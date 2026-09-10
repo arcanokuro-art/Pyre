@@ -1,0 +1,36 @@
+name: API network error marker l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          marker='  } catch (e) {\n    // A thrown exception here is a transport failure'
+          i=s.find(marker)
+          if i<0: raise SystemExit('catch marker missing')
+          j=s.find('\n  }\n}\n\n/// Curated list', i)
+          if j<0: raise SystemExit('catch end missing')
+          block=s[i:j]
+          old="""    messenger.showSnackBar(SnackBar(
+        content: Text('Couldn\\'t reach the server — check the URL and your '
+            'connection. ($e)')));"""
+          if old not in block: raise SystemExit('network text missing in catch')
+          new="""    messenger.showSnackBar(SnackBar(
+        content: Text(AppStrings.of(context).es
+            ? 'No se pudo contactar con el servidor; comprueba la URL y tu conexión. ($e)'
+            : 'Couldn\\'t reach the server — check the URL and your connection. ($e)')));"""
+          block=block.replace(old,new,1)
+          p.write_text(s[:i]+block+s[j:])
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API network error by marker'
+          git push origin HEAD:spanish-localization
