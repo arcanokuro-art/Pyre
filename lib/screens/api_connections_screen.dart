@@ -417,7 +417,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
             configured
-                ? 'Tap the connection (or +) to change the server\'s provider.'
+                ? (AppStrings.of(context).es ? 'Toca la conexión (o +) para cambiar el proveedor del servidor.' : 'Tap the connection (or +) to change the server\'s provider.')
                 : '',
             style: TextStyle(color: EmberColors.textDim, fontSize: 12),
           ),
