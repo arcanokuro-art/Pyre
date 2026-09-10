@@ -654,7 +654,7 @@ class _LoadStatusBanner extends StatelessWidget {
           if (errors.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(
-              'Per-collection issues:',
+              AppStrings.of(context).es ? 'Problemas por colección:' : 'Per-collection issues:',
               style: TextStyle(
                 color: EmberColors.textHigh,
                 fontSize: 12,
@@ -752,7 +752,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'API key storage errors',
+                  AppStrings.of(context).es ? 'Errores de almacenamiento de claves API' : 'API key storage errors',
                   style: TextStyle(
                     color: color,
                     fontWeight: FontWeight.w700,
@@ -769,7 +769,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  'Dismiss',
+                  AppStrings.of(context).es ? 'Descartar' : 'Dismiss',
                   style: TextStyle(
                     color: EmberColors.textMid,
                     fontSize: 12,
@@ -780,9 +780,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'One or more API keys failed to read/write from OS-secure '
-            'storage. If a provider is missing its key, re-paste it '
-            'in API Connections.',
+            AppStrings.of(context).es ? 'No se pudieron leer o escribir una o más claves API en el almacenamiento seguro del sistema. Si a un proveedor le falta su clave, vuelve a pegarla en Conexiones API.' : 'One or more API keys failed to read/write from OS-secure storage. If a provider is missing its key, re-paste it in API Connections.',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
@@ -791,7 +789,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Recent failures:',
+            AppStrings.of(context).es ? 'Fallos recientes:' : 'Recent failures:',
             style: TextStyle(
               color: EmberColors.textHigh,
               fontSize: 12,
@@ -815,7 +813,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 6, top: 4),
               child: Text(
-                '…and ${errors.length - 8} more',
+                AppStrings.of(context).es ? '…y ${errors.length - 8} más' : '…and ${errors.length - 8} more',
                 style: TextStyle(
                   color: EmberColors.textMid,
                   fontSize: 11.5,
