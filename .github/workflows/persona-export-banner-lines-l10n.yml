@@ -1,0 +1,38 @@
+name: Persona export banner lines l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          needle="    final banner = galleryExported > 0\n"
+          start=s.find(needle)
+          if start < 0: raise SystemExit('start missing')
+          end=s.find("    await deliverExport(\n", start)
+          if end < 0: raise SystemExit('end missing')
+          lines=[
+            "    final es = AppStrings.of(context).es;",
+            "    final banner = galleryExported > 0",
+            "        ? (es",
+            "            ? 'Exportado — ${file.uri.pathSegments.last} (+$galleryExported ${galleryExported == 1 ? \\"imagen\\" : \\"imágenes\\"} de galería)'",
+            "            : 'Exported — ${file.uri.pathSegments.last} (+$galleryExported gallery ${galleryExported == 1 ? \\"image\\" : \\"images\\"})')",
+            "        : (es",
+            "            ? 'Exportado — ${file.uri.pathSegments.last}'",
+            "            : 'Exported — ${file.uri.pathSegments.last}');",
+            "",
+          ]
+          s=s[:start]+'\n'.join(lines)+s[end:]
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize persona export banner line by line'
+          git push origin HEAD:spanish-localization
