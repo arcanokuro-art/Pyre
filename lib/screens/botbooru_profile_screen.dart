@@ -1262,9 +1262,9 @@ class _FeaturedPickerSheet extends StatelessWidget {
                         leading: Icon(Icons.star_outline,
                             color: EmberColors.textMid),
                         title: Text(es ? 'Quitar destacado' : 'Remove featured'),
-                        subtitle: const Text(
+                        subtitle: Text(
                           es ? 'Oculta la tarjeta destacada de tu perfil.' : 'Hide the featured card from your profile.',
-                          style: TextStyle(fontSize: 11),
+                          style: const TextStyle(fontSize: 11),
                         ),
                         // Pass empty string sentinel — caller treats
                         // it as "explicit clear" (null sentinel means
