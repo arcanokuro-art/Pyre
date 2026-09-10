@@ -1,0 +1,24 @@
+name: Profile remove subtitle
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/botbooru_profile_screen.dart'); s=p.read_text()
+          needle="'Hide the featured card from your profile.'"
+          if needle not in s: raise SystemExit('marker missing')
+          s=s.replace(needle,"es ? 'Oculta la tarjeta destacada de tu perfil.' : 'Hide the featured card from your profile.'",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/botbooru_profile_screen.dart
+          git commit -m 'Localize remove featured description'
+          git push origin HEAD:spanish-localization
