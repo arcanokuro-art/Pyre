@@ -1,0 +1,41 @@
+name: Persona menu core l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          a=s.index('void _showPersonaMenu')
+          b=s.index('Future<void> _showImportCharacterDialog', a)
+          block=s[a:b]
+          pairs=[
+            ("_menuSectionLabel('Persona'),", "_menuSectionLabel('Persona'),"),
+            ("title: const Text('View details'),", "title: Text(AppStrings.of(context).es ? 'Ver detalles' : 'View details'),"),
+            ("title: const Text('Set as default'),", "title: Text(AppStrings.of(context).es ? 'Establecer como predeterminada' : 'Set as default'),"),
+            ("title: const Text('Duplicate'),", "title: Text(AppStrings.of(context).es ? 'Duplicar' : 'Duplicate'),"),
+            ("SnackBar(content: Text('Duplicated as \"${clone.name}\".')),", "SnackBar(content: Text(AppStrings.of(context).es ? 'Duplicada como \"${clone.name}\".' : 'Duplicated as \"${clone.name}\".')),"),
+            ("_menuSectionLabel('Export'),", "_menuSectionLabel(AppStrings.of(context).es ? 'Exportar' : 'Export'),"),
+            ("title: const Text('Export as PNG'),", "title: Text(AppStrings.of(context).es ? 'Exportar como PNG' : 'Export as PNG'),"),
+            ("title: const Text('Export as JSON card'),", "title: Text(AppStrings.of(context).es ? 'Exportar como tarjeta JSON' : 'Export as JSON card'),"),
+            ("_menuSectionLabel('Library'),", "_menuSectionLabel(AppStrings.of(context).es ? 'Biblioteca' : 'Library'),"),
+            ("title: const Text('Add to folder…'),", "title: Text(AppStrings.of(context).es ? 'Añadir a carpeta…' : 'Add to folder…'),"),
+            ("'In: ${folderNames.join(\", \")}',", "AppStrings.of(context).es ? 'En: ${folderNames.join(\", \")}' : 'In: ${folderNames.join(\", \")}',"),
+            ("title: Text('Delete persona',", "title: Text(AppStrings.of(context).es ? 'Eliminar persona' : 'Delete persona',"),
+          ]
+          for x,y in pairs:
+            if block.count(x)!=1: raise SystemExit(f'matches {block.count(x)} for {x[:35]}')
+            block=block.replace(x,y,1)
+          p.write_text(s[:a]+block+s[b:])
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize persona menu core actions'
+          git push origin HEAD:spanish-localization
