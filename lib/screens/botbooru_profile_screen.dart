@@ -619,15 +619,13 @@ class _IdentityEditCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Optional. Shown as the creator on cards you build in the '
-            'Character Creator — this is not a BotBooru account, nothing to '
-            'sign into. Case-sensitive on botbooru.com.',
+            es ? 'Opcional. Se muestra como creador en las tarjetas que haces con el Creador de personajes. No es una cuenta de BotBooru y no hay que iniciar sesión. En botbooru.com distingue mayúsculas y minúsculas.' : 'Optional. Shown as the creator on cards you build in the Character Creator — this is not a BotBooru account, nothing to sign into. Case-sensitive on botbooru.com.',
             style: TextStyle(
                 color: EmberColors.textDim, fontSize: 11, height: 1.4),
           ),
           const SizedBox(height: 14),
           Text(
-            'Title',
+            es ? 'Título' : 'Title',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
@@ -640,7 +638,7 @@ class _IdentityEditCard extends StatelessWidget {
             onChanged: onTitleChanged,
             maxLength: 60,
             decoration: _dec(
-                    'e.g. "Slow-burn enthusiast", "Just here for the chaos"')
+                    es ? 'p. ej. "Fan del slow burn", "Aquí por el caos"' : 'e.g. "Slow-burn enthusiast", "Just here for the chaos"')
                 .copyWith(counterText: ''),
             style: TextStyle(
               color: EmberColors.textHigh,
@@ -649,13 +647,13 @@ class _IdentityEditCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Short subtitle that sits under your name. Empty hides it.',
+            es ? 'Subtítulo corto que aparece debajo de tu nombre. Si está vacío, se oculta.' : 'Short subtitle that sits under your name. Empty hides it.',
             style: TextStyle(
                 color: EmberColors.textDim, fontSize: 11, height: 1.4),
           ),
           const SizedBox(height: 14),
           Text(
-            'Pronouns (optional)',
+            es ? 'Pronombres (opcional)' : 'Pronouns (optional)',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
@@ -667,7 +665,7 @@ class _IdentityEditCard extends StatelessWidget {
             controller: pronounsCtl,
             onChanged: onPronounsChanged,
             maxLength: 30,
-            decoration: _dec('e.g. she/her, they/them, he/him').copyWith(
+            decoration: _dec(es ? 'p. ej. ella, elle, él' : 'e.g. she/her, they/them, he/him').copyWith(
               counterText: '',
             ),
             style: TextStyle(
@@ -719,6 +717,7 @@ class _AboutMeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     if (editMode) {
       return Container(
         padding: const EdgeInsets.all(14),
@@ -731,7 +730,7 @@ class _AboutMeSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'ABOUT ME',
+              es ? 'ACERCA DE MÍ' : 'ABOUT ME',
               style: TextStyle(
                 color: EmberColors.primary,
                 fontWeight: FontWeight.w700,
@@ -741,8 +740,7 @@ class _AboutMeSection extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'A short bio for your profile. Whatever you want — '
-              'tropes you love, favorite genres, what you\'re into.',
+              es ? 'Una breve biografía para tu perfil. Lo que quieras: tropos que te gustan, géneros favoritos y tus intereses.' : 'A short bio for your profile. Whatever you want — tropes you love, favorite genres, what you\'re into.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
