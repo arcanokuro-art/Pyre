@@ -403,12 +403,12 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: EmptyState(
               icon: Icons.cloud_outlined,
-              title: 'Connect an AI provider',
+              title: AppStrings.of(context).es ? 'Conecta un proveedor de IA' : 'Connect an AI provider',
               subtitle:
                   'This server has no AI yet. Add one (OpenRouter has free '
                   'models to start) and paste its API key — it\'s saved on the '
                   'server for every device that connects.',
-              ctaLabel: 'Add a provider',
+              ctaLabel: AppStrings.of(context).es ? 'Añadir un proveedor' : 'Add a provider',
               onCta: () => _editProvider(context, null),
             ),
           ),
