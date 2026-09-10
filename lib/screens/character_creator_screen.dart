@@ -761,10 +761,7 @@ class _HowItWorksCard extends StatelessWidget {
           HowItWorksBlock.bullet(
               es ? '**Escenario** — un entorno con un narrador que interpreta NPC y describe escenas. Úsalo cuando estés creando un mundo o un centro de interacción, no un solo personaje.' : '**Scenario** — a setting with a narrator that voices NPCs and describes scenes. Use when you\'re building a world or hub ("haunted mansion", "supernatural school", "free-use city"), not a single character.'),
           HowItWorksBlock.bullet(
-              '**Lorebooks** aren\'t a starting choice here anymore — create '
-              'them from the Lorebooks section of your library (Create → '
-              'Build with AI). Character sessions can still draft lorebook '
-              'entries for the card as you go.'),
+              es ? '**Libros de lore** ya no son una opción inicial aquí; créalos desde la sección Libros de lore de tu biblioteca (Crear → Crear con IA). Las sesiones de personajes todavía pueden preparar entradas de lore para la tarjeta durante el proceso.' : '**Lorebooks** aren\'t a starting choice here anymore — create them from the Lorebooks section of your library (Create → Build with AI). Character sessions can still draft lorebook entries for the card as you go.'),
           HowItWorksBlock.paragraph(
               '**Edit with AI** isn\'t a starting choice — it\'s how you '
               'open an EXISTING character or persona back into the Creator '
@@ -779,12 +776,7 @@ class _HowItWorksCard extends StatelessWidget {
         // Wave CY.18.101: guided flow removed — single freeform flow.
         HowItWorksSection(es ? 'Cómo se ejecuta la creación' : 'How the build runs', [
           HowItWorksBlock.paragraph(
-              'When you say to build, the architect writes the whole sheet '
-              'over a few automatic passes (you\'ll see a "pass X of N" '
-              'counter) — you don\'t confirm anything along the way. It '
-              'usually takes a few minutes depending on your provider, and '
-              'Pyre keeps generating in the background if you minimise the '
-              'app.'),
+              es ? 'Cuando indicas que se cree, el arquitecto escribe toda la ficha mediante varias pasadas automáticas (verás un contador «pasada X de N»); no tienes que confirmar nada durante el proceso. Normalmente tarda unos minutos según tu proveedor, y Pyre continúa generando en segundo plano si minimizas la aplicación.' : 'When you say to build, the architect writes the whole sheet over a few automatic passes (you\'ll see a "pass X of N" counter) — you don\'t confirm anything along the way. It usually takes a few minutes depending on your provider, and Pyre keeps generating in the background if you minimise the app.'),
         ]),
 
         // 3. What gets built. (Wave CY.18.112: de-jargoned — the
@@ -798,13 +790,13 @@ class _HowItWorksCard extends StatelessWidget {
               'reference everything that came before. A character '
               'card covers:'),
           HowItWorksBlock.bullet(
-              'Appearance — look, build, distinctive features'),
-          HowItWorksBlock.bullet('Personality & psychology'),
-          HowItWorksBlock.bullet('Abilities, lore & world'),
+              es ? 'Apariencia — aspecto, complexión y rasgos distintivos' : 'Appearance — look, build, distinctive features'),
+          HowItWorksBlock.bullet(es ? 'Personalidad y psicología' : 'Personality & psychology'),
+          HowItWorksBlock.bullet(es ? 'Habilidades, lore y mundo' : 'Abilities, lore & world'),
           HowItWorksBlock.bullet(
-              'The opening — scenario, first message & examples'),
+              es ? 'La apertura — escenario, primer mensaje y ejemplos' : 'The opening — scenario, first message & examples'),
           HowItWorksBlock.bullet(
-              'Tagline, creator notes & tags (the wrap-up)'),
+              es ? 'Eslogan, notas del creador y etiquetas (el cierre)' : 'Tagline, creator notes & tags (the wrap-up)'),
           HowItWorksBlock.paragraph(
               'A scenario card covers the same ground re-aimed at a '
               'setting: the world and its rules, the cast (NPCs), the '
