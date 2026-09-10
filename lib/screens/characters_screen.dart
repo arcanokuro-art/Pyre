@@ -1960,7 +1960,7 @@ class _ActiveTagChipsRow extends StatelessWidget {
               visualDensity: VisualDensity.compact,
             ),
           ActionChip(
-            label: const Text('Clear all', style: TextStyle(fontSize: 11)),
+            label: Text(AppStrings.of(context).es ? 'Borrar todo' : 'Clear all', style: const TextStyle(fontSize: 11)),
             avatar: const Icon(Icons.close, size: 14),
             onPressed: () => store.clearCharSelectedTags(),
             padding: EdgeInsets.zero,
@@ -2006,7 +2006,7 @@ class _FavoritesHeader extends StatelessWidget {
             Icon(Icons.star, size: 14, color: EmberColors.primary),
             const SizedBox(width: 6),
             Text(
-              'FAVORITES ($count)',
+              AppStrings.of(context).es ? 'FAVORITOS ($count)' : 'FAVORITES ($count)',
               style: TextStyle(
                 color: EmberColors.primary,
                 fontWeight: FontWeight.w700,
