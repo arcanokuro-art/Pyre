@@ -55,9 +55,9 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
       final host = Uri.parse(baseUrl).host;
       final parts = host.split('.').where((p) => p.isNotEmpty).toList();
       final core = parts.length >= 2 ? parts[parts.length - 2] : host;
-      return core.isEmpty ? 'AI provider' : core[0].toUpperCase() + core.substring(1);
+      return core.isEmpty ? (AppStrings.of(context).es ? 'Proveedor de IA' : 'AI provider') : core[0].toUpperCase() + core.substring(1);
     } catch (_) {
-      return 'AI provider';
+      return AppStrings.of(context).es ? 'Proveedor de IA' : 'AI provider';
     }
   }
 
@@ -201,7 +201,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                               if (isVision) ...[
                                 const SizedBox(width: 6),
                                 _ProviderBadge(
-                                  label: 'VISION',
+                                  label: es ? 'VISIÓN' : 'VISION',
                                   color: const Color(0xFF6FBEFF),
                                 ),
                               ],
