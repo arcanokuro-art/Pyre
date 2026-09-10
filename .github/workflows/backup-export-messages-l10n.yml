@@ -1,0 +1,31 @@
+name: Backup export messages l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart')
+          s=p.read_text()
+          s=s.replace("title: 'Export with API keys?'", "title: AppStrings.of(context).es ? '¿Exportar con claves API?' : 'Export with API keys?'",1)
+          s=s.replace("message:\n          'The backup will contain your bearer tokens in plain text. Anyone who gets this file can spend on your provider accounts. Continue?',", "message: AppStrings.of(context).es ? 'La copia de seguridad contendrá tus tokens de acceso en texto sin formato. Cualquier persona que obtenga este archivo podría generar cargos en tus cuentas de proveedores. ¿Continuar?' : 'The backup will contain your bearer tokens in plain text. Anyone who gets this file can spend on your provider accounts. Continue?',",1)
+          s=s.replace("confirmLabel: 'Export anyway'", "confirmLabel: AppStrings.of(context).es ? 'Exportar de todos modos' : 'Export anyway'",1)
+          s=s.replace("ScaffoldMessenger.of(context).showSnackBar(const SnackBar(\n        content: Text('Pick at least one category to back up.')));", "ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Selecciona al menos una categoría para incluir en la copia.' : 'Pick at least one category to back up.')));",1)
+          s=s.replace("? 'Copied — backup includes API keys.'\n              : 'Copied — backup is key-free.'", "? (AppStrings.of(context).es ? 'Copiado; la copia incluye claves API.' : 'Copied — backup includes API keys.')\n              : (AppStrings.of(context).es ? 'Copiado; la copia no incluye claves API.' : 'Copied — backup is key-free.')",1)
+          s=s.replace("SnackBar(content: Text('Downloading $filename'))", "SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename'))",1)
+          s=s.replace("messenger.showSnackBar(SnackBar(content: Text('Share failed: $e')));", "messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Error al compartir: $e' : 'Share failed: $e')));",1)
+          s=s.replace("messenger.showSnackBar(SnackBar(content: Text('Save failed: $e')));", "messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Error al guardar: $e' : 'Save failed: $e')));",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize backup export warnings and results'
+          git push origin HEAD:spanish-localization
