@@ -716,8 +716,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       if (blob == null) {
         messenger.showSnackBar(
           SnackBar(content: Text(
-              'Backup is not a parseable JSON object — the file may be '
-              'corrupted. ${text.length} bytes read.')),
+              AppStrings.of(context).es ? 'La copia no es un objeto JSON válido; el archivo puede estar dañado. Se leyeron ${text.length} bytes.' : 'Backup is not a parseable JSON object — the file may be corrupted. ${text.length} bytes read.')),
         );
         return;
       }
@@ -731,11 +730,10 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         if (!context.mounted) return;
         importKeys = await confirmDelete(
           context,
-          title: 'Import API keys?',
-          message:
-              'This backup contains API keys. Add/overwrite your saved keys with them? Choose "Keep mine" to import everything else and leave your current keys untouched.',
-          confirmLabel: 'Use backup keys',
-          cancelLabel: 'Keep mine',
+          title: AppStrings.of(context).es ? '¿Importar claves API?' : 'Import API keys?',
+          message: AppStrings.of(context).es ? 'Esta copia contiene claves API. ¿Quieres añadirlas o sobrescribir tus claves guardadas? Elige «Conservar las mías» para importar todo lo demás sin modificar tus claves actuales.' : 'This backup contains API keys. Add/overwrite your saved keys with them? Choose "Keep mine" to import everything else and leave your current keys untouched.',
+          confirmLabel: AppStrings.of(context).es ? 'Usar claves de la copia' : 'Use backup keys',
+          cancelLabel: AppStrings.of(context).es ? 'Conservar las mías' : 'Keep mine',
         );
       }
       // Audit 2026-06-04 (Persist H2): import is a destructive WHOLE-category
@@ -748,12 +746,11 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         if (!context.mounted) return;
         final ok = await confirmDelete(
           context,
-          title: 'Replace your data?',
-          message:
-              'This will REPLACE your current data for:\n\n'
-              '${replaceSummary.join('\n')}\n\n'
-              'Records you added since this backup will be lost. Continue?',
-          confirmLabel: 'Replace',
+          title: AppStrings.of(context).es ? '¿Reemplazar tus datos?' : 'Replace your data?',
+          message: AppStrings.of(context).es
+              ? 'Esto REEMPLAZARÁ tus datos actuales de:\n\n${replaceSummary.join('\n')}\n\nLos registros que hayas añadido desde esta copia se perderán. ¿Continuar?'
+              : 'This will REPLACE your current data for:\n\n${replaceSummary.join('\n')}\n\nRecords you added since this backup will be lost. Continue?',
+          confirmLabel: AppStrings.of(context).es ? 'Reemplazar' : 'Replace',
         );
         if (!ok) {
           if (!context.mounted) return;
