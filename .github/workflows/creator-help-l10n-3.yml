@@ -1,0 +1,30 @@
+name: Creator help l10n 3
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          s=s.replace("'**Lorebooks** aren\\'t a starting choice here anymore — create '\n              'them from the Lorebooks section of your library (Create → '\n              'Build with AI). Character sessions can still draft lorebook '\n              'entries for the card as you go.'", "es ? '**Libros de lore** ya no son una opción inicial aquí; créalos desde la sección Libros de lore de tu biblioteca (Crear → Crear con IA). Las sesiones de personajes todavía pueden preparar entradas de lore para la tarjeta durante el proceso.' : '**Lorebooks** aren\\'t a starting choice here anymore — create them from the Lorebooks section of your library (Create → Build with AI). Character sessions can still draft lorebook entries for the card as you go.'",1)
+          s=s.replace("'When you say to build, the architect writes the whole sheet '\n              'over a few automatic passes (you\\'ll see a \"pass X of N\" '\n              'counter) — you don\\'t confirm anything along the way. It '\n              'usually takes a few minutes depending on your provider, and '\n              'Pyre keeps generating in the background if you minimise the '\n              'app.'", "es ? 'Cuando indicas que se cree, el arquitecto escribe toda la ficha mediante varias pasadas automáticas (verás un contador «pasada X de N»); no tienes que confirmar nada durante el proceso. Normalmente tarda unos minutos según tu proveedor, y Pyre continúa generando en segundo plano si minimizas la aplicación.' : 'When you say to build, the architect writes the whole sheet over a few automatic passes (you\\'ll see a \"pass X of N\" counter) — you don\\'t confirm anything along the way. It usually takes a few minutes depending on your provider, and Pyre keeps generating in the background if you minimise the app.'",1)
+          s=s.replace("'Appearance — look, build, distinctive features'", "es ? 'Apariencia — aspecto, complexión y rasgos distintivos' : 'Appearance — look, build, distinctive features'",1)
+          s=s.replace("HowItWorksBlock.bullet('Personality & psychology')", "HowItWorksBlock.bullet(es ? 'Personalidad y psicología' : 'Personality & psychology')",1)
+          s=s.replace("HowItWorksBlock.bullet('Abilities, lore & world')", "HowItWorksBlock.bullet(es ? 'Habilidades, lore y mundo' : 'Abilities, lore & world')",1)
+          s=s.replace("'The opening — scenario, first message & examples'", "es ? 'La apertura — escenario, primer mensaje y ejemplos' : 'The opening — scenario, first message & examples'",1)
+          s=s.replace("'Tagline, creator notes & tags (the wrap-up)'", "es ? 'Eslogan, notas del creador y etiquetas (el cierre)' : 'Tagline, creator notes & tags (the wrap-up)'",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Continue localizing Creator help content'
+          git push origin HEAD:spanish-localization
