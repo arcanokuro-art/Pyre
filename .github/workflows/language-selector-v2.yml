@@ -22,27 +22,20 @@ jobs:
           from pathlib import Path
           p = Path('lib/state/app_store.dart')
           s = p.read_text()
-          anchor = """  void setBackgroundGeneration(bool v) {
-            if (uiPrefs.backgroundGeneration == v) return;
-            uiPrefs.backgroundGeneration = v;
-            GenerationKeepAlive.promoteAllToHeavy = v;
-            _bump();
-          }
-          """
-          addition = """
-
-          /// Change the device-local UI language and persist it.
-          void setLanguageCode(String code) {
-            final normalized = code == 'en' ? 'en' : 'es';
-            if (uiPrefs.languageCode == normalized) return;
-            uiPrefs.languageCode = normalized;
-            _bump();
-          }
-          """
           if 'void setLanguageCode(String code)' not in s:
-              if anchor not in s:
-                  raise SystemExit('AppStore anchor not found')
-              s = s.replace(anchor, anchor + addition, 1)
+              marker = '  /// Reorder a provider in the list'
+              if marker not in s:
+                  raise SystemExit('AppStore insertion marker not found')
+              addition = """  /// Change the device-local UI language and persist it.
+  void setLanguageCode(String code) {
+    final normalized = code == 'en' ? 'en' : 'es';
+    if (uiPrefs.languageCode == normalized) return;
+    uiPrefs.languageCode = normalized;
+    _bump();
+  }
+
+"""
+              s = s.replace(marker, addition + marker, 1)
               p.write_text(s)
           PY
       - name: Commit language setter
