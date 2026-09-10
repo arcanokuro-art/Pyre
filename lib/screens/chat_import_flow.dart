@@ -1,13 +1,4 @@
-// UI flow for importing a single Pyre chat file (1.2.1 #3). Pyre can EXPORT a
-// chat (chat_screen → "Export chat") as either a full-fidelity `pyre.chat.v1`
-// JSON or a SillyTavern-compatible `.jsonl`; this is the missing IMPORT side.
-//
-// Thin shell around the PURE services/chat_import.dart: pick a file, run
-// importChat (format auto-detected), add the reconstructed chat via
-// store.addImportedChat (the SAME method the ST-backup path uses), then show a
-// summary dialog — or a readable error snackbar on failure. Nothing is ever
-// half-imported: importChat throws BEFORE returning a chat on unusable input.
-//
+// UI flow for importing a single Pyre chat file.
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
@@ -15,21 +6,18 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/models.dart';
 import '../services/chat_import.dart';
 import '../state/app_store.dart';
 import '../theme.dart';
 
-/// Hard cap on a chat import — a single chat file is small; anything past this
-/// is almost certainly corrupt or a JSON bomb. Refusing early avoids an OOM /
-/// pathological decode. Matches the spirit of the backup-import cap.
 const int _kMaxChatImportBytes = 25 * 1024 * 1024;
 
-/// Entry point wired from Backup & Restore. Picks ONE `.json` / `.jsonl` chat
-/// file, imports it, and reports the outcome. Safe to call with a stale
-/// context — every async gap is guarded.
 Future<void> runPyreChatImport(BuildContext context, AppStore store) async {
   final messenger = ScaffoldMessenger.of(context);
+  final es = AppStrings.of(context).es;
+  String t(String spanish, String english) => es ? spanish : english;
 
   final FilePickerResult? result;
   try {
@@ -39,7 +27,7 @@ Future<void> runPyreChatImport(BuildContext context, AppStore store) async {
       withData: true,
     );
   } catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text('Could not open picker: $e')));
+    messenger.showSnackBar(SnackBar(content: Text(t('No se pudo abrir el selector de archivos: $e', 'Could not open picker: $e'))));
     return;
   }
   if (result == null || result.files.isEmpty) return;
@@ -47,14 +35,14 @@ Future<void> runPyreChatImport(BuildContext context, AppStore store) async {
   final file = result.files.single;
   final bytes = file.bytes;
   if (bytes == null) {
-    messenger.showSnackBar(
-        const SnackBar(content: Text('Could not read the chat file.')));
+    messenger.showSnackBar(SnackBar(content: Text(t('No se pudo leer el archivo del chat.', 'Could not read the chat file.'))));
     return;
   }
   if (bytes.length > _kMaxChatImportBytes) {
-    messenger.showSnackBar(SnackBar(
-        content: Text(
-            'Chat file is too large (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Max 25 MB.')));
+    messenger.showSnackBar(SnackBar(content: Text(t(
+      'El archivo del chat es demasiado grande (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). El máximo es 25 MB.',
+      'Chat file is too large (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Max 25 MB.',
+    ))));
     return;
   }
 
@@ -62,8 +50,10 @@ Future<void> runPyreChatImport(BuildContext context, AppStore store) async {
   try {
     content = utf8.decode(bytes);
   } catch (_) {
-    messenger.showSnackBar(const SnackBar(
-        content: Text("This file isn't valid text — it may be corrupted.")));
+    messenger.showSnackBar(SnackBar(content: Text(t(
+      'Este archivo no contiene texto válido; puede estar dañado.',
+      "This file isn't valid text — it may be corrupted.",
+    ))));
     return;
   }
 
@@ -75,23 +65,16 @@ Future<void> runPyreChatImport(BuildContext context, AppStore store) async {
       existingChatIds: store.chats.map((c) => c.id).toSet(),
     );
   } on ChatImportException catch (e) {
-    // Typed, human-readable reason — no crash, nothing added.
     messenger.showSnackBar(SnackBar(content: Text(e.message)));
     return;
   } catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text('Import failed: $e')));
+    messenger.showSnackBar(SnackBar(content: Text(t('Error al importar: $e', 'Import failed: $e'))));
     return;
   }
 
-  // Freeze a per-chat snapshot from the live card when the chat bound to a
-  // library character but carries no snapshot (the JSONL path) — parity with
-  // how the ST-backup importer builds self-contained chats, so the chat still
-  // renders if the card is later edited/deleted.
   final chat = imported.chat;
   final primary = chat.primaryCharacterId;
-  if (imported.summary.characterBound &&
-      primary != null &&
-      chat.characterSnapshots.isEmpty) {
+  if (imported.summary.characterBound && primary != null && chat.characterSnapshots.isEmpty) {
     final live = store.characterById(primary);
     if (live != null) {
       chat.characterSnapshots[primary] = Character.fromJson(live.toJson());
@@ -104,29 +87,34 @@ Future<void> runPyreChatImport(BuildContext context, AppStore store) async {
   await _showChatImportSummary(context, imported.summary);
 }
 
-Future<void> _showChatImportSummary(
-  BuildContext context,
-  ChatImportSummary summary,
-) async {
-  String plural(int n, String unit) => '$n $unit${n == 1 ? '' : 's'}';
+Future<void> _showChatImportSummary(BuildContext context, ChatImportSummary summary) async {
+  final es = AppStrings.of(context).es;
+  String t(String spanish, String english) => es ? spanish : english;
+  String quantity(int n, String singularEs, String pluralEs, String singularEn, String pluralEn) =>
+      es ? '$n ${n == 1 ? singularEs : pluralEs}' : '$n ${n == 1 ? singularEn : pluralEn}';
 
   final formatLabel = switch (summary.format) {
-    ChatImportFormat.pyreJson => 'Pyre JSON (full fidelity)',
+    ChatImportFormat.pyreJson => t('Pyre JSON (fidelidad completa)', 'Pyre JSON (full fidelity)'),
     ChatImportFormat.pyreJsonl => 'Pyre JSONL',
     ChatImportFormat.foreignJsonl => 'SillyTavern JSONL',
   };
 
   final lines = <String>[
-    'Imported "${summary.title}" — ${plural(summary.messageCount, 'message')}.',
+    t(
+      'Se importó «${summary.title}» — ${quantity(summary.messageCount, 'mensaje', 'mensajes', 'message', 'messages')}.',
+      'Imported "${summary.title}" — ${quantity(summary.messageCount, 'mensaje', 'mensajes', 'message', 'messages')}.',
+    ),
   ];
   if (summary.variantCount > 0) {
-    lines.add('${plural(summary.variantCount, 'message')} with saved '
-        'alternates restored.');
+    lines.add(t(
+      '${quantity(summary.variantCount, 'mensaje', 'mensajes', 'message', 'messages')} con respuestas alternativas guardadas restauradas.',
+      '${quantity(summary.variantCount, 'mensaje', 'mensajes', 'message', 'messages')} with saved alternates restored.',
+    ));
   }
   lines.add(summary.characterBound
-      ? 'Linked to its character in your library.'
-      : 'Imported as a standalone chat.');
-  lines.add('Format: $formatLabel.');
+      ? t('Vinculado con su personaje de tu biblioteca.', 'Linked to its character in your library.')
+      : t('Importado como chat independiente.', 'Imported as a standalone chat.'));
+  lines.add(t('Formato: $formatLabel.', 'Format: $formatLabel.'));
   lines.addAll(summary.warnings);
 
   await showDialog<void>(
@@ -137,7 +125,7 @@ Future<void> _showChatImportSummary(
         children: [
           Icon(Icons.download_done, color: EmberColors.primary, size: 22),
           const SizedBox(width: 10),
-          const Expanded(child: Text('Chat imported')),
+          Expanded(child: Text(t('Chat importado', 'Chat imported'))),
         ],
       ),
       content: SingleChildScrollView(
@@ -147,24 +135,13 @@ Future<void> _showChatImportSummary(
           children: [
             for (var i = 0; i < lines.length; i++) ...[
               if (i > 0) const SizedBox(height: 10),
-              Text(
-                lines[i],
-                style: TextStyle(
-                  color: i == 0 ? EmberColors.textHigh : EmberColors.textMid,
-                  fontSize: 14,
-                  height: 1.4,
-                  fontWeight: i == 0 ? FontWeight.w600 : FontWeight.w400,
-                ),
-              ),
+              Text(lines[i], style: TextStyle(color: i == 0 ? EmberColors.textHigh : EmberColors.textMid, fontSize: 14, height: 1.4, fontWeight: i == 0 ? FontWeight.w600 : FontWeight.w400)),
             ],
           ],
         ),
       ),
       actions: [
-        FilledButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: const Text('Done'),
-        ),
+        FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(t('Listo', 'Done'))),
       ],
     ),
   );
