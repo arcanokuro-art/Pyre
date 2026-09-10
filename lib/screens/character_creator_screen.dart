@@ -737,19 +737,9 @@ class _HowItWorksCard extends StatelessWidget {
         // BUILD-UP/GENERATE/REFINE phase model + "Generate" button were
         // retired with the deterministic build).
         HowItWorksSection(es ? 'Cómo transcurre una sesión' : 'How a session flows', [
-          HowItWorksBlock.paragraph(
-              '1) **Talk it out** — tell the AI the vibe (name, species, '
-              'archetype, "broken princess with a sword", anything). Vague '
-              'is fine; it asks a few targeted questions. The sheet stays '
-              'empty while you chat — nothing is written yet.\n\n'
-              '2) **Build** — when the AI proposes building, or any time '
-              'you\'re ready, say the word (or type /build). It then writes '
-              'the WHOLE card in one go, over a few automatic passes.\n\n'
-              '3) **Review** — the finished card appears field-by-field in '
-              'the canvas. Read it, and tap any field to edit it by hand.\n\n'
-              '4) **Refine or save** — keep chatting to ask for changes '
-              '(the AI edits only what you asked and leaves the rest alone), '
-              'or Save it to your library.'),
+          HowItWorksBlock.paragraph(es
+              ? '1) **Habla sobre la idea** — cuéntale a la IA el concepto. Puede ser algo vago; hará algunas preguntas específicas. La ficha permanece vacía mientras conversan: todavía no se escribe nada.\\n\\n2) **Crear** — cuando la IA proponga crearla, o cuando tú estés listo, indícalo (o escribe /build). Entonces escribe TODA la tarjeta mediante varias pasadas automáticas.\\n\\n3) **Revisar** — la tarjeta terminada aparece campo por campo en el lienzo. Revísala y toca cualquier campo para editarlo manualmente.\\n\\n4) **Refinar o guardar** — sigue conversando para pedir cambios; la IA modifica solo lo que pediste y deja lo demás intacto, o guarda la tarjeta en tu biblioteca.'
+              : '1) **Talk it out** — tell the AI the vibe. Vague is fine; it asks a few targeted questions. The sheet stays empty while you chat.\\n\\n2) **Build** — when the AI proposes building, or any time you are ready, say the word (or type /build). It writes the whole card over a few automatic passes.\\n\\n3) **Review** — the finished card appears field-by-field in the canvas. Read it and edit any field by hand.\\n\\n4) **Refine or save** — keep chatting to ask for changes, or save it to your library.'),
         ]),
 
         // 1. Building modes — what the new-session picker offers.
