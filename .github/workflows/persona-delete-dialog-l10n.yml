@@ -1,0 +1,50 @@
+name: Persona delete dialog l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          a=s.index('void _showPersonaMenu')
+          b=s.index('Future<void> _showImportCharacterDialog', a)
+          block=s[a:b]
+          old='''title: isDefault
+                    ? 'Delete default persona "${p.name}"?'
+                    : 'Delete "${p.name}"?',
+                message: isDefault
+                    ? 'This is your default persona. After deleting, new chats '
+                        'will have no default persona until you set another one. '
+                        'Existing chats fall back to whichever persona was active '
+                        'when they were created. Are you sure?'
+                    : 'The persona will be removed. Existing chats will fall '
+                        'back to the default persona.','''
+          new='''title: isDefault
+                    ? (AppStrings.of(context).es
+                        ? '¿Eliminar la persona predeterminada "${p.name}"?'
+                        : 'Delete default persona "${p.name}"?')
+                    : (AppStrings.of(context).es
+                        ? '¿Eliminar "${p.name}"?'
+                        : 'Delete "${p.name}"?'),
+                message: isDefault
+                    ? (AppStrings.of(context).es
+                        ? 'Esta es tu persona predeterminada. Después de eliminarla, los chats nuevos no tendrán una persona predeterminada hasta que establezcas otra. Los chats existentes usarán como alternativa la persona que estaba activa cuando fueron creados. ¿Continuar?'
+                        : 'This is your default persona. After deleting, new chats will have no default persona until you set another one. Existing chats fall back to whichever persona was active when they were created. Are you sure?')
+                    : (AppStrings.of(context).es
+                        ? 'La persona será eliminada. Los chats existentes usarán como alternativa la persona predeterminada.'
+                        : 'The persona will be removed. Existing chats will fall back to the default persona.'),'''
+          if block.count(old)!=1: raise SystemExit(f'matches {block.count(old)}')
+          block=block.replace(old,new,1)
+          p.write_text(s[:a]+block+s[b:])
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize persona deletion confirmation'
+          git push origin HEAD:spanish-localization
