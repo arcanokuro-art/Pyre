@@ -613,7 +613,7 @@ class _LoadStatusBanner extends StatelessWidget {
     if (isClean || result.status == LoadStatus.freshInstall) {
       return const SizedBox.shrink();
     }
-    final (color, icon, title) = _styleFor(result.status);
+    final (color, icon, title) = _styleFor(result.status, AppStrings.of(context).es);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -680,7 +680,7 @@ class _LoadStatusBanner extends StatelessWidget {
     );
   }
 
-  (Color, IconData, String) _styleFor(LoadStatus s) {
+  (Color, IconData, String) _styleFor(LoadStatus s, bool es) {
     switch (s) {
       case LoadStatus.ok:
         // Reached here means there were per-model errors but the main
@@ -688,31 +688,31 @@ class _LoadStatusBanner extends StatelessWidget {
         return (
           const Color(0xFFE9A35A),
           Icons.warning_amber_outlined,
-          'Loaded with warnings',
+          es ? 'Cargado con advertencias' : 'Loaded with warnings',
         );
       case LoadStatus.recoveredFromBackup:
         return (
           const Color(0xFFE9A35A),
           Icons.history,
-          'Recovered from backup',
+          es ? 'Recuperado desde la copia de seguridad' : 'Recovered from backup',
         );
       case LoadStatus.salvagedPartial:
         return (
           const Color(0xFFE57373),
           Icons.health_and_safety_outlined,
-          'Partial salvage — some recent data may be lost',
+          es ? 'Recuperación parcial; algunos datos recientes pueden haberse perdido' : 'Partial salvage — some recent data may be lost',
         );
       case LoadStatus.failed:
         return (
           EmberColors.danger,
           Icons.error_outline,
-          'Load failed — raw file still on disk',
+          es ? 'Falló la carga; el archivo original sigue en el dispositivo' : 'Load failed — raw file still on disk',
         );
       case LoadStatus.freshInstall:
         return (
           EmberColors.textMid,
           Icons.fiber_new,
-          'Fresh install',
+          es ? 'Instalación nueva' : 'Fresh install',
         );
     }
   }
