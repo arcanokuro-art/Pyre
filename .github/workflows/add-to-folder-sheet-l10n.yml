@@ -1,0 +1,31 @@
+name: Add to folder sheet l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          a=s.index('Future<void> showAddToFolderSheet')
+          q=s[a:]
+          pairs=[
+            ("'Add \"$itemName\" to folder',", "AppStrings.of(sheetCtx).es ? 'Añadir \"$itemName\" a carpeta' : 'Add \"$itemName\" to folder',"),
+            ("'No folders yet. Create one below to group ${countNoun}s.',", "AppStrings.of(sheetCtx).es ? 'Aún no hay carpetas. Crea una abajo para agrupar elementos.' : 'No folders yet. Create one below to group ${countNoun}s.',"),
+            ("title: const Text('Create new folder + add'),", "title: Text(AppStrings.of(sheetCtx).es ? 'Crear carpeta nueva + añadir' : 'Create new folder + add'),"),
+          ]
+          for x,y in pairs:
+            if q.count(x)!=1: raise SystemExit(f'matches {q.count(x)} for {x[:40]}')
+            q=q.replace(x,y,1)
+          p.write_text(s[:a]+q)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize add to folder sheet'
+          git push origin HEAD:spanish-localization
