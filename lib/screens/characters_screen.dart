@@ -2960,7 +2960,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                       final input = urlCtl.text.trim();
                       final parsed = Uri.parse(input);
                       if (parsed.scheme != 'https') {
-                        throw 'Only https:// URLs are accepted.';
+                        throw (AppStrings.of(ctx).es ? 'Solo se aceptan URL https://.' : 'Only https:// URLs are accepted.');
                       }
                       // Wave CT: try the community-page resolver first so a
                       // chub.ai / botbooru.com page URL works, not just a
@@ -2978,7 +2978,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                         bytes = resolved!.bytes!;
                       } else {
                         if (target.scheme != 'https') {
-                          throw 'Only https:// URLs are accepted.';
+                          throw (AppStrings.of(ctx).es ? 'Solo se aceptan URL https://.' : 'Only https:// URLs are accepted.');
                         }
                         // SSRF gate for the "paste ANY direct link" case.
                         // A botbooru/chub page resolves to a known CDN host
@@ -2997,8 +2997,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                             : (kCardFileHostAllowlist.contains(host) ||
                                 isPublicHost(host));
                         if (!allowed) {
-                          throw "Couldn't import — that link points to a "
-                              'private or local address.';
+                          throw (AppStrings.of(ctx).es ? 'No se pudo importar: ese enlace apunta a una dirección privada o local.' : "Couldn't import — that link points to a private or local address.");
                         }
                         // Wave CY.18.255 (audit FIX 4): DNS-rebinding guard.
                         // `isPublicHost` above is a literal-IP + name check
@@ -3041,7 +3040,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                       try {
                         card = parseCharaCard(bytes);
                       } catch (e) {
-                        throw 'Not a valid character card: $e';
+                        throw (AppStrings.of(ctx).es ? 'No es una tarjeta de personaje válida: $e' : 'Not a valid character card: $e');
                       }
                       final character = characterFromCharaCard(card);
                       // Wave CY.18.141: BotBooru gallery auto-import REMOVED
