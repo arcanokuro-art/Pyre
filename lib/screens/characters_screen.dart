@@ -3571,7 +3571,9 @@ Future<void> showAddToFolderSheet(
                             },
                             title: Text(f.name),
                             subtitle: Text(
-                              '${countOf(f)} $countNoun${countOf(f) == 1 ? "" : "s"}',
+                              AppStrings.of(sheetCtx).es
+                                  ? '${countOf(f)} elemento${countOf(f) == 1 ? "" : "s"}'
+                                  : '${countOf(f)} $countNoun${countOf(f) == 1 ? "" : "s"}',
                               style: const TextStyle(fontSize: 11),
                             ),
                             controlAffinity:
