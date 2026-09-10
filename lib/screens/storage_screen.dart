@@ -255,9 +255,7 @@ class _StorageScreenState extends State<StorageScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    t('Elimina todos los personajes, chats, personas, preajustes, libros de lore y conexiones API almacenados en este dispositivo. Tus ajustes (temperatura, comportamiento del chat, etc.) se conservan. No se puede deshacer.\n\n', 'Removes every character, chat, persona, preset, lorebook and API connection stored on this device. Your settings (temperature, chat behaviour, etc.) are kept. There is no undo.\n\n')
-                    'For a full factory reset that also wipes settings, '
-                    'use Backup & Restore → Advanced → Reset to factory settings.',
+                    t('Elimina todos los personajes, chats, personas, preajustes, libros de lore y conexiones API almacenados en este dispositivo. Tus ajustes se conservan. No se puede deshacer.\n\nPara un restablecimiento completo que también borre los ajustes, usa Copia de seguridad y restauración → Avanzado → Restablecer a valores de fábrica.', 'Removes every character, chat, persona, preset, lorebook and API connection stored on this device. Your settings are kept. There is no undo.\n\nFor a full factory reset that also wipes settings, use Backup & Restore → Advanced → Reset to factory settings.'),
                     style: TextStyle(
                       color: EmberColors.textMid,
                       fontSize: 12,
