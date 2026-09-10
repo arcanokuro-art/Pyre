@@ -598,8 +598,9 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'You have in-progress cards. Tap one to resume; '
-                  'long-press to delete.',
+                  AppStrings.of(context).es
+                      ? 'Tienes tarjetas en progreso. Toca una para continuar; mantén pulsado para eliminarla.'
+                      : 'You have in-progress cards. Tap one to resume; long-press to delete.',
                   style: TextStyle(
                     color: EmberColors.textMid,
                     fontSize: 12,
