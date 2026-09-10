@@ -826,19 +826,12 @@ class _HowItWorksCard extends StatelessWidget {
               es ? 'Cuando termina el cierre, la tarjeta queda lista. En este punto puedes hacer varias cosas:' : 'Once the wrap-up lands, the card is shippable. A few things you can do at this point:'),
           HowItWorksBlock.bullet(
               es ? '**Guardar tarjeta** — la añade a tu biblioteca de Personajes. El avatar predeterminado será la imagen de referencia que adjuntaste (o un marcador). Después de guardar, puedes iniciar un chat con la nueva tarjeta.' : '**Save card** — commits to your Characters library. Default avatar is the reference image you attached (or a placeholder). After saving, the screen offers to start a chat with the new card.'),
-          HowItWorksBlock.bullet(
-              '**Ask for an image prompt** — "give me an image '
-              'prompt" / "avatar prompt" produces TWO formats in '
-              'one go: natural-language flow (for GPT Image, '
-              'Midjourney, Flux) and danbooru tags (for SDXL / Pony '
-              '/ Illustrious). Recommended dimensions: 768×1280 '
-              'portrait.'),
-          HowItWorksBlock.bullet(
-              '**Add alternate greetings by hand** — the build '
-              'doesn\'t write these, but you can add as many as you '
-              'like in the editor (Advanced → Alternate greetings) '
-              'after saving. Mix POVs, times of day, tones — '
-              'each greeting is its own opening.'),
+          HowItWorksBlock.bullet(es
+    ? '**Pedir un prompt de imagen** — pedir un «prompt de imagen» o «prompt de avatar» genera dos formatos: lenguaje natural para generadores como GPT Image, Midjourney o Flux, y etiquetas danbooru para SDXL, Pony o Illustrious. Dimensiones recomendadas: 768×1280 vertical.'
+    : '**Ask for an image prompt** — asking for an image or avatar prompt produces two formats: natural-language flow and danbooru tags. Recommended dimensions: 768×1280 portrait.'),
+          HowItWorksBlock.bullet(es
+    ? '**Añadir saludos alternativos manualmente** — la creación no los escribe, pero puedes añadir tantos como quieras después de guardar desde Avanzado → Saludos alternativos. Cada saludo funciona como una apertura independiente.'
+    : '**Add alternate greetings by hand** — the build does not write these, but you can add as many as you like after saving from Advanced → Alternate greetings. Each greeting is its own opening.'),
           HowItWorksBlock.bullet(
               es ? '**Seguir refinando mediante el chat** — cualquier mensaje después del cierre se interpreta como una edición parcial, igual que en el modo Editar con IA.' : '**Continue refining via chat** — any message after the wrap-up is interpreted as a partial edit. Same shape as Edit-with-AI mode.'),
         ]),
@@ -855,26 +848,19 @@ class _HowItWorksCard extends StatelessWidget {
 
         // 8. Tips.
         HowItWorksSection(es ? 'Consejos que realmente ayudan' : 'Tips that actually help', [
-          HowItWorksBlock.bullet(
-              'Start with a vibe, not a checklist. "broken '
-              'princess, cold on the outside, soft underneath" '
-              'gives the architect more to work with than '
-              '"name: X, age: 18, hair: blonde".'),
+          HowItWorksBlock.bullet(es
+    ? 'Empieza con una idea o ambiente, no con una lista de comprobación. Una descripción breve de la personalidad y el concepto le da al arquitecto más material que una lista rígida de atributos.'
+    : 'Start with a vibe, not a checklist. A short personality and concept description gives the architect more to work with than a rigid attribute list.'),
           HowItWorksBlock.bullet(
               es ? 'Si tienes una imagen de referencia, adjúntala PRIMERO, antes de conversar. El perfil de visión se convierte en contexto para las preguntas posteriores.' : 'If you have a reference image, attach it FIRST — before talking. The vision profile becomes context for every later question.'),
           HowItWorksBlock.bullet(
               es ? 'Al refinar, sé específico. «Cambia su edad a 22» funciona mejor que «Hazla mayor», que obliga al modelo a adivinar.' : 'When refining, be specific. "Change her age to 22" works. "Make her older" makes the model guess.'),
-          HowItWorksBlock.bullet(
-              'If the assistant tries to be vanilla or dodges '
-              'NSFW requests, your provider has refusal patterns. '
-              'The model matters more than the prompt — see the '
-              'recommendations at the top of this screen. DeepSeek '
-              'family models just write what you ask.'),
-          HowItWorksBlock.bullet(
-              'Magic phrases in Freeform mode work in any '
-              'language. "faz a ficha", "build it", "vai", "go", '
-              '"作って" — the architect detects build intent '
-              'semantically, not from a phrase list.'),
+          HowItWorksBlock.bullet(es
+    ? 'Si el asistente evita ciertas solicitudes, puede deberse a los patrones de rechazo del proveedor. El modelo elegido influye mucho en el resultado; consulta las recomendaciones de la parte superior de esta pantalla.'
+    : 'If the assistant dodges certain requests, your provider may have refusal patterns. The model matters a lot; see the recommendations at the top of this screen.'),
+          HowItWorksBlock.bullet(es
+    ? 'Las frases para iniciar la creación en modo libre funcionan en cualquier idioma. El arquitecto detecta semánticamente la intención de crear, no mediante una lista fija de frases.'
+    : 'Build phrases in Freeform mode work in any language. The architect detects build intent semantically, not from a fixed phrase list.'),
         ]),
 
         // 9. NSFW reality.
