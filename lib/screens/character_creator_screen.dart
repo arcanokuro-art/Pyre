@@ -845,13 +845,9 @@ class _HowItWorksCard extends StatelessWidget {
         // 6. After the card is built.
         HowItWorksSection(es ? 'Después de crear la tarjeta' : 'After the card is built', [
           HowItWorksBlock.paragraph(
-              'Once the wrap-up lands, the card is shippable. '
-              'A few things you can do at this point:'),
+              es ? 'Cuando termina el cierre, la tarjeta queda lista. En este punto puedes hacer varias cosas:' : 'Once the wrap-up lands, the card is shippable. A few things you can do at this point:'),
           HowItWorksBlock.bullet(
-              '**Save card** — commits to your Characters '
-              'library. Default avatar is the reference image you '
-              'attached (or a placeholder). After saving, the '
-              'screen offers to start a chat with the new card.'),
+              es ? '**Guardar tarjeta** — la añade a tu biblioteca de Personajes. El avatar predeterminado será la imagen de referencia que adjuntaste (o un marcador). Después de guardar, puedes iniciar un chat con la nueva tarjeta.' : '**Save card** — commits to your Characters library. Default avatar is the reference image you attached (or a placeholder). After saving, the screen offers to start a chat with the new card.'),
           HowItWorksBlock.bullet(
               '**Ask for an image prompt** — "give me an image '
               'prompt" / "avatar prompt" produces TWO formats in '
@@ -866,30 +862,17 @@ class _HowItWorksCard extends StatelessWidget {
               'after saving. Mix POVs, times of day, tones — '
               'each greeting is its own opening.'),
           HowItWorksBlock.bullet(
-              '**Continue refining via chat** — any message '
-              'after the wrap-up is interpreted as a partial edit. '
-              'Same shape as Edit-with-AI mode.'),
+              es ? '**Seguir refinando mediante el chat** — cualquier mensaje después del cierre se interpreta como una edición parcial, igual que en el modo Editar con IA.' : '**Continue refining via chat** — any message after the wrap-up is interpreted as a partial edit. Same shape as Edit-with-AI mode.'),
         ]),
 
         // 7. Background generation.
         HowItWorksSection(es ? 'Generación en segundo plano' : 'Background generation', [
           HowItWorksBlock.paragraph(
-              'A full build usually takes a few minutes; each pass can '
-              'be 30–90 seconds. Pyre uses a foreground '
-              'service so generation continues when you minimise '
-              'the app or screen-off — just don\'t kill the '
-              'process. A persistent notification appears while '
-              'generation is active.'),
+              es ? 'Una creación completa normalmente tarda unos minutos; cada pasada puede durar entre 30 y 90 segundos. Pyre usa un servicio en primer plano para continuar generando al minimizar la aplicación o apagar la pantalla; no cierres el proceso. Mientras la generación esté activa aparecerá una notificación persistente.' : 'A full build usually takes a few minutes; each pass can be 30–90 seconds. Pyre uses a foreground service so generation continues when you minimise the app or screen-off — just don\'t kill the process. A persistent notification appears while generation is active.'),
           HowItWorksBlock.bullet(
-              'Hit **Stop** on the streaming assistant message '
-              'any time to cancel mid-generation. It does '
-              'NOT auto-resume — you\'re in control of when to '
-              'continue.'),
+              es ? 'Pulsa **Detener** en el mensaje del asistente en cualquier momento para cancelar durante la generación. NO se reanuda automáticamente; tú decides cuándo continuar.' : 'Hit **Stop** on the streaming assistant message any time to cancel mid-generation. It does NOT auto-resume — you\'re in control of when to continue.'),
           HowItWorksBlock.bullet(
-              'Hit **Retry** on the last assistant message to '
-              'regenerate the most recent section. The pre-turn '
-              'canvas snapshot restores so retry starts from a '
-              'clean state — no leftover partial fields.'),
+              es ? 'Pulsa **Reintentar** en el último mensaje del asistente para regenerar la sección más reciente. Se restaura la instantánea del lienzo anterior al turno para empezar desde un estado limpio, sin campos parciales sobrantes.' : 'Hit **Retry** on the last assistant message to regenerate the most recent section. The pre-turn canvas snapshot restores so retry starts from a clean state — no leftover partial fields.'),
         ]),
 
         // 8. Tips.
