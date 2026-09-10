@@ -2620,11 +2620,11 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
   showMenuSheet<void>(
     context,
     itemsBuilder: (sheet) => [
-          _menuSectionLabel('Chat'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Chat' : 'Chat'),
           ListTile(
             leading: Icon(Icons.add_comment_outlined,
                 color: EmberColors.primary),
-            title: const Text('Start new chat'),
+            title: Text(AppStrings.of(context).es ? 'Iniciar chat nuevo' : 'Start new chat'),
             onTap: () {
               Navigator.pop(sheet);
               startNewChatWithPersonaPrompt(context, c);
@@ -2637,7 +2637,7 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
             ListTile(
               leading:
                   Icon(Icons.groups_outlined, color: EmberColors.primary),
-              title: const Text('Start group chat'),
+              title: Text(AppStrings.of(context).es ? 'Iniciar chat grupal' : 'Start group chat'),
               onTap: () {
                 Navigator.pop(sheet);
                 startNewGroupChat(context, c);
@@ -2647,9 +2647,9 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
             ListTile(
               leading: Icon(Icons.play_arrow_rounded,
                   color: EmberColors.primary),
-              title: const Text('Continue chat'),
+              title: Text(AppStrings.of(context).es ? 'Continuar chat' : 'Continue chat'),
               subtitle: Text(
-                'Resume "${c.name}" — ${existingChat.messages.length} msgs.',
+                AppStrings.of(context).es ? 'Reanudar "${c.name}" — ${existingChat.messages.length} mensajes.' : 'Resume "${c.name}" — ${existingChat.messages.length} msgs.',
                 style: TextStyle(
                     color: EmberColors.textMid, fontSize: 12),
               ),
@@ -2660,10 +2660,10 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
                 ));
               },
             ),
-          _menuSectionLabel('Card'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Tarjeta' : 'Card'),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('View details'),
+            title: Text(AppStrings.of(context).es ? 'Ver detalles' : 'View details'),
             onTap: () {
               Navigator.pop(sheet);
               showCharacterDetailsSheet(context, characterId: c.id);
@@ -2674,24 +2674,24 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
           // dialog; a fresh "<name> (copy)" appears right after the original.
           ListTile(
             leading: const Icon(Icons.copy_outlined),
-            title: const Text('Duplicate'),
+            title: Text(AppStrings.of(context).es ? 'Duplicar' : 'Duplicate'),
             onTap: () {
               Navigator.pop(sheet);
               final clone = store.duplicateCharacter(c.id);
               if (clone == null) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Duplicated as "${clone.name}".')),
+                SnackBar(content: Text(AppStrings.of(context).es ? 'Duplicado como "${clone.name}".' : 'Duplicated as "${clone.name}".')),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.face_outlined),
-            title: const Text('Add as persona'),
+            title: Text(AppStrings.of(context).es ? 'Añadir como persona' : 'Add as persona'),
             onTap: () {
               Navigator.pop(sheet);
               final p = store.convertCharacterToPersona(c);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Persona "${p.name}" created.')),
+                SnackBar(content: Text(AppStrings.of(context).es ? 'Persona "${p.name}" creada.' : 'Persona "${p.name}" created.')),
               );
             },
           ),
