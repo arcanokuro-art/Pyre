@@ -1,0 +1,30 @@
+name: API server empty headings
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          pos=s.index('Widget _serverBackedBody'); h=s[:pos]; t=s[pos:]
+          a="title: 'Connect an AI provider',"
+          b="title: AppStrings.of(context).es ? 'Conecta un proveedor de IA' : 'Connect an AI provider',"
+          if a not in t: raise SystemExit('title')
+          t=t.replace(a,b,1)
+          a="ctaLabel: 'Add a provider',"
+          b="ctaLabel: AppStrings.of(context).es ? 'Añadir un proveedor' : 'Add a provider',"
+          if a not in t: raise SystemExit('cta')
+          t=t.replace(a,b,1)
+          p.write_text(h+t)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize server empty-state controls'
+          git push origin HEAD:spanish-localization
