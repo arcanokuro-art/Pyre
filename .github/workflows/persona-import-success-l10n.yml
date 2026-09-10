@@ -1,0 +1,25 @@
+name: Persona import success l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          a='SnackBar(content: Text(\'Imported persona "${persona.name}"\'))'
+          b='SnackBar(content: Text(AppStrings.of(context).es ? \'Persona "${persona.name}" importada\' : \'Imported persona "${persona.name}"\'))'
+          print('matches',s.count(a))
+          if s.count(a)!=1: raise SystemExit('expected one match')
+          p.write_text(s.replace(a,b,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize persona import success'
+          git push origin HEAD:spanish-localization
