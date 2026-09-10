@@ -1,0 +1,46 @@
+name: Bootstrap Pyre source
+
+on:
+  push:
+    paths:
+      - '.github/workflows/bootstrap-pyre.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout destination
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download original Pyre
+        run: |
+          set -e
+          git clone --depth 1 https://github.com/devemberteam-ops/Pyre.git /tmp/original-pyre
+          rm -rf /tmp/original-pyre/.git
+
+      - name: Copy original project
+        run: |
+          set -e
+          cp .github/workflows/bootstrap-pyre.yml /tmp/bootstrap-pyre.yml
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a /tmp/original-pyre/. .
+          mkdir -p .github/workflows
+          cp /tmp/bootstrap-pyre.yml .github/workflows/bootstrap-pyre.yml
+
+      - name: Commit imported source
+        run: |
+          set -e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Import complete original Pyre source'
+          git push origin HEAD:main
