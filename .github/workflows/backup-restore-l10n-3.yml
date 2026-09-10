@@ -1,0 +1,30 @@
+name: Backup restore l10n 3
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart')
+          s=p.read_text()
+          s=s.replace("'Bulk-import World Info, regex, presets, and cards exported '\n                    'from SillyTavern, or pick a full SillyTavern backup '\n                    '(.zip from ST\\'s \"Download Backup\"). Pyre detects each '\n                    'file\\'s type automatically.'", "AppStrings.of(context).es ? 'Importa en lote World Info, regex, preajustes y tarjetas exportadas desde SillyTavern, o elige una copia de seguridad completa de SillyTavern (.zip de «Download Backup» de ST). Pyre detecta automáticamente el tipo de cada archivo.' : 'Bulk-import World Info, regex, presets, and cards exported from SillyTavern, or pick a full SillyTavern backup (.zip from ST\\'s \"Download Backup\"). Pyre detects each file\\'s type automatically.'",1)
+          s=s.replace("label: const Text('Choose files…')", "label: Text(AppStrings.of(context).es ? 'Elegir archivos…' : 'Choose files…')",1)
+          s=s.replace("const Text(\n                    'Import a chat',", "Text(\n                    AppStrings.of(context).es ? 'Importar un chat' : 'Import a chat',",1)
+          s=s.replace("'Load a chat you exported from Pyre (the \"Export chat\" '\n                    'option in a conversation) — either the full-fidelity '\n                    'Pyre JSON or the SillyTavern-compatible JSONL. Pyre '\n                    'detects the format automatically and adds it as a new '\n                    'conversation.'", "AppStrings.of(context).es ? 'Carga un chat que exportaste desde Pyre (la opción «Exportar chat» de una conversación), ya sea el JSON completo de Pyre o el JSONL compatible con SillyTavern. Pyre detecta automáticamente el formato y lo añade como una conversación nueva.' : 'Load a chat you exported from Pyre (the \"Export chat\" option in a conversation) — either the full-fidelity Pyre JSON or the SillyTavern-compatible JSONL. Pyre detects the format automatically and adds it as a new conversation.'",1)
+          s=s.replace("label: const Text('Choose chat file…')", "label: Text(AppStrings.of(context).es ? 'Elegir archivo de chat…' : 'Choose chat file…')",1)
+          s=s.replace("title: const Text(\n                  'Advanced',", "title: Text(\n                  AppStrings.of(context).es ? 'Avanzado' : 'Advanced',",1)
+          s=s.replace("'Full wipe: returns Pyre to a brand-new install — '\n                      'characters, personas, chats, lorebooks, presets, '\n                      'settings AND API keys. A full backup is saved first.\\n\\n'\n                      'To delete only your library and keep your settings, '\n                      'use Storage → Clear library.'", "AppStrings.of(context).es ? 'Borrado completo: devuelve Pyre al estado de una instalación nueva; elimina personajes, personas, chats, libros de lore, preajustes, ajustes Y claves API. Primero se guarda una copia de seguridad completa.\\n\\nPara eliminar solo tu biblioteca y conservar los ajustes, usa Almacenamiento → Borrar biblioteca.' : 'Full wipe: returns Pyre to a brand-new install — characters, personas, chats, lorebooks, presets, settings AND API keys. A full backup is saved first.\\n\\nTo delete only your library and keep your settings, use Storage → Clear library.'",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize Backup Restore import and advanced cards'
+          git push origin HEAD:spanish-localization
