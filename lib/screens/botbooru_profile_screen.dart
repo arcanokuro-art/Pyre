@@ -1094,12 +1094,8 @@ class _FeaturedCharacterCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     editMode
-                        ? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación, sin ningún efecto funcional.' : 'Pin one of your characters as your ')
-                            'featured spotlight. It\'s a pure curation '
-                            'choice — no functional impact, just a way '
-                            'to show off what you\'re proud of.'
-                        : (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No character pinned yet. Tap Edit to ')
-                            'pick one to spotlight here.',
+                        ? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación, sin ningún efecto funcional.' : 'Pin one of your characters as your featured spotlight. It\'s a pure curation choice — no functional impact, just a way to show off what you\'re proud of.')
+                        : (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No character pinned yet. Tap Edit to pick one to spotlight here.'),
                     style: TextStyle(
                       color: EmberColors.textDim,
                       fontSize: 12,
