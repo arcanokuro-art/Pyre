@@ -230,8 +230,9 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
         leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
         title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),
         subtitle: Text(
-          'Describe the world or topic and the AI drafts keyword-'
-          'triggered entries you can review before saving.',
+          AppStrings.of(context).es
+              ? 'Describe el mundo o tema y la IA preparará entradas activadas por palabras clave que podrás revisar antes de guardar.'
+              : 'Describe the world or topic and the AI drafts keyword-triggered entries you can review before saving.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () {
@@ -283,8 +284,9 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
             Icon(Icons.auto_awesome, color: EmberColors.primary),
         title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),
         subtitle: Text(
-          'Chat with an AI that helps you flesh out your persona — who '
-          'you are in chats — then writes it for you.',
+          AppStrings.of(context).es
+              ? 'Chatea con una IA que te ayuda a desarrollar tu persona — quién eres en los chats — y después la redacta por ti.'
+              : 'Chat with an AI that helps you flesh out your persona — who you are in chats — then writes it for you.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () {
