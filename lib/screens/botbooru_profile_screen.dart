@@ -1265,7 +1265,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
                       return ListTile(
                         leading: Icon(Icons.star_outline,
                             color: EmberColors.textMid),
-                        title: const Text('Remove featured'),
+                        title: Text(es ? 'Quitar destacado' : 'Remove featured'),
                         subtitle: const Text(
                           'Hide the featured card from your profile.',
                           style: TextStyle(fontSize: 11),
