@@ -1,0 +1,35 @@
+name: API host warning line transform
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart')
+          lines=p.read_text().splitlines()
+          needle="content: Text('You changed the host"
+          hits=[i for i,x in enumerate(lines) if needle in x]
+          if len(hits)!=1: raise SystemExit(f'hits={hits}')
+          i=hits[0]
+          # Replace the const SnackBar line plus its three Text lines only.
+          if 'messenger.showSnackBar(const SnackBar(' not in lines[i-1]: raise SystemExit('unexpected preceding line')
+          repl=[
+            '    messenger.showSnackBar(SnackBar(',
+            '        content: Text(AppStrings.of(context).es',
+            "            ? 'Cambiaste el host: introduce una clave API diferente (o bórrala) antes de probar. Tu clave guardada nunca se envía a un host nuevo.'",
+            "            : 'You changed the host — enter a different API key (or clear it) before testing. Your saved key is never sent to a new host.')));",
+          ]
+          lines[i-1:i+3]=repl
+          p.write_text('\n'.join(lines)+'\n')
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API changed-host warning'
+          git push origin HEAD:spanish-localization
