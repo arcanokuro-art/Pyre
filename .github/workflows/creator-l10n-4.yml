@@ -1,0 +1,34 @@
+name: Creator l10n 4
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          pairs={
+          "label: 'Creator max tokens',":"label: AppStrings.of(context).es ? 'Máximo de tokens del Creador' : 'Creator max tokens',",
+          "subtitle:\n                'Cap for all three creator calls. Heavy-reasoning models (DeepSeek V4, R1) burn 3-5k tokens on thinking alone — keep this high so the actual card content has room. Default 12000.',":"subtitle: AppStrings.of(context).es ? 'Límite para las tres llamadas del Creador. Los modelos de razonamiento intensivo (DeepSeek V4, R1) consumen 3–5 mil tokens solo al razonar; mantenlo alto para dejar espacio al contenido de la tarjeta. Predeterminado: 12000.' : 'Cap for all three creator calls. Heavy-reasoning models (DeepSeek V4, R1) burn 3-5k tokens on thinking alone — keep this high so the actual card content has room. Default 12000.',",
+          "label: 'Temperature — creator chat',":"label: AppStrings.of(context).es ? 'Temperatura — chat del Creador' : 'Temperature — creator chat',",
+          "subtitle:\n                'Design conversation with the assistant. Default 0.95 = creative; lower for more focused replies.',":"subtitle: AppStrings.of(context).es ? 'Conversación de diseño con el asistente. Predeterminado 0.95 = creativo; bájalo para obtener respuestas más enfocadas.' : 'Design conversation with the assistant. Default 0.95 = creative; lower for more focused replies.',",
+          "label: 'Temperature — image analysis',":"label: AppStrings.of(context).es ? 'Temperatura — análisis de imágenes' : 'Temperature — image analysis',",
+          "subtitle:\n                'Vision call that describes attached images. Keep low (0.3-0.5) so the model captures what it sees instead of inventing.',":"subtitle: AppStrings.of(context).es ? 'Llamada de Visión que describe las imágenes adjuntas. Mantenla baja (0.3–0.5) para que el modelo describa lo que ve en vez de inventar.' : 'Vision call that describes attached images. Keep low (0.3-0.5) so the model captures what it sees instead of inventing.',",
+          "label: 'Temperature — sheet update',":"label: AppStrings.of(context).es ? 'Temperatura — actualización de ficha' : 'Temperature — sheet update',",
+          "subtitle:\n                'Structured JSON merger that fills the canvas after each turn. Near-zero (0.0-0.3) keeps the output parseable.',":"subtitle: AppStrings.of(context).es ? 'Combinador JSON estructurado que rellena el lienzo después de cada turno. Un valor cercano a cero (0.0–0.3) mantiene la salida procesable.' : 'Structured JSON merger that fills the canvas after each turn. Near-zero (0.0-0.3) keeps the output parseable.',"
+          }
+          for a,b in pairs.items(): s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize Creator generation sliders'
+          git push origin HEAD:spanish-localization
