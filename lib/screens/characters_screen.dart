@@ -2914,15 +2914,15 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Import character'),
+        title: Text(AppStrings.of(ctx).es ? 'Importar personaje' : 'Import character'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Paste a chub.ai / botbooru.com character page, or a direct '
-              'link to a Tavern Card v2 file (.png or .json) — e.g. a '
-              'catbox or pixeldrain link.',
+              AppStrings.of(ctx).es
+                  ? 'Pega una página de personaje de chub.ai / botbooru.com o un enlace directo a un archivo Tavern Card v2 (.png o .json), por ejemplo de catbox o pixeldrain.'
+                  : 'Paste a chub.ai / botbooru.com character page, or a direct link to a Tavern Card v2 file (.png or .json) — e.g. a catbox or pixeldrain link.',
               style: TextStyle(color: EmberColors.textMid),
             ),
             const SizedBox(height: 12),
@@ -2942,7 +2942,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
         actions: [
           TextButton(
             onPressed: busy ? null : () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.of(ctx).es ? 'Cancelar' : 'Cancel'),
           ),
           ElevatedButton(
             onPressed: busy
