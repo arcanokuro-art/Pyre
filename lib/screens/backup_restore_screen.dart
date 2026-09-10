@@ -741,7 +741,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       // partial backup silently drops records the user added since. Confirm
       // first, listing exactly which categories will be overwritten with
       // current → incoming counts so the user can see what they stand to lose.
-      final replaceSummary = _replaceSummaryLines(store, blob);
+      final replaceSummary = _replaceSummaryLines(store, blob, AppStrings.of(context).es);
       if (replaceSummary.isNotEmpty) {
         if (!context.mounted) return;
         final ok = await confirmDelete(
@@ -832,7 +832,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   /// a no-count "App settings" line when the backup carries any settings
   /// block. Returns an empty list when the backup replaces nothing (e.g. an
   /// empty/garbage blob) so the caller can skip the dialog.
-  List<String> _replaceSummaryLines(AppStore s, Map<String, dynamic> raw) {
+  List<String> _replaceSummaryLines(AppStore s, Map<String, dynamic> raw, bool es) {
     int? incoming(String key) {
       if (!raw.containsKey(key)) return null;
       final v = raw[key];
@@ -846,17 +846,17 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       lines.add('$label ($current → $inc)');
     }
 
-    add('Characters', 'characters', s.characters.length);
+    add(es ? 'Personajes' : 'Characters', 'characters', s.characters.length);
     add('Personas', 'personas', s.personas.length);
     add('Chats', 'chats', s.chats.length);
-    add('Lorebooks', 'lorebooks', s.lorebooks.length);
-    add('Presets', 'presets', s.presets.length);
-    add('Connections', 'providers', s.providers.length);
-    add('Creator drafts', 'creatorSessions', s.creatorSessions.length);
+    add(es ? 'Libros de lore' : 'Lorebooks', 'lorebooks', s.lorebooks.length);
+    add(es ? 'Preajustes' : 'Presets', 'presets', s.presets.length);
+    add(es ? 'Conexiones' : 'Connections', 'providers', s.providers.length);
+    add(es ? 'Borradores del creador' : 'Creator drafts', 'creatorSessions', s.creatorSessions.length);
     // F3: regex rules + folders are wholesale-REPLACED on import — surface
     // their counts like the other list categories.
-    add('Regex rules', 'regexRules', s.regexRules.length);
-    add('Folders', 'folders', s.folders.length);
+    add(es ? 'Reglas regex' : 'Regex rules', 'regexRules', s.regexRules.length);
+    add(es ? 'Carpetas' : 'Folders', 'folders', s.folders.length);
     // Settings are singletons (no count). Mention them if any block is present.
     if (raw.containsKey('modelSettings') ||
         raw.containsKey('chatSettings') ||
@@ -865,7 +865,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         raw.containsKey('liveSheetSettings') ||
         raw.containsKey('scriptSettings') ||
         raw.containsKey('guideSettings')) {
-      lines.add('App settings');
+      lines.add(es ? 'Ajustes de la app' : 'App settings');
     }
     return lines;
   }
