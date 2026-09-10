@@ -1042,6 +1042,7 @@ class _FeaturedCharacterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -1056,7 +1057,7 @@ class _FeaturedCharacterCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'FEATURED CHARACTER',
+                  es ? 'PERSONAJE DESTACADO' : 'FEATURED CHARACTER',
                   style: TextStyle(
                     color: EmberColors.primary,
                     fontWeight: FontWeight.w700,
@@ -1068,7 +1069,7 @@ class _FeaturedCharacterCard extends StatelessWidget {
               if (editMode)
                 TextButton.icon(
                   icon: const Icon(Icons.swap_horiz, size: 14),
-                  label: Text(character == null ? 'Pick' : 'Change'),
+                  label: Text(character == null ? (es ? 'Elegir' : 'Pick') : (es ? 'Cambiar' : 'Change')),
                   style: TextButton.styleFrom(
                     foregroundColor: EmberColors.primary,
                     padding: const EdgeInsets.symmetric(
@@ -1211,6 +1212,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     final maxHeight = MediaQuery.of(context).size.height * 0.7;
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),
@@ -1225,7 +1227,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Pick a featured character',
+                      es ? 'Elige un personaje destacado' : 'Pick a featured character',
                       style: TextStyle(
                         color: EmberColors.textHigh,
                         fontWeight: FontWeight.w600,
