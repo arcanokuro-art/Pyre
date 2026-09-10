@@ -517,14 +517,14 @@ class _CreatorProviderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
                 Icon(Icons.auto_awesome,
                     color: Colors.amber, size: 16),
                 SizedBox(width: 8),
                 Text(
-                  'Per-feature provider overrides',
-                  style: TextStyle(
+                  AppStrings.of(context).es ? 'Proveedores por función' : 'Per-feature provider overrides',
+                  style: const TextStyle(
                       fontWeight: FontWeight.w600, fontSize: 13),
                 ),
               ],
