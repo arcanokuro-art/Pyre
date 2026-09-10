@@ -457,8 +457,7 @@ class _AdvancedFallbackTile extends StatelessWidget {
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             subtitle: Text(
               on
-                  ? (AppStrings.of(context).es ? 'Activado — si un proveedor falla o rechaza la solicitud, Pyre ofrece el siguiente.' : 'On — if a provider fails or refuses, Pyre offers the next one.') //
-                      'next one.'
+                  ? (AppStrings.of(context).es ? 'Activado — si un proveedor falla o rechaza la solicitud, Pyre ofrece el siguiente.' : 'On — if a provider fails or refuses, Pyre offers the next one.')
                   : (AppStrings.of(context).es ? 'Desactivado — una respuesta fallida simplemente muestra el error.' : 'Off — a failed reply just surfaces the error.'),
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 12, height: 1.4),
@@ -482,9 +481,8 @@ class _AdvancedFallbackTile extends StatelessWidget {
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             subtitle: Text(
               store.uiPrefs.backgroundGeneration
-                  ? 'On — replies keep generating if you switch apps '
-                      '(silent notification while active).'
-                  : 'Off — switching apps mid-reply may drop the connection.',
+                  ? (AppStrings.of(context).es ? 'Activado — las respuestas siguen generándose si cambias de aplicación (notificación silenciosa mientras está activo).' : 'On — replies keep generating if you switch apps (silent notification while active).') //
+                  : (AppStrings.of(context).es ? 'Desactivado — cambiar de aplicación durante una respuesta puede interrumpir la conexión.' : 'Off — switching apps mid-reply may drop the connection.'),
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 12, height: 1.4),
             ),
