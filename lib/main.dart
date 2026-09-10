@@ -1089,13 +1089,13 @@ class _RootShellState extends State<RootShell> {
         if (!store.hasUnshownPersistError) return; // recovered before frame
         store.acknowledgePersistError();
         final ctx = _rootNavKey.currentContext ?? context;
+        final es = AppStrings.of(ctx).es;
         ScaffoldMessenger.of(ctx).showSnackBar(
-          const SnackBar(
-            duration: Duration(seconds: 8),
-            content: Text(
-                "Couldn't save your changes — check that the device isn't "
-                'out of storage. Your work is still here for now, but it '
-                'may not survive a restart until a save succeeds.'),
+          SnackBar(
+            duration: const Duration(seconds: 8),
+            content: Text(es
+                ? 'No se pudieron guardar tus cambios; comprueba que el dispositivo tenga espacio disponible. Tu trabajo sigue aquí por ahora, pero podría perderse al reiniciar hasta que se complete un guardado correctamente.'
+                : "Couldn't save your changes — check that the device isn't out of storage. Your work is still here for now, but it may not survive a restart until a save succeeds."),
           ),
         );
       });
