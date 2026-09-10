@@ -616,7 +616,7 @@ class _ArchitectPresetCard extends StatelessWidget {
                               EmberColors.primary.withValues(alpha: 0.5)),
                     ),
                     child: Text(
-                      'DEFAULT',
+                      AppStrings.of(context).es ? 'PREDETERMINADO' : 'DEFAULT',
                       style: TextStyle(
                         color: EmberColors.primary,
                         fontSize: 9,
@@ -630,11 +630,7 @@ class _ArchitectPresetCard extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'The base architect prompts (Character / Scenario / Edit) '
-              'the Creator runs on. The shipped "Pyre Default" is '
-              'read-only — fork it to a custom preset to rewrite the '
-              'base prompts. Your additions above still append on top '
-              'of whichever preset is active.',
+              AppStrings.of(context).es ? 'Los prompts base del arquitecto (Personaje / Escenario / Edición) que utiliza el Creador. "Pyre Default" es de solo lectura; crea una copia personalizada para modificar los prompts base. Tus añadidos de arriba se siguen agregando al preajuste que esté activo.' : 'The base architect prompts (Character / Scenario / Edit) the Creator runs on. The shipped "Pyre Default" is read-only — fork it to a custom preset to rewrite the base prompts. Your additions above still append on top of whichever preset is active.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -673,8 +669,7 @@ class _ArchitectPresetCard extends StatelessWidget {
                       builder: (_) => const CreatorPresetsScreen()),
                 ),
                 icon: const Icon(Icons.tune, size: 18),
-                label: Text(locked ? 'Fork or switch preset'
-                    : 'Manage prompt presets'),
+                label: Text(AppStrings.of(context).es ? (locked ? 'Copiar o cambiar preajuste' : 'Administrar preajustes de prompts') : (locked ? 'Fork or switch preset' : 'Manage prompt presets')),
                 style: TextButton.styleFrom(
                   foregroundColor: EmberColors.primary,
                 ),
