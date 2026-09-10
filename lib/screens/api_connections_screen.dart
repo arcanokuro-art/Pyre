@@ -129,9 +129,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 12, 20, 4),
                     child: Text(
-                      'If a provider fails or refuses, Pyre offers to '
-                      'switch to the next one. Drag to set the order — '
-                      'the CHAT provider is always tried first.',
+                      es ? 'Si un proveedor falla o rechaza la solicitud, Pyre ofrece cambiar al siguiente. Arrastra para establecer el orden; el proveedor CHAT siempre se prueba primero.' : 'If a provider fails or refuses, Pyre offers to switch to the next one. Drag to set the order — the CHAT provider is always tried first.',
                       style: TextStyle(
                           color: EmberColors.textDim, fontSize: 12,
                           height: 1.4),
