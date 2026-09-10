@@ -755,18 +755,11 @@ class _HowItWorksCard extends StatelessWidget {
         // 1. Building modes — what the new-session picker offers.
         HowItWorksSection(es ? 'Qué puedes crear' : 'What you can build', [
           HowItWorksBlock.paragraph(
-              'A new Creator session asks what you\'re making — the choice '
-              'sets which architect runs the show:'),
+              es ? 'Una nueva sesión del Creador pregunta qué vas a crear; tu elección determina qué arquitecto se utiliza:' : 'A new Creator session asks what you\'re making — the choice sets which architect runs the show:'),
           HowItWorksBlock.bullet(
-              '**Character** — a single persona for roleplay. '
-              'Name, look, voice, personality, contradictions, '
-              'kinks. The default and most common.'),
+              es ? '**Personaje** — una sola persona para roleplay. Nombre, apariencia, voz, personalidad, contradicciones e intereses. Es la opción predeterminada y la más común.' : '**Character** — a single persona for roleplay. Name, look, voice, personality, contradictions, kinks. The default and most common.'),
           HowItWorksBlock.bullet(
-              '**Scenario** — a setting with a narrator that '
-              'voices NPCs and describes scenes. Use when you\'re '
-              'building a world or hub ("haunted mansion", '
-              '"supernatural school", "free-use city"), not a '
-              'single character.'),
+              es ? '**Escenario** — un entorno con un narrador que interpreta NPC y describe escenas. Úsalo cuando estés creando un mundo o un centro de interacción, no un solo personaje.' : '**Scenario** — a setting with a narrator that voices NPCs and describes scenes. Use when you\'re building a world or hub ("haunted mansion", "supernatural school", "free-use city"), not a single character.'),
           HowItWorksBlock.bullet(
               '**Lorebooks** aren\'t a starting choice here anymore — create '
               'them from the Lorebooks section of your library (Create → '
