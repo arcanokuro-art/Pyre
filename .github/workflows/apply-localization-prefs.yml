@@ -1,0 +1,42 @@
+name: Apply localization preferences
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - name: Patch persistent language preference
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('lib/models/models.dart')
+          s = p.read_text()
+          s = s.replace("class UiPrefs {\n  String activeTab;", "class UiPrefs {\n  /// UI language. Spanish is the default; English remains selectable.\n  String languageCode;\n  String activeTab;")
+          s = s.replace("  UiPrefs({\n    this.activeTab = 'characters',", "  UiPrefs({\n    this.languageCode = 'es',\n    this.activeTab = 'characters',")
+          s = s.replace("  factory UiPrefs.fromJson(Map<String, dynamic> j) => UiPrefs(\n        activeTab:", "  factory UiPrefs.fromJson(Map<String, dynamic> j) => UiPrefs(\n        languageCode: j['languageCode'] == 'en' ? 'en' : 'es',\n        activeTab:")
+          s = s.replace("  Map<String, dynamic> toJson() => {\n        'activeTab': activeTab,", "  Map<String, dynamic> toJson() => {\n        if (languageCode != 'es') 'languageCode': languageCode,\n        'activeTab': activeTab,")
+          p.write_text(s)
+
+          p = Path('lib/main.dart')
+          s = p.read_text()
+          if "package:flutter_localizations/flutter_localizations.dart" not in s:
+              s = s.replace("import 'package:flutter/material.dart';", "import 'package:flutter/material.dart';\nimport 'package:flutter_localizations/flutter_localizations.dart';")
+          s = s.replace("locale: AppStrings.defaultLocale,", "locale: Locale(store.uiPrefs.languageCode),")
+          s = s.replace("localizationsDelegates: const [AppStringsDelegate()],", "localizationsDelegates: const [\n              AppStringsDelegate(),\n              GlobalMaterialLocalizations.delegate,\n              GlobalWidgetsLocalizations.delegate,\n              GlobalCupertinoLocalizations.delegate,\n            ],")
+          p.write_text(s)
+      - name: Commit changes
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add lib/models/models.dart lib/main.dart
+          git diff --cached --quiet || git commit -m "Persist Spanish and English UI language"
+          git push origin spanish-localization
