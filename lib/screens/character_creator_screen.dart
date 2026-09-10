@@ -43,6 +43,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
+import '../l10n/app_strings.dart';
 import '../services/creator_schema.dart' show CreatorDescriptionSize;
 import '../services/token_estimate.dart';
 import '../state/app_store.dart';
@@ -114,14 +115,14 @@ class _CharacterCreatorScreenState extends State<CharacterCreatorScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Creator settings'),
+        title: Text(AppStrings.of(context).es ? 'Ajustes del creador' : 'Creator settings'),
         actions: [
           if (hasAdditions)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: TextButton(
                 onPressed: _clearAdditions,
-                child: const Text('Clear additions'),
+                child: Text(AppStrings.of(context).es ? 'Borrar añadidos' : 'Clear additions'),
               ),
             ),
         ],
@@ -168,7 +169,7 @@ class _CharacterCreatorScreenState extends State<CharacterCreatorScreen> {
           //    read-only base-prompt viewers. Shows which preset the
           //    Creator runs on and lets the user fork/edit it (opens
           //    the shared CreatorPresetsScreen manager).
-          _SectionHeader('Architect prompt'),
+          _SectionHeader(AppStrings.of(context).es ? 'Prompt del arquitecto' : 'Architect prompt'),
           const SizedBox(height: 6),
           const _ArchitectPresetCard(),
 
@@ -236,7 +237,7 @@ class _ModelRecommendationsBanner extends StatelessWidget {
                   size: 18, color: EmberColors.primary),
               SizedBox(width: 8),
               Text(
-                'RECOMMENDED MODELS',
+                AppStrings.of(context).es ? 'MODELOS RECOMENDADOS' : 'RECOMMENDED MODELS',
                 style: TextStyle(
                   color: EmberColors.primary,
                   fontWeight: FontWeight.w700,
@@ -248,7 +249,7 @@ class _ModelRecommendationsBanner extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'For the Character Creator (this screen):',
+            AppStrings.of(context).es ? 'Para el Creador de personajes (esta pantalla):' : 'For the Character Creator (this screen):',
             style: TextStyle(
               color: EmberColors.textHigh,
               fontSize: 12.5,
