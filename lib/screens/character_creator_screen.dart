@@ -865,18 +865,9 @@ class _HowItWorksCard extends StatelessWidget {
 
         // 9. NSFW reality.
         HowItWorksSection(es ? 'Sobre el contenido para adultos' : 'Honest section', [
-          HowItWorksBlock.paragraph(
-              'Most people building cards in tools like this are '
-              'doing roleplay that\'s adult, often explicit, often '
-              'weird. That\'s fine — Pyre is built for that. The '
-              'model you pick matters more than the prompt you '
-              'write. Big-name commercial models (Claude, GPT) '
-              'will dance around NSFW no matter how clever your '
-              'prompt; open-weight models and uncensored hosts '
-              '(DeepSeek direct, Venice, NanoGPT, Soji, '
-              'Featherless, Arli, Infermatic) just write what you '
-              'ask. Pyre doesn\'t take a side here — your '
-              'providers, your choice, your tokens.'),
+          HowItWorksBlock.paragraph(es
+    ? 'Muchas personas usan herramientas como esta para roleplay adulto. Pyre no decide por ti qué contenido crear: el resultado depende del modelo y del proveedor que elijas, y cada proveedor puede aplicar sus propias restricciones. Tú eliges tus proveedores y cómo utilizar tus tokens.'
+    : 'Many people use tools like this for adult roleplay. Pyre does not decide what content you create: results depend on the model and provider you choose, and each provider may apply its own restrictions. You choose your providers and how to use your tokens.'),
         ]),
 
         // 10. Troubleshooting.
@@ -885,38 +876,21 @@ class _HowItWorksCard extends StatelessWidget {
               es ? '**«No hay ningún proveedor configurado»** — abre Más → Conexiones API y añade un proveedor. Si lo necesitas, usa la tarjeta de configuración superior para establecer proveedores separados para Creador y Visión.' : '**"No provider configured"** — Open More → API Connections and add a provider. Use the override card at the top to set a separate Creator and Vision provider if needed.'),
           HowItWorksBlock.bullet(
               es ? '**«Falló el análisis de la imagen»** — tu proveedor activo no admite visión. Configura un proveedor específico compatible con visión.' : '**"Image analysis failed"** — your active provider doesn\'t support vision. Set a vision-specific provider (Qwen 3.6 Plus Uncensored on Venice or NanoGPT).'),
-          HowItWorksBlock.bullet(
-              '**"The architect claimed a section was done '
-              'but never wrote the structured card data"** — '
-              'your model is ignoring structured-output discipline. '
-              'Switch to a DeepSeek-family model. Pyre will '
-              'auto-retry up to 3 times before surfacing this '
-              'warning.'),
-          HowItWorksBlock.bullet(
-              '**Card seems lobotomised after a small edit** — '
-              'your model probably ignored the "preserve every '
-              'field" rule and rewrote everything. Same fix: '
-              'switch to a model that follows instructions better.'),
-          HowItWorksBlock.bullet(
-              '**Generating takes forever / hangs silently** — '
-              'long card outputs can hit 4–8k tokens. Increase '
-              '"Creator max tokens" in the Generation settings '
-              'section above. Also check the persistent '
-              'notification — if it disappeared, the OS killed the '
-              'foreground service and you\'ll need to restart the '
-              'generation.'),
-          HowItWorksBlock.bullet(
-              '**Imported card got reformatted unexpectedly** — '
-              'this should NOT happen in Edit-with-AI mode. The '
-              'edit architect explicitly preserves W++ / prose / '
-              'XML / labeled-line conventions in place. If your '
-              'model normalised the format anyway, it\'s ignoring '
-              'the prompt — try a different DeepSeek model.'),
-          HowItWorksBlock.bullet(
-              '**A field already filled but the architect '
-              're-fills it** — confused model loop. Hit Retry once; '
-              'if it persists, tell it explicitly to move on to '
-              'what\'s still missing.'),
+          HowItWorksBlock.bullet(es
+              ? '**«El arquitecto dijo que una sección estaba terminada pero nunca escribió los datos estructurados de la tarjeta»** — el modelo está ignorando el formato de salida estructurada. Cambia a un modelo que siga mejor las instrucciones. Pyre reintentará automáticamente hasta 3 veces antes de mostrar esta advertencia.'
+              : '**"The architect claimed a section was done but never wrote the structured card data"** — your model is ignoring structured-output discipline. Switch to a model that follows instructions better. Pyre will auto-retry up to 3 times before surfacing this warning.'),
+          HowItWorksBlock.bullet(es
+              ? '**La tarjeta parece dañada después de una edición pequeña** — probablemente el modelo ignoró la regla de conservar todos los campos y reescribió demasiado. Cambia a un modelo que siga mejor las instrucciones.'
+              : '**Card seems damaged after a small edit** — your model probably ignored the preserve-every-field rule and rewrote too much. Switch to a model that follows instructions better.'),
+          HowItWorksBlock.bullet(es
+              ? '**La generación tarda demasiado o parece bloqueada** — las tarjetas largas pueden alcanzar entre 4k y 8k tokens. Aumenta «Tokens máximos del Creador» en los ajustes de generación. Si desapareció la notificación persistente, el sistema operativo pudo cerrar el servicio y tendrás que reiniciar la generación.'
+              : '**Generating takes forever / hangs silently** — long cards can hit 4–8k tokens. Increase Creator max tokens in Generation settings. If the persistent notification disappeared, the OS may have killed the service and you will need to restart generation.'),
+          HowItWorksBlock.bullet(es
+              ? '**Una tarjeta importada cambió de formato inesperadamente** — esto no debería ocurrir en Editar con IA, que intenta conservar las convenciones de formato existentes. Si el modelo normaliza el formato de todos modos, prueba otro modelo.'
+              : '**Imported card got reformatted unexpectedly** — this should not happen in Edit-with-AI mode, which tries to preserve existing formatting conventions. If the model normalises it anyway, try another model.'),
+          HowItWorksBlock.bullet(es
+              ? '**El arquitecto vuelve a rellenar un campo que ya estaba completo** — puede ser un bucle del modelo. Pulsa Reintentar una vez; si continúa, indícale explícitamente que avance a lo que todavía falta.'
+              : '**A field already filled but the architect re-fills it** — this can be a confused model loop. Hit Retry once; if it persists, explicitly tell it to move on to what is still missing.'),
         ]),
       ],
     );
