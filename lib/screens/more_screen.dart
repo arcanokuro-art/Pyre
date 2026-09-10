@@ -58,6 +58,11 @@ class MoreScreen extends StatelessWidget {
               trailing: _themeName(store.uiPrefs.activeThemeId),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ThemeSettingsScreen())),
             ),
+            _MoreRow(
+              label: l.es ? 'Idioma' : 'Language',
+              trailing: store.uiPrefs.languageCode == 'en' ? 'English' : 'Español',
+              onTap: () => _showLanguagePicker(context, store),
+            ),
           ]),
           const SizedBox(height: 12),
           _MoreCard(rows: [
@@ -118,6 +123,33 @@ class MoreScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showLanguagePicker(BuildContext context, AppStore store) async {
+  final l = AppStrings.of(context);
+  final selected = await showModalBottomSheet<String>(
+    context: context,
+    builder: (sheetContext) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(title: Text(l.es ? 'Idioma' : 'Language', style: const TextStyle(fontWeight: FontWeight.w700))),
+          ListTile(
+            leading: Icon(store.uiPrefs.languageCode == 'es' ? Icons.radio_button_checked : Icons.radio_button_off),
+            title: const Text('Español'),
+            onTap: () => Navigator.of(sheetContext).pop('es'),
+          ),
+          ListTile(
+            leading: Icon(store.uiPrefs.languageCode == 'en' ? Icons.radio_button_checked : Icons.radio_button_off),
+            title: const Text('English'),
+            onTap: () => Navigator.of(sheetContext).pop('en'),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    ),
+  );
+  if (selected != null) store.setLanguageCode(selected);
 }
 
 class _VersionFooter extends StatefulWidget {
