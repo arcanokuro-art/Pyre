@@ -447,8 +447,8 @@ class _AdvancedFallbackTile extends StatelessWidget {
       data: Theme.of(context)
           .copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
-        title: const Text('Advanced',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        title: Text(AppStrings.of(context).es ? 'Avanzado' : 'Advanced',
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
         childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         children: [
           ListTile(
