@@ -382,20 +382,17 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         title: Text(
             AppStrings.of(context).es ? (missingImages > 0 ? 'Copia guardada, con una advertencia' : 'Copia guardada') : (missingImages > 0 ? 'Backup saved — with a warning' : 'Backup saved')),
         content: Text(
-          (missingImages > 0
-                  ? '⚠ $missingImages image file(s) could NOT be included in the '
-                      'backup — their files are missing (they may only exist on '
-                      'another synced device). If you reset now, those images '
-                      'will be lost on this device.\n\n'
-                  : '') +
-              (backupPath != null
-                  ? 'A full backup (everything except API keys) was saved to:'
-                      '\n\n$backupPath\n\n'
-                      "You'll re-enter API keys after restoring. If you want a "
-                      'totally clean slate afterwards, you can delete that file '
-                      'yourself. Reset now?'
-                  : 'Web: a full backup (no API keys) was downloaded to your '
-                      'device. Keep that file safe. Reset now?'),
+          AppStrings.of(context).es
+              ? (missingImages > 0
+                  ? '⚠ No se pudieron incluir $missingImages archivo(s) de imagen en la copia porque faltan sus archivos. Puede que solo existan en otro dispositivo sincronizado. Si restableces ahora, esas imágenes se perderán en este dispositivo.\n\n'
+                  : '') + (backupPath != null
+                  ? 'Se guardó una copia de seguridad completa (todo excepto las claves API) en:\n\n$backupPath\n\nTendrás que volver a introducir las claves API después de restaurar. Si después quieres empezar completamente desde cero, puedes eliminar ese archivo. ¿Restablecer ahora?'
+                  : 'Web: se descargó en tu dispositivo una copia de seguridad completa (sin claves API). Guarda ese archivo en un lugar seguro. ¿Restablecer ahora?')
+              : (missingImages > 0
+                  ? '⚠ $missingImages image file(s) could NOT be included in the backup — their files are missing (they may only exist on another synced device). If you reset now, those images will be lost on this device.\n\n'
+                  : '') + (backupPath != null
+                  ? 'A full backup (everything except API keys) was saved to:\n\n$backupPath\n\nYou will re-enter API keys after restoring. If you want a totally clean slate afterwards, you can delete that file yourself. Reset now?'
+                  : 'Web: a full backup (no API keys) was downloaded to your device. Keep that file safe. Reset now?'),
         ),
         actions: [
           TextButton(
