@@ -678,12 +678,12 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
             ListTile(
               leading: Icon(Icons.add,
                   color: EmberColors.primary),
-              title: Text('Start fresh',
+              title: Text(AppStrings.of(context).es ? 'Empezar de cero' : 'Start fresh',
                   style: TextStyle(
                       color: EmberColors.textHigh,
                       fontWeight: FontWeight.w600)),
               subtitle: Text(
-                'Create a brand-new card alongside your existing drafts.',
+                AppStrings.of(context).es ? 'Crea una tarjeta nueva junto a tus borradores existentes.' : 'Create a brand-new card alongside your existing drafts.',
                 style: TextStyle(
                     color: EmberColors.textMid, fontSize: 12),
               ),
@@ -782,7 +782,7 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
       // copying an unsaveable data URL to the clipboard.
       downloadBytesToBrowser(pngBytes, filename, 'image/png');
       messenger.showSnackBar(
-        SnackBar(content: Text('Downloading $filename')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
       );
       return;
     }
