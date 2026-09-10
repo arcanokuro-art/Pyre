@@ -883,12 +883,9 @@ class _HowItWorksCard extends StatelessWidget {
               'gives the architect more to work with than '
               '"name: X, age: 18, hair: blonde".'),
           HowItWorksBlock.bullet(
-              'If you have a reference image, attach it FIRST — '
-              'before talking. The vision profile becomes context '
-              'for every later question.'),
+              es ? 'Si tienes una imagen de referencia, adjúntala PRIMERO, antes de conversar. El perfil de visión se convierte en contexto para las preguntas posteriores.' : 'If you have a reference image, attach it FIRST — before talking. The vision profile becomes context for every later question.'),
           HowItWorksBlock.bullet(
-              'When refining, be specific. "Change her age to '
-              '22" works. "Make her older" makes the model guess.'),
+              es ? 'Al refinar, sé específico. «Cambia su edad a 22» funciona mejor que «Hazla mayor», que obliga al modelo a adivinar.' : 'When refining, be specific. "Change her age to 22" works. "Make her older" makes the model guess.'),
           HowItWorksBlock.bullet(
               'If the assistant tries to be vanilla or dodges '
               'NSFW requests, your provider has refusal patterns. '
@@ -903,7 +900,7 @@ class _HowItWorksCard extends StatelessWidget {
         ]),
 
         // 9. NSFW reality.
-        HowItWorksSection('Honest section', [
+        HowItWorksSection(es ? 'Sobre el contenido para adultos' : 'Honest section', [
           HowItWorksBlock.paragraph(
               'Most people building cards in tools like this are '
               'doing roleplay that\'s adult, often explicit, often '
@@ -919,17 +916,11 @@ class _HowItWorksCard extends StatelessWidget {
         ]),
 
         // 10. Troubleshooting.
-        HowItWorksSection('Troubleshooting', [
+        HowItWorksSection(es ? 'Solución de problemas' : 'Troubleshooting', [
           HowItWorksBlock.bullet(
-              '**"No provider configured"** — Open More → API '
-              'Connections and add a provider. Use the override '
-              'card at the top to set a separate Creator and '
-              'Vision provider if needed.'),
+              es ? '**«No hay ningún proveedor configurado»** — abre Más → Conexiones API y añade un proveedor. Si lo necesitas, usa la tarjeta de configuración superior para establecer proveedores separados para Creador y Visión.' : '**"No provider configured"** — Open More → API Connections and add a provider. Use the override card at the top to set a separate Creator and Vision provider if needed.'),
           HowItWorksBlock.bullet(
-              '**"Image analysis failed"** — your active '
-              'provider doesn\'t support vision. Set a vision-'
-              'specific provider (Qwen 3.6 Plus Uncensored on '
-              'Venice or NanoGPT).'),
+              es ? '**«Falló el análisis de la imagen»** — tu proveedor activo no admite visión. Configura un proveedor específico compatible con visión.' : '**"Image analysis failed"** — your active provider doesn\'t support vision. Set a vision-specific provider (Qwen 3.6 Plus Uncensored on Venice or NanoGPT).'),
           HowItWorksBlock.bullet(
               '**"The architect claimed a section was done '
               'but never wrote the structured card data"** — '
