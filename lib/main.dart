@@ -937,7 +937,10 @@ class _RootShellState extends State<RootShell> {
       ActiveTabGate(
           active: index == 3, childBuilder: (_) => MoreScreen()),
     ];
-    const labels = ['Chats', 'Library', 'Discover', 'More'];
+    final es = AppStrings.of(context).es;
+    final labels = es
+        ? const ['Chats', 'Biblioteca', 'Descubrir', 'Más']
+        : const ['Chats', 'Library', 'Discover', 'More'];
     const icons = [
       Icons.chat_bubble_outline,
       Icons.people_outline,
