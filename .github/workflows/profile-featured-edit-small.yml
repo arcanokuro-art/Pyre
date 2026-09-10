@@ -1,0 +1,29 @@
+name: Profile featured edit small
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/botbooru_profile_screen.dart')
+          s=p.read_text()
+          a="? 'Pin one of your characters as your '"
+          b=": 'No character pinned yet. Tap Edit to '"
+          if a not in s or b not in s:
+              raise SystemExit('markers missing')
+          s=s.replace(a,"? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación, sin ningún efecto funcional.' : 'Pin one of your characters as your ')",1)
+          s=s.replace(b,": (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No character pinned yet. Tap Edit to ')",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/botbooru_profile_screen.dart
+          git commit -m 'Localize featured edit text safely'
+          git push origin HEAD:spanish-localization
