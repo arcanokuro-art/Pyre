@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
+import '../l10n/app_strings.dart';
 import '../services/chat_api.dart';
 import '../services/hub_provider.dart';
 import '../services/lan_client.dart';
@@ -63,15 +64,16 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
+    final es = AppStrings.of(context).es;
     final webHeadless =
         kIsWeb && LanClient.instance.isPaired && _hub?.supported == true;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('API Connections'),
+        title: Text(es ? 'Conexiones API' : 'API Connections'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Add provider',
+            tooltip: es ? 'Añadir proveedor' : 'Add provider',
             onPressed: () => _editProvider(context, null),
           ),
         ],
@@ -85,12 +87,9 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
           // where a key comes from. Use the house empty-state with a real CTA.
           ? EmptyState(
               icon: Icons.cloud_outlined,
-              title: 'Connect an AI provider',
-              subtitle:
-                  'Pyre needs an AI service to write replies — it brings no '
-                  'model of its own. Add one (OpenRouter has free models to '
-                  'start), then paste the API key from that service\'s site.',
-              ctaLabel: 'Add a provider',
+              title: es ? 'Conecta un proveedor de IA' : 'Connect an AI provider',
+              subtitle: es ? 'Pyre necesita un servicio de IA para escribir respuestas; no incluye un modelo propio. Añade uno (OpenRouter tiene modelos gratuitos para empezar) y pega la clave API obtenida en el sitio de ese servicio.' : 'Pyre needs an AI service to write replies — it brings no model of its own. Add one (OpenRouter has free models to start), then paste the API key from that service\'s site.',
+              ctaLabel: es ? 'Añadir un proveedor' : 'Add a provider',
               onCta: () => _editProvider(context, null),
             )
           : Column(
