@@ -1,0 +1,76 @@
+name: Fix storage localization
+on:
+  push:
+    branches: [spanish-localization]
+    paths: ['.github/workflows/fix-storage-localization.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - name: Complete storage localization and fix concatenation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/storage_screen.dart')
+          s=p.read_text()
+          bad="""t('Elimina todos los personajes, chats, personas, preajustes, libros de lore y conexiones API almacenados en este dispositivo. Tus ajustes (temperatura, comportamiento del chat, etc.) se conservan. No se puede deshacer.\\n\\n', 'Removes every character, chat, persona, preset, lorebook and API connection stored on this device. Your settings (temperature, chat behaviour, etc.) are kept. There is no undo.\\n\\n')
+                    'For a full factory reset that also wipes settings, '
+                    'use Backup & Restore → Advanced → Reset to factory settings.'"""
+          good="""t(
+                      'Elimina todos los personajes, chats, personas, preajustes, libros de lore y conexiones API almacenados en este dispositivo. Tus ajustes (temperatura, comportamiento del chat, etc.) se conservan. No se puede deshacer.\\n\\nPara un restablecimiento completo que también borre los ajustes, usa Copia de seguridad y restauración → Avanzado → Restablecer a valores de fábrica.',
+                      'Removes every character, chat, persona, preset, lorebook and API connection stored on this device. Your settings (temperature, chat behaviour, etc.) are kept. There is no undo.\\n\\nFor a full factory reset that also wipes settings, use Backup & Restore → Advanced → Reset to factory settings.',
+                    )"""
+          if bad not in s: raise SystemExit('expected concatenation block not found')
+          s=s.replace(bad,good)
+          s=s.replace("'Clear library',\n                      style: TextStyle(color: EmberColors.danger)", "t('Borrar biblioteca', 'Clear library'),\n                      style: TextStyle(color: EmberColors.danger)")
+          # Localize methods by adding local helpers.
+          s=s.replace("Future<void> _saveSnapshot(BuildContext context) async {\n    final store", "Future<void> _saveSnapshot(BuildContext context) async {\n    final es = AppStrings.of(context).es;\n    String t(String spanish, String english) => es ? spanish : english;\n    final store")
+          s=s.replace("const SnackBar(\n        content: Text(\n            'Snapshot saved. Previous state rotated into bak.0.'),\n        duration: Duration(seconds: 2),\n      )", "SnackBar(\n        content: Text(t('Instantánea guardada. El estado anterior se rotó a bak.0.', 'Snapshot saved. Previous state rotated into bak.0.')),\n        duration: const Duration(seconds: 2),\n      )")
+          s=s.replace("Future<void> _copyErrorLog(BuildContext context) async {\n    final messenger", "Future<void> _copyErrorLog(BuildContext context) async {\n    final es = AppStrings.of(context).es;\n    final messenger")
+          s=s.replace("? 'Error log is empty — no crashes recorded.'\n              : 'Copied $bytes B of error log to clipboard.'", "? (es ? 'El registro de errores está vacío; no hay fallos registrados.' : 'Error log is empty — no crashes recorded.')\n              : (es ? 'Se copiaron $bytes B del registro de errores al portapapeles.' : 'Copied $bytes B of error log to clipboard.')")
+          s=s.replace("Future<void> _shareErrorLog(BuildContext context) async {\n    final messenger", "Future<void> _shareErrorLog(BuildContext context) async {\n    final es = AppStrings.of(context).es;\n    final messenger")
+          s=s.replace("const SnackBar(\n            content:\n                Text('Error log is empty — no crashes recorded.'),\n          )", "SnackBar(content: Text(es ? 'El registro de errores está vacío; no hay fallos registrados.' : 'Error log is empty — no crashes recorded.'))")
+          s=s.replace("subject: 'Pyre error log'", "subject: es ? 'Registro de errores de Pyre' : 'Pyre error log'")
+          s=s.replace("SnackBar(content: Text('Could not share log: $e'))", "SnackBar(content: Text(es ? 'No se pudo compartir el registro: $e' : 'Could not share log: $e'))")
+          s=s.replace("Future<void> _clearErrorLog(BuildContext context) async {\n    final messenger", "Future<void> _clearErrorLog(BuildContext context) async {\n    final es = AppStrings.of(context).es;\n    final messenger")
+          s=s.replace("const SnackBar(content: Text('Error log cleared.'))", "SnackBar(content: Text(es ? 'Registro de errores borrado.' : 'Error log cleared.'))")
+          s=s.replace("Future<void> _confirmWipe(BuildContext context) async {\n    // Capture", "Future<void> _confirmWipe(BuildContext context) async {\n    final es = AppStrings.of(context).es;\n    String t(String spanish, String english) => es ? spanish : english;\n    // Capture")
+          s=s.replace("title: const Text('Clear library?')", "title: Text(t('¿Borrar biblioteca?', 'Clear library?'))")
+          old="""content: const Text(
+          'This permanently deletes all characters, chats, personas, presets, '
+          'lorebooks and API connections. Your settings are kept. '
+          'There is no undo.\\n\\n'
+          'To also wipe settings, use Backup & Restore → Advanced → '
+          'Reset to factory settings.',
+        )"""
+          new="""content: Text(t(
+          'Esto elimina permanentemente todos los personajes, chats, personas, preajustes, libros de lore y conexiones API. Tus ajustes se conservan. No se puede deshacer.\\n\\nPara borrar también los ajustes, usa Copia de seguridad y restauración → Avanzado → Restablecer a valores de fábrica.',
+          'This permanently deletes all characters, chats, personas, presets, lorebooks and API connections. Your settings are kept. There is no undo.\\n\\nTo also wipe settings, use Backup & Restore → Advanced → Reset to factory settings.',
+        ))"""
+          if old not in s: raise SystemExit('wipe dialog block not found')
+          s=s.replace(old,new)
+          s=s.replace("child: const Text('Cancel')", "child: Text(t('Cancelar', 'Cancel'))")
+          s=s.replace("child: const Text('Clear')", "child: Text(t('Borrar', 'Clear'))")
+          s=s.replace("const SnackBar(content: Text('Library cleared.'))", "SnackBar(content: Text(t('Biblioteca borrada.', 'Library cleared.')))")
+          # LLM card build strings.
+          s=s.replace("  Widget build(BuildContext context) {\n    return Card(\n      child: Padding(\n        padding: const EdgeInsets.all(16),\n        child: Column(\n          crossAxisAlignment: CrossAxisAlignment.start,\n          children: [\n            const Text('Developer'", "  Widget build(BuildContext context) {\n    final es = AppStrings.of(context).es;\n    String t(String spanish, String english) => es ? spanish : english;\n    return Card(\n      child: Padding(\n        padding: const EdgeInsets.all(16),\n        child: Column(\n          crossAxisAlignment: CrossAxisAlignment.start,\n          children: [\n            Text(t('Desarrollador', 'Developer')")
+          s=s.replace("'Stored locally on this device; contains your chat text; '\n              'never your API key. For debugging.'", "t('Se almacena localmente en este dispositivo; contiene el texto de tus chats, pero nunca tu clave API. Para depuración.', 'Stored locally on this device; contains your chat text; never your API key. For debugging.')")
+          s=s.replace("title: const Text('Log raw LLM calls (debug)')", "title: Text(t('Registrar llamadas LLM sin procesar (depuración)', 'Log raw LLM calls (debug)'))")
+          s=s.replace("subtitle: const Text(\n                'Records every request + response, tagged per feature, '\n                'to a JSONL file you can export.'", "subtitle: Text(\n                t('Registra cada solicitud y respuesta, etiquetadas por función, en un archivo JSONL que puedes exportar.', 'Records every request + response, tagged per feature, to a JSONL file you can export.')")
+          s=s.replace("label: const Text('View log')", "label: Text(t('Ver registro', 'View log'))")
+          s=s.replace("'Export logs'", "t('Exportar registros', 'Export logs')")
+          s=s.replace("'Copy logs'", "t('Copiar registros', 'Copy logs')")
+          s=s.replace("'Clear logs'", "t('Borrar registros', 'Clear logs')")
+          p.write_text(s)
+          PY
+          dart format lib/screens/storage_screen.dart
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add lib/screens/storage_screen.dart
+          git diff --cached --quiet || git commit -m 'Complete storage screen localization [skip ci]'
+          git push
