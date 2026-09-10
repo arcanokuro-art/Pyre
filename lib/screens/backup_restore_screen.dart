@@ -216,17 +216,14 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Bulk-import World Info, regex, presets, and cards exported '
-                    'from SillyTavern, or pick a full SillyTavern backup '
-                    '(.zip from ST\'s "Download Backup"). Pyre detects each '
-                    'file\'s type automatically.',
+                    AppStrings.of(context).es ? 'Importa en lote World Info, regex, preajustes y tarjetas exportadas desde SillyTavern, o elige una copia de seguridad completa de SillyTavern (.zip de «Download Backup» de ST). Pyre detecta automáticamente el tipo de cada archivo.' : 'Bulk-import World Info, regex, presets, and cards exported from SillyTavern, or pick a full SillyTavern backup (.zip from ST\'s "Download Backup"). Pyre detects each file\'s type automatically.',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.download_outlined, size: 16),
-                    label: const Text('Choose files…'),
+                    label: Text(AppStrings.of(context).es ? 'Elegir archivos…' : 'Choose files…'),
                     onPressed: () => runStBulkImport(context, store),
                   ),
                 ],
@@ -244,25 +241,21 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Import a chat',
+                  Text(
+                    AppStrings.of(context).es ? 'Importar un chat' : 'Import a chat',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 15),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Load a chat you exported from Pyre (the "Export chat" '
-                    'option in a conversation) — either the full-fidelity '
-                    'Pyre JSON or the SillyTavern-compatible JSONL. Pyre '
-                    'detects the format automatically and adds it as a new '
-                    'conversation.',
+                    AppStrings.of(context).es ? 'Carga un chat que exportaste desde Pyre (la opción «Exportar chat» de una conversación), ya sea el JSON completo de Pyre o el JSONL compatible con SillyTavern. Pyre detecta automáticamente el formato y lo añade como una conversación nueva.' : 'Load a chat you exported from Pyre (the "Export chat" option in a conversation) — either the full-fidelity Pyre JSON or the SillyTavern-compatible JSONL. Pyre detects the format automatically and adds it as a new conversation.',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.chat_outlined, size: 16),
-                    label: const Text('Choose chat file…'),
+                    label: Text(AppStrings.of(context).es ? 'Elegir archivo de chat…' : 'Choose chat file…'),
                     onPressed: () => runPyreChatImport(context, store),
                   ),
                 ],
@@ -279,8 +272,8 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: ExpansionTile(
                 tilePadding: const EdgeInsets.symmetric(horizontal: 16),
                 childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                title: const Text(
-                  'Advanced',
+                title: Text(
+                  AppStrings.of(context).es ? 'Avanzado' : 'Advanced',
                   style:
                       TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                 ),
@@ -290,11 +283,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Full wipe: returns Pyre to a brand-new install — '
-                      'characters, personas, chats, lorebooks, presets, '
-                      'settings AND API keys. A full backup is saved first.\n\n'
-                      'To delete only your library and keep your settings, '
-                      'use Storage → Clear library.',
+                      AppStrings.of(context).es ? 'Borrado completo: devuelve Pyre al estado de una instalación nueva; elimina personajes, personas, chats, libros de lore, preajustes, ajustes Y claves API. Primero se guarda una copia de seguridad completa.\n\nPara eliminar solo tu biblioteca y conservar los ajustes, usa Almacenamiento → Borrar biblioteca.' : 'Full wipe: returns Pyre to a brand-new install — characters, personas, chats, lorebooks, presets, settings AND API keys. A full backup is saved first.\n\nTo delete only your library and keep your settings, use Storage → Clear library.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 13),
                     ),
