@@ -1801,17 +1801,17 @@ class _OrgControlRow extends StatelessWidget {
   final AppStore store;
   const _OrgControlRow({required this.store});
 
-  String _sortLabel(String key) {
+  String _sortLabel(BuildContext context, String key) {
     switch (key) {
       case 'created':
-        return 'Recently added';
+        return AppStrings.of(context).es ? 'Añadidos recientemente' : 'Recently added';
       case 'alpha':
         return 'A → Z';
       case 'chatted':
-        return 'Most chatted';
+        return AppStrings.of(context).es ? 'Más usados en chats' : 'Most chatted';
       case 'recent':
       default:
-        return 'Recently used';
+        return AppStrings.of(context).es ? 'Usados recientemente' : 'Recently used';
     }
   }
 
@@ -1834,18 +1834,18 @@ class _OrgControlRow extends StatelessWidget {
         children: [
           // Sort
           PopupMenuButton<String>(
-            tooltip: 'Sort',
+            tooltip: AppStrings.of(context).es ? 'Ordenar' : 'Sort',
             initialValue: store.charSortKey,
             onSelected: (k) => store.setCharSortKey(k),
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'recent', child: Text('Recently used')),
-              PopupMenuItem(value: 'created', child: Text('Recently added')),
-              PopupMenuItem(value: 'alpha', child: Text('A → Z')),
-              PopupMenuItem(value: 'chatted', child: Text('Most chatted')),
+            itemBuilder: (_) => [
+              PopupMenuItem(value: 'recent', child: Text(AppStrings.of(context).es ? 'Usados recientemente' : 'Recently used')),
+              PopupMenuItem(value: 'created', child: Text(AppStrings.of(context).es ? 'Añadidos recientemente' : 'Recently added')),
+              const PopupMenuItem(value: 'alpha', child: Text('A → Z')),
+              PopupMenuItem(value: 'chatted', child: Text(AppStrings.of(context).es ? 'Más usados en chats' : 'Most chatted')),
             ],
             child: _OrgChip(
               icon: Icons.sort,
-              label: _sortLabel(store.charSortKey),
+              label: _sortLabel(context, store.charSortKey),
               trailingIcon: Icons.arrow_drop_down,
             ),
           ),
@@ -1856,10 +1856,10 @@ class _OrgControlRow extends StatelessWidget {
               icon: Icons.folder_outlined,
               label: folderName == null
                   ? (store.folders.isEmpty
-                      ? 'Folders'
-                      : 'Folders (${store.folders.length})')
+                      ? (AppStrings.of(context).es ? 'Carpetas' : 'Folders')
+                      : (AppStrings.of(context).es ? 'Carpetas (${store.folders.length})' : 'Folders (${store.folders.length})'))
                   : folderName.isEmpty
-                      ? 'Folder ✕'
+                      ? (AppStrings.of(context).es ? 'Carpeta ✕' : 'Folder ✕')
                       : '📁 $folderName',
               trailing: store.charFolderId != null
                   ? GestureDetector(
@@ -1875,8 +1875,8 @@ class _OrgControlRow extends StatelessWidget {
             child: _OrgChip(
               icon: Icons.tag,
               label: store.charSelectedTags.isEmpty
-                  ? 'Tags'
-                  : 'Tags (${store.charSelectedTags.length})',
+                  ? (AppStrings.of(context).es ? 'Etiquetas' : 'Tags')
+                  : (AppStrings.of(context).es ? 'Etiquetas (${store.charSelectedTags.length})' : 'Tags (${store.charSelectedTags.length})'),
             ),
           ),
         ],
