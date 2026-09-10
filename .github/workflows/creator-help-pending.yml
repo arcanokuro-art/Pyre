@@ -1,0 +1,53 @@
+name: Creator help pending
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          replacements={
+          """          HowItWorksBlock.paragraph(
+              'A scenario card covers the same ground re-aimed at a '
+              'setting: the world and its rules, the cast (NPCs), the '
+              'opening scene, and the same wrap-up.'),""": """          HowItWorksBlock.paragraph(es
+              ? 'Una tarjeta de escenario cubre los mismos aspectos, pero orientados a un entorno: el mundo y sus reglas, el reparto de NPC, la escena inicial y el mismo cierre.'
+              : 'A scenario card covers the same ground re-aimed at a setting: the world and its rules, the cast (NPCs), the opening scene, and the same wrap-up.'),""",
+          """          HowItWorksBlock.paragraph(
+              'The automatic build doesn\\'t write alternate greetings — '
+              'you can add those by hand in the editor after saving '
+              '(Advanced → Alternate greetings).'),""": """          HowItWorksBlock.paragraph(es
+              ? 'La creación automática no escribe saludos alternativos; puedes añadirlos manualmente en el editor después de guardar (Avanzado → Saludos alternativos).'
+              : 'The automatic build doesn\\'t write alternate greetings — you can add those by hand in the editor after saving (Advanced → Alternate greetings).'),""",
+          """          HowItWorksBlock.bullet(
+              'Custom architect behaviour you want enforced — '
+              '\"always respond in Brazilian Portuguese\", \"keep '
+              'appearances PG-13 unless I say otherwise\", \"default '
+              'scenarios to anime high-school\". These override the '
+              'architect\\'s defaults.'),""": """          HowItWorksBlock.bullet(es
+              ? 'Comportamiento personalizado del arquitecto que quieras imponer; por ejemplo, responder siempre en un idioma determinado o aplicar reglas concretas a las apariencias y escenarios. Estas reglas reemplazan los valores predeterminados del arquitecto.'
+              : 'Custom architect behaviour you want enforced. These rules override the architect\\'s defaults.'),""",
+          """          HowItWorksBlock.paragraph(
+              'Your Profile \"About Me\" is NOT sent to the architect '
+              '— it\\'s a local bio on the Profile screen, not a '
+              'context input.'),""": """          HowItWorksBlock.paragraph(es
+              ? 'El apartado «Acerca de mí» de tu perfil NO se envía al arquitecto: es una biografía local de la pantalla Perfil, no una entrada de contexto.'
+              : 'Your Profile \"About Me\" is NOT sent to the architect — it\\'s a local bio on the Profile screen, not a context input.'),"""
+          }
+          for old,new in replacements.items():
+              if old not in s: raise SystemExit('missing target: '+old[:70])
+              s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize remaining Creator built and additions help'
+          git push origin HEAD:spanish-localization
