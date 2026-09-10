@@ -1,0 +1,28 @@
+name: Backup reset l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart')
+          s=p.read_text()
+          s=s.replace("label: const Text('Reset to factory settings')", "label: Text(AppStrings.of(context).es ? 'Restablecer a valores de fábrica' : 'Reset to factory settings')",1)
+          s=s.replace("title: 'Reset Pyre to factory settings?',", "title: AppStrings.of(context).es ? '¿Restablecer Pyre a valores de fábrica?' : 'Reset Pyre to factory settings?',",1)
+          old="""message:\n          'This permanently deletes ALL data — every character, persona, '\n          'chat, lorebook, preset, setting and API key — and returns the '\n          'app to a brand-new install. '\n          'A full backup is saved first so you can restore.\\n\\n'\n          'To delete only your library and keep your settings, cancel and '\n          'use Storage → Clear library. Continue?',\n      confirmLabel: 'Continue',"""
+          new="""message: AppStrings.of(context).es\n          ? 'Esto elimina permanentemente TODOS los datos —personajes, personas, chats, libros de lore, preajustes, ajustes y claves API— y devuelve la app al estado de una instalación nueva. Primero se guarda una copia de seguridad completa para que puedas restaurarla.\\n\\nPara eliminar solo tu biblioteca y conservar los ajustes, cancela y usa Almacenamiento → Borrar biblioteca. ¿Continuar?'\n          : 'This permanently deletes ALL data — every character, persona, chat, lorebook, preset, setting and API key — and returns the app to a brand-new install. A full backup is saved first so you can restore.\\n\\nTo delete only your library and keep your settings, cancel and use Storage → Clear library. Continue?',\n      confirmLabel: AppStrings.of(context).es ? 'Continuar' : 'Continue',"""
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize factory reset entry and first confirmation'
+          git push origin HEAD:spanish-localization
