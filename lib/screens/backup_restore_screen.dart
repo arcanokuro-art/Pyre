@@ -601,15 +601,15 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       }
 
       final subject = _include.contains(_catProviders)
-          ? 'Pyre backup (contains API keys — handle with care)'
-          : 'Pyre backup';
+          ? (AppStrings.of(context).es ? 'Copia de Pyre (contiene claves API; manéjala con cuidado)' : 'Pyre backup (contains API keys — handle with care)')
+          : (AppStrings.of(context).es ? 'Copia de seguridad de Pyre' : 'Pyre backup');
       try {
         await Share.shareXFiles(
           [XFile(file.path, mimeType: 'application/json')],
           subject: subject,
           text: _include.contains(_catProviders)
-              ? 'Pyre backup with API keys. Don\'t share this file with anyone you wouldn\'t hand your credit card to.'
-              : 'Pyre backup (no API keys included — safe to share).',
+              ? (AppStrings.of(context).es ? 'Copia de Pyre con claves API. No compartas este archivo con nadie a quien no confiarías información financiera sensible.' : 'Pyre backup with API keys. Don\'t share this file with anyone you wouldn\'t hand your credit card to.')
+              : (AppStrings.of(context).es ? 'Copia de Pyre (sin claves API; se puede compartir).' : 'Pyre backup (no API keys included — safe to share).'),
         );
       } finally {
         // Best-effort cleanup — the chosen transport copies the bytes
@@ -647,7 +647,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         downloadBytesToBrowser(wbytes, filename, 'application/json');
         final warn = _oversizeWarning(wbytes.length);
         messenger.showSnackBar(SnackBar(
-          content: Text(warn == null ? 'Downloading $filename' : warn),
+          content: Text(warn == null ? (AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename') : warn),
           duration: Duration(seconds: warn == null ? 4 : 8),
         ));
         return;
@@ -663,7 +663,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       final warn = _oversizeWarning(utf8.encode(json).length);
       messenger.showSnackBar(
         SnackBar(
-          content: Text(warn == null ? 'Saved to ${file.path}' : warn),
+          content: Text(warn == null ? (AppStrings.of(context).es ? 'Guardado en ${file.path}' : 'Saved to ${file.path}') : warn),
           duration: Duration(seconds: warn == null ? 4 : 8),
         ),
       );
@@ -684,7 +684,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       final bytes = result.files.single.bytes;
       if (bytes == null) {
         messenger.showSnackBar(
-            const SnackBar(content: Text('Could not read file bytes.')));
+            SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron leer los datos del archivo.' : 'Could not read file bytes.')));
         return;
       }
       // Hard size cap — a malicious backup could otherwise OOM or freeze
@@ -693,7 +693,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         messenger.showSnackBar(
           SnackBar(
             content: Text(
-              'Backup is too large (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Max 50 MB.',
+              AppStrings.of(context).es ? 'La copia es demasiado grande (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Máximo 50 MB.' : 'Backup is too large (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Max 50 MB.',
             ),
           ),
         );
