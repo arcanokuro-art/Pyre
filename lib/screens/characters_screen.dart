@@ -1140,7 +1140,7 @@ Future<void> _pickAndImportCard(BuildContext context) async {
     final bytes = f.bytes;
     if (bytes == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not read file bytes.')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron leer los datos del archivo.' : 'Could not read file bytes.')),
       );
       return;
     }
@@ -1166,7 +1166,7 @@ Future<void> _pickAndImportCard(BuildContext context) async {
       galleryCount: galleryUrls.length,
     );
     if (!choice.import) {
-      messenger.showSnackBar(const SnackBar(content: Text('Import cancelled.')));
+      messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Importación cancelada.' : 'Import cancelled.')));
       return;
     }
     if (choice.withGallery) {
@@ -1187,11 +1187,11 @@ Future<void> _pickAndImportCard(BuildContext context) async {
     await externalizeCharacterImages(character);
     store.addCharacter(character);
     messenger.showSnackBar(
-      SnackBar(content: Text('Imported ${character.name}')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Se importó ${character.name}' : 'Imported ${character.name}')),
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Import failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al importar: $e' : 'Import failed: $e')),
     );
   }
 }
