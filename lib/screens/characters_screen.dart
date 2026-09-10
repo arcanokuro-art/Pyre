@@ -2885,8 +2885,8 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
               final ok = await confirmDelete(
                 context,
                 title: isDefault
-                    ? 'Delete default persona "${p.name}"?'
-                    : 'Delete "${p.name}"?',
+                    ? (AppStrings.of(context).es ? '¿Eliminar la persona predeterminada "${p.name}"?' : 'Delete default persona "${p.name}"?')
+                    : (AppStrings.of(context).es ? '¿Eliminar "${p.name}"?' : 'Delete "${p.name}"?'),
                 message: isDefault
                     ? 'This is your default persona. After deleting, new chats '
                         'will have no default persona until you set another one. '
