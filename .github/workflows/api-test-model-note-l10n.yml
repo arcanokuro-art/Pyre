@@ -1,0 +1,24 @@
+name: API missing model note l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          old="' — but no model is set yet, so pick one before chatting.'"
+          new="(AppStrings.of(context).es ? ' — pero todavía no hay un modelo configurado; elige uno antes de chatear.' : ' — but no model is set yet, so pick one before chatting.')"
+          if old not in s: raise SystemExit('model note missing')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API missing model note'
+          git push origin HEAD:spanish-localization
