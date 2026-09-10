@@ -1,11 +1,10 @@
 name: Language selector v2
 
-'on':
+on:
   push:
-    branches:
-      - spanish-localization
+    branches: [spanish-localization]
     paths:
-      - .github/workflows/language-selector-v2.yml
+      - '.github/workflows/language-selector-v2.yml'
 
 permissions:
   contents: write
@@ -17,11 +16,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: spanish-localization
-      - name: Patch files
-        shell: python
+      - name: Add language setter
         run: |
+          python3 - <<'PY'
           from pathlib import Path
-
           p = Path('lib/state/app_store.dart')
           s = p.read_text()
           anchor = """  void setBackgroundGeneration(bool v) {
@@ -30,8 +28,9 @@ jobs:
             GenerationKeepAlive.promoteAllToHeavy = v;
             _bump();
           }
-"""
+          """
           addition = """
+
           /// Change the device-local UI language and persist it.
           void setLanguageCode(String code) {
             final normalized = code == 'en' ? 'en' : 'es';
@@ -39,77 +38,21 @@ jobs:
             uiPrefs.languageCode = normalized;
             _bump();
           }
-"""
-          if anchor not in s:
-              raise SystemExit('AppStore anchor not found')
-          s = s.replace(anchor, anchor + addition, 1)
-          p.write_text(s)
-
-          p = Path('lib/screens/more_screen.dart')
-          s = p.read_text()
-          anchor = """          _MoreCard(rows: [
-            _MoreRow(
-              label: l.appearance,
-              trailing: _themeName(store.uiPrefs.activeThemeId),
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ThemeSettingsScreen())),
-            ),
-          ]),
-"""
-          replacement = """          _MoreCard(rows: [
-            _MoreRow(
-              label: l.appearance,
-              trailing: _themeName(store.uiPrefs.activeThemeId),
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ThemeSettingsScreen())),
-            ),
-            _MoreRow(
-              label: l.es ? 'Idioma' : 'Language',
-              trailing: store.uiPrefs.languageCode == 'en' ? 'English' : 'Español',
-              onTap: () => _showLanguagePicker(context, store),
-            ),
-          ]),
-"""
-          if anchor not in s:
-              raise SystemExit('More card anchor not found')
-          s = s.replace(anchor, replacement, 1)
-          marker = 'class _VersionFooter extends StatefulWidget {'
-          helper = """Future<void> _showLanguagePicker(BuildContext context, AppStore store) async {
-            final l = AppStrings.of(context);
-            final selected = await showModalBottomSheet<String>(
-              context: context,
-              builder: (sheetContext) => SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      title: Text(l.es ? 'Idioma' : 'Language', style: const TextStyle(fontWeight: FontWeight.w700)),
-                    ),
-                    ListTile(
-                      leading: Icon(store.uiPrefs.languageCode == 'es' ? Icons.radio_button_checked : Icons.radio_button_off),
-                      title: const Text('Español'),
-                      onTap: () => Navigator.of(sheetContext).pop('es'),
-                    ),
-                    ListTile(
-                      leading: Icon(store.uiPrefs.languageCode == 'en' ? Icons.radio_button_checked : Icons.radio_button_off),
-                      title: const Text('English'),
-                      onTap: () => Navigator.of(sheetContext).pop('en'),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
-              ),
-            );
-            if (selected != null) store.setLanguageCode(selected);
-          }
-
           """
-          if marker not in s:
-              raise SystemExit('Version footer anchor not found')
-          s = s.replace(marker, helper + marker, 1)
-          p.write_text(s)
-      - name: Commit
+          if 'void setLanguageCode(String code)' not in s:
+              if anchor not in s:
+                  raise SystemExit('AppStore anchor not found')
+              s = s.replace(anchor, anchor + addition, 1)
+              p.write_text(s)
+          PY
+      - name: Commit language setter
         run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add lib/state/app_store.dart lib/screens/more_screen.dart
-          git diff --cached --quiet || git commit -m "Add persistent Spanish English language selector"
-          git push origin HEAD:spanish-localization
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lib/state/app_store.dart
+          if git diff --cached --quiet; then
+            echo 'Language setter already present.'
+          else
+            git commit -m 'Persist language changes from settings'
+            git push origin HEAD:spanish-localization
+          fi
