@@ -1,0 +1,40 @@
+name: Creator help l10n 2
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          old="""'1) **Talk it out** — tell the AI the vibe (name, species, '
+              'archetype, "broken princess with a sword", anything). Vague '
+              'is fine; it asks a few targeted questions. The sheet stays '
+              'empty while you chat — nothing is written yet.\\n\\n'
+              '2) **Build** — when the AI proposes building, or any time '
+              'you\\'re ready, say the word (or type /build). It then writes '
+              'the WHOLE card in one go, over a few automatic passes.\\n\\n'
+              '3) **Review** — the finished card appears field-by-field in '
+              'the canvas. Read it, and tap any field to edit it by hand.\\n\\n'
+              '4) **Refine or save** — keep chatting to ask for changes '
+              '(the AI edits only what you asked and leaves the rest alone), '
+              'or Save it to your library.'"""
+          new="""es ? '1) **Habla sobre la idea** — cuéntale a la IA el concepto (nombre, especie, arquetipo, «princesa rota con una espada», lo que sea). Puede ser algo vago; hará algunas preguntas específicas. La ficha permanece vacía mientras conversan: todavía no se escribe nada.\\n\\n2) **Crear** — cuando la IA proponga crearla, o cuando tú estés listo, indícalo (o escribe /build). Entonces escribe TODA la tarjeta de una vez mediante varias pasadas automáticas.\\n\\n3) **Revisar** — la tarjeta terminada aparece campo por campo en el lienzo. Revísala y toca cualquier campo para editarlo manualmente.\\n\\n4) **Refinar o guardar** — sigue conversando para pedir cambios (la IA modifica solo lo que pediste y deja lo demás intacto), o guárdala en tu biblioteca.' : '1) **Talk it out** — tell the AI the vibe (name, species, archetype, "broken princess with a sword", anything). Vague is fine; it asks a few targeted questions. The sheet stays empty while you chat — nothing is written yet.\\n\\n2) **Build** — when the AI proposes building, or any time you\\'re ready, say the word (or type /build). It then writes the WHOLE card in one go, over a few automatic passes.\\n\\n3) **Review** — the finished card appears field-by-field in the canvas. Read it, and tap any field to edit it by hand.\\n\\n4) **Refine or save** — keep chatting to ask for changes (the AI edits only what you asked and leaves the rest alone), or Save it to your library.'"""
+          s=s.replace(old,new,1)
+          s=s.replace("'A new Creator session asks what you\\'re making — the choice '\n              'sets which architect runs the show:'", "es ? 'Una nueva sesión del Creador pregunta qué vas a crear; tu elección determina qué arquitecto se utiliza:' : 'A new Creator session asks what you\\'re making — the choice sets which architect runs the show:'",1)
+          s=s.replace("'**Character** — a single persona for roleplay. '\n              'Name, look, voice, personality, contradictions, '\n              'kinks. The default and most common.'", "es ? '**Personaje** — una sola persona para roleplay. Nombre, apariencia, voz, personalidad, contradicciones e intereses. Es la opción predeterminada y la más común.' : '**Character** — a single persona for roleplay. Name, look, voice, personality, contradictions, kinks. The default and most common.'",1)
+          s=s.replace("'**Scenario** — a setting with a narrator that '\n              'voices NPCs and describes scenes. Use when you\\'re '\n              'building a world or hub (\"haunted mansion\", '\n              '\"supernatural school\", \"free-use city\"), not a '\n              'single character.'", "es ? '**Escenario** — un entorno con un narrador que interpreta NPC y describe escenas. Úsalo cuando estés creando un mundo o un centro de interacción, no un solo personaje.' : '**Scenario** — a setting with a narrator that voices NPCs and describes scenes. Use when you\\'re building a world or hub (\"haunted mansion\", \"supernatural school\", \"free-use city\"), not a single character.'",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize Creator help session flow'
+          git push origin HEAD:spanish-localization
