@@ -2448,9 +2448,12 @@ class _PersonaAllFiledHintItem extends _PersonaItem {
   const _PersonaAllFiledHintItem();
 
   @override
-  Widget build(AppStore store) => const AllFiledHint(
-        message: 'All your personas are in folders.\n'
-            'Open a folder above to pick one.',
+  Widget build(AppStore store) => Builder(
+        builder: (context) => AllFiledHint(
+          message: AppStrings.of(context).es
+              ? 'Todas tus personas están en carpetas.\nAbre una carpeta de arriba para elegir una.'
+              : 'All your personas are in folders.\nOpen a folder above to pick one.',
+        ),
       );
 }
 
@@ -2492,7 +2495,7 @@ class _PersonaCard extends StatelessWidget {
                       color: EmberColors.primary.withValues(alpha: 0.5)),
                 ),
                 child: Text(
-                  'DEFAULT',
+                  AppStrings.of(context).es ? 'PREDETERMINADA' : 'DEFAULT',
                   style: TextStyle(
                     color: EmberColors.primary,
                     fontSize: 10,
@@ -2545,15 +2548,15 @@ class _PersonaCard extends StatelessWidget {
                 size: 20,
               ),
               tooltip: p.favorite
-                  ? 'Remove from favorites'
-                  : 'Add to favorites',
+                  ? (AppStrings.of(context).es ? 'Quitar de favoritos' : 'Remove from favorites')
+                  : (AppStrings.of(context).es ? 'Añadir a favoritos' : 'Add to favorites'),
               onPressed: () => store.togglePersonaFavorite(p.id),
               visualDensity: VisualDensity.compact,
             ),
             IconButton(
               icon: Icon(Icons.more_vert,
                   color: EmberColors.textMid),
-              tooltip: 'Persona actions',
+              tooltip: AppStrings.of(context).es ? 'Acciones de la persona' : 'Persona actions',
               onPressed: () => _showPersonaMenu(context, store, p),
               visualDensity: VisualDensity.compact,
             ),
