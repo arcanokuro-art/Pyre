@@ -317,8 +317,8 @@ class _StorageScreenState extends State<StorageScreen> {
       SnackBar(
         content: Text(
           bytes == 0
-              ? 'Error log is empty — no crashes recorded.'
-              : 'Copied $bytes B of error log to clipboard.',
+              ? (AppStrings.of(context).es ? 'El registro de errores está vacío; no se registraron fallos.' : 'Error log is empty — no crashes recorded.')
+              : (AppStrings.of(context).es ? 'Se copiaron $bytes B del registro de errores al portapapeles.' : 'Copied $bytes B of error log to clipboard.'),
         ),
         duration: const Duration(seconds: 3),
       ),
@@ -339,21 +339,18 @@ class _StorageScreenState extends State<StorageScreen> {
       if (body.isEmpty) {
         if (!mounted) return;
         messenger.showSnackBar(
-          const SnackBar(
-            content:
-                Text('Error log is empty — no crashes recorded.'),
-          ),
+          SnackBar(content: Text(AppStrings.of(context).es ? 'El registro de errores está vacío; no se registraron fallos.' : 'Error log is empty — no crashes recorded.')),
         );
         return;
       }
       await Share.shareXFiles(
         [XFile(path)],
-        subject: 'Pyre error log',
+        subject: AppStrings.of(context).es ? 'Registro de errores de Pyre' : 'Pyre error log',
       );
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not share log: $e')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudo compartir el registro: $e' : 'Could not share log: $e')),
       );
     }
   }
@@ -381,7 +378,7 @@ class _StorageScreenState extends State<StorageScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Clear library?'),
+        title: Text(AppStrings.of(context).es ? '¿Borrar biblioteca?' : 'Clear library?'),
         content: const Text(
           'This permanently deletes all characters, chats, personas, presets, '
           'lorebooks and API connections. Your settings are kept. '
