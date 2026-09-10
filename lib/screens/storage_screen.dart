@@ -507,12 +507,11 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Developer',
+            Text(AppStrings.of(context).es ? 'Desarrollador' : 'Developer',
                 style: TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
             Text(
-              'Stored locally on this device; contains your chat text; '
-              'never your API key. For debugging.',
+              AppStrings.of(context).es ? 'Se almacena localmente en este dispositivo; contiene el texto de tus chats, pero nunca tu clave API. Para depuración.' : 'Stored locally on this device; contains your chat text; never your API key. For debugging.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -524,10 +523,9 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
               contentPadding: EdgeInsets.zero,
               dense: true,
               activeThumbColor: EmberColors.primary,
-              title: const Text((AppStrings.of(context).es ? 'Registrar llamadas LLM sin procesar (depuración)' : 'Log raw LLM calls (debug)')),
-              subtitle: const Text(
-                'Records every request + response, tagged per feature, '
-                'to a JSONL file you can export.',
+              title: Text((AppStrings.of(context).es ? 'Registrar llamadas LLM sin procesar (depuración)' : 'Log raw LLM calls (debug)')),
+              subtitle: Text(
+                AppStrings.of(context).es ? 'Registra cada solicitud y respuesta, etiquetadas por función, en un archivo JSONL que puedes exportar.' : 'Records every request + response, tagged per feature, to a JSONL file you can export.',
                 style: TextStyle(fontSize: 12),
               ),
               value: _enabled,
@@ -540,7 +538,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
               children: [
                 FilledButton.icon(
                   icon: const Icon(Icons.visibility_outlined, size: 18),
-                  label: const Text((AppStrings.of(context).es ? 'Ver registro' : 'View log')),
+                  label: Text((AppStrings.of(context).es ? 'Ver registro' : 'View log')),
                   style: FilledButton.styleFrom(
                     backgroundColor: EmberColors.primary,
                     foregroundColor: Colors.white,
