@@ -1,0 +1,28 @@
+name: API connections l10n 1
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          s=s.replace("import '../models/models.dart';", "import '../models/models.dart';\nimport '../l10n/app_strings.dart';",1)
+          s=s.replace('    final store = context.watch<AppStore>();', '    final store = context.watch<AppStore>();\n    final es = AppStrings.of(context).es;',1)
+          s=s.replace("title: const Text('API Connections'),", "title: Text(es ? 'Conexiones API' : 'API Connections'),",1)
+          s=s.replace("tooltip: 'Add provider',", "tooltip: es ? 'Añadir proveedor' : 'Add provider',",1)
+          s=s.replace("title: 'Connect an AI provider',", "title: es ? 'Conecta un proveedor de IA' : 'Connect an AI provider',",1)
+          s=s.replace("ctaLabel: 'Add a provider',", "ctaLabel: es ? 'Añadir un proveedor' : 'Add a provider',",1)
+          s=s.replace("subtitle:\n                  'Pyre needs an AI service to write replies — it brings no '\n                  'model of its own. Add one (OpenRouter has free models to '\n                  'start), then paste the API key from that service\\'s site.',", "subtitle: es ? 'Pyre necesita un servicio de IA para escribir respuestas; no incluye un modelo propio. Añade uno (OpenRouter tiene modelos gratuitos para empezar) y pega la clave API obtenida en el sitio de ese servicio.' : 'Pyre needs an AI service to write replies — it brings no model of its own. Add one (OpenRouter has free models to start), then paste the API key from that service\\'s site.',",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Begin API connections localization'
+          git push origin HEAD:spanish-localization
