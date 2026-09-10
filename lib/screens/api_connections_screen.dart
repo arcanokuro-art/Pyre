@@ -541,11 +541,11 @@ class _CreatorProviderCard extends StatelessWidget {
             const SizedBox(height: 12),
             // Creator provider — used for the design conversation and
             // canvas updates inside Character Creator.
-            const Padding(
-              padding: EdgeInsets.only(bottom: 4),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                'CREATOR',
-                style: TextStyle(
+                AppStrings.of(context).es ? 'CREADOR' : 'CREATOR',
+                style: const TextStyle(
                   color: Colors.amber,
                   fontWeight: FontWeight.w700,
                   fontSize: 10,
