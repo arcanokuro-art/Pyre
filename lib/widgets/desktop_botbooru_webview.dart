@@ -34,6 +34,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_windows/webview_windows.dart';
 
+import '../l10n/app_strings.dart';
 import '../services/attachment_store.dart';
 import '../services/png_encoder.dart';
 import '../state/app_store.dart';
@@ -153,6 +154,9 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
   /// fallback button. NOT rendered in the chrome.
   String _currentUrl = '';
 
+  bool get _es => AppStrings.of(context).es;
+  String _t(String es, String en) => _es ? es : en;
+
   @override
   void initState() {
     super.initState();
@@ -263,11 +267,11 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
               try {
                 bytes = base64Decode(b64);
               } catch (_) {
-                widget.onCardError('Could not read the downloaded card.');
+                widget.onCardError(_t('No se pudo leer la tarjeta descargada.', 'Could not read the downloaded card.'));
                 return;
               }
               if (bytes.isEmpty || bytes.length > _kCardBytesMaxLen) {
-                widget.onCardError('Could not read the downloaded card.');
+                widget.onCardError(_t('No se pudo leer la tarjeta descargada.', 'Could not read the downloaded card.'));
                 return;
               }
               final g = probe['gallery'];
@@ -418,26 +422,24 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
       if (!mounted) return;
       final String msg;
       if (exported > 0) {
-        msg = 'Exported $exported '
-            '${exported == 1 ? 'card' : 'cards'} → opened the folder. '
-            "Pick one in botbooru's upload dialog.";
+        msg = _es
+            ? 'Se exportaron $exported ${exported == 1 ? 'tarjeta' : 'tarjetas'} → se abrió la carpeta. Elige una en el diálogo de carga de BotBooru.'
+            : 'Exported $exported ${exported == 1 ? 'card' : 'cards'} → opened the folder. Pick one in botbooru\'s upload dialog.';
       } else if (skippedNoAvatar > 0) {
-        msg = 'No cards have an avatar yet — a card needs an image to '
-            'export. Set avatars in the editor, then try again. '
-            'Opened the (empty) folder anyway.';
+        msg = _t('Ninguna tarjeta tiene avatar todavía; se necesita una imagen para exportarla. Configura los avatares en el editor y vuelve a intentarlo. Se abrió la carpeta vacía de todos modos.', 'No cards have an avatar yet — a card needs an image to export. Set avatars in the editor, then try again. Opened the (empty) folder anyway.');
       } else {
-        msg = 'No saved cards to export yet. Opened the folder anyway.';
+        msg = _t('Todavía no hay tarjetas guardadas para exportar. Se abrió la carpeta de todos modos.', 'No saved cards to export yet. Opened the folder anyway.');
       }
       // Guaranteed-dismiss notice: explorer.exe was launched just above and
       // steals window focus, which can freeze this SnackBar's entrance
       // animation so Flutter never arms the built-in auto-dismiss timer. The
       // helper arms a frame-independent close so it can't hang forever.
       // No Share action here (the user picks the file in botbooru's dialog).
-      showExportSnack(messenger, msg, null, visible: const Duration(seconds: 6));
+      showExportSnack(messenger, msg, null, visible: const Duration(seconds: 6), spanish: _es);
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not export cards: $e')),
+        SnackBar(content: Text(_t('No se pudieron exportar las tarjetas: $e', 'Could not export cards: $e'))),
       );
     }
   }
@@ -499,7 +501,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
           TextButton.icon(
             onPressed: widget.onClose,
             icon: const Icon(Icons.arrow_back, size: 16),
-            label: const Text('Back'),
+            label: Text(_t('Atrás', 'Back')),
             style: TextButton.styleFrom(
               foregroundColor: EmberColors.primary,
               padding:
@@ -515,14 +517,14 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
           // the chrome compact.
           IconButton(
             icon: const Icon(Icons.chevron_left, size: 20),
-            tooltip: 'Browser back',
+            tooltip: _t('Atrás en el navegador', 'Browser back'),
             color: EmberColors.textMid,
             visualDensity: VisualDensity.compact,
             onPressed: _ready == true ? () => _controller.goBack() : null,
           ),
           IconButton(
             icon: const Icon(Icons.chevron_right, size: 20),
-            tooltip: 'Browser forward',
+            tooltip: _t('Adelante en el navegador', 'Browser forward'),
             color: EmberColors.textMid,
             visualDensity: VisualDensity.compact,
             onPressed:
@@ -530,7 +532,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
           ),
           IconButton(
             icon: const Icon(Icons.refresh, size: 18),
-            tooltip: 'Reload',
+            tooltip: _t('Recargar', 'Reload'),
             color: EmberColors.textMid,
             visualDensity: VisualDensity.compact,
             onPressed: _ready == true ? () => _controller.reload() : null,
@@ -544,7 +546,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
           OutlinedButton.icon(
             onPressed: _exportCardsAndOpenFolder,
             icon: const Icon(Icons.drive_folder_upload, size: 14),
-            label: const Text('My cards'),
+            label: Text(_t('Mis tarjetas', 'My cards')),
             style: OutlinedButton.styleFrom(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -565,7 +567,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
                     widget.onImportCurrentUrl(_currentUrl, srcs);
                   },
             icon: const Icon(Icons.download, size: 14),
-            label: const Text('Use this page for import'),
+            label: Text(_t('Usar esta página para importar', 'Use this page for import')),
             style: OutlinedButton.styleFrom(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -588,7 +590,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
             CircularProgressIndicator(strokeWidth: 2),
             SizedBox(height: 12),
             Text(
-              'Starting embedded browser…',
+              _t('Iniciando navegador integrado…', 'Starting embedded browser…'),
               style:
                   TextStyle(color: EmberColors.textDim, fontSize: 12),
             ),
@@ -620,7 +622,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
                         color: EmberColors.primary, size: 20),
                     SizedBox(width: 10),
                     Text(
-                      'Embedded browser unavailable',
+                      _t('Navegador integrado no disponible', 'Embedded browser unavailable'),
                       style: TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w700),
                     ),
@@ -628,9 +630,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Pyre uses Microsoft Edge WebView2 to embed '
-                  'botbooru.com inside the app. The runtime isn\'t '
-                  'installed on this machine.',
+                  _t('Pyre usa Microsoft Edge WebView2 para integrar botbooru.com dentro de la aplicación. El entorno de ejecución no está instalado en este equipo.', 'Pyre uses Microsoft Edge WebView2 to embed botbooru.com inside the app. The runtime isn\'t installed on this machine.'),
                   style: TextStyle(
                     color: EmberColors.textMid,
                     fontSize: 12,
@@ -639,8 +639,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Install the free Evergreen runtime from Microsoft, '
-                  'then relaunch Pyre:',
+                  _t('Instala el entorno de ejecución Evergreen gratuito de Microsoft y luego vuelve a iniciar Pyre:', 'Install the free Evergreen runtime from Microsoft, then relaunch Pyre:'),
                   style: TextStyle(
                     color: EmberColors.textMid,
                     fontSize: 12,
@@ -661,7 +660,7 @@ class _DesktopBotbooruWebviewState extends State<DesktopBotbooruWebview> {
                   Divider(color: EmberColors.stroke, height: 1),
                   const SizedBox(height: 8),
                   Text(
-                    'Error: $_initError',
+                    _t('Error: $_initError', 'Error: $_initError'),
                     style: TextStyle(
                       color: EmberColors.textDim,
                       fontSize: 10,
