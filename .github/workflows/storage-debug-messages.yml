@@ -1,0 +1,28 @@
+name: Storage debug messages
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/storage_screen.dart')
+          s=p.read_text()
+          s=s.replace("const SnackBar(\n            content: Text(\n                'No LLM diagnostics logged yet — turn the switch on, then '\n                'reproduce the issue.'),\n          )", "SnackBar(content: Text(AppStrings.of(context).es ? 'Aún no hay diagnósticos LLM registrados; activa el interruptor y luego reproduce el problema.' : 'No LLM diagnostics logged yet — turn the switch on, then reproduce the issue.'))",1)
+          s=s.replace("subject: 'Pyre LLM diagnostics log',", "subject: AppStrings.of(context).es ? 'Registro de diagnósticos LLM de Pyre' : 'Pyre LLM diagnostics log',",1)
+          s=s.replace("SnackBar(content: Text('Could not export diagnostics: $e'))", "SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron exportar los diagnósticos: $e' : 'Could not export diagnostics: $e'))",1)
+          s=s.replace("? 'No LLM diagnostics logged yet.'\n            : 'Copied $bytes B of LLM diagnostics to clipboard.'", "? (AppStrings.of(context).es ? 'Aún no hay diagnósticos LLM registrados.' : 'No LLM diagnostics logged yet.')\n            : (AppStrings.of(context).es ? 'Se copiaron $bytes B de diagnósticos LLM al portapapeles.' : 'Copied $bytes B of LLM diagnostics to clipboard.')",1)
+          s=s.replace("const SnackBar(content: Text('LLM diagnostics log cleared.'))", "SnackBar(content: Text(AppStrings.of(context).es ? 'Registro de diagnósticos LLM borrado.' : 'LLM diagnostics log cleared.'))",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/storage_screen.dart
+          git commit -m 'Localize storage LLM diagnostic messages'
+          git push origin HEAD:spanish-localization
