@@ -1,0 +1,28 @@
+name: Persona avatar unreadable l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          start=s.index('Future<void> _exportPersonaAsPng')
+          end=s.index('Future<void> _exportPersonaAsJson', start)
+          block=s[start:end]
+          a='"Couldn\'t read the avatar image to embed in the card. Try setting a different avatar."'
+          b="AppStrings.of(context).es ? 'No se pudo leer la imagen del avatar para incluirla en la tarjeta. Prueba con otro avatar.' : \"Couldn't read the avatar image to embed in the card. Try setting a different avatar.\""
+          if block.count(a)!=1: raise SystemExit(f'matches {block.count(a)}')
+          block=block.replace(a,b,1)
+          p.write_text(s[:start]+block+s[end:])
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize persona unreadable avatar warning'
+          git push origin HEAD:spanish-localization
