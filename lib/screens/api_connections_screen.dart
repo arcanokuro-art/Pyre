@@ -246,7 +246,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                         ? EmberColors.primary
                                         : EmberColors.textDim,
                                   ),
-                                  tooltip: 'Show in chat quick-swap',
+                                  tooltip: es ? 'Mostrar en cambio rápido del chat' : 'Show in chat quick-swap',
                                   onPressed: () =>
                                       store.toggleChatSwapProvider(p.id),
                                 );
@@ -270,22 +270,20 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                       builder: (dctx) => AlertDialog(
                                         backgroundColor: EmberColors.bgPanel,
                                         title:
-                                            const Text('Delete provider?'),
+                                            Text(es ? '¿Eliminar proveedor?' : 'Delete provider?'),
                                         content: Text(
-                                          'Remove "${p.name}" and its saved '
-                                          'API key from this device? This '
-                                          'can\'t be undone.',
+                                          es ? '¿Quitar "${p.name}" y su clave API guardada de este dispositivo? Esta acción no se puede deshacer.' : 'Remove "${p.name}" and its saved API key from this device? This can\'t be undone.',
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(dctx, false),
-                                            child: const Text('Cancel'),
+                                            child: Text(es ? 'Cancelar' : 'Cancel'),
                                           ),
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(dctx, true),
-                                            child: const Text('Delete',
+                                            child: Text(es ? 'Eliminar' : 'Delete',
                                                 style: TextStyle(
                                                     color: Colors.redAccent)),
                                           ),
@@ -297,15 +295,15 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                     }
                                   }
                                 },
-                                itemBuilder: (_) => const [
+                                itemBuilder: (_) => [
                                   PopupMenuItem(
-                                      value: 'edit', child: Text('Edit')),
+                                      value: 'edit', child: Text(es ? 'Editar' : 'Edit')),
                                   PopupMenuItem(
                                       value: 'duplicate',
-                                      child: Text('Duplicate')),
+                                      child: Text(es ? 'Duplicar' : 'Duplicate')),
                                   PopupMenuItem(
                                       value: 'delete',
-                                      child: Text('Delete',
+                                      child: Text(es ? 'Eliminar' : 'Delete',
                                           style: TextStyle(
                                               color: Colors.redAccent))),
                                 ],
