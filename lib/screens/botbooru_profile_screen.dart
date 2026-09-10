@@ -754,10 +754,7 @@ class _AboutMeSection extends StatelessWidget {
               minLines: 4,
               maxLines: 10,
               decoration: InputDecoration(
-                hintText:
-                    'e.g. "Slice-of-life teacher cards with soft '
-                    'NSFW. I like flawed-but-warm characters and '
-                    'slow-burn pacing."',
+                hintText: es ? 'p. ej. "Tarjetas slice-of-life con personajes imperfectos pero cálidos y un ritmo slow burn."' : 'e.g. "Slice-of-life teacher cards with soft NSFW. I like flawed-but-warm characters and slow-burn pacing."',
                 filled: true,
                 fillColor: EmberColors.bgDeep,
                 isDense: true,
@@ -802,7 +799,7 @@ class _AboutMeSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'ABOUT',
+            es ? 'ACERCA DE MÍ' : 'ABOUT',
             style: TextStyle(
               color: EmberColors.primary,
               fontWeight: FontWeight.w700,
@@ -842,6 +839,7 @@ class _StatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -851,14 +849,14 @@ class _StatsCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(child: _Stat(value: cardsCreated, label: 'cards built')),
+          Expanded(child: _Stat(value: cardsCreated, label: es ? 'tarjetas creadas' : 'cards built')),
           _Divider(),
           Expanded(
-              child: _Stat(value: libraryTotal, label: 'in library')),
+              child: _Stat(value: libraryTotal, label: es ? 'en biblioteca' : 'in library')),
           _Divider(),
-          Expanded(child: _Stat(value: chatsStarted, label: 'chats')),
+          Expanded(child: _Stat(value: chatsStarted, label: es ? 'chats' : 'chats')),
           _Divider(),
-          Expanded(child: _Stat(value: days, label: 'days')),
+          Expanded(child: _Stat(value: days, label: es ? 'días' : 'days')),
         ],
       ),
     );
@@ -941,6 +939,7 @@ class _UsageStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       decoration: BoxDecoration(
@@ -954,7 +953,7 @@ class _UsageStatsCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 2, bottom: 6),
             child: Text(
-              'Usage',
+              es ? 'Uso' : 'Usage',
               style: TextStyle(
                 color: EmberColors.textDim,
                 fontSize: 10,
@@ -967,17 +966,17 @@ class _UsageStatsCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _Stat(
-                    value: userMessages, label: 'messages sent'),
+                    value: userMessages, label: es ? 'mensajes enviados' : 'messages sent'),
               ),
               _Divider(),
               Expanded(
                 child: _Stat(
-                    value: assistantReplies, label: 'replies'),
+                    value: assistantReplies, label: es ? 'respuestas' : 'replies'),
               ),
               _Divider(),
               Expanded(
                 child: _Stat(
-                    value: cardsImported, label: 'imported'),
+                    value: cardsImported, label: es ? 'importadas' : 'imported'),
               ),
               _Divider(),
               // Tokens use a custom label widget so we can render
