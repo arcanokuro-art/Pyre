@@ -1,0 +1,42 @@
+name: Storage wipe final
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/storage_screen.dart')
+          s=p.read_text()
+          old="""        content: const Text(
+          'This permanently deletes all characters, chats, personas, presets, '
+          'lorebooks and API connections. Your settings are kept. '
+          'There is no undo.\\n\\n'
+          'To also wipe settings, use Backup & Restore → Advanced → '
+          'Reset to factory settings.',
+        ),"""
+          new="""        content: Text(AppStrings.of(context).es
+            ? 'Esto elimina permanentemente todos los personajes, chats, personas, preajustes, libros de lore y conexiones API. Tus ajustes se conservan. No se puede deshacer.\\n\\nPara borrar también los ajustes, usa Copia de seguridad y restauración → Avanzado → Restablecer a valores de fábrica.'
+            : 'This permanently deletes all characters, chats, personas, presets, lorebooks and API connections. Your settings are kept. There is no undo.\\n\\nTo also wipe settings, use Backup & Restore → Advanced → Reset to factory settings.'),"""
+          if old not in s: raise SystemExit('dialog body missing')
+          s=s.replace(old,new,1)
+          s=s.replace("child: const Text('Cancel'),", "child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),",1)
+          s=s.replace("child: const Text('Clear'),", "child: Text(AppStrings.of(context).es ? 'Borrar' : 'Clear'),",1)
+          s=s.replace("const SnackBar(content: Text('Library cleared.'))", "SnackBar(content: Text(AppStrings.of(context).es ? 'Biblioteca borrada.' : 'Library cleared.'))",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/storage_screen.dart
+          git commit -m 'Finish storage wipe dialog localization'
+          git push origin HEAD:spanish-localization
