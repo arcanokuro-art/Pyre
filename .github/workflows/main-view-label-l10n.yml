@@ -1,0 +1,24 @@
+name: Main View label l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/main.dart'); s=p.read_text()
+          old="              label: 'View',"
+          new="              label: AppStrings.of(ctx).es ? 'Ver' : 'View',"
+          if old not in s: raise SystemExit('View action missing')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/main.dart
+          git commit -m 'Localize update View action'
+          git push origin HEAD:spanish-localization
