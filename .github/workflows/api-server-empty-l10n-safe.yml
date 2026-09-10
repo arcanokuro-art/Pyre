@@ -1,0 +1,34 @@
+name: API server empty state safe
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          pos=s.index('Widget _serverBackedBody'); h=s[:pos]; t=s[pos:]
+          for a,b in [
+            ("title: 'Connect an AI provider',", "title: AppStrings.of(context).es ? 'Conecta un proveedor de IA' : 'Connect an AI provider',"),
+            ("ctaLabel: 'Add a provider',", "ctaLabel: AppStrings.of(context).es ? 'Añadir un proveedor' : 'Add a provider',")]:
+            if a not in t: raise SystemExit(a)
+            t=t.replace(a,b,1)
+          a="""subtitle:
+                  'This server has no AI yet. Add one (OpenRouter has free '
+                  'models to start) and paste its API key — it\\'s saved on the '
+                  'server for every device that connects.',"""
+          b="""subtitle: AppStrings.of(context).es ? 'Este servidor todavía no tiene IA. Añade un proveedor (OpenRouter tiene modelos gratuitos para empezar) y pega su clave API; se guardará en el servidor para todos los dispositivos que se conecten.' : 'This server has no AI yet. Add one (OpenRouter has free models to start) and paste its API key — it\\'s saved on the server for every device that connects.',"""
+          if a not in t: raise SystemExit('subtitle')
+          t=t.replace(a,b,1)
+          p.write_text(h+t)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize server empty state'
+          git push origin HEAD:spanish-localization
