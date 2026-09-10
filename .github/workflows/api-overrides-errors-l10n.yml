@@ -1,0 +1,61 @@
+name: API overrides and connection errors l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          old="""              'By default every call uses your active chat provider. Pin a '
+              'different one here for the Creator or for image analysis — '
+              'e.g. DeepSeek for chat and creator text, Qwen-VL only for '
+              'vision. Vision falls back to creator → chat.',"""
+          new="""              AppStrings.of(context).es
+                  ? 'De forma predeterminada, cada llamada usa tu proveedor de chat activo. Puedes fijar aquí uno diferente para el Creador o para el análisis de imágenes; por ejemplo, DeepSeek para chat y texto del creador, y Qwen-VL solo para visión. Visión recurre a creador → chat.'
+                  : 'By default every call uses your active chat provider. Pin a different one here for the Creator or for image analysis — e.g. DeepSeek for chat and creator text, Qwen-VL only for vision. Vision falls back to creator → chat.',"""
+          if s.count(old)!=1: raise SystemExit('override paragraph mismatch')
+          s=s.replace(old,new,1)
+          old2="""            const Padding(
+              padding: EdgeInsets.only(bottom: 4),
+              child: Text(
+                'VISION',
+                style: TextStyle("""
+          new2="""            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                AppStrings.of(context).es ? 'VISIÓN' : 'VISION',
+                style: const TextStyle("""
+          if s.count(old2)!=1: raise SystemExit('vision heading mismatch')
+          s=s.replace(old2,new2,1)
+          old3="""    messenger.showSnackBar(const SnackBar(
+        content: Text('You changed the host — enter a different API key (or '
+            'clear it) before testing. Your saved key is never sent to a new '
+            'host.')));"""
+          new3="""    messenger.showSnackBar(SnackBar(
+        content: Text(AppStrings.of(context).es
+            ? 'Cambiaste el host: introduce una clave API diferente (o bórrala) antes de probar. Tu clave guardada nunca se envía a un host nuevo.'
+            : 'You changed the host — enter a different API key (or clear it) before testing. Your saved key is never sent to a new host.')));"""
+          if s.count(old3)!=1: raise SystemExit('host warning mismatch')
+          s=s.replace(old3,new3,1)
+          old4="""    messenger.showSnackBar(SnackBar(
+        content: Text('Couldn\\'t reach the server — check the URL and your '
+            'connection. ($e)')));"""
+          new4="""    messenger.showSnackBar(SnackBar(
+        content: Text(AppStrings.of(context).es
+            ? 'No se pudo contactar con el servidor; comprueba la URL y tu conexión. ($e)'
+            : 'Couldn\\'t reach the server — check the URL and your connection. ($e)')));"""
+          if s.count(old4)!=1: raise SystemExit('network error mismatch')
+          s=s.replace(old4,new4,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API overrides and connection errors'
+          git push origin HEAD:spanish-localization
