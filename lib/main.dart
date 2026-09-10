@@ -316,7 +316,7 @@ Future<void> _scheduleUpdateCheck(AppStore store) async {
       action: info.url.isEmpty
           ? null
           : SnackBarAction(
-              label: 'View',
+              label: AppStrings.of(ctx).es ? 'Ver' : 'View',
               onPressed: () async {
                 store.dismissUpdate(info.latestVersion);
                 final uri = Uri.tryParse(info.url);
