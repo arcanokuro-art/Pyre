@@ -1,0 +1,29 @@
+name: API fallback simple lines
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          a="? 'On — if a provider fails or refuses, Pyre offers the '"
+          b="? (AppStrings.of(context).es ? 'Activado — si un proveedor falla o rechaza la solicitud, Pyre ofrece el siguiente.' : 'On — if a provider fails or refuses, Pyre offers the next one.') //"
+          if a not in s: raise SystemExit('on line missing')
+          s=s.replace(a,b,1)
+          a=": 'Off — a failed reply just surfaces the error.',"
+          b=": (AppStrings.of(context).es ? 'Desactivado — una respuesta fallida simplemente muestra el error.' : 'Off — a failed reply just surfaces the error.'),"
+          if a not in s: raise SystemExit('off line missing')
+          s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize fallback status lines'
+          git push origin HEAD:spanish-localization
