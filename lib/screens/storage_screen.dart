@@ -456,22 +456,18 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
       if (files.isEmpty) {
         if (!mounted) return;
         messenger.showSnackBar(
-          const SnackBar(
-            content: Text(
-                'No LLM diagnostics logged yet — turn the switch on, then '
-                'reproduce the issue.'),
-          ),
+          SnackBar(content: Text(AppStrings.of(context).es ? 'Aún no hay diagnósticos LLM registrados; activa el interruptor y luego reproduce el problema.' : 'No LLM diagnostics logged yet — turn the switch on, then reproduce the issue.')),
         );
         return;
       }
       await Share.shareXFiles(
         [for (final f in files) XFile(f.path)],
-        subject: 'Pyre LLM diagnostics log',
+        subject: AppStrings.of(context).es ? 'Registro de diagnósticos LLM de Pyre' : 'Pyre LLM diagnostics log',
       );
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not export diagnostics: $e')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron exportar los diagnósticos: $e' : 'Could not export diagnostics: $e')),
       );
     }
   }
@@ -483,8 +479,8 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
     messenger.showSnackBar(
       SnackBar(
         content: Text(bytes == 0
-            ? 'No LLM diagnostics logged yet.'
-            : 'Copied $bytes B of LLM diagnostics to clipboard.'),
+            ? (AppStrings.of(context).es ? 'Aún no hay diagnósticos LLM registrados.' : 'No LLM diagnostics logged yet.')
+            : (AppStrings.of(context).es ? 'Se copiaron $bytes B de diagnósticos LLM al portapapeles.' : 'Copied $bytes B of LLM diagnostics to clipboard.')),
         duration: const Duration(seconds: 3),
       ),
     );
@@ -495,7 +491,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
     await LlmDebugLog.instance.clear();
     if (!mounted) return;
     messenger.showSnackBar(
-      const SnackBar(content: Text('LLM diagnostics log cleared.')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Registro de diagnósticos LLM borrado.' : 'LLM diagnostics log cleared.')),
     );
   }
 
