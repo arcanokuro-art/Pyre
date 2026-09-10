@@ -2695,10 +2695,10 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
               );
             },
           ),
-          _menuSectionLabel('Export'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Exportar' : 'Export'),
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Export as PNG card'),
+            title: Text(AppStrings.of(context).es ? 'Exportar como tarjeta PNG' : 'Export as PNG card'),
             onTap: () async {
               Navigator.pop(sheet);
               await _exportCharacterAsPng(context, c);
@@ -2708,22 +2708,22 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
           // no avatar required, so an avatarless card can still be shared.
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Export as JSON card'),
+            title: Text(AppStrings.of(context).es ? 'Exportar como tarjeta JSON' : 'Export as JSON card'),
             onTap: () async {
               Navigator.pop(sheet);
               await _exportCharacterAsJson(context, c);
             },
           ),
-          _menuSectionLabel('Library'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Biblioteca' : 'Library'),
           // Wave CY.18.38: "Add to folder" via a sub-sheet listing the
           // user's folders + a "create new" option.
           ListTile(
             leading: const Icon(Icons.folder_open_outlined),
-            title: const Text('Add to folder…'),
+            title: Text(AppStrings.of(context).es ? 'Añadir a carpeta…' : 'Add to folder…'),
             subtitle: folderNames.isEmpty
                 ? null
                 : Text(
-                    'In: ${folderNames.join(", ")}',
+                    AppStrings.of(context).es ? 'En: ${folderNames.join(", ")}' : 'In: ${folderNames.join(", ")}',
                     style: TextStyle(
                         color: EmberColors.textMid, fontSize: 12),
                     maxLines: 1,
@@ -2750,15 +2750,16 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
           ListTile(
             leading: Icon(Icons.delete_outline,
                 color: EmberColors.danger),
-            title: Text('Delete character',
+            title: Text(AppStrings.of(context).es ? 'Eliminar personaje' : 'Delete character',
                 style: TextStyle(color: EmberColors.danger)),
             onTap: () async {
               Navigator.pop(sheet);
               final ok = await confirmDelete(
                 context,
-                title: 'Delete "${c.name}"?',
-                message:
-                    'The character and every chat with them will be lost forever.',
+                title: AppStrings.of(context).es ? '¿Eliminar "${c.name}"?' : 'Delete "${c.name}"?',
+                message: AppStrings.of(context).es
+                    ? 'El personaje y todos sus chats se perderán para siempre.'
+                    : 'The character and every chat with them will be lost forever.',
               );
               if (!ok) return;
               store.removeCharacter(c.id);
