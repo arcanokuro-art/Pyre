@@ -453,8 +453,8 @@ class _AdvancedFallbackTile extends StatelessWidget {
         children: [
           ListTile(
             leading: Icon(Icons.alt_route, color: EmberColors.textMid),
-            title: const Text('Smart provider fallback',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            title: Text(AppStrings.of(context).es ? 'Cambio inteligente de proveedor' : 'Smart provider fallback',
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             subtitle: Text(
               on
                   ? 'On — if a provider fails or refuses, Pyre offers the '
@@ -478,8 +478,8 @@ class _AdvancedFallbackTile extends StatelessWidget {
           SwitchListTile(
             secondary:
                 Icon(Icons.play_circle_outline, color: EmberColors.textMid),
-            title: const Text('Background generation',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            title: Text(AppStrings.of(context).es ? 'Generación en segundo plano' : 'Background generation',
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             subtitle: Text(
               store.uiPrefs.backgroundGeneration
                   ? 'On — replies keep generating if you switch apps '
