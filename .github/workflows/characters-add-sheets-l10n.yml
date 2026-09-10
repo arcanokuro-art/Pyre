@@ -1,0 +1,31 @@
+name: Characters add sheets l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          pairs=[
+          ("title: const Text('Build with AI assistant'),","title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),"),
+          ("title: const Text('Create manually'),","title: Text(AppStrings.of(context).es ? 'Crear manualmente' : 'Create manually'),"),
+          ("title: const Text('Import from JSON'),","title: Text(AppStrings.of(context).es ? 'Importar desde JSON' : 'Import from JSON'),"),
+          ("title: const Text('Import from file'),","title: Text(AppStrings.of(context).es ? 'Importar desde archivo' : 'Import from file'),"),
+          ]
+          # first two occur twice; replace all intentionally
+          for old,new in pairs:
+            if old not in s: raise SystemExit('missing '+old)
+            s=s.replace(old,new)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize library add menu actions'
+          git push origin HEAD:spanish-localization
