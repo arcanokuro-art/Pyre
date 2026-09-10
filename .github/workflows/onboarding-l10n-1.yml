@@ -1,0 +1,34 @@
+name: Onboarding l10n 1
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/onboarding_screen.dart'); s=p.read_text()
+          s=s.replace("import '../state/app_store.dart';", "import '../state/app_store.dart';\nimport '../l10n/app_strings.dart';",1)
+          s=s.replace('  Widget build(BuildContext context) {\n    return Scaffold(', '  Widget build(BuildContext context) {\n    final es = AppStrings.of(context).es;\n    return Scaffold(',1)
+          s=s.replace("const Text(\n                'Welcome to Pyre',", "Text(\n                es ? 'Bienvenido a Pyre' : 'Welcome to Pyre',",1)
+          s=s.replace("'A powerful, private roleplay frontend. You bring the AI — '\n                'Pyre is the interface.',", "es ? 'Una interfaz potente y privada para roleplay. Tú eliges la IA; Pyre es la interfaz.' : 'A powerful, private roleplay frontend. You bring the AI — Pyre is the interface.',",1)
+          s=s.replace("'Bring your own key',", "es ? 'Usa tu propia clave' : 'Bring your own key',",1)
+          s=s.replace("'Pyre talks directly to the AI provider you choose. '\n                          'No middle-man server.',", "es ? 'Pyre se comunica directamente con el proveedor de IA que elijas. No hay ningún servidor intermediario.' : 'Pyre talks directly to the AI provider you choose. No middle-man server.',",1)
+          s=s.replace("'Your data stays on this device',", "es ? 'Tus datos permanecen en este dispositivo' : 'Your data stays on this device',",1)
+          s=s.replace("'Built for roleplay',", "es ? 'Creado para roleplay' : 'Built for roleplay',",1)
+          s=s.replace("'Discover marketplace',", "es ? 'Explora el catálogo' : 'Discover marketplace',",1)
+          s=s.replace("'Power tools',", "es ? 'Herramientas avanzadas' : 'Power tools',",1)
+          s=s.replace("'Set up once, you\\'re good',", "es ? 'Configúralo una vez y listo' : 'Set up once, you\\'re good',",1)
+          s=s.replace(": const Text('Get started',\n                            style: TextStyle(fontSize: 15)),", ": Text(es ? 'Comenzar' : 'Get started',\n                            style: const TextStyle(fontSize: 15)),",1)
+          s=s.replace("'By continuing, you accept the Terms of Use and Privacy '\n                'Policy.',", "es ? 'Al continuar, aceptas los Términos de uso y la Política de privacidad.' : 'By continuing, you accept the Terms of Use and Privacy Policy.',",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/onboarding_screen.dart
+          git commit -m 'Localize onboarding primary content'
+          git push origin HEAD:spanish-localization
