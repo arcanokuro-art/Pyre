@@ -1,0 +1,33 @@
+name: Storage dialogs l10n
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/storage_screen.dart')
+          s=p.read_text()
+          s=s.replace("? 'Error log is empty — no crashes recorded.'\n              : 'Copied $bytes B of error log to clipboard.'", "? (AppStrings.of(context).es ? 'El registro de errores está vacío; no se registraron fallos.' : 'Error log is empty — no crashes recorded.')\n              : (AppStrings.of(context).es ? 'Se copiaron $bytes B del registro de errores al portapapeles.' : 'Copied $bytes B of error log to clipboard.')", 1)
+          s=s.replace("const SnackBar(\n            content:\n                Text('Error log is empty — no crashes recorded.'),\n          )", "SnackBar(content: Text(AppStrings.of(context).es ? 'El registro de errores está vacío; no se registraron fallos.' : 'Error log is empty — no crashes recorded.'))", 1)
+          s=s.replace("subject: 'Pyre error log',", "subject: AppStrings.of(context).es ? 'Registro de errores de Pyre' : 'Pyre error log',", 1)
+          s=s.replace("SnackBar(content: Text('Could not share log: $e'))", "SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudo compartir el registro: $e' : 'Could not share log: $e'))", 1)
+          s=s.replace("title: const Text('Clear library?'),", "title: Text(AppStrings.of(context).es ? '¿Borrar biblioteca?' : 'Clear library?'),", 1)
+          s=s.replace("TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel'))", "TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'))", 1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/storage_screen.dart
+          git commit -m 'Localize storage logs and wipe dialog'
+          git push origin HEAD:spanish-localization
