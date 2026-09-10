@@ -516,18 +516,16 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     if (!_include.contains(_catProviders)) return true;
     return confirmDelete(
       context,
-      title: 'Export with API keys?',
-      message:
-          'The backup will contain your bearer tokens in plain text. Anyone who gets this file can spend on your provider accounts. Continue?',
-      confirmLabel: 'Export anyway',
+      title: AppStrings.of(context).es ? '¿Exportar con claves API?' : 'Export with API keys?',
+      message: AppStrings.of(context).es ? 'La copia de seguridad contendrá tus tokens de acceso en texto sin formato. Cualquier persona que obtenga este archivo podría generar cargos en tus cuentas de proveedores. ¿Continuar?' : 'The backup will contain your bearer tokens in plain text. Anyone who gets this file can spend on your provider accounts. Continue?',
+      confirmLabel: AppStrings.of(context).es ? 'Exportar de todos modos' : 'Export anyway',
     );
   }
 
   /// Wave CY.18.169: block an export with nothing selected.
   bool _ensureSelection(BuildContext context) {
     if (_include.isNotEmpty) return true;
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Pick at least one category to back up.')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Selecciona al menos una categoría para incluir en la copia.' : 'Pick at least one category to back up.')));
     return false;
   }
 
@@ -544,8 +542,8 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       SnackBar(
         content: Text(
           _include.contains(_catProviders)
-              ? 'Copied — backup includes API keys.'
-              : 'Copied — backup is key-free.',
+              ? (AppStrings.of(context).es ? 'Copiado; la copia incluye claves API.' : 'Copied — backup includes API keys.')
+              : (AppStrings.of(context).es ? 'Copiado; la copia no incluye claves API.' : 'Copied — backup is key-free.'),
         ),
       ),
     );
@@ -579,7 +577,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         downloadBytesToBrowser(
             utf8.encode(json), filename, 'application/json');
         messenger.showSnackBar(
-          SnackBar(content: Text('Downloading $filename')),
+          SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
         );
         return;
       }
@@ -622,7 +620,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         } catch (_) {/* best-effort */}
       }
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Share failed: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Error al compartir: $e' : 'Share failed: $e')));
     }
   }
 
@@ -670,7 +668,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         ),
       );
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Save failed: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Error al guardar: $e' : 'Save failed: $e')));
     }
   }
 
