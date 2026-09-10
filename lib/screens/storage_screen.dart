@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/app_strings.dart';
 import '../services/error_log.dart';
 import '../services/llm_debug_log.dart';
 import 'llm_debug_log_viewer_screen.dart';
@@ -42,6 +43,8 @@ class _StorageScreenState extends State<StorageScreen> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
+    final es = AppStrings.of(context).es;
+    String t(String spanish, String english) => es ? spanish : english;
     final used = _bytes == null ? '…' : _fmtBytes(_bytes!);
     final loadResult = JsonStorage.lastLoad;
     final loadErrors = store.loadErrors;
@@ -52,7 +55,7 @@ class _StorageScreenState extends State<StorageScreen> {
     final secureKeyErrors = List<String>.from(SecureKeys.lastErrors);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Storage')),
+      appBar: AppBar(title: Text(t('Almacenamiento', 'Storage'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -86,10 +89,10 @@ class _StorageScreenState extends State<StorageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Local data',
+                  Text(t('Datos locales', 'Local data'),
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  Text('$used used (main + rotated backups)',
+                  Text(t('$used usados (principal + copias rotativas)', '$used used (main + rotated backups)'),
                       style:
                           TextStyle(color: EmberColors.textMid)),
                 ],
@@ -99,7 +102,7 @@ class _StorageScreenState extends State<StorageScreen> {
           const SizedBox(height: 8),
           _StatTile(
             icon: Icons.person_outline,
-            label: 'Characters',
+            label: t('Personajes', 'Characters'),
             value: store.characters.length.toString(),
           ),
           _StatTile(
@@ -114,17 +117,17 @@ class _StorageScreenState extends State<StorageScreen> {
           ),
           _StatTile(
             icon: Icons.menu_book_outlined,
-            label: 'Lorebooks',
+            label: t('Libros de lore', 'Lorebooks'),
             value: store.lorebooks.length.toString(),
           ),
           _StatTile(
             icon: Icons.layers_outlined,
-            label: 'Presets (visible)',
+            label: t('Preajustes (visibles)', 'Presets (visible)'),
             value: store.visiblePresets.length.toString(),
           ),
           _StatTile(
             icon: Icons.api,
-            label: 'Providers',
+            label: t('Proveedores', 'Providers'),
             value: store.providers.length.toString(),
           ),
           const SizedBox(height: 16),
@@ -138,7 +141,7 @@ class _StorageScreenState extends State<StorageScreen> {
             icon: Icon(Icons.save_outlined,
                 color: EmberColors.primary),
             label: Text(
-              'Save snapshot now',
+              t('Guardar instantánea ahora', 'Save snapshot now'),
               style: TextStyle(color: EmberColors.primary),
             ),
             style: OutlinedButton.styleFrom(
@@ -159,13 +162,11 @@ class _StorageScreenState extends State<StorageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Diagnostics',
+                  Text(t('Diagnósticos', 'Diagnostics'),
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                   Text(
-                    'Crashes and uncaught exceptions are logged to a '
-                    'file on this device only. Nothing leaves your '
-                    'phone unless you tap one of the buttons below.',
+                    t('Los fallos y las excepciones no controladas se registran únicamente en un archivo de este dispositivo. Nada sale de tu dispositivo a menos que pulses uno de los botones de abajo.', 'Crashes and uncaught exceptions are logged to a file on this device only. Nothing leaves your phone unless you tap one of the buttons below.'),
                     style: TextStyle(
                       color: EmberColors.textMid,
                       fontSize: 12,
@@ -181,7 +182,7 @@ class _StorageScreenState extends State<StorageScreen> {
                         icon: Icon(Icons.copy_outlined,
                             color: EmberColors.primary, size: 18),
                         label: Text(
-                          'Copy error log',
+                          t('Copiar registro de errores', 'Copy error log'),
                           style:
                               TextStyle(color: EmberColors.primary),
                         ),
@@ -195,7 +196,7 @@ class _StorageScreenState extends State<StorageScreen> {
                         icon: Icon(Icons.ios_share,
                             color: EmberColors.primary, size: 18),
                         label: Text(
-                          'Share error log',
+                          t('Compartir registro de errores', 'Share error log'),
                           style:
                               TextStyle(color: EmberColors.primary),
                         ),
@@ -209,7 +210,7 @@ class _StorageScreenState extends State<StorageScreen> {
                         icon: Icon(Icons.delete_sweep_outlined,
                             color: EmberColors.textMid, size: 18),
                         label: Text(
-                          'Clear log',
+                          t('Borrar registro', 'Clear log'),
                           style: TextStyle(color: EmberColors.textMid),
                         ),
                         style: OutlinedButton.styleFrom(
@@ -248,16 +249,13 @@ class _StorageScreenState extends State<StorageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Clear library',
+                  Text(
+                    t('Borrar biblioteca', 'Clear library'),
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Removes every character, chat, persona, preset, lorebook '
-                    'and API connection stored on this device. '
-                    'Your settings (temperature, chat behaviour, etc.) are kept. '
-                    'There is no undo.\n\n'
+                    t('Elimina todos los personajes, chats, personas, preajustes, libros de lore y conexiones API almacenados en este dispositivo. Tus ajustes (temperatura, comportamiento del chat, etc.) se conservan. No se puede deshacer.\n\n', 'Removes every character, chat, persona, preset, lorebook and API connection stored on this device. Your settings (temperature, chat behaviour, etc.) are kept. There is no undo.\n\n')
                     'For a full factory reset that also wipes settings, '
                     'use Backup & Restore → Advanced → Reset to factory settings.',
                     style: TextStyle(
