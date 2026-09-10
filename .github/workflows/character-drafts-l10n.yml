@@ -1,0 +1,31 @@
+name: Character drafts l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          pairs=[
+          ("                  'Resume a draft or start fresh',","                  AppStrings.of(context).es ? 'Continuar un borrador o empezar de cero' : 'Resume a draft or start fresh',"),
+          ("                      ? '(unnamed draft)'","                      ? (AppStrings.of(context).es ? '(borrador sin nombre)' : '(unnamed draft)')"),
+          ("                          title: const Text('Delete draft?'),","                          title: Text(AppStrings.of(context).es ? '¿Eliminar borrador?' : 'Delete draft?'),"),
+          ("                              child: const Text('Cancel'),","                              child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),"),
+          ("                              child: const Text('Delete'),","                              child: Text(AppStrings.of(context).es ? 'Eliminar' : 'Delete'),"),
+          ]
+          for old,new in pairs:
+            if old not in s: raise SystemExit('missing '+old)
+            s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize character draft chooser'
+          git push origin HEAD:spanish-localization
