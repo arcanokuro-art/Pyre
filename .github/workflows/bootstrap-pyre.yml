@@ -22,6 +22,7 @@ jobs:
           set -e
           git clone --depth 1 https://github.com/devemberteam-ops/Pyre.git /tmp/original-pyre
           rm -rf /tmp/original-pyre/.git
+          rm -rf /tmp/original-pyre/.github/workflows
 
       - name: Copy original project
         run: |
