@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/models.dart';
 import '../services/capped_fetch.dart';
 import '../services/card_import.dart';
@@ -111,6 +112,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
     // defeating the gate — so the screen reads the store instead and lets the
     // gate govern its rebuilds.
     final store = context.read<AppStore>();
+    final es = AppStrings.of(context).es;
     // 2026-07-03 (Gui): Lorebooks moved out of More into this library —
     // they're content like characters and personas, not a setting.
     final segment = switch (store.uiPrefs.charactersSegment) {
@@ -127,15 +129,15 @@ class _CharactersScreenState extends State<CharactersScreen> {
       appBar: AppBar(
         title: Text(switch (segment) {
           1 => 'Personas',
-          2 => 'Lorebooks',
-          _ => 'Characters',
+          2 => es ? 'Libros de lore' : 'Lorebooks',
+          _ => es ? 'Personajes' : 'Characters',
         }),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: ElevatedButton.icon(
               icon: const Icon(Icons.add, size: 16),
-              label: const Text('Create'),
+              label: Text(es ? 'Crear' : 'Create'),
               onPressed: () => _onAdd(context, segment),
             ),
           ),
@@ -147,9 +149,9 @@ class _CharactersScreenState extends State<CharactersScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: SegmentedButton<int>(
               segments: [
-                ButtonSegment(value: 0, label: Text('Characters ($charCount)')),
+                ButtonSegment(value: 0, label: Text('${es ? 'Personajes' : 'Characters'} ($charCount)')),
                 ButtonSegment(value: 1, label: Text('Personas ($personaCount)')),
-                ButtonSegment(value: 2, label: Text('Lorebooks ($loreCount)')),
+                ButtonSegment(value: 2, label: Text('${es ? 'Libros de lore' : 'Lorebooks'} ($loreCount)')),
               ],
               selected: {segment},
               showSelectedIcon: false,
@@ -182,9 +184,9 @@ class _CharactersScreenState extends State<CharactersScreen> {
               focusNode: _searchFocus,
               decoration: InputDecoration(
                 hintText: switch (segment) {
-                  1 => 'Search Persona',
-                  2 => 'Search Lorebook',
-                  _ => 'Search Character',
+                  1 => es ? 'Buscar persona' : 'Search Persona',
+                  2 => es ? 'Buscar libro de lore' : 'Search Lorebook',
+                  _ => es ? 'Buscar personaje' : 'Search Character',
                 },
                 prefixIcon: const Icon(Icons.search, size: 18),
                 isDense: true,
