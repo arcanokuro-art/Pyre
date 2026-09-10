@@ -561,9 +561,9 @@ class _CreatorProviderCard extends StatelessWidget {
                     horizontal: 12, vertical: 8),
               ),
               items: [
-                const DropdownMenuItem<String?>(
+                DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('Same as chat provider'),
+                  child: Text(AppStrings.of(context).es ? 'Igual que el proveedor de chat' : 'Same as chat provider'),
                 ),
                 for (final p in store.providers)
                   DropdownMenuItem<String?>(
