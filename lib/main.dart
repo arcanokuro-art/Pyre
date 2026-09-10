@@ -487,22 +487,7 @@ void _scheduleImport(AppStore store, String input, Uri cleanedHomeUri) {
       await externalizeCharacterImages(character);
       store.addCharacter(character);
       store.setActiveTab('characters');
-    } catch (e) {
-      final ctx = await _waitForNavContext();
-      if (ctx != null && ctx.mounted) {
-        final es = AppStrings.of(ctx).es;
-        final raw = e.toString();
-        final msg = raw.contains('link redirected to another address')
-            ? (es ? 'No se pudo importar: el enlace redirigió a otra dirección.' : "Couldn't import — the link redirected to another address.")
-            : raw.contains('file is too large')
-                ? (es ? 'No se pudo importar: el archivo es demasiado grande.' : "Couldn't import — file is too large.")
-                : (es ? 'No se pudo importar la tarjeta.' : "Couldn't import the card.");
-        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-          content: Text(msg),
-          duration: const Duration(seconds: 5),
-        ));
-      }
-    }
+    } catch (_) {/* swallow — UI still works */}
   });
 }
 
