@@ -3247,10 +3247,9 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                       final ok = await confirmDelete(
                                         context,
                                         title: AppStrings.of(sheetCtx).es ? '¿Eliminar la carpeta "${f.name}"?' : 'Delete folder "${f.name}"?',
-                                        message:
-                                            'Characters in this folder stay '
-                                            'in your library. Only the '
-                                            'folder grouping is removed.',
+                                        message: AppStrings.of(sheetCtx).es
+                                            ? 'Los personajes de esta carpeta permanecerán en tu biblioteca. Solo se eliminará la agrupación de la carpeta.'
+                                            : 'Characters in this folder stay in your library. Only the folder grouping is removed.',
                                       );
                                       if (ok) {
                                         store.deleteFolder(f.id);
@@ -3258,13 +3257,13 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                       }
                                     }
                                   },
-                                  itemBuilder: (_) => const [
+                                  itemBuilder: (_) => [
                                     PopupMenuItem(
                                         value: 'rename',
-                                        child: Text('Rename')),
+                                        child: Text(AppStrings.of(sheetCtx).es ? 'Renombrar' : 'Rename')),
                                     PopupMenuItem(
                                         value: 'delete',
-                                        child: Text('Delete')),
+                                        child: Text(AppStrings.of(sheetCtx).es ? 'Eliminar' : 'Delete')),
                                   ],
                                 ),
                               ],
