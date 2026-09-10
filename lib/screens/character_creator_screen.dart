@@ -815,9 +815,7 @@ class _HowItWorksCard extends StatelessWidget {
         // Your additions — keeping the help text in sync.
         HowItWorksSection(es ? 'Tus añadidos' : 'Your additions', [
           HowItWorksBlock.paragraph(
-              'The text box higher up on this screen is appended to '
-              'every Creator session\'s system prompt as hard '
-              'rules.'),
+              es ? 'El cuadro de texto de arriba se añade al prompt de sistema de cada sesión del Creador como reglas obligatorias.' : 'The text box higher up on this screen is appended to every Creator session\'s system prompt as hard rules.'),
           HowItWorksBlock.bullet(
               'Custom architect behaviour you want enforced — '
               '"always respond in Brazilian Portuguese", "keep '
@@ -825,7 +823,7 @@ class _HowItWorksCard extends StatelessWidget {
               'scenarios to anime high-school". These override the '
               'architect\'s defaults.'),
           HowItWorksBlock.bullet(
-              'Leave it empty and the base prompt runs unchanged.'),
+              es ? 'Déjalo vacío y el prompt base se ejecutará sin cambios.' : 'Leave it empty and the base prompt runs unchanged.'),
           HowItWorksBlock.paragraph(
               'Your Profile "About Me" is NOT sent to the architect '
               '— it\'s a local bio on the Profile screen, not a '
@@ -835,27 +833,13 @@ class _HowItWorksCard extends StatelessWidget {
         // 5. Attach buttons.
         HowItWorksSection(es ? 'Botones para adjuntar' : 'Attach buttons', [
           HowItWorksBlock.paragraph(
-              'In the input bar you have three icons before the text '
-              'field:'),
+              es ? 'En la barra de entrada tienes tres iconos antes del campo de texto:' : 'In the input bar you have three icons before the text field:'),
           HowItWorksBlock.bullet(
-              '**Image** — pick a reference picture. The vision '
-              'model describes what the character (or characters, '
-              'or setting) looks like in clinical detail, then the '
-              'architect uses that profile as authoritative context. '
-              'Requires a vision-capable provider — Qwen 3.6 Plus '
-              'Uncensored on Venice or NanoGPT is the pick.'),
+              es ? '**Imagen** — selecciona una imagen de referencia. El modelo de visión describe detalladamente el aspecto del personaje, personajes o escenario, y el arquitecto usa ese perfil como contexto de referencia. Requiere un proveedor compatible con visión.' : '**Image** — pick a reference picture. The vision model describes what the character (or characters, or setting) looks like in clinical detail, then the architect uses that profile as authoritative context. Requires a vision-capable provider — Qwen 3.6 Plus Uncensored on Venice or NanoGPT is the pick.'),
           HowItWorksBlock.bullet(
-              '**Character card** — pick a chara_card_v2 PNG or '
-              'JSON. The full metadata is injected into the '
-              'conversation so you can edit an existing card or use '
-              'it as a reference ("make me a card like this one but '
-              'darker").'),
+              es ? '**Tarjeta de personaje** — selecciona un PNG o JSON chara_card_v2. Los metadatos completos se incorporan a la conversación para que puedas editar una tarjeta existente o usarla como referencia.' : '**Character card** — pick a chara_card_v2 PNG or JSON. The full metadata is injected into the conversation so you can edit an existing card or use it as a reference ("make me a card like this one but darker").'),
           HowItWorksBlock.bullet(
-              '**Document** — pick a TXT, MD, or PDF. The full '
-              'text is injected (no truncation). Useful for world '
-              'lore, background docs, "here\'s the setting, build me '
-              'an NPC that fits". PDFs that are scanned images '
-              'won\'t work — no OCR yet.'),
+              es ? '**Documento** — selecciona un TXT, MD o PDF. Se incorpora el texto completo, sin recortarlo. Es útil para lore del mundo y documentos de contexto. Los PDF que sean imágenes escaneadas no funcionan todavía porque no hay OCR.' : '**Document** — pick a TXT, MD, or PDF. The full text is injected (no truncation). Useful for world lore, background docs, "here\'s the setting, build me an NPC that fits". PDFs that are scanned images won\'t work — no OCR yet.'),
         ]),
 
         // 6. After the card is built.
