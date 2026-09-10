@@ -431,7 +431,7 @@ Future<void> _pickAndImportPersona(BuildContext context) async {
     await externalizePersonaImages(persona);
     store.addPersona(persona);
     messenger.showSnackBar(
-      SnackBar(content: Text('Imported persona "${persona.name}"')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Persona "${persona.name}" importada' : 'Imported persona "${persona.name}"')),
     );
   } catch (e) {
     messenger.showSnackBar(
