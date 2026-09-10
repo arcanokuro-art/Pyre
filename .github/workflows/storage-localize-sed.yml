@@ -1,0 +1,49 @@
+name: Storage localize minimal
+on:
+  push:
+    branches: [spanish-localization]
+    paths: [.github/workflows/storage-localize-sed.yml]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - name: Patch storage screen
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/storage_screen.dart')
+          s=p.read_text()
+          R={
+          "'Clear library',\n                      style: TextStyle(color: EmberColors.danger)":"t('Borrar biblioteca', 'Clear library'),\n                      style: TextStyle(color: EmberColors.danger)",
+          "const SnackBar(content: Text('Library cleared.'))":"SnackBar(content: Text(AppStrings.of(context).es ? 'Biblioteca borrada.' : 'Library cleared.'))",
+          "const SnackBar(content: Text('Error log cleared.'))":"SnackBar(content: Text(AppStrings.of(context).es ? 'Registro de errores borrado.' : 'Error log cleared.'))",
+          "title: const Text('Clear library?')":"title: Text(AppStrings.of(context).es ? '¿Borrar biblioteca?' : 'Clear library?')",
+          "child: const Text('Cancel')":"child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel')",
+          "child: const Text('Clear')":"child: Text(AppStrings.of(context).es ? 'Borrar' : 'Clear')",
+          "const Text('Developer',":"Text(AppStrings.of(context).es ? 'Desarrollador' : 'Developer',",
+          "title: const Text('Log raw LLM calls (debug)')":"title: Text(AppStrings.of(context).es ? 'Registrar llamadas LLM sin procesar (depuración)' : 'Log raw LLM calls (debug)')",
+          "label: const Text('View log')":"label: Text(AppStrings.of(context).es ? 'Ver registro' : 'View log')",
+          "'Export logs',":"AppStrings.of(context).es ? 'Exportar registros' : 'Export logs',",
+          "'Copy logs',":"AppStrings.of(context).es ? 'Copiar registros' : 'Copy logs',",
+          "'Clear logs',":"AppStrings.of(context).es ? 'Borrar registros' : 'Clear logs',",
+          "'Per-collection issues:'":"AppStrings.of(context).es ? 'Problemas por colección:' : 'Per-collection issues:'",
+          "'API key storage errors'":"AppStrings.of(context).es ? 'Errores de almacenamiento de claves API' : 'API key storage errors'",
+          "'Dismiss'":"AppStrings.of(context).es ? 'Descartar' : 'Dismiss'",
+          "'Recent failures:'":"AppStrings.of(context).es ? 'Fallos recientes:' : 'Recent failures:'",
+          "'…and ${errors.length - 8} more'":"AppStrings.of(context).es ? '…y ${errors.length - 8} más' : '…and ${errors.length - 8} more'",
+          }
+          for a,b in R.items(): s=s.replace(a,b)
+          p.write_text(s)
+          PY
+          dart format lib/screens/storage_screen.dart
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add lib/screens/storage_screen.dart
+          git commit -m 'Localize additional storage controls [skip ci]'
+          git push
