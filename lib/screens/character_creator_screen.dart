@@ -781,14 +781,12 @@ class _HowItWorksCard extends StatelessWidget {
               es ? 'La apertura — escenario, primer mensaje y ejemplos' : 'The opening — scenario, first message & examples'),
           HowItWorksBlock.bullet(
               es ? 'Eslogan, notas del creador y etiquetas (el cierre)' : 'Tagline, creator notes & tags (the wrap-up)'),
-          HowItWorksBlock.paragraph(
-              'A scenario card covers the same ground re-aimed at a '
-              'setting: the world and its rules, the cast (NPCs), the '
-              'opening scene, and the same wrap-up.'),
-          HowItWorksBlock.paragraph(
-              'The automatic build doesn\'t write alternate greetings — '
-              'you can add those by hand in the editor after saving '
-              '(Advanced → Alternate greetings).'),
+          HowItWorksBlock.paragraph(es
+    ? 'Una tarjeta de escenario cubre los mismos aspectos, pero orientados a un entorno: el mundo y sus reglas, el reparto de NPC, la escena inicial y el mismo cierre.'
+    : 'A scenario card covers the same ground re-aimed at a setting: the world and its rules, the cast (NPCs), the opening scene, and the same wrap-up.'),
+          HowItWorksBlock.paragraph(es
+    ? 'La creación automática no escribe saludos alternativos; puedes añadirlos manualmente en el editor después de guardar (Avanzado → Saludos alternativos).'
+    : 'The automatic build does not write alternate greetings — you can add those by hand in the editor after saving (Advanced → Alternate greetings).'),
         ]),
 
         // 4. Your additions reach the architect.
@@ -800,18 +798,14 @@ class _HowItWorksCard extends StatelessWidget {
         HowItWorksSection(es ? 'Tus añadidos' : 'Your additions', [
           HowItWorksBlock.paragraph(
               es ? 'El cuadro de texto de arriba se añade al prompt de sistema de cada sesión del Creador como reglas obligatorias.' : 'The text box higher up on this screen is appended to every Creator session\'s system prompt as hard rules.'),
-          HowItWorksBlock.bullet(
-              'Custom architect behaviour you want enforced — '
-              '"always respond in Brazilian Portuguese", "keep '
-              'appearances PG-13 unless I say otherwise", "default '
-              'scenarios to anime high-school". These override the '
-              'architect\'s defaults.'),
+          HowItWorksBlock.bullet(es
+    ? 'Comportamiento personalizado del arquitecto que quieras imponer. Estas reglas reemplazan los valores predeterminados del arquitecto.'
+    : 'Custom architect behaviour you want enforced. These rules override the architect defaults.'),
           HowItWorksBlock.bullet(
               es ? 'Déjalo vacío y el prompt base se ejecutará sin cambios.' : 'Leave it empty and the base prompt runs unchanged.'),
-          HowItWorksBlock.paragraph(
-              'Your Profile "About Me" is NOT sent to the architect '
-              '— it\'s a local bio on the Profile screen, not a '
-              'context input.'),
+          HowItWorksBlock.paragraph(es
+    ? 'El apartado «Acerca de mí» de tu perfil NO se envía al arquitecto: es una biografía local de la pantalla Perfil, no una entrada de contexto.'
+    : 'Your Profile "About Me" is NOT sent to the architect — it is a local bio on the Profile screen, not a context input.'),
         ]),
 
         // 5. Attach buttons.
