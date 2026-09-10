@@ -505,9 +505,8 @@ class _GenerationSettingsCardState extends State<_GenerationSettingsCard> {
             ),
           ),
           SliderCard(
-            label: 'Creator max tokens',
-            subtitle:
-                'Cap for all three creator calls. Heavy-reasoning models (DeepSeek V4, R1) burn 3-5k tokens on thinking alone — keep this high so the actual card content has room. Default 12000.',
+            label: AppStrings.of(context).es ? 'Máximo de tokens del Creador' : 'Creator max tokens',
+            subtitle: AppStrings.of(context).es ? 'Límite para las tres llamadas del Creador. Los modelos de razonamiento intensivo (DeepSeek V4, R1) consumen 3–5 mil tokens solo al razonar; mantenlo alto para dejar espacio al contenido de la tarjeta. Predeterminado: 12000.' : 'Cap for all three creator calls. Heavy-reasoning models (DeepSeek V4, R1) burn 3-5k tokens on thinking alone — keep this high so the actual card content has room. Default 12000.',
             value: _draft.creatorMaxTokens.toDouble(),
             min: 1024,
             max: 32768,
@@ -518,9 +517,8 @@ class _GenerationSettingsCardState extends State<_GenerationSettingsCard> {
             onChangeEnd: (_) => _commit(),
           ),
           SliderCard(
-            label: 'Temperature — creator chat',
-            subtitle:
-                'Design conversation with the assistant. Default 0.95 = creative; lower for more focused replies.',
+            label: AppStrings.of(context).es ? 'Temperatura — chat del Creador' : 'Temperature — creator chat',
+            subtitle: AppStrings.of(context).es ? 'Conversación de diseño con el asistente. Predeterminado 0.95 = creativo; bájalo para obtener respuestas más enfocadas.' : 'Design conversation with the assistant. Default 0.95 = creative; lower for more focused replies.',
             value: _draft.creatorTemperature,
             min: 0,
             max: 2,
@@ -530,9 +528,8 @@ class _GenerationSettingsCardState extends State<_GenerationSettingsCard> {
             onChangeEnd: (_) => _commit(),
           ),
           SliderCard(
-            label: 'Temperature — image analysis',
-            subtitle:
-                'Vision call that describes attached images. Keep low (0.3-0.5) so the model captures what it sees instead of inventing.',
+            label: AppStrings.of(context).es ? 'Temperatura — análisis de imágenes' : 'Temperature — image analysis',
+            subtitle: AppStrings.of(context).es ? 'Llamada de Visión que describe las imágenes adjuntas. Mantenla baja (0.3–0.5) para que el modelo describa lo que ve en vez de inventar.' : 'Vision call that describes attached images. Keep low (0.3-0.5) so the model captures what it sees instead of inventing.',
             value: _draft.visionTemperature,
             min: 0,
             max: 1.5,
@@ -542,9 +539,8 @@ class _GenerationSettingsCardState extends State<_GenerationSettingsCard> {
             onChangeEnd: (_) => _commit(),
           ),
           SliderCard(
-            label: 'Temperature — sheet update',
-            subtitle:
-                'Structured JSON merger that fills the canvas after each turn. Near-zero (0.0-0.3) keeps the output parseable.',
+            label: AppStrings.of(context).es ? 'Temperatura — actualización de ficha' : 'Temperature — sheet update',
+            subtitle: AppStrings.of(context).es ? 'Combinador JSON estructurado que rellena el lienzo después de cada turno. Un valor cercano a cero (0.0–0.3) mantiene la salida procesable.' : 'Structured JSON merger that fills the canvas after each turn. Near-zero (0.0-0.3) keeps the output parseable.',
             value: _draft.sheetTemperature,
             min: 0,
             max: 1,
