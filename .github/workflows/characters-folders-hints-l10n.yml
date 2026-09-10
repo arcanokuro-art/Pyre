@@ -1,0 +1,29 @@
+name: Characters folders hints l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          pairs=[
+            ("Widget build(AppStore store) => const AllFiledHint(\n        message: 'All your characters are in folders.\\n'\n            'Open a folder above to chat.',\n      );", "Widget build(AppStore store) => Builder(\n        builder: (context) => AllFiledHint(\n          message: AppStrings.of(context).es\n              ? 'Todos tus personajes están en carpetas.\\nAbre una carpeta de arriba para chatear.'\n              : 'All your characters are in folders.\\nOpen a folder above to chat.',\n        ),\n      );"),
+            ("          'FOLDERS',", "          AppStrings.of(context).es ? 'CARPETAS' : 'FOLDERS',"),
+            ("label: folderName.isEmpty ? 'Folder ✕' : '📁 $folderName',", "label: folderName.isEmpty\n            ? (AppStrings.of(context).es ? 'Carpeta ✕' : 'Folder ✕')\n            : '📁 $folderName',"),
+          ]
+          for a,b in pairs:
+            if s.count(a)!=1: raise SystemExit(f'matches {s.count(a)}')
+            s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize character folder labels and hints'
+          git push origin HEAD:spanish-localization
