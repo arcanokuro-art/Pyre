@@ -1246,8 +1246,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
                 child: Text(
-                  'No characters in your library yet. Build or import '
-                  'a card first, then come back to pin it here.',
+                  es ? 'Todavía no hay personajes en tu biblioteca. Crea o importa una tarjeta y vuelve aquí para fijarla.' : 'No characters in your library yet. Build or import a card first, then come back to pin it here.',
                   style: TextStyle(
                     color: EmberColors.textDim,
                     fontSize: 13,
