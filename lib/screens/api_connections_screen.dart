@@ -194,7 +194,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                               if (isCreator) ...[
                                 const SizedBox(width: 6),
                                 _ProviderBadge(
-                                  label: 'CREATOR',
+                                  label: es ? 'CREADOR' : 'CREATOR',
                                   color: Colors.amber,
                                 ),
                               ],
@@ -219,7 +219,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                     fontSize: 12),
                               ),
                               Text(
-                                'model: ${p.model.isEmpty ? "(none)" : p.model}',
+                                es ? 'modelo: ${p.model.isEmpty ? "(ninguno)" : p.model}' : 'model: ${p.model.isEmpty ? "(none)" : p.model}',
                                 style: TextStyle(
                                     color: EmberColors.textMid,
                                     fontSize: 12),
