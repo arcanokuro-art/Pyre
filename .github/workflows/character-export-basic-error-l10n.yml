@@ -1,0 +1,27 @@
+name: Character export basic error l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          old="SnackBar(content: Text('Export failed: $e'))"
+          new="SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e'))"
+          n=s.count(old)
+          if n < 1: raise SystemExit('export failure missing')
+          s=s.replace(old,new)
+          p.write_text(s)
+          print('localized', n, 'export failure message(s)')
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize character export failure messages'
+          git push origin HEAD:spanish-localization
