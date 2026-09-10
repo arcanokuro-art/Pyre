@@ -1,0 +1,32 @@
+name: Main update notice l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/main.dart'); s=p.read_text()
+          old="""      content: Text(
+        'Pyre ${info.latestVersion} is out'
+        '${info.notes.isNotEmpty ? \" — ${info.notes}\" : \"\"}',"""
+          new="""      content: Text(
+        '${AppStrings.of(ctx).es ? 'Ya está disponible Pyre' : 'Pyre'} ${info.latestVersion}${AppStrings.of(ctx).es ? '' : ' is out'}'
+        '${info.notes.isNotEmpty ? \" — ${info.notes}\" : \"\"}',"""
+          if old not in s: raise SystemExit('update notice missing')
+          s=s.replace(old,new,1)
+          old2="label: 'View',"
+          new2="label: AppStrings.of(ctx).es ? 'Ver' : 'View',"
+          if old2 not in s: raise SystemExit('view label missing')
+          p.write_text(s.replace(old2,new2,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/main.dart
+          git commit -m 'Localize update notification'
+          git push origin HEAD:spanish-localization
