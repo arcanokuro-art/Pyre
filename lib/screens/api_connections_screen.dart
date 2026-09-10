@@ -481,7 +481,7 @@ class _AdvancedFallbackTile extends StatelessWidget {
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             subtitle: Text(
               store.uiPrefs.backgroundGeneration
-                  ? (AppStrings.of(context).es ? 'Activado — las respuestas siguen generándose si cambias de aplicación (notificación silenciosa mientras está activo).' : 'On — replies keep generating if you switch apps (silent notification while active).') //
+                  ? (AppStrings.of(context).es ? 'Activado — las respuestas siguen generándose si cambias de aplicación (notificación silenciosa mientras está activo).' : 'On — replies keep generating if you switch apps (silent notification while active).')
                   : (AppStrings.of(context).es ? 'Desactivado — cambiar de aplicación durante una respuesta puede interrumpir la conexión.' : 'Off — switching apps mid-reply may drop the connection.'),
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 12, height: 1.4),
