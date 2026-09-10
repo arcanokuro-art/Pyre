@@ -345,9 +345,9 @@ class _YourAdditionsCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Your additions',
+                    AppStrings.of(context).es ? 'Tus añadidos' : 'Your additions',
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -373,10 +373,7 @@ class _YourAdditionsCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Custom rules appended to the architect\'s prompt. '
-              'Examples: "Always respond in Brazilian Portuguese.", '
-              '"Keep appearances PG-13 unless I say otherwise.", '
-              '"Default scenarios to anime high-school settings."',
+              AppStrings.of(context).es ? 'Reglas personalizadas que se añaden al prompt del arquitecto. Ejemplos: "Responde siempre en portugués de Brasil.", "Mantén las apariencias en PG-13 salvo que indique lo contrario.", "Usa por defecto escenarios de instituto de anime."' : 'Custom rules appended to the architect\'s prompt. Examples: "Always respond in Brazilian Portuguese.", "Keep appearances PG-13 unless I say otherwise.", "Default scenarios to anime high-school settings."',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -389,12 +386,9 @@ class _YourAdditionsCard extends StatelessWidget {
               onChanged: onChanged,
               minLines: 5,
               maxLines: 10,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText:
-                    'Type extra rules / style guidelines / language '
-                    'preferences. Leave blank to run the architect '
-                    'exactly as shipped.',
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: AppStrings.of(context).es ? 'Escribe reglas adicionales, pautas de estilo o preferencias de idioma. Déjalo en blanco para ejecutar el arquitecto exactamente como viene configurado.' : 'Type extra rules / style guidelines / language preferences. Leave blank to run the architect exactly as shipped.',
               ),
             ),
           ],
@@ -457,11 +451,10 @@ class _GenerationSettingsCardState extends State<_GenerationSettingsCard> {
         tilePadding: const EdgeInsets.symmetric(horizontal: 16),
         childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
         leading: Icon(Icons.tune, color: EmberColors.primary, size: 20),
-        title: const Text('Generation settings',
-            style: TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(AppStrings.of(context).es ? 'Ajustes de generación' : 'Generation settings',
+            style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(
-          'Sampling knobs for the Creator only (chat, image analysis, '
-          'sheet update). Defaults work for most setups.',
+          AppStrings.of(context).es ? 'Controles de muestreo solo para el Creador (chat, análisis de imágenes y actualización de ficha). Los valores predeterminados funcionan en la mayoría de configuraciones.' : 'Sampling knobs for the Creator only (chat, image analysis, sheet update). Defaults work for most setups.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         children: [
@@ -472,32 +465,22 @@ class _GenerationSettingsCardState extends State<_GenerationSettingsCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Description size',
-                    style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(AppStrings.of(context).es ? 'Tamaño de la descripción' : 'Description size',
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 2),
                 Text(
-                  'How long a Description the Creator writes for characters and '
-                  'personas. A soft target, not a cap — Standard matches Pyre\'s '
-                  'default.',
+                  AppStrings.of(context).es ? 'Define qué tan larga será la descripción que el Creador escribe para personajes y personas. Es un objetivo aproximado, no un límite; Estándar coincide con el valor predeterminado de Pyre.' : 'How long a Description the Creator writes for characters and personas. A soft target, not a cap — Standard matches Pyre\'s default.',
                   style: TextStyle(color: EmberColors.textMid, fontSize: 12),
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   child: SegmentedButton<CreatorDescriptionSize>(
-                    segments: const [
-                      ButtonSegment(
-                          value: CreatorDescriptionSize.concise,
-                          label: Text('Concise')),
-                      ButtonSegment(
-                          value: CreatorDescriptionSize.standard,
-                          label: Text('Standard')),
-                      ButtonSegment(
-                          value: CreatorDescriptionSize.detailed,
-                          label: Text('Detailed')),
-                      ButtonSegment(
-                          value: CreatorDescriptionSize.veryDetailed,
-                          label: Text('Max')),
+                    segments: [
+                      ButtonSegment(value: CreatorDescriptionSize.concise, label: Text(AppStrings.of(context).es ? 'Concisa' : 'Concise')),
+                      ButtonSegment(value: CreatorDescriptionSize.standard, label: Text(AppStrings.of(context).es ? 'Estándar' : 'Standard')),
+                      ButtonSegment(value: CreatorDescriptionSize.detailed, label: Text(AppStrings.of(context).es ? 'Detallada' : 'Detailed')),
+                      ButtonSegment(value: CreatorDescriptionSize.veryDetailed, label: Text(AppStrings.of(context).es ? 'Máx.' : 'Max')),
                     ],
                     selected: {_draft.creatorDescriptionSize},
                     showSelectedIcon: false,
