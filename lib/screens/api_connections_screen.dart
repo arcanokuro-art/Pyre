@@ -343,11 +343,11 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        const HowItWorksCard(
-          title: 'How connections work',
-          subtitle: 'Set once on the server — every device that connects uses it.',
+        HowItWorksCard(
+          title: AppStrings.of(context).es ? 'Cómo funcionan las conexiones' : 'How connections work',
+          subtitle: AppStrings.of(context).es ? 'Configúralo una vez en el servidor: todos los dispositivos conectados lo usarán.' : 'Set once on the server — every device that connects uses it.',
           sections: [
-            HowItWorksSection('Shared by the server', [
+            HowItWorksSection(AppStrings.of(context).es ? 'Compartido por el servidor' : 'Shared by the server', [
               HowItWorksBlock.paragraph(
                   'You\'re connected to a self-host server. Its AI provider is '
                   'set here and shared by **every** device that connects — no '
