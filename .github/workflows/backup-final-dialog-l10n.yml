@@ -1,0 +1,28 @@
+name: Backup final dialog l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart')
+          s=p.read_text()
+          marker="""        content: Text(\n          (missingImages > 0\n                  ? '⚠ $missingImages image file(s) could NOT be included in the '\n                      'backup — their files are missing (they may only exist on '\n                      'another synced device). If you reset now, those images '\n                      'will be lost on this device.\\n\\n'\n                  : '') +\n              (backupPath != null\n                  ? 'A full backup (everything except API keys) was saved to:'\n                      '\\n\\n$backupPath\\n\\n'\n                      \"You'll re-enter API keys after restoring. If you want a \"\n                      'totally clean slate afterwards, you can delete that file '\n                      'yourself. Reset now?'\n                  : 'Web: a full backup (no API keys) was downloaded to your '\n                      'device. Keep that file safe. Reset now?'),\n        ),"""
+          repl="""        content: Text(\n          AppStrings.of(context).es\n              ? (missingImages > 0\n                  ? '⚠ No se pudieron incluir $missingImages archivo(s) de imagen en la copia porque faltan sus archivos. Puede que solo existan en otro dispositivo sincronizado. Si restableces ahora, esas imágenes se perderán en este dispositivo.\\n\\n'\n                  : '') + (backupPath != null\n                  ? 'Se guardó una copia de seguridad completa (todo excepto las claves API) en:\\n\\n$backupPath\\n\\nTendrás que volver a introducir las claves API después de restaurar. Si después quieres empezar completamente desde cero, puedes eliminar ese archivo. ¿Restablecer ahora?'\n                  : 'Web: se descargó en tu dispositivo una copia de seguridad completa (sin claves API). Guarda ese archivo en un lugar seguro. ¿Restablecer ahora?')\n              : (missingImages > 0\n                  ? '⚠ $missingImages image file(s) could NOT be included in the backup — their files are missing (they may only exist on another synced device). If you reset now, those images will be lost on this device.\\n\\n'\n                  : '') + (backupPath != null\n                  ? 'A full backup (everything except API keys) was saved to:\\n\\n$backupPath\\n\\nYou will re-enter API keys after restoring. If you want a totally clean slate afterwards, you can delete that file yourself. Reset now?'\n                  : 'Web: a full backup (no API keys) was downloaded to your device. Keep that file safe. Reset now?'),\n        ),"""
+          if marker not in s:
+            raise SystemExit('target final backup dialog not found')
+          s=s.replace(marker,repl,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize final backup confirmation details'
+          git push origin HEAD:spanish-localization
