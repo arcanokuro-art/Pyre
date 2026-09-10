@@ -293,7 +293,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.restart_alt, size: 16),
-                      label: const Text('Reset to factory settings'),
+                      label: Text(AppStrings.of(context).es ? 'Restablecer a valores de fábrica' : 'Reset to factory settings'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: EmberColors.danger,
                         side:
@@ -320,15 +320,11 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final ok = await confirmDelete(
       context,
-      title: 'Reset Pyre to factory settings?',
-      message:
-          'This permanently deletes ALL data — every character, persona, '
-          'chat, lorebook, preset, setting and API key — and returns the '
-          'app to a brand-new install. '
-          'A full backup is saved first so you can restore.\n\n'
-          'To delete only your library and keep your settings, cancel and '
-          'use Storage → Clear library. Continue?',
-      confirmLabel: 'Continue',
+      title: AppStrings.of(context).es ? '¿Restablecer Pyre a valores de fábrica?' : 'Reset Pyre to factory settings?',
+      message: AppStrings.of(context).es
+          ? 'Esto elimina permanentemente TODOS los datos —personajes, personas, chats, libros de lore, preajustes, ajustes y claves API— y devuelve la app al estado de una instalación nueva. Primero se guarda una copia de seguridad completa para que puedas restaurarla.\n\nPara eliminar solo tu biblioteca y conservar los ajustes, cancela y usa Almacenamiento → Borrar biblioteca. ¿Continuar?'
+          : 'This permanently deletes ALL data — every character, persona, chat, lorebook, preset, setting and API key — and returns the app to a brand-new install. A full backup is saved first so you can restore.\n\nTo delete only your library and keep your settings, cancel and use Storage → Clear library. Continue?',
+      confirmLabel: AppStrings.of(context).es ? 'Continuar' : 'Continue',
     );
     if (!ok || !context.mounted) return;
 
