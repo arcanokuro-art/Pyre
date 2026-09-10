@@ -1645,9 +1645,12 @@ class _AllFiledHintItem extends _CharItem {
   const _AllFiledHintItem();
 
   @override
-  Widget build(AppStore store) => const AllFiledHint(
-        message: 'All your characters are in folders.\n'
-            'Open a folder above to chat.',
+  Widget build(AppStore store) => Builder(
+        builder: (context) => AllFiledHint(
+          message: AppStrings.of(context).es
+              ? 'Todos tus personajes están en carpetas.\nAbre una carpeta de arriba para chatear.'
+              : 'All your characters are in folders.\nOpen a folder above to chat.',
+        ),
       );
 }
 
@@ -1667,7 +1670,7 @@ class FolderSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(0, 4, 0, 2),
         child: Text(
-          'FOLDERS',
+          AppStrings.of(context).es ? 'CARPETAS' : 'FOLDERS',
           style: TextStyle(
             color: EmberColors.textMid,
             fontSize: 11,
@@ -1780,7 +1783,9 @@ class ActiveFolderChip extends StatelessWidget {
         icon: Icons.folder_outlined,
         // Empty name = the folder vanished mid-view; same fallback label as
         // the Characters chip.
-        label: folderName.isEmpty ? 'Folder ✕' : '📁 $folderName',
+        label: folderName.isEmpty
+            ? (AppStrings.of(context).es ? 'Carpeta ✕' : 'Folder ✕')
+            : '📁 $folderName',
         trailing: GestureDetector(
           onTap: onClear,
           child: const Icon(Icons.close, size: 14),
