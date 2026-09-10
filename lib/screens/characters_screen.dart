@@ -2791,7 +2791,7 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
           // surfacing the two edit flows directly in the menu.
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('View details'),
+            title: Text(AppStrings.of(context).es ? 'Ver detalles' : 'View details'),
             onTap: () {
               Navigator.pop(sheet);
               showPersonaDetailsSheet(context, personaId: p.id);
@@ -2801,7 +2801,7 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
             ListTile(
               leading: Icon(Icons.check_circle_outline,
                   color: EmberColors.primary),
-              title: const Text('Set as default'),
+              title: Text(AppStrings.of(context).es ? 'Establecer como predeterminada' : 'Set as default'),
               onTap: () {
                 Navigator.pop(sheet);
                 store.setActivePersona(p.id);
@@ -2810,23 +2810,23 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
           // In-app Duplicate — same convention as the character menu.
           ListTile(
             leading: const Icon(Icons.copy_outlined),
-            title: const Text('Duplicate'),
+            title: Text(AppStrings.of(context).es ? 'Duplicar' : 'Duplicate'),
             onTap: () {
               Navigator.pop(sheet);
               final clone = store.duplicatePersona(p.id);
               if (clone == null) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Duplicated as "${clone.name}".')),
+                SnackBar(content: Text(AppStrings.of(context).es ? 'Duplicada como "${clone.name}".' : 'Duplicated as "${clone.name}".')),
               );
             },
           ),
-          _menuSectionLabel('Export'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Exportar' : 'Export'),
           // Wave CY.18.250: export a persona as a chara_card_v2 PNG (mirrors
           // the character "Export as PNG card"). Builds a card from the
           // persona's shareable fields + its gallery.
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Export as PNG'),
+            title: Text(AppStrings.of(context).es ? 'Exportar como PNG' : 'Export as PNG'),
             onTap: () async {
               Navigator.pop(sheet);
               await _exportPersonaAsPng(context, p);
@@ -2836,22 +2836,22 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
           // no avatar required.
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Export as JSON card'),
+            title: Text(AppStrings.of(context).es ? 'Exportar como tarjeta JSON' : 'Export as JSON card'),
             onTap: () async {
               Navigator.pop(sheet);
               await _exportPersonaAsJson(context, p);
             },
           ),
-          _menuSectionLabel('Library'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Biblioteca' : 'Library'),
           // 2026-07-13 (community request): personas file into folders too —
           // the same sub-sheet as the character kebab, over folder.personaIds.
           ListTile(
             leading: const Icon(Icons.folder_open_outlined),
-            title: const Text('Add to folder…'),
+            title: Text(AppStrings.of(context).es ? 'Añadir a carpeta…' : 'Add to folder…'),
             subtitle: folderNames.isEmpty
                 ? null
                 : Text(
-                    'In: ${folderNames.join(", ")}',
+                    AppStrings.of(context).es ? 'En: ${folderNames.join(", ")}' : 'In: ${folderNames.join(", ")}',
                     style: TextStyle(
                         color: EmberColors.textMid, fontSize: 12),
                     maxLines: 1,
@@ -2874,7 +2874,7 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
           Divider(color: EmberColors.stroke),
           ListTile(
             leading: Icon(Icons.delete_outline, color: EmberColors.danger),
-            title: Text('Delete persona',
+            title: Text(AppStrings.of(context).es ? 'Eliminar persona' : 'Delete persona',
                 style: TextStyle(color: EmberColors.danger)),
             onTap: () async {
               Navigator.pop(sheet);
