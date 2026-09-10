@@ -304,7 +304,7 @@ Future<void> _scheduleUpdateCheck(AppStore store) async {
   final controller = messenger.showSnackBar(
     SnackBar(
       content: Text(
-        'Pyre ${info.latestVersion} is out'
+        '${AppStrings.of(ctx).es ? 'Ya está disponible Pyre ${info.latestVersion}' : 'Pyre ${info.latestVersion} is out'}'
         '${info.notes.isNotEmpty ? " — ${info.notes}" : ""}',
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
