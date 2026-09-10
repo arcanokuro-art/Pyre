@@ -26,6 +26,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/models.dart';
 import '../services/attachment_store.dart';
 import '../services/image_pick.dart';
@@ -151,6 +152,7 @@ class _BotbooruProfileScreenState extends State<BotbooruProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
+    final es = AppStrings.of(context).es;
     final avatar = store.botbooruAvatar;
     // Non-destructive Recrop: the lightbox opens the uncropped original when a
     // recrop preserved one, so the WHOLE profile picture is viewable.
@@ -220,14 +222,14 @@ class _BotbooruProfileScreenState extends State<BotbooruProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(es ? 'Perfil' : 'Profile'),
         actions: [
           TextButton.icon(
             icon: Icon(
               _editMode ? Icons.check : Icons.edit_outlined,
               size: 16,
             ),
-            label: Text(_editMode ? 'Done' : 'Edit'),
+            label: Text(_editMode ? (es ? 'Listo' : 'Done') : (es ? 'Editar' : 'Edit')),
             style: TextButton.styleFrom(
               foregroundColor: EmberColors.primary,
             ),
