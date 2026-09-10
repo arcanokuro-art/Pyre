@@ -1,0 +1,45 @@
+name: Localization maintenance
+
+on:
+  push:
+    branches: [spanish-localization]
+    paths:
+      - '.github/workflows/localization-maintenance.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  wire-localization:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - name: Wire localization into MaterialApp
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('lib/main.dart')
+          s = p.read_text()
+          marker = "import 'models/models.dart' show UiPrefs;"
+          addition = "import 'l10n/app_strings.dart';\n"
+          if addition not in s:
+              s = s.replace(marker, addition + marker)
+          needle = "return MaterialApp(\n            title: 'Pyre',"
+          repl = "return MaterialApp(\n            title: 'Pyre',\n            locale: AppStrings.defaultLocale,\n            supportedLocales: AppStrings.supportedLocales,\n            localizationsDelegates: const [AppStringsDelegate()],"
+          if needle in s:
+              s = s.replace(needle, repl, 1)
+          p.write_text(s)
+          PY
+      - name: Commit localization wiring
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lib/main.dart
+          if git diff --cached --quiet; then
+            echo 'No localization wiring changes needed.'
+          else
+            git commit -m 'Enable Spanish localization by default'
+            git push origin HEAD:spanish-localization
+          fi
