@@ -1,0 +1,29 @@
+name: Backup import results l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart')
+          s=p.read_text()
+          s=s.replace("const SnackBar(content: Text('Import cancelled.'))", "SnackBar(content: Text(AppStrings.of(context).es ? 'Importación cancelada.' : 'Import cancelled.'))",1)
+          old="""content: Text(salvaged\n              ? 'Backup imported with salvage — some recent edits in '\n                  'the backup tail may be missing.'\n              : (hasKeys && !importKeys)\n                  ? 'Backup imported — your saved API keys were kept.'\n                  : 'Backup imported.'),"""
+          new="""content: Text(AppStrings.of(context).es\n              ? (salvaged\n                  ? 'Copia importada mediante recuperación; pueden faltar algunos cambios recientes del final de la copia.'\n                  : (hasKeys && !importKeys)\n                      ? 'Copia importada; se conservaron tus claves API guardadas.'\n                      : 'Copia importada.')\n              : (salvaged\n                  ? 'Backup imported with salvage — some recent edits in the backup tail may be missing.'\n                  : (hasKeys && !importKeys)\n                      ? 'Backup imported — your saved API keys were kept.'\n                      : 'Backup imported.')),"""
+          if old not in s: raise SystemExit('result snackbar target not found')
+          s=s.replace(old,new,1)
+          s=s.replace(".showSnackBar(SnackBar(content: Text('Import failed: $e')));", ".showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Falló la importación: $e' : 'Import failed: $e')));",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize backup import completion and error messages'
+          git push origin HEAD:spanish-localization
