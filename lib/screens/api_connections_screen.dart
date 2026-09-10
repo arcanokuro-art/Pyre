@@ -104,26 +104,14 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                     subtitle: es ? 'BYOK: tu clave, tu modelo, en tu dispositivo.' : 'BYOK — your key, your model, on your device.',
                     sections: [
                       HowItWorksSection(es ? 'Qué es un proveedor' : 'What a provider is', [
-                        HowItWorksBlock.paragraph(
-                            'Pyre brings no AI of its own — it connects to a '
-                            'service that writes the replies (OpenRouter, '
-                            'OpenAI, a local model…). You add the service and '
-                            'paste **its** API key.'),
+                        HowItWorksBlock.paragraph(es ? 'Pyre no incluye una IA propia: se conecta a un servicio que escribe las respuestas (OpenRouter, OpenAI, un modelo local…). Añades el servicio y pegas **su** clave API.' : 'Pyre brings no AI of its own — it connects to a service that writes the replies (OpenRouter, OpenAI, a local model…). You add the service and paste **its** API key.'),
                       ]),
                       HowItWorksSection(es ? 'Tu clave sigue siendo tuya' : 'Your key stays yours', [
-                        HowItWorksBlock.paragraph(
-                            'Keys are kept in your device\'s secure store, '
-                            'never leave the device, and are left out of '
-                            'backups unless you tick that box.'),
+                        HowItWorksBlock.paragraph(es ? 'Las claves se guardan en el almacenamiento seguro de tu dispositivo, nunca salen de él y no se incluyen en las copias de seguridad salvo que marques esa opción.' : 'Keys are kept in your device\'s secure store, never leave the device, and are left out of backups unless you tick that box.'),
                       ]),
                       HowItWorksSection(es ? 'Selección y orden' : 'Tapping + the order', [
-                        HowItWorksBlock.bullet(
-                            '**Tap a connection** to make it the one your '
-                            'chats use (the CHAT badge moves to it).'),
-                        HowItWorksBlock.bullet(
-                            '**The list is the fallback order** — if one '
-                            'fails or refuses, Pyre offers the next. Drag to '
-                            'reorder.'),
+                        HowItWorksBlock.bullet(es ? '**Pulsa una conexión** para convertirla en la que usan tus chats (la insignia CHAT se moverá a ella).' : '**Tap a connection** to make it the one your chats use (the CHAT badge moves to it).'),
+                        HowItWorksBlock.bullet(es ? '**La lista define el orden alternativo**: si una conexión falla o rechaza la solicitud, Pyre ofrece la siguiente. Arrastra para reordenar.' : '**The list is the fallback order** — if one fails or refuses, Pyre offers the next. Drag to reorder.'),
                       ]),
                     ],
                   ),
