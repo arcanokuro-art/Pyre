@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/models.dart';
 import '../services/attachment_store.dart';
 import '../services/regex_rules.dart';
@@ -95,7 +96,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   Widget build(BuildContext context) {
     final store = context.read<AppStore>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Backup & Restore')),
+      appBar: AppBar(title: Text(AppStrings.of(context).es ? 'Copia de seguridad y restauración' : 'Backup & Restore')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -105,24 +106,20 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Export',
+                  Text(
+                    AppStrings.of(context).es ? 'Exportar' : 'Export',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 15),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Save your data to a single JSON file. Pick what to '
-                    'include below. Avatars and gallery images are packed '
-                    'in, so the file fully restores on a new device (this '
-                    'makes it larger). Compatible with the HTML prototype '
-                    'backup format.',
+                    AppStrings.of(context).es ? 'Guarda tus datos en un único archivo JSON. Elige abajo qué incluir. Los avatares y las imágenes de la galería se incluyen para que el archivo pueda restaurarse por completo en un dispositivo nuevo (esto aumenta su tamaño). Compatible con el formato de copia de seguridad del prototipo HTML.' : 'Save your data to a single JSON file. Pick what to include below. Avatars and gallery images are packed in, so the file fully restores on a new device (this makes it larger). Compatible with the HTML prototype backup format.',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'What to include',
+                  Text(
+                    AppStrings.of(context).es ? 'Qué incluir' : 'What to include',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 13),
                   ),
@@ -148,7 +145,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       Expanded(
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.ios_share, size: 16),
-                          label: const Text('Share…'),
+                          label: Text(AppStrings.of(context).es ? 'Compartir…' : 'Share…'),
                           onPressed: () => _shareBackup(context, store),
                         ),
                       ),
@@ -156,7 +153,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.copy, size: 16),
-                          label: const Text('Copy'),
+                          label: Text(AppStrings.of(context).es ? 'Copiar' : 'Copy'),
                           onPressed: () => _copyJson(context, store),
                         ),
                       ),
@@ -164,7 +161,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.save_alt, size: 16),
-                          label: const Text('Save'),
+                          label: Text(AppStrings.of(context).es ? 'Guardar' : 'Save'),
                           onPressed: () => _saveToFile(context, store),
                         ),
                       ),
@@ -181,23 +178,21 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Import',
+                  Text(
+                    AppStrings.of(context).es ? 'Importar' : 'Import',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 15),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Load a backup JSON. Only the categories present in the '
-                    'file are replaced — anything not in the backup is left '
-                    'untouched. (A full backup replaces everything.)',
+                    AppStrings.of(context).es ? 'Carga una copia de seguridad JSON. Solo se reemplazan las categorías presentes en el archivo; lo que no esté incluido permanece sin cambios. (Una copia completa reemplaza todo.)' : 'Load a backup JSON. Only the categories present in the file are replaced — anything not in the backup is left untouched. (A full backup replaces everything.)',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.file_open_outlined, size: 16),
-                    label: const Text('Choose file…'),
+                    label: Text(AppStrings.of(context).es ? 'Elegir archivo…' : 'Choose file…'),
                     onPressed: () => _pickAndImport(context, store),
                   ),
                 ],
