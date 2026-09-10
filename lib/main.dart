@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -614,9 +615,14 @@ class _PyreAppState extends State<PyreApp>
         builder: (context, store, _) {
           return MaterialApp(
             title: 'Pyre',
-            locale: AppStrings.defaultLocale,
+            locale: Locale(store.uiPrefs.languageCode),
             supportedLocales: AppStrings.supportedLocales,
-            localizationsDelegates: const [AppStringsDelegate()],
+            localizationsDelegates: const [
+              AppStringsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
             debugShowCheckedModeBanner: false,
             // Wave CY.18.1.3: re-evaluated on every rebuild. EmberColors.*
             // are getters backed by EmberColors.active, so calling
