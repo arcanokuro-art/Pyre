@@ -1,0 +1,27 @@
+name: API connections l10n 2a
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          s=s.replace('                const Padding(\n                  padding: EdgeInsets.fromLTRB(16, 8, 16, 0),\n                  child: HowItWorksCard(', '                Padding(\n                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),\n                  child: HowItWorksCard(',1)
+          s=s.replace("title: 'How connections work',", "title: es ? 'Cómo funcionan las conexiones' : 'How connections work',",1)
+          s=s.replace("subtitle: 'BYOK — your key, your model, on your device.',", "subtitle: es ? 'BYOK: tu clave, tu modelo, en tu dispositivo.' : 'BYOK — your key, your model, on your device.',",1)
+          s=s.replace("HowItWorksSection('What a provider is', [", "HowItWorksSection(es ? 'Qué es un proveedor' : 'What a provider is', [",1)
+          s=s.replace("HowItWorksSection('Your key stays yours', [", "HowItWorksSection(es ? 'Tu clave sigue siendo tuya' : 'Your key stays yours', [",1)
+          s=s.replace("HowItWorksSection('Tapping + the order', [", "HowItWorksSection(es ? 'Selección y orden' : 'Tapping + the order', [",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API connections explainer headings'
+          git push origin HEAD:spanish-localization
