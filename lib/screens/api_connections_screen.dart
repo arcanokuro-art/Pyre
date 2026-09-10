@@ -457,9 +457,9 @@ class _AdvancedFallbackTile extends StatelessWidget {
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             subtitle: Text(
               on
-                  ? 'On — if a provider fails or refuses, Pyre offers the '
+                  ? (AppStrings.of(context).es ? 'Activado — si un proveedor falla o rechaza la solicitud, Pyre ofrece el siguiente.' : 'On — if a provider fails or refuses, Pyre offers the next one.') //
                       'next one.'
-                  : 'Off — a failed reply just surfaces the error.',
+                  : (AppStrings.of(context).es ? 'Desactivado — una respuesta fallida simplemente muestra el error.' : 'Off — a failed reply just surfaces the error.'),
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 12, height: 1.4),
             ),
