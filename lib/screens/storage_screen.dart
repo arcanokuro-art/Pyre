@@ -267,7 +267,7 @@ class _StorageScreenState extends State<StorageScreen> {
                     icon: Icon(Icons.delete_outline,
                         color: EmberColors.danger),
                     label: Text(
-                      'Clear library',
+                      t('Borrar biblioteca', 'Clear library'),
                       style: TextStyle(color: EmberColors.danger),
                     ),
                     style: OutlinedButton.styleFrom(
@@ -298,10 +298,9 @@ class _StorageScreenState extends State<StorageScreen> {
     await _refresh();
     if (!mounted) return;
     messenger.showSnackBar(
-      const SnackBar(
-        content: Text(
-            'Snapshot saved. Previous state rotated into bak.0.'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(AppStrings.of(context).es ? 'Instantánea guardada. El estado anterior se movió a bak.0.' : 'Snapshot saved. Previous state rotated into bak.0.'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -368,7 +367,7 @@ class _StorageScreenState extends State<StorageScreen> {
     await ErrorLog.clear();
     if (!mounted) return;
     messenger.showSnackBar(
-      const SnackBar(content: Text('Error log cleared.')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Registro de errores borrado.' : 'Error log cleared.')),
     );
   }
 
