@@ -2179,15 +2179,15 @@ class _PersonaList extends StatelessWidget {
     return hay.contains(query);
   }
 
-  String _sortLabel(String key) {
+  String _sortLabel(BuildContext context, String key) {
     switch (key) {
       case 'created':
-        return 'Recently added';
+        return AppStrings.of(context).es ? 'Añadidas recientemente' : 'Recently added';
       case 'alpha':
         return 'A → Z';
       case 'recent':
       default:
-        return 'Recently used';
+        return AppStrings.of(context).es ? 'Usadas recientemente' : 'Recently used';
     }
   }
 
@@ -2247,10 +2247,10 @@ class _PersonaList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (store.personas.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: Icons.face_outlined,
-        title: 'No personas yet',
-        subtitle: 'Create a persona to define how you appear in chats.',
+        title: AppStrings.of(context).es ? 'Aún no hay personas' : 'No personas yet',
+        subtitle: AppStrings.of(context).es ? 'Crea una persona para definir cómo apareces en los chats.' : 'Create a persona to define how you appear in chats.',
       );
     }
     final filtered = _applyFiltersAndSort();
@@ -2290,18 +2290,17 @@ class _PersonaList extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               PopupMenuButton<String>(
-                tooltip: 'Sort',
+                tooltip: AppStrings.of(context).es ? 'Ordenar' : 'Sort',
                 initialValue: store.personaSortKey,
                 onSelected: (k) => store.setPersonaSortKey(k),
-                itemBuilder: (_) => const [
-                  PopupMenuItem(value: 'recent', child: Text('Recently used')),
-                  PopupMenuItem(
-                      value: 'created', child: Text('Recently added')),
-                  PopupMenuItem(value: 'alpha', child: Text('A → Z')),
+                itemBuilder: (_) => [
+                  PopupMenuItem(value: 'recent', child: Text(AppStrings.of(context).es ? 'Usadas recientemente' : 'Recently used')),
+                  PopupMenuItem(value: 'created', child: Text(AppStrings.of(context).es ? 'Añadidas recientemente' : 'Recently added')),
+                  const PopupMenuItem(value: 'alpha', child: Text('A → Z')),
                 ],
                 child: _OrgChip(
                   icon: Icons.sort,
-                  label: _sortLabel(store.personaSortKey),
+                  label: _sortLabel(context, store.personaSortKey),
                   trailingIcon: Icons.arrow_drop_down,
                 ),
               ),
@@ -2321,10 +2320,10 @@ class _PersonaList extends StatelessWidget {
           // the eager `ListView(children:[...])` still built every row +
           // avatar on each rebuild; the builder keeps it consistent.)
           child: items.isEmpty
-              ? const EmptyState(
+              ? EmptyState(
                   icon: Icons.search_off,
-                  title: 'No matches',
-                  subtitle: 'Nothing matches your search.',
+                  title: AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches',
+                  subtitle: AppStrings.of(context).es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.',
                 )
               : ListView.builder(
                   padding:
