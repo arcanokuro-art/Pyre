@@ -3313,7 +3313,7 @@ Future<String?> _promptFolderName(BuildContext context,
       content: TextField(
         controller: controller,
         autofocus: true,
-        decoration: const InputDecoration(hintText: 'e.g. "Bathhouse OCs"'),
+        decoration: InputDecoration(hintText: AppStrings.of(ctx).es ? 'p. ej. "OCs del balneario"' : 'e.g. "Bathhouse OCs"'),
         onSubmitted: (v) => Navigator.of(ctx).pop(v.trim()),
       ),
       actions: [
