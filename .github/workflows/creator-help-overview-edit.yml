@@ -1,0 +1,36 @@
+name: Creator help overview edit
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          old="""          HowItWorksBlock.paragraph(
+              '**Edit with AI** isn\\'t a starting choice — it\\'s how you '
+              'open an EXISTING character or persona back into the Creator '
+              '(from its \"Edit with AI\" action). It loads the card on the '
+              'sheet and every message becomes a partial edit (\"make her '
+              'younger\", \"tone down the NSFW tags\"), touching only what you '
+              'asked. It works on cards built ANYWHERE (SillyTavern W++, '
+              'Chub prose, JanitorAI XML) and preserves the original '
+              'format unless you ask it to change.'),"""
+          new="""          HowItWorksBlock.paragraph(es
+              ? '**Editar con IA** no es una opción inicial: sirve para volver a abrir en el Creador un personaje o persona EXISTENTE desde su acción «Editar con IA». Carga la tarjeta en la ficha y cada mensaje se convierte en una edición parcial, modificando solo lo que pidas. Funciona con tarjetas creadas en cualquier lugar y conserva el formato original salvo que pidas cambiarlo.'
+              : '**Edit with AI** isn\\'t a starting choice — it\\'s how you open an EXISTING character or persona back into the Creator (from its \"Edit with AI\" action). It loads the card on the sheet and every message becomes a partial edit, touching only what you asked. It works on cards built ANYWHERE and preserves the original format unless you ask it to change.'),"""
+          if old not in s: raise SystemExit('edit-with-ai target missing')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize remaining Creator overview help'
+          git push origin HEAD:spanish-localization
