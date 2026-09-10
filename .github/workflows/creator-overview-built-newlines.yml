@@ -1,0 +1,33 @@
+name: Creator overview built newlines
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart'); s=p.read_text()
+          def repl(marker,new,kind='paragraph'):
+            global s
+            pos=s.index(marker); a=s.rfind(f'          HowItWorksBlock.{kind}(',0,pos); b=s.index('),\n',pos)+2; s=s[:a]+new+s[b:]
+          repl("'Open Library tab", """          HowItWorksBlock.paragraph(es
+              ? 'Abre la pestaña Biblioteca → pulsa +. Hay tres formas de crear:\n  • Crear con asistente de IA — es lo que explica esta sección\n  • Crear desde cero — editor manual con control total\n  • Importar — PNG / JSON / URL\n\nEl flujo con el asistente de IA es una conversación. Tú planteas el personaje, la IA hace preguntas específicas para completar lo que falte y, cuando esté listo, escribe la tarjeta completa.'
+              : 'Open Library tab → tap +. Three ways to build:\n  • Build with AI assistant — what this section covers\n  • Create from scratch — manual editor, full control\n  • Import — PNG / JSON / URL\n\nThe AI assistant flow is a conversation. You sketch the character, the AI asks targeted questions to fill in gaps, and when ready it writes the full card.'),""")
+          repl("'You don\\'t drive any of this", """          HowItWorksBlock.paragraph(es
+              ? 'No tienes que dirigir esta parte: el arquitecto completa toda la tarjeta en orden y deja el cierre (eslogan, notas del creador y etiquetas) para el final, de modo que pueda tomar en cuenta todo lo anterior. Una tarjeta de personaje incluye:'
+              : 'You do not drive any of this — the architect fills the whole card for you in order, saving the wrap-up (tagline, creator notes, tags) for last so it can reference everything that came before. A character card covers:'),""")
+          # Earlier workflow accidentally produced literal backslash-n text in this one help paragraph.
+          s=s.replace('\\\\n\\\\n2) **Crear**','\\n\\n2) **Crear**').replace('\\\\n\\\\n3) **Revisar**','\\n\\n3) **Revisar**').replace('\\\\n\\\\n4) **Refinar o guardar**','\\n\\n4) **Refinar o guardar**')
+          s=s.replace('\\\\n\\\\n2) **Build**','\\n\\n2) **Build**').replace('\\\\n\\\\n3) **Review**','\\n\\n3) **Review**').replace('\\\\n\\\\n4) **Refine or save**','\\n\\n4) **Refine or save**')
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Finish Creator overview and session help formatting'
+          git push origin HEAD:spanish-localization
