@@ -1,0 +1,29 @@
+name: Profile featured syntax fix
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/botbooru_profile_screen.dart')
+          s=p.read_text()
+          old1="? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación, sin ningún efecto funcional.' : 'Pin one of your characters as your ')\n                            'featured spotlight. It\\'s a pure curation '\n                            'choice — no functional impact, just a way '\n                            'to show off what you\\'re proud of.'"
+          new1="? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación, sin ningún efecto funcional.' : 'Pin one of your characters as your featured spotlight. It\\'s a pure curation choice — no functional impact, just a way to show off what you\\'re proud of.')"
+          old2=": (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No character pinned yet. Tap Edit to ')\n                            'pick one to spotlight here.',"
+          new2=": (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No character pinned yet. Tap Edit to pick one to spotlight here.'),"
+          if old1 not in s or old2 not in s:
+              raise SystemExit('syntax markers missing')
+          p.write_text(s.replace(old1,new1,1).replace(old2,new2,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/botbooru_profile_screen.dart
+          git commit -m 'Fix featured localization syntax'
+          git push origin HEAD:spanish-localization
