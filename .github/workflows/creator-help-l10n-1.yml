@@ -1,0 +1,44 @@
+name: Creator help l10n 1
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          s=s.replace("return const HowItWorksCard(\n      title: 'How the Character Creator works',\n      subtitle: 'What it is, phases, modes, tips, troubleshooting.',\n      sections: [", "final es = AppStrings.of(context).es;\n    return HowItWorksCard(\n      title: es ? 'Cómo funciona el Creador de personajes' : 'How the Character Creator works',\n      subtitle: es ? 'Qué es, fases, modos, consejos y solución de problemas.' : 'What it is, phases, modes, tips, troubleshooting.',\n      sections: [",1)
+          s=s.replace("HowItWorksSection('What the Character Creator is', [", "HowItWorksSection(es ? 'Qué es el Creador de personajes' : 'What the Character Creator is', [",1)
+          old="""'Open Library tab → tap +. Three ways to build:\\n'
+              '  • Build with AI assistant — what this section covers\\n'
+              '  • Create from scratch — manual editor, full control\\n'
+              '  • Import — PNG / JSON / URL\\n\\n'
+              'The AI assistant flow is a conversation. You sketch the '
+              'character, the AI asks targeted questions to fill in '
+              'gaps, and when you\\'re both happy it writes the full '
+              'card.'"""
+          new="""es ? 'Abre la pestaña Biblioteca → toca +. Hay tres formas de crear:\\n  • Crear con el asistente de IA — lo que explica esta sección\\n  • Crear desde cero — editor manual, control total\\n  • Importar — PNG / JSON / URL\\n\\nEl flujo del asistente de IA es una conversación. Tú planteas el personaje, la IA hace preguntas específicas para completar los huecos y, cuando ambos están conformes, escribe la tarjeta completa.' : 'Open Library tab → tap +. Three ways to build:\\n  • Build with AI assistant — what this section covers\\n  • Create from scratch — manual editor, full control\\n  • Import — PNG / JSON / URL\\n\\nThe AI assistant flow is a conversation. You sketch the character, the AI asks targeted questions to fill in gaps, and when you\\'re both happy it writes the full card.'"""
+          s=s.replace(old,new,1)
+          s=s.replace("HowItWorksSection('How a session flows', [", "HowItWorksSection(es ? 'Cómo transcurre una sesión' : 'How a session flows', [",1)
+          s=s.replace("HowItWorksSection('What you can build', [", "HowItWorksSection(es ? 'Qué puedes crear' : 'What you can build', [",1)
+          s=s.replace("HowItWorksSection('How the build runs', [", "HowItWorksSection(es ? 'Cómo se ejecuta la creación' : 'How the build runs', [",1)
+          s=s.replace("HowItWorksSection('What gets built', [", "HowItWorksSection(es ? 'Qué se crea' : 'What gets built', [",1)
+          s=s.replace("HowItWorksSection('Your additions', [", "HowItWorksSection(es ? 'Tus añadidos' : 'Your additions', [",1)
+          s=s.replace("HowItWorksSection('Attach buttons', [", "HowItWorksSection(es ? 'Botones para adjuntar' : 'Attach buttons', [",1)
+          s=s.replace("HowItWorksSection('After the card is built', [", "HowItWorksSection(es ? 'Después de crear la tarjeta' : 'After the card is built', [",1)
+          s=s.replace("HowItWorksSection('Background generation', [", "HowItWorksSection(es ? 'Generación en segundo plano' : 'Background generation', [",1)
+          s=s.replace("HowItWorksSection('Tips that actually help', [", "HowItWorksSection(es ? 'Consejos que realmente ayudan' : 'Tips that actually help', [",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize Creator help headings and overview'
+          git push origin HEAD:spanish-localization
