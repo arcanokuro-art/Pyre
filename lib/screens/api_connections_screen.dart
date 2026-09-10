@@ -789,7 +789,7 @@ Future<void> _testConnection(
         ? (AppStrings.of(context).es ? ' — pero todavía no hay un modelo configurado; elige uno antes de chatear.' : ' — but no model is set yet, so pick one before chatting.')
         : '';
     messenger.showSnackBar(
-      SnackBar(content: Text('Connection OK ✓$modelNote')),
+      SnackBar(content: Text('${AppStrings.of(context).es ? 'Conexión correcta' : 'Connection OK'} ✓$modelNote')),
     );
   } catch (e) {
     // A thrown exception here is a transport failure (DNS, socket, TLS,
