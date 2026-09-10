@@ -1,0 +1,24 @@
+name: Backup parse error l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart'); s=p.read_text()
+          old="throw FormatException('Backup parse failed (likely corrupted): $e');"
+          new="throw FormatException(AppStrings.of(context).es ? 'No se pudo interpretar la copia de seguridad (probablemente está dañada): $e' : 'Backup parse failed (likely corrupted): $e');"
+          if old not in s: raise SystemExit('parse error marker missing')
+          s=s.replace(old,new,1); p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize backup parse failure message'
+          git push origin HEAD:spanish-localization
