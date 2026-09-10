@@ -1,0 +1,35 @@
+name: Profile l10n 5 retry
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/botbooru_profile_screen.dart'); s=p.read_text(); marker='  Widget build(BuildContext context) {\n'
+          for cls in ['class _FeaturedCharacterCard','class _FeaturedPickerSheet']:
+            pos=s.index(cls); idx=s.index(marker,pos)
+            if 'final es = AppStrings.of(context).es;' not in s[idx:idx+120]:
+              s=s[:idx]+s[idx:].replace(marker,marker+'    final es = AppStrings.of(context).es;\n',1)
+          s=s.replace("                  'FEATURED CHARACTER',","                  es ? 'PERSONAJE DESTACADO' : 'FEATURED CHARACTER',",1)
+          s=s.replace("                  label: Text(character == null ? 'Pick' : 'Change'),","                  label: Text(character == null ? (es ? 'Elegir' : 'Pick') : (es ? 'Cambiar' : 'Change')),",1)
+          start=s.index('                    editMode\n', s.index('class _FeaturedCharacterCard'))
+          end=s.index('                    style: TextStyle(', start)
+          replacement="""                    editMode
+                        ? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación: no tiene ningún efecto funcional.' : 'Pin one of your characters as your featured spotlight. It is a pure curation choice — no functional impact, just a way to show off what you are proud of.')
+                        : (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No character pinned yet. Tap Edit to pick one to spotlight here.'),
+"""
+          s=s[:start]+replacement+s[end:]
+          s=s.replace("                      'Pick a featured character',","                      es ? 'Elige un personaje destacado' : 'Pick a featured character',",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/botbooru_profile_screen.dart
+          git commit -m 'Localize profile featured character section'
+          git push origin HEAD:spanish-localization
