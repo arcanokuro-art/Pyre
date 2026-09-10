@@ -3218,7 +3218,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                 color: EmberColors.primary),
                             title: Text(f.name),
                             subtitle: Text(
-                              '${f.characterIds.length} card${f.characterIds.length == 1 ? "" : "s"}',
+                              AppStrings.of(sheetCtx).es ? '${f.characterIds.length} tarjeta${f.characterIds.length == 1 ? "" : "s"}' : '${f.characterIds.length} card${f.characterIds.length == 1 ? "" : "s"}',
                               style: const TextStyle(fontSize: 11),
                             ),
                             trailing: Row(
