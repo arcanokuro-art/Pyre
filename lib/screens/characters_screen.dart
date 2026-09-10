@@ -483,7 +483,7 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       // Start fresh); if none, go straight to new editor.
       ListTile(
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
-        title: const Text('Create from scratch'),
+        title: Text(AppStrings.of(context).es ? 'Crear desde cero' : 'Create from scratch'),
         onTap: () async {
           Navigator.pop(sheet);
           await _createBlankCharacter(context);
@@ -492,7 +492,7 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       Divider(color: EmberColors.stroke, height: 1),
       ListTile(
         leading: const Icon(Icons.link),
-        title: const Text('From URL'),
+        title: Text(AppStrings.of(context).es ? 'Desde URL' : 'From URL'),
         onTap: () {
           Navigator.pop(sheet);
           _showImportCharacterDialog(context);
@@ -500,7 +500,7 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       ),
       ListTile(
         leading: const Icon(Icons.file_upload_outlined),
-        title: const Text('From file'),
+        title: Text(AppStrings.of(context).es ? 'Desde archivo' : 'From file'),
         onTap: () async {
           Navigator.pop(sheet);
           await _pickAndImportCard(context);
