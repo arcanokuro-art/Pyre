@@ -123,22 +123,22 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 13),
                   ),
-                  _catCheck(_catCharacters, 'Characters',
-                      '${store.characters.length} cards · incl. avatars + gallery'),
+                  _catCheck(_catCharacters, AppStrings.of(context).es ? 'Personajes' : 'Characters',
+                      AppStrings.of(context).es ? '${store.characters.length} tarjetas · incl. avatares + galería' : '${store.characters.length} cards · incl. avatars + gallery'),
                   _catCheck(_catPersonas, 'Personas',
-                      '${store.personas.length} · incl. avatars'),
+                      AppStrings.of(context).es ? '${store.personas.length} · incl. avatares' : '${store.personas.length} · incl. avatars'),
                   _catCheck(_catChats, 'Chats',
-                      '${store.chats.length} conversations + memory'),
-                  _catCheck(_catLorebooks, 'Lorebooks',
+                      AppStrings.of(context).es ? '${store.chats.length} conversaciones + memoria' : '${store.chats.length} conversations + memory'),
+                  _catCheck(_catLorebooks, AppStrings.of(context).es ? 'Libros de lore' : 'Lorebooks',
                       '${store.lorebooks.length}'),
-                  _catCheck(_catPresets, 'Presets',
-                      'chat + creator prompt presets'),
-                  _catCheck(_catProviders, 'Connections',
-                      '${store.providers.length} providers · ⚠ saved WITH your API keys in plain text'),
-                  _catCheck(_catSettings, 'App settings',
-                      'model / chat / memory / UI · regex rules · folders · profile'),
-                  _catCheck(_catCreatorSessions, 'Creator drafts',
-                      '${store.creatorSessions.length} in progress'),
+                  _catCheck(_catPresets, AppStrings.of(context).es ? 'Preajustes' : 'Presets',
+                      AppStrings.of(context).es ? 'preajustes de chat + prompts del creador' : 'chat + creator prompt presets'),
+                  _catCheck(_catProviders, AppStrings.of(context).es ? 'Conexiones' : 'Connections',
+                      AppStrings.of(context).es ? '${store.providers.length} proveedores · ⚠ se guarda CON tus claves API en texto sin formato' : '${store.providers.length} providers · ⚠ saved WITH your API keys in plain text'),
+                  _catCheck(_catSettings, AppStrings.of(context).es ? 'Ajustes de la app' : 'App settings',
+                      AppStrings.of(context).es ? 'modelo / chat / memoria / interfaz · reglas regex · carpetas · perfil' : 'model / chat / memory / UI · regex rules · folders · profile'),
+                  _catCheck(_catCreatorSessions, AppStrings.of(context).es ? 'Borradores del creador' : 'Creator drafts',
+                      AppStrings.of(context).es ? '${store.creatorSessions.length} en progreso' : '${store.creatorSessions.length} in progress'),
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -209,8 +209,8 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Import from SillyTavern',
+                  Text(
+                    AppStrings.of(context).es ? 'Importar desde SillyTavern' : 'Import from SillyTavern',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 15),
                   ),
