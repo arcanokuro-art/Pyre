@@ -732,7 +732,7 @@ Future<void> _testConnection(
   final base = urlCtl.text.trim();
   if (base.isEmpty) {
     messenger.showSnackBar(
-        const SnackBar(content: Text('Fill in the base URL first.')));
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Primero introduce la URL base.' : 'Fill in the base URL first.')));
     return;
   }
   // Security (audit round 16): never send the SAVED key to a CHANGED host.
@@ -750,9 +750,10 @@ Future<void> _testConnection(
   // local server (LM Studio/Ollama) is exactly what it's for.
   if (!isProviderHostAllowed(base,
       isLocalhostKind: kind == ProviderKind.localhost)) {
-    messenger.showSnackBar(const SnackBar(
-        content: Text('That URL points at a private or internal address. '
-            'For a local server, set the type to Localhost.')));
+    messenger.showSnackBar(SnackBar(
+        content: Text(AppStrings.of(context).es
+            ? 'Esa URL apunta a una dirección privada o interna. Para un servidor local, establece el tipo en Localhost.'
+            : 'That URL points at a private or internal address. For a local server, set the type to Localhost.')));
     return;
   }
   final url = buildChatUrl(base, 'models');
