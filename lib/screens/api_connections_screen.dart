@@ -388,28 +388,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                   ),
                 ],
               ),
-              subtitle: Text(
-                AppStrings.of(context).es ? '${s.baseUrl}\nmodelo: ${s.model}' : '${s.baseUrl}\nmodel: ${s.model}',
-                style: TextStyle(color: EmberColors.textMid, fontSize: 12),
-              ),
-              isThreeLine: true,
-              trailing: Icon(Icons.chevron_right,
-                  color: EmberColors.textDim, size: 22),
-              onTap: () => _editProvider(context, null),
-            ),
-          )
-        else
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: EmptyState(
-              icon: Icons.cloud_outlined,
-              title: AppStrings.of(context).es ? 'Conecta un proveedor de IA' : 'Connect an AI provider',
-              subtitle:
-                  'This server has no AI yet. Add one (OpenRouter has free '
-                  'models to start) and paste its API key — it\'s saved on the '
-                  'server for every device that connects.',
-              ctaLabel: AppStrings.of(context).es ? 'Añadir un proveedor' : 'Add a provider',
-              onCta: () => _editProvider(context, null),
+              subtitle: Text(AppStrings.of(context).es ? 'Este servidor todavía no tiene IA. Añade un proveedor (OpenRouter tiene modelos gratuitos para empezar) y pega su clave de API; se guardará en el servidor para todos los dispositivos que se conecten.' : "This server has no AI yet. Add one (OpenRouter has free models to start) and paste its API key — it's saved on the server for every device that connects."),
             ),
           ),
         const SizedBox(height: 8),
