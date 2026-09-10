@@ -883,7 +883,7 @@ Future<void> _exportCharacterAsJson(BuildContext context, Character c) async {
       // copying an unsaveable data URL to the clipboard.
       downloadBytesToBrowser(bytes, filename, 'application/json');
       messenger.showSnackBar(
-        SnackBar(content: Text('Downloading $filename')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
       );
       return;
     }
@@ -932,9 +932,9 @@ Future<void> _exportPersonaAsPng(BuildContext context, Persona p) async {
     final avatarBytes = await resolveAvatarBytes(p.avatar);
     if (avatarBytes == null) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
-                'This persona has no avatar. Set one in the editor first, then re-export.')),
+                AppStrings.of(context).es ? 'Esta persona no tiene avatar. Configura uno primero en el editor y vuelve a exportar.' : 'This persona has no avatar. Set one in the editor first, then re-export.')),
       );
       return;
     }
@@ -987,7 +987,7 @@ Future<void> _exportPersonaAsPng(BuildContext context, Persona p) async {
       // Web has no filesystem — trigger a real browser download.
       downloadBytesToBrowser(pngBytes, filename, 'image/png');
       messenger.showSnackBar(
-        SnackBar(content: Text('Downloading $filename')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
       );
       return;
     }
@@ -1092,7 +1092,7 @@ Future<void> _exportPersonaAsJson(BuildContext context, Persona p) async {
       // Web has no filesystem — trigger a real browser download.
       downloadBytesToBrowser(bytes, filename, 'application/json');
       messenger.showSnackBar(
-        SnackBar(content: Text('Downloading $filename')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
       );
       return;
     }
