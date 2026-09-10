@@ -261,10 +261,7 @@ class _ModelRecommendationsBanner extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 6),
             child: Text(
-              '➤  DeepSeek V4 Pro — by far the best. Other DeepSeek '
-              'family models (V3.2, V3 chat) also work well. Models '
-              'OUTSIDE the DeepSeek family tend to refuse or stumble '
-              'on NSFW card content, even with the addendum below.',
+              AppStrings.of(context).es ? '➤  DeepSeek V4 Pro — con diferencia, el mejor. Otros modelos de la familia DeepSeek (V3.2, V3 chat) también funcionan bien. Los modelos FUERA de la familia DeepSeek tienden a rechazar o fallar con contenido NSFW de las tarjetas, incluso con los añadidos de abajo.' : '➤  DeepSeek V4 Pro — by far the best. Other DeepSeek family models (V3.2, V3 chat) also work well. Models OUTSIDE the DeepSeek family tend to refuse or stumble on NSFW card content, even with the addendum below.',
               style: TextStyle(
                 color: EmberColors.textHigh,
                 fontSize: 12.5,
@@ -274,7 +271,7 @@ class _ModelRecommendationsBanner extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'For Vision (image analysis when building cards):',
+            AppStrings.of(context).es ? 'Para Visión (análisis de imágenes al crear tarjetas):' : 'For Vision (image analysis when building cards):',
             style: TextStyle(
               color: EmberColors.textHigh,
               fontSize: 12.5,
@@ -286,9 +283,7 @@ class _ModelRecommendationsBanner extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 6),
             child: Text(
-              '➤  Qwen 3.6 Plus Uncensored — available on Venice and '
-              'NanoGPT. Best results for the clinical character '
-              'descriptions Pyre\'s vision prompt asks for.',
+              AppStrings.of(context).es ? '➤  Qwen 3.6 Plus Uncensored — disponible en Venice y NanoGPT. Ofrece los mejores resultados para las descripciones clínicas de personajes que solicita el prompt de visión de Pyre.' : '➤  Qwen 3.6 Plus Uncensored — available on Venice and NanoGPT. Best results for the clinical character descriptions Pyre\'s vision prompt asks for.',
               style: TextStyle(
                 color: EmberColors.textHigh,
                 fontSize: 12.5,
@@ -311,9 +306,7 @@ class _ModelRecommendationsBanner extends StatelessWidget {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Set these in More → API Connections. The top card '
-                    'lets you override the Creator and Vision providers '
-                    'independently from the main chat provider.',
+                    AppStrings.of(context).es ? 'Configúralos en Más → Conexiones API. La tarjeta superior permite elegir proveedores distintos para Creador y Visión, independientemente del proveedor del chat principal.' : 'Set these in More → API Connections. The top card lets you override the Creator and Vision providers independently from the main chat provider.',
                     style: TextStyle(
                       color: EmberColors.textMid,
                       fontSize: 11.5,
