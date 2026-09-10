@@ -776,7 +776,7 @@ Future<void> _testConnection(
         apiKey: keyCtl.text.trim(),
       );
       final hint = (resp.statusCode == 401 || resp.statusCode == 403)
-          ? 'The key was rejected — check you pasted the whole key.'
+          ? (AppStrings.of(context).es ? 'La clave fue rechazada; comprueba que pegaste la clave completa.' : 'The key was rejected — check you pasted the whole key.')
           : (resp.statusCode == 404)
               ? 'Nothing answered at this URL — check the Base URL.'
               : 'The provider returned an error.';
