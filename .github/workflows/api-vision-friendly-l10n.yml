@@ -1,0 +1,24 @@
+name: API vision and friendly name l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          s=s.replace("return core.isEmpty ? 'AI provider' : core[0].toUpperCase() + core.substring(1);", "return core.isEmpty ? (AppStrings.of(context).es ? 'Proveedor de IA' : 'AI provider') : core[0].toUpperCase() + core.substring(1);",1)
+          s=s.replace("return 'AI provider';", "return AppStrings.of(context).es ? 'Proveedor de IA' : 'AI provider';",1)
+          s=s.replace("label: 'VISION',\n                                  color: const Color(0xFF6FBEFF),", "label: es ? 'VISIÓN' : 'VISION',\n                                  color: const Color(0xFF6FBEFF),",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API vision badge and fallback provider name'
+          git push origin HEAD:spanish-localization
