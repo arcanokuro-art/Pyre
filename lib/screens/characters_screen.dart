@@ -3199,7 +3199,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                               color: EmberColors.textMid),
                           title: Text(AppStrings.of(sheetCtx).es ? 'Todos los personajes' : 'All characters'),
                           subtitle: Text(
-                            '${store.characters.length} card${store.characters.length == 1 ? "" : "s"}',
+                            AppStrings.of(sheetCtx).es ? '${store.characters.length} tarjeta${store.characters.length == 1 ? "" : "s"}' : '${store.characters.length} card${store.characters.length == 1 ? "" : "s"}',
                             style: const TextStyle(fontSize: 11),
                           ),
                           trailing: store.charFolderId == null
