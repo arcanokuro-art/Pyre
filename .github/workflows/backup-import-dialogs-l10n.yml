@@ -1,0 +1,32 @@
+name: Backup import dialogs l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart')
+          s=p.read_text()
+          s=s.replace("'Backup is not a parseable JSON object — the file may be '\n              'corrupted. ${text.length} bytes read.'", "AppStrings.of(context).es ? 'La copia no es un objeto JSON válido; el archivo puede estar dañado. Se leyeron ${text.length} bytes.' : 'Backup is not a parseable JSON object — the file may be corrupted. ${text.length} bytes read.'",1)
+          s=s.replace("title: 'Import API keys?'", "title: AppStrings.of(context).es ? '¿Importar claves API?' : 'Import API keys?'",1)
+          s=s.replace("message:\n              'This backup contains API keys. Add/overwrite your saved keys with them? Choose \"Keep mine\" to import everything else and leave your current keys untouched.'", "message: AppStrings.of(context).es ? 'Esta copia contiene claves API. ¿Quieres añadirlas o sobrescribir tus claves guardadas? Elige «Conservar las mías» para importar todo lo demás sin modificar tus claves actuales.' : 'This backup contains API keys. Add/overwrite your saved keys with them? Choose \"Keep mine\" to import everything else and leave your current keys untouched.'",1)
+          s=s.replace("confirmLabel: 'Use backup keys'", "confirmLabel: AppStrings.of(context).es ? 'Usar claves de la copia' : 'Use backup keys'",1)
+          s=s.replace("cancelLabel: 'Keep mine'", "cancelLabel: AppStrings.of(context).es ? 'Conservar las mías' : 'Keep mine'",1)
+          s=s.replace("title: 'Replace your data?'", "title: AppStrings.of(context).es ? '¿Reemplazar tus datos?' : 'Replace your data?'",1)
+          old="""message:\n              'This will REPLACE your current data for:\\n\\n'\n              '${replaceSummary.join('\\n')}\\n\\n'\n              'Records you added since this backup will be lost. Continue?',\n          confirmLabel: 'Replace',"""
+          new="""message: AppStrings.of(context).es\n              ? 'Esto REEMPLAZARÁ tus datos actuales de:\\n\\n${replaceSummary.join('\\n')}\\n\\nLos registros que hayas añadido desde esta copia se perderán. ¿Continuar?'\n              : 'This will REPLACE your current data for:\\n\\n${replaceSummary.join('\\n')}\\n\\nRecords you added since this backup will be lost. Continue?',\n          confirmLabel: AppStrings.of(context).es ? 'Reemplazar' : 'Replace',"""
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize backup import validation and confirmation dialogs'
+          git push origin HEAD:spanish-localization
