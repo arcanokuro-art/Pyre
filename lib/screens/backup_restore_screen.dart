@@ -371,8 +371,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     } catch (e) {
       if (!context.mounted) return;
       messenger.showSnackBar(SnackBar(
-          content: Text('Backup failed — reset aborted to keep your '
-              'data safe: $e')));
+          content: Text(AppStrings.of(context).es ? 'Falló la copia de seguridad; se canceló el restablecimiento para mantener tus datos seguros: $e' : 'Backup failed — reset aborted to keep your data safe: $e')));
       return;
     }
     if (!context.mounted) return;
@@ -381,7 +380,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       context: context,
       builder: (c) => AlertDialog(
         title: Text(
-            missingImages > 0 ? 'Backup saved — with a warning' : 'Backup saved'),
+            AppStrings.of(context).es ? (missingImages > 0 ? 'Copia guardada, con una advertencia' : 'Copia guardada') : (missingImages > 0 ? 'Backup saved — with a warning' : 'Backup saved')),
         content: Text(
           (missingImages > 0
                   ? '⚠ $missingImages image file(s) could NOT be included in the '
@@ -401,13 +400,13 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
                 backgroundColor: EmberColors.danger),
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Reset now'),
+            child: Text(AppStrings.of(context).es ? 'Restablecer ahora' : 'Reset now'),
           ),
         ],
       ),
@@ -419,15 +418,14 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     } catch (e) {
       if (!context.mounted) return;
       messenger.showSnackBar(
-          SnackBar(content: Text('Reset failed: $e')));
+          SnackBar(content: Text(AppStrings.of(context).es ? 'Falló el restablecimiento: $e' : 'Reset failed: $e')));
       return;
     }
     if (!context.mounted) return;
     // Back to the root so the fresh-install state (onboarding + seeded
     // examples) shows instead of this now-stale screen.
     Navigator.of(context).popUntil((r) => r.isFirst);
-    messenger.showSnackBar(const SnackBar(
-        content: Text('Pyre has been reset to factory settings.')));
+    messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Pyre se ha restablecido a los valores de fábrica.' : 'Pyre has been reset to factory settings.')));
   }
 
   /// Second gate: require the user to literally type "reset". The button
