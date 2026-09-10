@@ -839,7 +839,7 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Export failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e')),
     );
   }
 }
@@ -907,7 +907,7 @@ Future<void> _exportCharacterAsJson(BuildContext context, Character c) async {
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Export failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e')),
     );
   }
 }
@@ -1034,7 +1034,7 @@ Future<void> _exportPersonaAsPng(BuildContext context, Persona p) async {
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Export failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e')),
     );
   }
 }
@@ -1116,7 +1116,7 @@ Future<void> _exportPersonaAsJson(BuildContext context, Persona p) async {
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Export failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e')),
     );
   }
 }
