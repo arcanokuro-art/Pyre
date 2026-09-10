@@ -356,7 +356,7 @@ Future<void> _pickAndImportPersona(BuildContext context) async {
     final bytes = f.bytes;
     if (bytes == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not read file bytes.')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron leer los datos del archivo.' : 'Could not read file bytes.')),
       );
       return;
     }
@@ -423,7 +423,7 @@ Future<void> _pickAndImportPersona(BuildContext context) async {
     );
     final choice = await confirmCardImport(context, previewCard);
     if (!choice.import) {
-      messenger.showSnackBar(const SnackBar(content: Text('Import cancelled.')));
+      messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Importación cancelada.' : 'Import cancelled.')));
       return;
     }
     // B-2 / H-6: externalise a card-imported persona's inline avatar so it
@@ -435,7 +435,7 @@ Future<void> _pickAndImportPersona(BuildContext context) async {
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Import failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al importar: $e' : 'Import failed: $e')),
     );
   }
 }
