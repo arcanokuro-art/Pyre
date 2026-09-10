@@ -3524,7 +3524,7 @@ Future<void> showAddToFolderSheet(
                     children: [
                       Expanded(
                         child: Text(
-                          'Add "$itemName" to folder',
+                          AppStrings.of(sheetCtx).es ? 'Añadir "$itemName" a carpeta' : 'Add "$itemName" to folder',
                           style: TextStyle(
                             color: EmberColors.textHigh,
                             fontWeight: FontWeight.w600,
@@ -3545,7 +3545,7 @@ Future<void> showAddToFolderSheet(
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
                     child: Text(
-                      'No folders yet. Create one below to group ${countNoun}s.',
+                      AppStrings.of(sheetCtx).es ? 'Aún no hay carpetas. Crea una abajo para agrupar elementos.' : 'No folders yet. Create one below to group ${countNoun}s.',
                       style: TextStyle(
                         color: EmberColors.textMid,
                         fontSize: 13,
@@ -3584,7 +3584,7 @@ Future<void> showAddToFolderSheet(
                 ListTile(
                   leading: Icon(Icons.add,
                       color: EmberColors.primary),
-                  title: const Text('Create new folder + add'),
+                  title: Text(AppStrings.of(sheetCtx).es ? 'Crear carpeta nueva + añadir' : 'Create new folder + add'),
                   onTap: () async {
                     final name = await _promptFolderName(context);
                     if (name == null || name.trim().isEmpty) return;
