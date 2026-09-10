@@ -1,0 +1,29 @@
+name: Backup export share save l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart')
+          s=p.read_text()
+          s=s.replace("final subject = _include.contains(_catProviders)\n          ? 'Pyre backup (contains API keys — handle with care)'\n          : 'Pyre backup';", "final subject = _include.contains(_catProviders)\n          ? (AppStrings.of(context).es ? 'Copia de Pyre (contiene claves API; manéjala con cuidado)' : 'Pyre backup (contains API keys — handle with care)')\n          : (AppStrings.of(context).es ? 'Copia de seguridad de Pyre' : 'Pyre backup');",1)
+          s=s.replace("text: _include.contains(_catProviders)\n              ? 'Pyre backup with API keys. Don\\'t share this file with anyone you wouldn\\'t hand your credit card to.'\n              : 'Pyre backup (no API keys included — safe to share).'", "text: _include.contains(_catProviders)\n              ? (AppStrings.of(context).es ? 'Copia de Pyre con claves API. No compartas este archivo con nadie a quien no confiarías información financiera sensible.' : 'Pyre backup with API keys. Don\\'t share this file with anyone you wouldn\\'t hand your credit card to.')\n              : (AppStrings.of(context).es ? 'Copia de Pyre (sin claves API; se puede compartir).' : 'Pyre backup (no API keys included — safe to share).')",1)
+          s=s.replace("content: Text(warn == null ? 'Downloading $filename' : warn)", "content: Text(warn == null ? (AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename') : warn)",1)
+          s=s.replace("content: Text(warn == null ? 'Saved to ${file.path}' : warn)", "content: Text(warn == null ? (AppStrings.of(context).es ? 'Guardado en ${file.path}' : 'Saved to ${file.path}') : warn)",1)
+          s=s.replace("const SnackBar(content: Text('Could not read file bytes.'))", "SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron leer los datos del archivo.' : 'Could not read file bytes.'))",1)
+          s=s.replace("'Backup is too large (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Max 50 MB.'", "AppStrings.of(context).es ? 'La copia es demasiado grande (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Máximo 50 MB.' : 'Backup is too large (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Max 50 MB.'",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize backup share save and initial import messages'
+          git push origin HEAD:spanish-localization
