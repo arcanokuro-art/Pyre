@@ -1,0 +1,29 @@
+name: Storage banners l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/storage_screen.dart')
+          s=p.read_text()
+          s=s.replace("'Per-collection issues:'", "AppStrings.of(context).es ? 'Problemas por colección:' : 'Per-collection issues:'",1)
+          s=s.replace("'API key storage errors'", "AppStrings.of(context).es ? 'Errores de almacenamiento de claves API' : 'API key storage errors'",1)
+          s=s.replace("'Dismiss'", "AppStrings.of(context).es ? 'Descartar' : 'Dismiss'",1)
+          s=s.replace("'One or more API keys failed to read/write from OS-secure '\n            'storage. If a provider is missing its key, re-paste it '\n            'in API Connections.'", "AppStrings.of(context).es ? 'No se pudieron leer o escribir una o más claves API en el almacenamiento seguro del sistema. Si a un proveedor le falta su clave, vuelve a pegarla en Conexiones API.' : 'One or more API keys failed to read/write from OS-secure storage. If a provider is missing its key, re-paste it in API Connections.'",1)
+          s=s.replace("'Recent failures:'", "AppStrings.of(context).es ? 'Fallos recientes:' : 'Recent failures:'",1)
+          s=s.replace("'…and ${errors.length - 8} more'", "AppStrings.of(context).es ? '…y ${errors.length - 8} más' : '…and ${errors.length - 8} more'",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/storage_screen.dart
+          git commit -m 'Localize storage diagnostic banners'
+          git push origin HEAD:spanish-localization
