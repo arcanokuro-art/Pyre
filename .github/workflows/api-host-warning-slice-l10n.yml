@@ -1,0 +1,36 @@
+name: API host warning anchor patch
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          anchor='  // Security (audit round 16): never send the SAVED key to a CHANGED host.'
+          a=s.index(anchor)
+          b=s.index('  // Mega-audit 2026-06-05 (H-7): SSRF gate.',a)
+          block=s[a:b]
+          guard_start=block.index('  if (providerKeyStaleForChangedHost(')
+          return_end=block.index('    return;\n  }',guard_start)+len('    return;\n  }')
+          new_guard="""  if (providerKeyStaleForChangedHost(
+      existing: existing, currentUrl: base, currentKey: keyCtl.text)) {
+    messenger.showSnackBar(SnackBar(
+        content: Text(AppStrings.of(context).es
+            ? 'Cambiaste el host: introduce una clave API diferente (o bórrala) antes de probar. Tu clave guardada nunca se envía a un host nuevo.'
+            : 'You changed the host — enter a different API key (or clear it) before testing. Your saved key is never sent to a new host.')));
+    return;
+  }"""
+          block=block[:guard_start]+new_guard+block[return_end:]
+          p.write_text(s[:a]+block+s[b:])
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API changed-host warning'
+          git push origin HEAD:spanish-localization
