@@ -1456,10 +1456,12 @@ class _CharacterList extends StatelessWidget {
     // Wave BK: drafts live in the Create sheet now, NOT in the
     // Characters list. The Characters list is for SAVED cards only.
     if (store.characters.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: Icons.person_outline,
-        title: 'No characters yet',
-        subtitle: 'Tap Create to import a Tavern Card from a URL or file.',
+        title: AppStrings.of(context).es ? 'Aún no hay personajes' : 'No characters yet',
+        subtitle: AppStrings.of(context).es
+            ? 'Toca Crear para importar una Tavern Card desde una URL o archivo.'
+            : 'Tap Create to import a Tavern Card from a URL or file.',
       );
     }
 
@@ -1504,10 +1506,10 @@ class _CharacterList extends StatelessWidget {
           child: items.isEmpty
               ? EmptyState(
                   icon: Icons.search_off,
-                  title: 'No matches',
+                  title: AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches',
                   subtitle: hasFilters
-                      ? 'Clear filters or change sort to see more.'
-                      : 'Nothing matches your search.',
+                      ? (AppStrings.of(context).es ? 'Borra los filtros o cambia el orden para ver más.' : 'Clear filters or change sort to see more.')
+                      : (AppStrings.of(context).es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.'),
                 )
               : ListView.builder(
                   padding:
