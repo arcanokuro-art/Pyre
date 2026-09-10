@@ -1,0 +1,32 @@
+name: API advanced items l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          pos=s.index('class _AdvancedFallbackTile'); h=s[:pos]; t=s[pos:]
+          reps=[
+          ("title: const Text('Smart provider fallback',", "title: Text(AppStrings.of(context).es ? 'Cambio inteligente de proveedor' : 'Smart provider fallback',"),
+          ("style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),\n            subtitle: Text(\n              on", "style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),\n            subtitle: Text(\n              on"),
+          ("title: const Text('Background generation',", "title: Text(AppStrings.of(context).es ? 'Generación en segundo plano' : 'Background generation',")]
+          for a,b in reps:
+            if a not in t: raise SystemExit('missing '+a[:40])
+            t=t.replace(a,b,1)
+          # second title style is the next non-const style after background title
+          marker="title: Text(AppStrings.of(context).es ? 'Generación en segundo plano' : 'Background generation',"
+          i=t.index(marker); j=t.index('style: TextStyle(',i); t=t[:j]+'style: const TextStyle('+t[j+len('style: TextStyle('):]
+          p.write_text(h+t)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API advanced item titles'
+          git push origin HEAD:spanish-localization
