@@ -86,38 +86,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _bulletRow(
                       Icons.shield_outlined,
                       es ? 'Tus datos permanecen en este dispositivo' : 'Your data stays on this device',
-                      'Characters, chats, API keys — all local. We don\'t '
-                          'have a backend that sees them.',
+                      es ? 'Personajes, chats y claves de API: todo permanece en local. No tenemos un servidor que pueda verlos.' : 'Characters, chats, API keys — all local. We don\'t have a backend that sees them.',
                     ),
                     _bulletRow(
                       Icons.tune_outlined,
                       es ? 'Creado para roleplay' : 'Built for roleplay',
-                      'SillyTavern card import, group chats, presets, '
-                          'lorebooks, branching variants.',
+                      es ? 'Importación de tarjetas de SillyTavern, chats grupales, presets, lorebooks y variantes ramificadas.' : 'SillyTavern card import, group chats, presets, lorebooks, branching variants.',
                     ),
                     _bulletRow(
                       Icons.explore_outlined,
                       es ? 'Explora el catálogo' : 'Discover marketplace',
-                      'Browse botbooru.com inside the app and import '
-                          'characters in one tap.',
+                      es ? 'Explora botbooru.com desde la aplicación e importa personajes con un solo toque.' : 'Browse botbooru.com inside the app and import characters in one tap.',
                     ),
                     _bulletRow(
                       Icons.auto_awesome,
                       es ? 'Herramientas avanzadas' : 'Power tools',
-                      'AI Character Creator for characters, scenarios & '
-                          'personas, branch-aware Checkpoints, Live '
-                          'Sheet state tracking, Script story-direction, and '
-                          'scene-aware dynamic backgrounds.',
+                      es ? 'Creador de personajes con IA para personajes, escenarios y personas; Checkpoints compatibles con ramas, seguimiento de estado con Live Sheet, dirección narrativa con Script y fondos dinámicos según la escena.' : 'AI Character Creator for characters, scenarios & personas, branch-aware Checkpoints, Live Sheet state tracking, Script story-direction, and scene-aware dynamic backgrounds.',
                     ),
                     _bulletRow(
                       Icons.check_circle_outline,
                       es ? 'Configúralo una vez y listo' : 'Set up once, you\'re good',
-                      'Add an API provider in More → API Connections, '
-                          'grab a card (or build one), maybe make a persona '
-                          '— that\'s it. Pyre ships with best-practice '
-                          'prompts tuned for roleplay, so you don\'t need '
-                          'to fiddle with nerd settings to get a good '
-                          'experience out of the box.',
+                      es ? 'Añade un proveedor en Más → Conexiones API, consigue una tarjeta (o crea una) y, si quieres, crea una persona. Eso es todo. Pyre incluye prompts optimizados para roleplay, así que no necesitas ajustar configuraciones técnicas para obtener una buena experiencia desde el principio.' : 'Add an API provider in More → API Connections, grab a card (or build one), maybe make a persona — that\'s it. Pyre ships with best-practice prompts tuned for roleplay, so you don\'t need to fiddle with nerd settings to get a good experience out of the box.',
                     ),
                   ],
                 ),
