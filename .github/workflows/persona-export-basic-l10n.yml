@@ -1,0 +1,35 @@
+name: Persona export basic l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          old="SnackBar(content: Text('Downloading $filename'))"
+          new="SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename'))"
+          n=s.count(old)
+          if n < 1: raise SystemExit('download missing')
+          s=s.replace(old,new)
+          old="'This persona has no avatar. Set one in the editor first, then re-export.'"
+          new="AppStrings.of(context).es ? 'Esta persona no tiene avatar. Configura uno primero en el editor y vuelve a exportar.' : 'This persona has no avatar. Set one in the editor first, then re-export.'"
+          if old not in s: raise SystemExit('persona avatar missing')
+          s=s.replace(old,new,1)
+          # The surrounding SnackBar cannot remain const once the text depends on locale.
+          marker="const SnackBar(\n            content: Text(\n                "+new+")"
+          if marker not in s: raise SystemExit('const persona snackbar missing')
+          s=s.replace(marker,"SnackBar(\n            content: Text(\n                "+new+")",1)
+          p.write_text(s)
+          print('localized downloads',n)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize persona export basics'
+          git push origin HEAD:spanish-localization
