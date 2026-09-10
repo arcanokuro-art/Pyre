@@ -2063,15 +2063,15 @@ class _CharacterCard extends StatelessWidget {
                 size: 20,
               ),
               tooltip: character.favorite
-                  ? 'Remove from favorites'
-                  : 'Add to favorites',
+                  ? (AppStrings.of(context).es ? 'Quitar de favoritos' : 'Remove from favorites')
+                  : (AppStrings.of(context).es ? 'Añadir a favoritos' : 'Add to favorites'),
               onPressed: () => store.toggleCharacterFavorite(character.id),
               visualDensity: VisualDensity.compact,
             ),
             IconButton(
               icon: Icon(Icons.more_vert,
                   color: EmberColors.textMid),
-              tooltip: 'Character actions',
+              tooltip: AppStrings.of(context).es ? 'Acciones del personaje' : 'Character actions',
               onPressed: () =>
                   _showCharacterMenu(context, store, character),
               visualDensity: VisualDensity.compact,
@@ -2106,7 +2106,7 @@ class _CharacterSubtitle extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: _buildBody()),
+        Expanded(child: _buildBody(context)),
         if (tokenLabel != null) ...[
           const SizedBox(width: 6),
           Padding(
@@ -2125,7 +2125,7 @@ class _CharacterSubtitle extends StatelessWidget {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     if ((character.tagline ?? '').trim().isNotEmpty) {
       return Text(
         character.tagline!,
@@ -2152,7 +2152,7 @@ class _CharacterSubtitle extends StatelessWidget {
     }
     final firstLine = character.description.split('\n').first.trim();
     return Text(
-      firstLine.isEmpty ? '(no description)' : firstLine,
+      firstLine.isEmpty ? (AppStrings.of(context).es ? '(sin descripción)' : '(no description)') : firstLine,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(color: EmberColors.textMid),
