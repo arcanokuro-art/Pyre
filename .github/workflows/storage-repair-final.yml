@@ -1,0 +1,30 @@
+name: Storage repair final
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/storage_screen.dart')
+          s=p.read_text()
+          a="t('Elimina todos los personajes, chats, personas, preajustes, libros de lore y conexiones API almacenados en este dispositivo. Tus ajustes (temperatura, comportamiento del chat, etc.) se conservan. No se puede deshacer.\\n\\n', 'Removes every character, chat, persona, preset, lorebook and API connection stored on this device. Your settings (temperature, chat behaviour, etc.) are kept. There is no undo.\\n\\n')\n                    'For a full factory reset that also wipes settings, '\n                    'use Backup & Restore → Advanced → Reset to factory settings.'"
+          b="t('Elimina todos los personajes, chats, personas, preajustes, libros de lore y conexiones API almacenados en este dispositivo. Tus ajustes se conservan. No se puede deshacer.\\n\\nPara un restablecimiento completo que también borre los ajustes, usa Copia de seguridad y restauración → Avanzado → Restablecer a valores de fábrica.', 'Removes every character, chat, persona, preset, lorebook and API connection stored on this device. Your settings are kept. There is no undo.\\n\\nFor a full factory reset that also wipes settings, use Backup & Restore → Advanced → Reset to factory settings.')"
+          if a not in s: raise SystemExit('target missing')
+          p.write_text(s.replace(a,b,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/storage_screen.dart
+          git commit -m 'Fix storage screen syntax'
+          git push origin HEAD:spanish-localization
