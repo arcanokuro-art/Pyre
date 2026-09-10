@@ -1,0 +1,31 @@
+name: Onboarding l10n 2
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/onboarding_screen.dart'); s=p.read_text()
+          reps={
+          "'Characters, chats, API keys — all local. We don\\'t '\n                          'have a backend that sees them.',":"es ? 'Personajes, chats y claves de API: todo permanece en local. No tenemos un servidor que pueda verlos.' : 'Characters, chats, API keys — all local. We don\\'t have a backend that sees them.',",
+          "'SillyTavern card import, group chats, presets, '\n                          'lorebooks, branching variants.',":"es ? 'Importación de tarjetas de SillyTavern, chats grupales, presets, lorebooks y variantes ramificadas.' : 'SillyTavern card import, group chats, presets, lorebooks, branching variants.',",
+          "'Browse botbooru.com inside the app and import '\n                          'characters in one tap.',":"es ? 'Explora botbooru.com desde la aplicación e importa personajes con un solo toque.' : 'Browse botbooru.com inside the app and import characters in one tap.',",
+          "'AI Character Creator for characters, scenarios & '\n                          'personas, branch-aware Checkpoints, Live '\n                          'Sheet state tracking, Script story-direction, and '\n                          'scene-aware dynamic backgrounds.',":"es ? 'Creador de personajes con IA para personajes, escenarios y personas; Checkpoints compatibles con ramas, seguimiento de estado con Live Sheet, dirección narrativa con Script y fondos dinámicos según la escena.' : 'AI Character Creator for characters, scenarios & personas, branch-aware Checkpoints, Live Sheet state tracking, Script story-direction, and scene-aware dynamic backgrounds.',",
+          "'Add an API provider in More → API Connections, '\n                          'grab a card (or build one), maybe make a persona '\n                          '— that\\'s it. Pyre ships with best-practice '\n                          'prompts tuned for roleplay, so you don\\'t need '\n                          'to fiddle with nerd settings to get a good '\n                          'experience out of the box.',":"es ? 'Añade un proveedor en Más → Conexiones API, consigue una tarjeta (o crea una) y, si quieres, crea una persona. Eso es todo. Pyre incluye prompts optimizados para roleplay, así que no necesitas ajustar configuraciones técnicas para obtener una buena experiencia desde el principio.' : 'Add an API provider in More → API Connections, grab a card (or build one), maybe make a persona — that\\'s it. Pyre ships with best-practice prompts tuned for roleplay, so you don\\'t need to fiddle with nerd settings to get a good experience out of the box.',"
+          }
+          for a,b in reps.items():
+              if a not in s: raise SystemExit('missing: '+a[:40])
+              s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/onboarding_screen.dart
+          git commit -m 'Localize onboarding detail descriptions'
+          git push origin HEAD:spanish-localization
