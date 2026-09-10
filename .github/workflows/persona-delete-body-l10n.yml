@@ -1,0 +1,31 @@
+name: Persona delete warning l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          a=s.index('                message: isDefault')
+          b=s.index('              );',a)
+          new="""                message: isDefault
+                    ? (AppStrings.of(context).es
+                        ? 'Esta es tu persona predeterminada. Después de eliminarla, los chats nuevos no tendrán una persona predeterminada hasta que establezcas otra. Los chats existentes usarán como alternativa la persona que estaba activa cuando se crearon. ¿Seguro que quieres continuar?'
+                        : 'This is your default persona. After deleting, new chats will have no default persona until you set another one. Existing chats fall back to whichever persona was active when they were created. Are you sure?')
+                    : (AppStrings.of(context).es
+                        ? 'La persona se eliminará. Los chats existentes usarán como alternativa la persona predeterminada.'
+                        : 'The persona will be removed. Existing chats will fall back to the default persona.'),
+"""
+          p.write_text(s[:a]+new+s[b:])
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize persona deletion warning body'
+          git push origin HEAD:spanish-localization
