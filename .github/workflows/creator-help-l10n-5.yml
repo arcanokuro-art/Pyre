@@ -1,0 +1,32 @@
+name: Creator help l10n 5
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          repl={
+          "'Once the wrap-up lands, the card is shippable. '\n              'A few things you can do at this point:'":"es ? 'Cuando termina el cierre, la tarjeta queda lista. En este punto puedes hacer varias cosas:' : 'Once the wrap-up lands, the card is shippable. A few things you can do at this point:'",
+          "'**Save card** — commits to your Characters '\n              'library. Default avatar is the reference image you '\n              'attached (or a placeholder). After saving, the '\n              'screen offers to start a chat with the new card.'":"es ? '**Guardar tarjeta** — la añade a tu biblioteca de Personajes. El avatar predeterminado será la imagen de referencia que adjuntaste (o un marcador). Después de guardar, puedes iniciar un chat con la nueva tarjeta.' : '**Save card** — commits to your Characters library. Default avatar is the reference image you attached (or a placeholder). After saving, the screen offers to start a chat with the new card.'",
+          "'**Continue refining via chat** — any message '\n              'after the wrap-up is interpreted as a partial edit. '\n              'Same shape as Edit-with-AI mode.'":"es ? '**Seguir refinando mediante el chat** — cualquier mensaje después del cierre se interpreta como una edición parcial, igual que en el modo Editar con IA.' : '**Continue refining via chat** — any message after the wrap-up is interpreted as a partial edit. Same shape as Edit-with-AI mode.'",
+          "'A full build usually takes a few minutes; each pass can '\n              'be 30–90 seconds. Pyre uses a foreground '\n              'service so generation continues when you minimise '\n              'the app or screen-off — just don\\'t kill the '\n              'process. A persistent notification appears while '\n              'generation is active.'":"es ? 'Una creación completa normalmente tarda unos minutos; cada pasada puede durar entre 30 y 90 segundos. Pyre usa un servicio en primer plano para continuar generando al minimizar la aplicación o apagar la pantalla; no cierres el proceso. Mientras la generación esté activa aparecerá una notificación persistente.' : 'A full build usually takes a few minutes; each pass can be 30–90 seconds. Pyre uses a foreground service so generation continues when you minimise the app or screen-off — just don\\'t kill the process. A persistent notification appears while generation is active.'",
+          "'Hit **Stop** on the streaming assistant message '\n              'any time to cancel mid-generation. It does '\n              'NOT auto-resume — you\\'re in control of when to '\n              'continue.'":"es ? 'Pulsa **Detener** en el mensaje del asistente en cualquier momento para cancelar durante la generación. NO se reanuda automáticamente; tú decides cuándo continuar.' : 'Hit **Stop** on the streaming assistant message any time to cancel mid-generation. It does NOT auto-resume — you\\'re in control of when to continue.'",
+          "'Hit **Retry** on the last assistant message to '\n              'regenerate the most recent section. The pre-turn '\n              'canvas snapshot restores so retry starts from a '\n              'clean state — no leftover partial fields.'":"es ? 'Pulsa **Reintentar** en el último mensaje del asistente para regenerar la sección más reciente. Se restaura la instantánea del lienzo anterior al turno para empezar desde un estado limpio, sin campos parciales sobrantes.' : 'Hit **Retry** on the last assistant message to regenerate the most recent section. The pre-turn canvas snapshot restores so retry starts from a clean state — no leftover partial fields.'"
+          }
+          for a,b in repl.items(): s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize Creator post-build and background help'
+          git push origin HEAD:spanish-localization
