@@ -1,0 +1,29 @@
+name: Creator help l10n 6
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          s=s.replace("HowItWorksSection('Honest section', [", "HowItWorksSection(es ? 'Sobre el contenido para adultos' : 'Honest section', [",1)
+          s=s.replace("HowItWorksSection('Troubleshooting', [", "HowItWorksSection(es ? 'Solución de problemas' : 'Troubleshooting', [",1)
+          s=s.replace("'When refining, be specific. \"Change her age to '\n              '22\" works. \"Make her older\" makes the model guess.'", "es ? 'Al refinar, sé específico. «Cambia su edad a 22» funciona mejor que «Hazla mayor», que obliga al modelo a adivinar.' : 'When refining, be specific. \"Change her age to 22\" works. \"Make her older\" makes the model guess.'",1)
+          s=s.replace("'If you have a reference image, attach it FIRST — '\n              'before talking. The vision profile becomes context '\n              'for every later question.'", "es ? 'Si tienes una imagen de referencia, adjúntala PRIMERO, antes de conversar. El perfil de visión se convierte en contexto para las preguntas posteriores.' : 'If you have a reference image, attach it FIRST — before talking. The vision profile becomes context for every later question.'",1)
+          s=s.replace("'**\"No provider configured\"** — Open More → API '\n              'Connections and add a provider. Use the override '\n              'card at the top to set a separate Creator and '\n              'Vision provider if needed.'", "es ? '**«No hay ningún proveedor configurado»** — abre Más → Conexiones API y añade un proveedor. Si lo necesitas, usa la tarjeta de configuración superior para establecer proveedores separados para Creador y Visión.' : '**\"No provider configured\"** — Open More → API Connections and add a provider. Use the override card at the top to set a separate Creator and Vision provider if needed.'",1)
+          s=s.replace("'**\"Image analysis failed\"** — your active '\n              'provider doesn\\'t support vision. Set a vision-'\n              'specific provider (Qwen 3.6 Plus Uncensored on '\n              'Venice or NanoGPT).'", "es ? '**«Falló el análisis de la imagen»** — tu proveedor activo no admite visión. Configura un proveedor específico compatible con visión.' : '**\"Image analysis failed\"** — your active provider doesn\\'t support vision. Set a vision-specific provider (Qwen 3.6 Plus Uncensored on Venice or NanoGPT).'",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize Creator tips and troubleshooting headings'
+          git push origin HEAD:spanish-localization
