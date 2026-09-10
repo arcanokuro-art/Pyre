@@ -786,7 +786,7 @@ Future<void> _testConnection(
     }
     // Test only verifies the endpoint + key; it doesn't check the model name.
     final modelNote = modelCtl.text.trim().isEmpty
-        ? ' — but no model is set yet, so pick one before chatting.'
+        ? (AppStrings.of(context).es ? ' — pero todavía no hay un modelo configurado; elige uno antes de chatear.' : ' — but no model is set yet, so pick one before chatting.')
         : '';
     messenger.showSnackBar(
       SnackBar(content: Text('Connection OK ✓$modelNote')),
