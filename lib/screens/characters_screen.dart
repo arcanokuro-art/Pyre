@@ -840,6 +840,7 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
       saveBytes: pngBytes,
       saveFileName: file.uri.pathSegments.last,
       saveExtensions: const ['png'],
+      context: context,
     );
   } catch (e) {
     messenger.showSnackBar(
