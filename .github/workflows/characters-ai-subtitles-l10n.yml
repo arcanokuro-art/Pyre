@@ -1,0 +1,26 @@
+name: Characters AI subtitles l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          a="          'Describe the world or topic and the AI drafts keyword-'\n          'triggered entries you can review before saving.',"
+          b="          AppStrings.of(context).es\n              ? 'Describe el mundo o tema y la IA preparará entradas activadas por palabras clave que podrás revisar antes de guardar.'\n              : 'Describe the world or topic and the AI drafts keyword-triggered entries you can review before saving.',"
+          c="          'Chat with an AI that helps you flesh out your persona — who '\n          'you are in chats — then writes it for you.',"
+          d="          AppStrings.of(context).es\n              ? 'Chatea con una IA que te ayuda a desarrollar tu persona — quién eres en los chats — y después la redacta por ti.'\n              : 'Chat with an AI that helps you flesh out your persona — who you are in chats — then writes it for you.',"
+          if s.count(a)!=1 or s.count(c)!=1: raise SystemExit(f'matches lore={s.count(a)} persona={s.count(c)}')
+          p.write_text(s.replace(a,b,1).replace(c,d,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize library AI subtitles'
+          git push origin HEAD:spanish-localization
