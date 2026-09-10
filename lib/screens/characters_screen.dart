@@ -3088,7 +3088,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                     width: 16,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Import'),
+                : Text(AppStrings.of(ctx).es ? 'Importar' : 'Import'),
           ),
         ],
       ),
