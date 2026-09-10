@@ -1,0 +1,32 @@
+name: Creator help l10n 4
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart')
+          s=p.read_text()
+          repl={
+          "'The text box higher up on this screen is appended to '\n              'every Creator session\\'s system prompt as hard '\n              'rules.'":"es ? 'El cuadro de texto de arriba se añade al prompt de sistema de cada sesión del Creador como reglas obligatorias.' : 'The text box higher up on this screen is appended to every Creator session\\'s system prompt as hard rules.'",
+          "'Leave it empty and the base prompt runs unchanged.'":"es ? 'Déjalo vacío y el prompt base se ejecutará sin cambios.' : 'Leave it empty and the base prompt runs unchanged.'",
+          "'In the input bar you have three icons before the text '\n              'field:'":"es ? 'En la barra de entrada tienes tres iconos antes del campo de texto:' : 'In the input bar you have three icons before the text field:'",
+          "'**Image** — pick a reference picture. The vision '\n              'model describes what the character (or characters, '\n              'or setting) looks like in clinical detail, then the '\n              'architect uses that profile as authoritative context. '\n              'Requires a vision-capable provider — Qwen 3.6 Plus '\n              'Uncensored on Venice or NanoGPT is the pick.'":"es ? '**Imagen** — selecciona una imagen de referencia. El modelo de visión describe detalladamente el aspecto del personaje, personajes o escenario, y el arquitecto usa ese perfil como contexto de referencia. Requiere un proveedor compatible con visión.' : '**Image** — pick a reference picture. The vision model describes what the character (or characters, or setting) looks like in clinical detail, then the architect uses that profile as authoritative context. Requires a vision-capable provider — Qwen 3.6 Plus Uncensored on Venice or NanoGPT is the pick.'",
+          "'**Character card** — pick a chara_card_v2 PNG or '\n              'JSON. The full metadata is injected into the '\n              'conversation so you can edit an existing card or use '\n              'it as a reference (\"make me a card like this one but '\n              'darker\").'":"es ? '**Tarjeta de personaje** — selecciona un PNG o JSON chara_card_v2. Los metadatos completos se incorporan a la conversación para que puedas editar una tarjeta existente o usarla como referencia.' : '**Character card** — pick a chara_card_v2 PNG or JSON. The full metadata is injected into the conversation so you can edit an existing card or use it as a reference (\"make me a card like this one but darker\").'",
+          "'**Document** — pick a TXT, MD, or PDF. The full '\n              'text is injected (no truncation). Useful for world '\n              'lore, background docs, \"here\\'s the setting, build me '\n              'an NPC that fits\". PDFs that are scanned images '\n              'won\\'t work — no OCR yet.'":"es ? '**Documento** — selecciona un TXT, MD o PDF. Se incorpora el texto completo, sin recortarlo. Es útil para lore del mundo y documentos de contexto. Los PDF que sean imágenes escaneadas no funcionan todavía porque no hay OCR.' : '**Document** — pick a TXT, MD, or PDF. The full text is injected (no truncation). Useful for world lore, background docs, \"here\\'s the setting, build me an NPC that fits\". PDFs that are scanned images won\\'t work — no OCR yet.'"
+          }
+          for a,b in repl.items(): s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize Creator additions and attachments help'
+          git push origin HEAD:spanish-localization
