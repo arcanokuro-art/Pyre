@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../theme.dart';
 
 /// Wave CY.18.192: a labelled slider Card with a subtitle, a tap-to-type
 /// numeric input dialog (bypasses the slider's snap-grid for precise
-/// values), and an optional "preset override" badge.
-///
-/// Extracted from the now-deleted Model Settings screen so it can be
-/// reused by the Presets screen (global sampling defaults) and the
-/// Character Creator (creator knobs). The `overrideValue` param is
-/// optional and defaults off — only the Presets screen passes it (to
-/// show when the active preset overrides a global default).
+/// values), and an optional preset-override badge.
 class SliderCard extends StatelessWidget {
   final String label;
   final String subtitle;
@@ -21,11 +16,6 @@ class SliderCard extends StatelessWidget {
   final String display;
   final ValueChanged<double> onChanged;
   final ValueChanged<double>? onChangeEnd;
-
-  /// When set, this slider is currently being overridden by the active
-  /// preset — we dim the slider's own value, show the preset value in
-  /// primary colour, and append an "overridden" badge so the user knows
-  /// their change here won't take effect while the preset is selected.
   final String? overrideValue;
 
   const SliderCard({
@@ -42,16 +32,12 @@ class SliderCard extends StatelessWidget {
     this.overrideValue,
   });
 
-  /// Format a min/max bound for the dialog hint. Integer bounds drop
-  /// the decimals; fractional bounds show 2 decimal places.
   String _fmtBound(double v) =>
       v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
 
-  /// Open an inline number-input dialog so the user can type the value
-  /// directly instead of fighting the slider for precision. Out-of-range
-  /// values get clamped silently; invalid input is ignored. Bypasses
-  /// the slider's `divisions` snap-grid — useful for precise tokens.
   Future<void> _openEditDialog(BuildContext context) async {
+    final es = AppStrings.of(context).es;
+    String t(String spanish, String english) => es ? spanish : english;
     final controller = TextEditingController(text: display);
     controller.selection = TextSelection(
       baseOffset: 0,
@@ -70,15 +56,18 @@ class SliderCard extends StatelessWidget {
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               autofocus: true,
-              decoration: const InputDecoration(
-                hintText: 'Enter a number',
+              decoration: InputDecoration(
+                hintText: t('Introduce un número', 'Enter a number'),
                 isDense: true,
               ),
               onSubmitted: (s) => Navigator.pop(ctx, s),
             ),
             const SizedBox(height: 8),
             Text(
-              'Range: ${_fmtBound(min)} – ${_fmtBound(max)}',
+              t(
+                'Rango: ${_fmtBound(min)} – ${_fmtBound(max)}',
+                'Range: ${_fmtBound(min)} – ${_fmtBound(max)}',
+              ),
               style: TextStyle(
                 color: EmberColors.textDim,
                 fontSize: 11,
@@ -89,18 +78,17 @@ class SliderCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(t('Cancelar', 'Cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, controller.text),
-            child: const Text('Set'),
+            child: Text(t('Establecer', 'Set')),
           ),
         ],
       ),
     );
-    controller.dispose(); // H-3: dispose the type-value controller on close.
+    controller.dispose();
     if (raw == null) return;
-    // Accept either `.` or `,` as decimal separator (PT-BR habit).
     final parsed = double.tryParse(raw.trim().replaceAll(',', '.'));
     if (parsed == null) return;
     final clamped = parsed.clamp(min, max);
@@ -108,19 +96,12 @@ class SliderCard extends StatelessWidget {
     onChangeEnd?.call(clamped);
   }
 
-  /// M-5: the value handed to the Material [Slider] must satisfy its
-  /// `min <= value <= max` assert. A stored value can legitimately fall
-  /// outside the slider's range (an older build with a wider cap, a synced /
-  /// hand-edited backup with `maxTokens > 4096` or `temp > 2`, etc.), which
-  /// crashes in debug and renders oddly in release. We clamp ONLY the value
-  /// shown to the Slider — the stored value (and the `display` string the
-  /// caller passes) are untouched, so a user's intentional high value isn't
-  /// silently lost; it just pins to the slider end until they retype it.
   double get _clampedSliderValue =>
       max <= min ? min : value.clamp(min, max);
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     final isOverridden = overrideValue != null;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -137,21 +118,23 @@ class SliderCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(label,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w600)),
+                          Text(
+                            label,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
                           if (isOverridden) ...[
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 2),
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: EmberColors.primary
-                                    .withValues(alpha: 0.18),
+                                color: EmberColors.primary.withValues(alpha: 0.18),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                'PRESET OVERRIDE',
+                                es ? 'ANULADO POR PREAJUSTE' : 'PRESET OVERRIDE',
                                 style: TextStyle(
                                   color: EmberColors.primary,
                                   fontSize: 9,
@@ -167,7 +150,9 @@ class SliderCard extends StatelessWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                            color: EmberColors.textMid, fontSize: 12),
+                          color: EmberColors.textMid,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -185,30 +170,31 @@ class SliderCard extends StatelessWidget {
                           fontFeatures: [FontFeature.tabularFigures()],
                         ),
                       ),
-                      // Underlying value (dimmed) — tap to type, even
-                      // though the preset override takes precedence.
                       InkWell(
                         onTap: () => _openEditDialog(context),
                         borderRadius: BorderRadius.circular(4),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 1),
+                            horizontal: 4,
+                            vertical: 1,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'was $display',
+                                es ? 'era $display' : 'was $display',
                                 style: TextStyle(
                                   color: EmberColors.textDim,
                                   fontSize: 10,
-                                  fontFeatures: [
-                                    FontFeature.tabularFigures()
-                                  ],
+                                  fontFeatures: [FontFeature.tabularFigures()],
                                 ),
                               ),
                               const SizedBox(width: 3),
-                              Icon(Icons.edit,
-                                  size: 10, color: EmberColors.textDim),
+                              Icon(
+                                Icons.edit,
+                                size: 10,
+                                color: EmberColors.textDim,
+                              ),
                             ],
                           ),
                         ),
@@ -216,16 +202,14 @@ class SliderCard extends StatelessWidget {
                     ],
                   )
                 else
-                  // Tap-to-type: bypasses the slider grid for precise
-                  // values (especially useful for max_tokens where a
-                  // 512-token step snap is annoying when you want
-                  // exactly 12000).
                   InkWell(
                     onTap: () => _openEditDialog(context),
                     borderRadius: BorderRadius.circular(4),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -237,8 +221,11 @@ class SliderCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 4),
-                          Icon(Icons.edit,
-                              size: 12, color: EmberColors.textDim),
+                          Icon(
+                            Icons.edit,
+                            size: 12,
+                            color: EmberColors.textDim,
+                          ),
                         ],
                       ),
                     ),
@@ -251,10 +238,11 @@ class SliderCard extends StatelessWidget {
                 data: SliderTheme.of(context).copyWith(
                   trackHeight: 3,
                   thumbShape: const RoundSliderThumbShape(
-                      enabledThumbRadius: 8),
+                    enabledThumbRadius: 8,
+                  ),
                 ),
                 child: Slider(
-                  value: _clampedSliderValue, // M-5: keep within [min,max]
+                  value: _clampedSliderValue,
                   min: min,
                   max: max,
                   divisions: divisions,
