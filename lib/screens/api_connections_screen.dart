@@ -348,12 +348,8 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
           subtitle: AppStrings.of(context).es ? 'Configúralo una vez en el servidor: todos los dispositivos conectados lo usarán.' : 'Set once on the server — every device that connects uses it.',
           sections: [
             HowItWorksSection(AppStrings.of(context).es ? 'Compartido por el servidor' : 'Shared by the server', [
-              HowItWorksBlock.paragraph(
-                  'You\'re connected to a self-host server. Its AI provider is '
-                  'set here and shared by **every** device that connects — no '
-                  'need to configure each browser.'),
-              HowItWorksBlock.bullet(
-                  'The API key is stored on the server, never shown back.'),
+              HowItWorksBlock.paragraph(AppStrings.of(context).es ? 'Estás conectado a un servidor autoalojado. Su proveedor de IA se configura aquí y se comparte con **todos** los dispositivos que se conecten; no es necesario configurar cada navegador.' : 'You\'re connected to a self-host server. Its AI provider is set here and shared by **every** device that connects — no need to configure each browser.'),
+              HowItWorksBlock.bullet(AppStrings.of(context).es ? 'La clave API se guarda en el servidor y nunca vuelve a mostrarse.' : 'The API key is stored on the server, never shown back.'),
             ]),
           ],
         ),
@@ -393,7 +389,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                 ],
               ),
               subtitle: Text(
-                '${s.baseUrl}\nmodel: ${s.model}',
+                AppStrings.of(context).es ? '${s.baseUrl}\nmodelo: ${s.model}' : '${s.baseUrl}\nmodel: ${s.model}',
                 style: TextStyle(color: EmberColors.textMid, fontSize: 12),
               ),
               isThreeLine: true,
