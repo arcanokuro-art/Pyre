@@ -1,0 +1,40 @@
+name: Creator postbuild tips
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/character_creator_screen.dart'); s=p.read_text()
+          def repl(marker,new,kind='bullet'):
+            global s
+            pos=s.index(marker); a=s.rfind(f'          HowItWorksBlock.{kind}(',0,pos); b=s.index('),\n',pos)+2
+            s=s[:a]+new+s[b:]
+          repl("'**Ask for an image prompt**", """          HowItWorksBlock.bullet(es
+              ? '**Pedir un prompt de imagen** — pedir un «prompt de imagen» o «prompt de avatar» genera dos formatos: lenguaje natural para generadores como GPT Image, Midjourney o Flux, y etiquetas danbooru para SDXL, Pony o Illustrious. Dimensiones recomendadas: 768×1280 vertical.'
+              : '**Ask for an image prompt** — asking for an image or avatar prompt produces two formats: natural-language flow and danbooru tags. Recommended dimensions: 768×1280 portrait.'),""")
+          repl("'**Add alternate greetings by hand**", """          HowItWorksBlock.bullet(es
+              ? '**Añadir saludos alternativos manualmente** — la creación no los escribe, pero puedes añadir tantos como quieras después de guardar desde Avanzado → Saludos alternativos. Cada saludo funciona como una apertura independiente.'
+              : '**Add alternate greetings by hand** — the build does not write these, but you can add as many as you like after saving from Advanced → Alternate greetings. Each greeting is its own opening.'),""")
+          repl("'Start with a vibe, not a checklist", """          HowItWorksBlock.bullet(es
+              ? 'Empieza con una idea o ambiente, no con una lista de comprobación. Una descripción breve de la personalidad y el concepto le da al arquitecto más material que una lista rígida de atributos.'
+              : 'Start with a vibe, not a checklist. A short personality and concept description gives the architect more to work with than a rigid attribute list.'),""")
+          repl("'If the assistant tries to be vanilla", """          HowItWorksBlock.bullet(es
+              ? 'Si el asistente evita ciertas solicitudes, puede deberse a los patrones de rechazo del proveedor. El modelo elegido influye mucho en el resultado; consulta las recomendaciones de la parte superior de esta pantalla.'
+              : 'If the assistant dodges certain requests, your provider may have refusal patterns. The model matters a lot; see the recommendations at the top of this screen.'),""")
+          repl("'Magic phrases in Freeform mode", """          HowItWorksBlock.bullet(es
+              ? 'Las frases para iniciar la creación en modo libre funcionan en cualquier idioma. El arquitecto detecta semánticamente la intención de crear, no mediante una lista fija de frases.'
+              : 'Build phrases in Freeform mode work in any language. The architect detects build intent semantically, not from a fixed phrase list.'),""")
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/character_creator_screen.dart
+          git commit -m 'Localize Creator post-build and tips help'
+          git push origin HEAD:spanish-localization
