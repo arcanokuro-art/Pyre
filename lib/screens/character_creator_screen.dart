@@ -752,15 +752,9 @@ class _HowItWorksCard extends StatelessWidget {
               es ? '**Escenario** — un entorno con un narrador que interpreta NPC y describe escenas. Úsalo cuando estés creando un mundo o un centro de interacción, no un solo personaje.' : '**Scenario** — a setting with a narrator that voices NPCs and describes scenes. Use when you\'re building a world or hub ("haunted mansion", "supernatural school", "free-use city"), not a single character.'),
           HowItWorksBlock.bullet(
               es ? '**Libros de lore** ya no son una opción inicial aquí; créalos desde la sección Libros de lore de tu biblioteca (Crear → Crear con IA). Las sesiones de personajes todavía pueden preparar entradas de lore para la tarjeta durante el proceso.' : '**Lorebooks** aren\'t a starting choice here anymore — create them from the Lorebooks section of your library (Create → Build with AI). Character sessions can still draft lorebook entries for the card as you go.'),
-          HowItWorksBlock.paragraph(
-              '**Edit with AI** isn\'t a starting choice — it\'s how you '
-              'open an EXISTING character or persona back into the Creator '
-              '(from its "Edit with AI" action). It loads the card on the '
-              'sheet and every message becomes a partial edit ("make her '
-              'younger", "tone down the NSFW tags"), touching only what you '
-              'asked. It works on cards built ANYWHERE (SillyTavern W++, '
-              'Chub prose, JanitorAI XML) and preserves the original '
-              'format unless you ask it to change.'),
+          HowItWorksBlock.paragraph(es
+    ? '**Editar con IA** no es una opción inicial: sirve para volver a abrir en el Creador un personaje o persona EXISTENTE desde su acción «Editar con IA». Carga la tarjeta en la ficha y cada mensaje se convierte en una edición parcial, modificando solo lo que pidas. Funciona con tarjetas creadas en cualquier lugar y conserva el formato original salvo que pidas cambiarlo.'
+    : '**Edit with AI** isn\'t a starting choice — it\'s how you open an EXISTING character or persona back into the Creator. It loads the card on the sheet and every message becomes a partial edit, touching only what you asked. It works on cards built ANYWHERE and preserves the original format unless you ask it to change.'),
         ]),
 
         // Wave CY.18.101: guided flow removed — single freeform flow.
