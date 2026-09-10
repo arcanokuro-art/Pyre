@@ -1,0 +1,27 @@
+name: Backup reset confirm l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/backup_restore_screen.dart')
+          s=p.read_text()
+          s=s.replace("title: const Text('Type to confirm')", "title: Text(AppStrings.of(context).es ? 'Escribe para confirmar' : 'Type to confirm')",1)
+          s=s.replace("const Text(\n                    'This cannot be undone except from the backup. Type '\n                    '\"reset\" below to confirm.')", "Text(AppStrings.of(context).es ? 'Esto no se puede deshacer salvo restaurando la copia de seguridad. Escribe «reset» abajo para confirmar.' : 'This cannot be undone except from the backup. Type \"reset\" below to confirm.')",1)
+          s=s.replace("child: const Text('Cancel')", "child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel')",1)
+          s=s.replace("child: const Text('Reset')", "child: Text(AppStrings.of(context).es ? 'Restablecer' : 'Reset')",1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/backup_restore_screen.dart
+          git commit -m 'Localize typed factory reset confirmation'
+          git push origin HEAD:spanish-localization
