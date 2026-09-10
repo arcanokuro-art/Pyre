@@ -379,6 +379,9 @@ class _StorageScreenState extends State<StorageScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
         title: Text(AppStrings.of(context).es ? '¿Borrar biblioteca?' : 'Clear library?'),
+        content: Text(AppStrings.of(context).es ? 'Esto elimina permanentemente los datos de tu biblioteca. Tus ajustes se conservan. No se puede deshacer.' : 'This permanently deletes your library data. Your settings are kept. There is no undo.'),
+        /* original English detail removed from visible UI */
+        /*
         content: const Text(
           'This permanently deletes all characters, chats, personas, presets, '
           'lorebooks and API connections. Your settings are kept. '
@@ -386,17 +389,18 @@ class _StorageScreenState extends State<StorageScreen> {
           'To also wipe settings, use Backup & Restore → Advanced → '
           'Reset to factory settings.',
         ),
+        */
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: EmberColors.danger,
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Clear'),
+            child: Text(AppStrings.of(context).es ? 'Borrar' : 'Clear'),
           ),
         ],
       ),
@@ -420,7 +424,7 @@ class _StorageScreenState extends State<StorageScreen> {
     if (!mounted) return;
     _refresh();
     messenger.showSnackBar(
-      const SnackBar(content: Text('Library cleared.')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Biblioteca borrada.' : 'Library cleared.')),
     );
   }
 }
