@@ -1,0 +1,30 @@
+name: API server empty text l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          needle='This server has no AI yet.'
+          i=s.find(needle)
+          if i<0: raise SystemExit('empty state text missing')
+          start=s.rfind("Text(",0,i)
+          end=s.find('),',i)
+          if start<0 or end<0: raise SystemExit('text bounds missing')
+          old=s[start:end+2]
+          if 'OpenRouter' not in old or 'API key' not in old: raise SystemExit('unexpected text block')
+          new="Text(AppStrings.of(context).es ? 'Este servidor todavía no tiene IA. Añade un proveedor (OpenRouter tiene modelos gratuitos para empezar) y pega su clave de API; se guardará en el servidor para todos los dispositivos que se conecten.' : \"This server has no AI yet. Add one (OpenRouter has free models to start) and paste its API key — it's saved on the server for every device that connects.\"),"
+          p.write_text(s[:start]+new+s[end+2:])
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize server AI empty state'
+          git push origin HEAD:spanish-localization
