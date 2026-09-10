@@ -3162,7 +3162,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                     children: [
                       Expanded(
                         child: Text(
-                          'Folders',
+                          AppStrings.of(sheetCtx).es ? 'Carpetas' : 'Folders',
                           style: TextStyle(
                             color: EmberColors.textHigh,
                             fontWeight: FontWeight.w600,
@@ -3181,7 +3181,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
                     child: Text(
-                      'No folders yet. Create one to group characters.',
+                      AppStrings.of(sheetCtx).es ? 'Aún no hay carpetas. Crea una para agrupar personajes.' : 'No folders yet. Create one to group characters.',
                       style: TextStyle(
                         color: EmberColors.textMid,
                         fontSize: 13,
@@ -3197,7 +3197,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                         ListTile(
                           leading: Icon(Icons.folder_open,
                               color: EmberColors.textMid),
-                          title: const Text('All characters'),
+                          title: Text(AppStrings.of(sheetCtx).es ? 'Todos los personajes' : 'All characters'),
                           subtitle: Text(
                             '${store.characters.length} card${store.characters.length == 1 ? "" : "s"}',
                             style: const TextStyle(fontSize: 11),
@@ -3232,7 +3232,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                         size: 18),
                                   ),
                                 PopupMenuButton<String>(
-                                  tooltip: 'Folder actions',
+                                  tooltip: AppStrings.of(sheetCtx).es ? 'Acciones de carpeta' : 'Folder actions',
                                   onSelected: (action) async {
                                     if (action == 'rename') {
                                       final newName =
@@ -3246,7 +3246,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                     } else if (action == 'delete') {
                                       final ok = await confirmDelete(
                                         context,
-                                        title: 'Delete folder "${f.name}"?',
+                                        title: AppStrings.of(sheetCtx).es ? '¿Eliminar la carpeta "${f.name}"?' : 'Delete folder "${f.name}"?',
                                         message:
                                             'Characters in this folder stay '
                                             'in your library. Only the '
@@ -3281,7 +3281,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                 ListTile(
                   leading: Icon(Icons.add,
                       color: EmberColors.primary),
-                  title: const Text('New folder'),
+                  title: Text(AppStrings.of(sheetCtx).es ? 'Nueva carpeta' : 'New folder'),
                   onTap: () async {
                     final name = await _promptFolderName(context);
                     if (name != null && name.trim().isNotEmpty) {
