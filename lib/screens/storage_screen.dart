@@ -524,7 +524,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
               contentPadding: EdgeInsets.zero,
               dense: true,
               activeThumbColor: EmberColors.primary,
-              title: const Text('Log raw LLM calls (debug)'),
+              title: const Text((AppStrings.of(context).es ? 'Registrar llamadas LLM sin procesar (depuración)' : 'Log raw LLM calls (debug)')),
               subtitle: const Text(
                 'Records every request + response, tagged per feature, '
                 'to a JSONL file you can export.',
@@ -540,7 +540,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
               children: [
                 FilledButton.icon(
                   icon: const Icon(Icons.visibility_outlined, size: 18),
-                  label: const Text('View log'),
+                  label: const Text((AppStrings.of(context).es ? 'Ver registro' : 'View log')),
                   style: FilledButton.styleFrom(
                     backgroundColor: EmberColors.primary,
                     foregroundColor: Colors.white,
@@ -555,7 +555,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
                   icon: Icon(Icons.ios_share,
                       color: EmberColors.primary, size: 18),
                   label: Text(
-                    'Export logs',
+                    (AppStrings.of(context).es ? 'Exportar registros' : 'Export logs'),
                     style: TextStyle(color: EmberColors.primary),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -567,7 +567,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
                   icon: Icon(Icons.copy_outlined,
                       color: EmberColors.primary, size: 18),
                   label: Text(
-                    'Copy logs',
+                    (AppStrings.of(context).es ? 'Copiar registros' : 'Copy logs'),
                     style: TextStyle(color: EmberColors.primary),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -579,7 +579,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
                   icon: Icon(Icons.delete_sweep_outlined,
                       color: EmberColors.textMid, size: 18),
                   label: Text(
-                    'Clear logs',
+                    (AppStrings.of(context).es ? 'Borrar registros' : 'Clear logs'),
                     style: TextStyle(color: EmberColors.textMid),
                   ),
                   style: OutlinedButton.styleFrom(
