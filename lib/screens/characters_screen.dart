@@ -650,8 +650,9 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                           backgroundColor: EmberColors.bgPanel,
                           title: Text(AppStrings.of(context).es ? '¿Eliminar borrador?' : 'Delete draft?'),
                           content: Text(
-                              'Permanently discard "$title"? '
-                              'This cannot be undone.'),
+                              AppStrings.of(context).es
+                                  ? '¿Descartar permanentemente "$title"? Esta acción no se puede deshacer.'
+                                  : 'Permanently discard "$title"? This cannot be undone.'),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
