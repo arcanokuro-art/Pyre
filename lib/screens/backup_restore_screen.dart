@@ -755,25 +755,30 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         if (!ok) {
           if (!context.mounted) return;
           messenger.showSnackBar(
-              const SnackBar(content: Text('Import cancelled.')));
+              SnackBar(content: Text(AppStrings.of(context).es ? 'Importación cancelada.' : 'Import cancelled.')));
           return;
         }
       }
       await _applyImport(store, blob, importKeys: importKeys);
       messenger.showSnackBar(
         SnackBar(
-          content: Text(salvaged
-              ? 'Backup imported with salvage — some recent edits in '
-                  'the backup tail may be missing.'
-              : (hasKeys && !importKeys)
-                  ? 'Backup imported — your saved API keys were kept.'
-                  : 'Backup imported.'),
+          content: Text(AppStrings.of(context).es
+              ? (salvaged
+                  ? 'Copia importada mediante recuperación; pueden faltar algunos cambios recientes del final de la copia.'
+                  : (hasKeys && !importKeys)
+                      ? 'Copia importada; se conservaron tus claves API guardadas.'
+                      : 'Copia importada.')
+              : (salvaged
+                  ? 'Backup imported with salvage — some recent edits in the backup tail may be missing.'
+                  : (hasKeys && !importKeys)
+                      ? 'Backup imported — your saved API keys were kept.'
+                      : 'Backup imported.')),
           duration: Duration(seconds: salvaged ? 5 : 2),
         ),
       );
     } catch (e) {
       messenger
-          .showSnackBar(SnackBar(content: Text('Import failed: $e')));
+          .showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Falló la importación: $e' : 'Import failed: $e')));
     }
   }
 
