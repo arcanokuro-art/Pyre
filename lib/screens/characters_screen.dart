@@ -246,7 +246,7 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
         title: Text(AppStrings.of(context).es ? 'Crear manualmente' : 'Create manually'),
         subtitle: Text(
-          'Name the book, then add keyword-triggered entries yourself.',
+          AppStrings.of(context).es ? 'Ponle un nombre al libro y después añade tú mismo entradas activadas por palabras clave.' : 'Name the book, then add keyword-triggered entries yourself.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () {
@@ -259,7 +259,7 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
         leading: const Icon(Icons.file_upload_outlined),
         title: Text(AppStrings.of(context).es ? 'Importar desde JSON' : 'Import from JSON'),
         subtitle: Text(
-          'Pick a SillyTavern World Info / lorebook JSON from your device.',
+          AppStrings.of(context).es ? 'Elige en tu dispositivo un JSON de World Info / libro de lore de SillyTavern.' : 'Pick a SillyTavern World Info / lorebook JSON from your device.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () async {
@@ -299,7 +299,7 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
         title: Text(AppStrings.of(context).es ? 'Crear manualmente' : 'Create manually'),
         subtitle: Text(
-          'Fill in the persona fields yourself in the in-app editor.',
+          AppStrings.of(context).es ? 'Completa tú mismo los campos de la persona en el editor de la aplicación.' : 'Fill in the persona fields yourself in the in-app editor.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () {
@@ -315,7 +315,7 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
         leading: const Icon(Icons.file_upload_outlined),
         title: Text(AppStrings.of(context).es ? 'Importar desde archivo' : 'Import from file'),
         subtitle: Text(
-          'Pick a character card PNG/JSON or a Pyre persona JSON from your device.',
+          AppStrings.of(context).es ? 'Elige en tu dispositivo una tarjeta de personaje PNG/JSON o un JSON de persona de Pyre.' : 'Pick a character card PNG/JSON or a Pyre persona JSON from your device.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () async {
