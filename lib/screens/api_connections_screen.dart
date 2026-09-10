@@ -97,26 +97,26 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                 // 2026-07-03: the app's make-or-break screen was the only
                 // major one without the house "How it works" explainer (regex,
                 // fallback, memory, script all have one). Collapsed by default.
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: HowItWorksCard(
-                    title: 'How connections work',
-                    subtitle: 'BYOK — your key, your model, on your device.',
+                    title: es ? 'Cómo funcionan las conexiones' : 'How connections work',
+                    subtitle: es ? 'BYOK: tu clave, tu modelo, en tu dispositivo.' : 'BYOK — your key, your model, on your device.',
                     sections: [
-                      HowItWorksSection('What a provider is', [
+                      HowItWorksSection(es ? 'Qué es un proveedor' : 'What a provider is', [
                         HowItWorksBlock.paragraph(
                             'Pyre brings no AI of its own — it connects to a '
                             'service that writes the replies (OpenRouter, '
                             'OpenAI, a local model…). You add the service and '
                             'paste **its** API key.'),
                       ]),
-                      HowItWorksSection('Your key stays yours', [
+                      HowItWorksSection(es ? 'Tu clave sigue siendo tuya' : 'Your key stays yours', [
                         HowItWorksBlock.paragraph(
                             'Keys are kept in your device\'s secure store, '
                             'never leave the device, and are left out of '
                             'backups unless you tick that box.'),
                       ]),
-                      HowItWorksSection('Tapping + the order', [
+                      HowItWorksSection(es ? 'Selección y orden' : 'Tapping + the order', [
                         HowItWorksBlock.bullet(
                             '**Tap a connection** to make it the one your '
                             'chats use (the CHAT badge moves to it).'),
