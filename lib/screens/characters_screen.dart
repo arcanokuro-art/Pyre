@@ -741,9 +741,9 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
     final avatarBytes = await resolveAvatarBytes(c.avatar);
     if (avatarBytes == null) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
-                'This character has no avatar. Set one in the editor first, then re-export.')),
+                AppStrings.of(context).es ? 'Este personaje no tiene avatar. Configura uno primero en el editor y vuelve a exportar.' : 'This character has no avatar. Set one in the editor first, then re-export.')),
       );
       return;
     }
@@ -751,9 +751,9 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
     final pngAvatarBytes = _ensurePngBytes(avatarBytes);
     if (pngAvatarBytes == null) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
-                "Couldn't read the avatar image to embed in the card. Try setting a different avatar.")),
+                AppStrings.of(context).es ? 'No se pudo leer la imagen del avatar para incluirla en la tarjeta. Prueba con otro avatar.' : "Couldn't read the avatar image to embed in the card. Try setting a different avatar.")),
       );
       return;
     }
