@@ -438,14 +438,12 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         builder: (c, setSt) {
           final canReset = ctl.text.trim().toLowerCase() == 'reset';
           return AlertDialog(
-            title: const Text('Type to confirm'),
+            title: Text(AppStrings.of(context).es ? 'Escribe para confirmar' : 'Type to confirm'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                    'This cannot be undone except from the backup. Type '
-                    '"reset" below to confirm.'),
+                Text(AppStrings.of(context).es ? 'Esto no se puede deshacer salvo restaurando la copia de seguridad. Escribe «reset» abajo para confirmar.' : 'This cannot be undone except from the backup. Type "reset" below to confirm.'),
                 const SizedBox(height: 12),
                 TextField(
                   controller: ctl,
@@ -458,13 +456,13 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(c, false),
-                child: const Text('Cancel'),
+                child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),
               ),
               FilledButton(
                 style: FilledButton.styleFrom(
                     backgroundColor: EmberColors.danger),
                 onPressed: canReset ? () => Navigator.pop(c, true) : null,
-                child: const Text('Reset'),
+                child: Text(AppStrings.of(context).es ? 'Restablecer' : 'Reset'),
               ),
             ],
           );
