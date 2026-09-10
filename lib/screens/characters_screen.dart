@@ -228,7 +228,7 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
     itemsBuilder: (sheet) => [
       ListTile(
         leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
-        title: const Text('Build with AI assistant'),
+        title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),
         subtitle: Text(
           'Describe the world or topic and the AI drafts keyword-'
           'triggered entries you can review before saving.',
@@ -244,7 +244,7 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
       ),
       ListTile(
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
-        title: const Text('Create manually'),
+        title: Text(AppStrings.of(context).es ? 'Crear manualmente' : 'Create manually'),
         subtitle: Text(
           'Name the book, then add keyword-triggered entries yourself.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
@@ -257,7 +257,7 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
       Divider(color: EmberColors.stroke, height: 1),
       ListTile(
         leading: const Icon(Icons.file_upload_outlined),
-        title: const Text('Import from JSON'),
+        title: Text(AppStrings.of(context).es ? 'Importar desde JSON' : 'Import from JSON'),
         subtitle: Text(
           'Pick a SillyTavern World Info / lorebook JSON from your device.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
@@ -281,7 +281,7 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
       ListTile(
         leading:
             Icon(Icons.auto_awesome, color: EmberColors.primary),
-        title: const Text('Build with AI assistant'),
+        title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),
         subtitle: Text(
           'Chat with an AI that helps you flesh out your persona — who '
           'you are in chats — then writes it for you.',
@@ -297,7 +297,7 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
       ),
       ListTile(
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
-        title: const Text('Create manually'),
+        title: Text(AppStrings.of(context).es ? 'Crear manualmente' : 'Create manually'),
         subtitle: Text(
           'Fill in the persona fields yourself in the in-app editor.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
@@ -313,7 +313,7 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
       // or a native Pyre persona JSON.
       ListTile(
         leading: const Icon(Icons.file_upload_outlined),
-        title: const Text('Import from file'),
+        title: Text(AppStrings.of(context).es ? 'Importar desde archivo' : 'Import from file'),
         subtitle: Text(
           'Pick a character card PNG/JSON or a Pyre persona JSON from your device.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
@@ -467,7 +467,7 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
     itemsBuilder: (sheet) => [
       ListTile(
         leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
-        title: const Text('Build with AI assistant'),
+        title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),
         onTap: () {
           Navigator.pop(sheet);
           Navigator.of(context).push(MaterialPageRoute(
