@@ -28,6 +28,7 @@ import 'services/single_instance.dart';
 import 'services/sync_engine.dart';
 import 'services/store_backend.dart';
 import 'services/update_check.dart';
+import 'l10n/app_strings.dart';
 import 'models/models.dart' show UiPrefs;
 import 'state/app_store.dart';
 import 'theme.dart';
@@ -613,6 +614,9 @@ class _PyreAppState extends State<PyreApp>
         builder: (context, store, _) {
           return MaterialApp(
             title: 'Pyre',
+            locale: AppStrings.defaultLocale,
+            supportedLocales: AppStrings.supportedLocales,
+            localizationsDelegates: const [AppStringsDelegate()],
             debugShowCheckedModeBanner: false,
             // Wave CY.18.1.3: re-evaluated on every rebuild. EmberColors.*
             // are getters backed by EmberColors.active, so calling
