@@ -723,18 +723,8 @@ class _HowItWorksCard extends StatelessWidget {
         // 0. Entry-point overview — what the Creator is.
         HowItWorksSection(es ? 'Qué es el Creador de personajes' : 'What the Character Creator is', [
           HowItWorksBlock.paragraph(es
-    ? 'Abre la pestaña Biblioteca → pulsa +. Hay tres formas de crear:
-  • Crear con asistente de IA — es lo que explica esta sección
-  • Crear desde cero — editor manual con control total
-  • Importar — PNG / JSON / URL
-
-El flujo con el asistente de IA es una conversación. Tú planteas el personaje, la IA hace preguntas específicas para completar lo que falte y, cuando esté listo, escribe la tarjeta completa.'
-    : 'Open Library tab → tap +. Three ways to build:
-  • Build with AI assistant — what this section covers
-  • Create from scratch — manual editor, full control
-  • Import — PNG / JSON / URL
-
-The AI assistant flow is a conversation. You sketch the character, the AI asks targeted questions to fill in gaps, and when ready it writes the full card.'),
+    ? 'Abre la pestaña Biblioteca → pulsa +. Hay tres formas de crear:\n  • Crear con asistente de IA — es lo que explica esta sección\n  • Crear desde cero — editor manual con control total\n  • Importar — PNG / JSON / URL\n\nEl flujo con el asistente de IA es una conversación. Tú planteas el personaje, la IA hace preguntas específicas para completar lo que falte y, cuando esté listo, escribe la tarjeta completa.'
+    : 'Open Library tab → tap +. Three ways to build:\n  • Build with AI assistant — what this section covers\n  • Create from scratch — manual editor, full control\n  • Import — PNG / JSON / URL\n\nThe AI assistant flow is a conversation. You sketch the character, the AI asks targeted questions to fill in gaps, and when ready it writes the full card.'),
         ]),
 
         // 0b. How a session flows (structured build — the old GREETING/
