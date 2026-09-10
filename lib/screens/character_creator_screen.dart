@@ -715,12 +715,13 @@ class _HowItWorksCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const HowItWorksCard(
-      title: 'How the Character Creator works',
-      subtitle: 'What it is, phases, modes, tips, troubleshooting.',
+    final es = AppStrings.of(context).es;
+    return HowItWorksCard(
+      title: es ? 'Cómo funciona el Creador de personajes' : 'How the Character Creator works',
+      subtitle: es ? 'Qué es, fases, modos, consejos y solución de problemas.' : 'What it is, phases, modes, tips, troubleshooting.',
       sections: [
         // 0. Entry-point overview — what the Creator is.
-        HowItWorksSection('What the Character Creator is', [
+        HowItWorksSection(es ? 'Qué es el Creador de personajes' : 'What the Character Creator is', [
           HowItWorksBlock.paragraph(
               'Open Library tab → tap +. Three ways to build:\n'
               '  • Build with AI assistant — what this section covers\n'
@@ -735,7 +736,7 @@ class _HowItWorksCard extends StatelessWidget {
         // 0b. How a session flows (structured build — the old GREETING/
         // BUILD-UP/GENERATE/REFINE phase model + "Generate" button were
         // retired with the deterministic build).
-        HowItWorksSection('How a session flows', [
+        HowItWorksSection(es ? 'Cómo transcurre una sesión' : 'How a session flows', [
           HowItWorksBlock.paragraph(
               '1) **Talk it out** — tell the AI the vibe (name, species, '
               'archetype, "broken princess with a sword", anything). Vague '
@@ -752,7 +753,7 @@ class _HowItWorksCard extends StatelessWidget {
         ]),
 
         // 1. Building modes — what the new-session picker offers.
-        HowItWorksSection('What you can build', [
+        HowItWorksSection(es ? 'Qué puedes crear' : 'What you can build', [
           HowItWorksBlock.paragraph(
               'A new Creator session asks what you\'re making — the choice '
               'sets which architect runs the show:'),
@@ -783,7 +784,7 @@ class _HowItWorksCard extends StatelessWidget {
         ]),
 
         // Wave CY.18.101: guided flow removed — single freeform flow.
-        HowItWorksSection('How the build runs', [
+        HowItWorksSection(es ? 'Cómo se ejecuta la creación' : 'How the build runs', [
           HowItWorksBlock.paragraph(
               'When you say to build, the architect writes the whole sheet '
               'over a few automatic passes (you\'ll see a "pass X of N" '
@@ -796,7 +797,7 @@ class _HowItWorksCard extends StatelessWidget {
         // 3. What gets built. (Wave CY.18.112: de-jargoned — the
         // user-facing help no longer exposes the internal "block"
         // scaffolding; it just describes the card's contents.)
-        HowItWorksSection('What gets built', [
+        HowItWorksSection(es ? 'Qué se crea' : 'What gets built', [
           HowItWorksBlock.paragraph(
               'You don\'t drive any of this — the architect fills the '
               'whole card for you in order, saving the wrap-up '
@@ -827,7 +828,7 @@ class _HowItWorksCard extends StatelessWidget {
         // context" but Wave CY.18.36 demoted it to pure personal
         // bio on the Profile screen. The architect now ONLY sees
         // Your additions — keeping the help text in sync.
-        HowItWorksSection('Your additions', [
+        HowItWorksSection(es ? 'Tus añadidos' : 'Your additions', [
           HowItWorksBlock.paragraph(
               'The text box higher up on this screen is appended to '
               'every Creator session\'s system prompt as hard '
@@ -847,7 +848,7 @@ class _HowItWorksCard extends StatelessWidget {
         ]),
 
         // 5. Attach buttons.
-        HowItWorksSection('Attach buttons', [
+        HowItWorksSection(es ? 'Botones para adjuntar' : 'Attach buttons', [
           HowItWorksBlock.paragraph(
               'In the input bar you have three icons before the text '
               'field:'),
@@ -873,7 +874,7 @@ class _HowItWorksCard extends StatelessWidget {
         ]),
 
         // 6. After the card is built.
-        HowItWorksSection('After the card is built', [
+        HowItWorksSection(es ? 'Después de crear la tarjeta' : 'After the card is built', [
           HowItWorksBlock.paragraph(
               'Once the wrap-up lands, the card is shippable. '
               'A few things you can do at this point:'),
@@ -902,7 +903,7 @@ class _HowItWorksCard extends StatelessWidget {
         ]),
 
         // 7. Background generation.
-        HowItWorksSection('Background generation', [
+        HowItWorksSection(es ? 'Generación en segundo plano' : 'Background generation', [
           HowItWorksBlock.paragraph(
               'A full build usually takes a few minutes; each pass can '
               'be 30–90 seconds. Pyre uses a foreground '
@@ -923,7 +924,7 @@ class _HowItWorksCard extends StatelessWidget {
         ]),
 
         // 8. Tips.
-        HowItWorksSection('Tips that actually help', [
+        HowItWorksSection(es ? 'Consejos que realmente ayudan' : 'Tips that actually help', [
           HowItWorksBlock.bullet(
               'Start with a vibe, not a checklist. "broken '
               'princess, cold on the outside, soft underneath" '
