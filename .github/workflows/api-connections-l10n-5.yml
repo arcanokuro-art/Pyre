@@ -1,0 +1,37 @@
+name: API connections l10n 5
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          pairs=[
+          ("tooltip: 'Show in chat quick-swap',", "tooltip: es ? 'Mostrar en cambio rápido del chat' : 'Show in chat quick-swap',"),
+          ("const Text('Delete provider?')", "Text(es ? '¿Eliminar proveedor?' : 'Delete provider?')"),
+          ("child: const Text('Cancel'),", "child: Text(es ? 'Cancelar' : 'Cancel'),"),
+          ("child: const Text('Delete',", "child: Text(es ? 'Eliminar' : 'Delete',"),
+          ("itemBuilder: (_) => const [", "itemBuilder: (_) => ["),
+          ("value: 'edit', child: Text('Edit')", "value: 'edit', child: Text(es ? 'Editar' : 'Edit')"),
+          ("child: Text('Duplicate')", "child: Text(es ? 'Duplicar' : 'Duplicate')"),
+          ("child: Text('Delete',", "child: Text(es ? 'Eliminar' : 'Delete',")]
+          for a,b in pairs:
+              if a not in s: raise SystemExit('missing: '+a)
+              s=s.replace(a,b,1)
+          old="                                          'Remove \"${p.name}\" and its saved '\n                                          'API key from this device? This '\n                                          'can\\'t be undone.',"
+          new="                                          es ? '¿Quitar \"${p.name}\" y su clave API guardada de este dispositivo? Esta acción no se puede deshacer.' : 'Remove \"${p.name}\" and its saved API key from this device? This can\\'t be undone.',"
+          if old not in s: raise SystemExit('delete content missing')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize provider list actions'
+          git push origin HEAD:spanish-localization
