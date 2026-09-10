@@ -1,0 +1,43 @@
+name: Character export errors l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          old="""        const SnackBar(
+            content: Text(
+                'This character has no avatar. Set one in the editor first, then re-export.')),"""
+          new="""        SnackBar(
+            content: Text(AppStrings.of(context).es
+                ? 'Este personaje no tiene avatar. Configura uno primero en el editor y vuelve a exportar.'
+                : 'This character has no avatar. Set one in the editor first, then re-export.')),"""
+          if old not in s: raise SystemExit('avatar missing')
+          s=s.replace(old,new,1)
+          old="""        const SnackBar(
+            content: Text(
+                \"Couldn't read the avatar image to embed in the card. Try setting a different avatar.\")),"""
+          new="""        SnackBar(
+            content: Text(AppStrings.of(context).es
+                ? 'No se pudo leer la imagen del avatar para incluirla en la tarjeta. Prueba con otro avatar.'
+                : \"Couldn't read the avatar image to embed in the card. Try setting a different avatar.\")),"""
+          if old not in s: raise SystemExit('image missing')
+          s=s.replace(old,new,1)
+          old="SnackBar(content: Text('Export failed: $e'))"
+          new="SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e'))"
+          if old not in s: raise SystemExit('export failure missing')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize character export errors'
+          git push origin HEAD:spanish-localization
