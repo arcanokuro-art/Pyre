@@ -722,15 +722,19 @@ class _HowItWorksCard extends StatelessWidget {
       sections: [
         // 0. Entry-point overview — what the Creator is.
         HowItWorksSection(es ? 'Qué es el Creador de personajes' : 'What the Character Creator is', [
-          HowItWorksBlock.paragraph(
-              'Open Library tab → tap +. Three ways to build:\n'
-              '  • Build with AI assistant — what this section covers\n'
-              '  • Create from scratch — manual editor, full control\n'
-              '  • Import — PNG / JSON / URL\n\n'
-              'The AI assistant flow is a conversation. You sketch the '
-              'character, the AI asks targeted questions to fill in '
-              'gaps, and when you\'re both happy it writes the full '
-              'card.'),
+          HowItWorksBlock.paragraph(es
+    ? 'Abre la pestaña Biblioteca → pulsa +. Hay tres formas de crear:
+  • Crear con asistente de IA — es lo que explica esta sección
+  • Crear desde cero — editor manual con control total
+  • Importar — PNG / JSON / URL
+
+El flujo con el asistente de IA es una conversación. Tú planteas el personaje, la IA hace preguntas específicas para completar lo que falte y, cuando esté listo, escribe la tarjeta completa.'
+    : 'Open Library tab → tap +. Three ways to build:
+  • Build with AI assistant — what this section covers
+  • Create from scratch — manual editor, full control
+  • Import — PNG / JSON / URL
+
+The AI assistant flow is a conversation. You sketch the character, the AI asks targeted questions to fill in gaps, and when ready it writes the full card.'),
         ]),
 
         // 0b. How a session flows (structured build — the old GREETING/
@@ -738,8 +742,8 @@ class _HowItWorksCard extends StatelessWidget {
         // retired with the deterministic build).
         HowItWorksSection(es ? 'Cómo transcurre una sesión' : 'How a session flows', [
           HowItWorksBlock.paragraph(es
-              ? '1) **Habla sobre la idea** — cuéntale a la IA el concepto. Puede ser algo vago; hará algunas preguntas específicas. La ficha permanece vacía mientras conversan: todavía no se escribe nada.\\n\\n2) **Crear** — cuando la IA proponga crearla, o cuando tú estés listo, indícalo (o escribe /build). Entonces escribe TODA la tarjeta mediante varias pasadas automáticas.\\n\\n3) **Revisar** — la tarjeta terminada aparece campo por campo en el lienzo. Revísala y toca cualquier campo para editarlo manualmente.\\n\\n4) **Refinar o guardar** — sigue conversando para pedir cambios; la IA modifica solo lo que pediste y deja lo demás intacto, o guarda la tarjeta en tu biblioteca.'
-              : '1) **Talk it out** — tell the AI the vibe. Vague is fine; it asks a few targeted questions. The sheet stays empty while you chat.\\n\\n2) **Build** — when the AI proposes building, or any time you are ready, say the word (or type /build). It writes the whole card over a few automatic passes.\\n\\n3) **Review** — the finished card appears field-by-field in the canvas. Read it and edit any field by hand.\\n\\n4) **Refine or save** — keep chatting to ask for changes, or save it to your library.'),
+              ? '1) **Habla sobre la idea** — cuéntale a la IA el concepto. Puede ser algo vago; hará algunas preguntas específicas. La ficha permanece vacía mientras conversan: todavía no se escribe nada.\n\n2) **Crear** — cuando la IA proponga crearla, o cuando tú estés listo, indícalo (o escribe /build). Entonces escribe TODA la tarjeta mediante varias pasadas automáticas.\n\n3) **Revisar** — la tarjeta terminada aparece campo por campo en el lienzo. Revísala y toca cualquier campo para editarlo manualmente.\n\n4) **Refinar o guardar** — sigue conversando para pedir cambios; la IA modifica solo lo que pediste y deja lo demás intacto, o guarda la tarjeta en tu biblioteca.'
+              : '1) **Talk it out** — tell the AI the vibe. Vague is fine; it asks a few targeted questions. The sheet stays empty while you chat.\n\n2) **Build** — when the AI proposes building, or any time you are ready, say the word (or type /build). It writes the whole card over a few automatic passes.\n\n3) **Review** — the finished card appears field-by-field in the canvas. Read it and edit any field by hand.\n\n4) **Refine or save** — keep chatting to ask for changes, or save it to your library.'),
         ]),
 
         // 1. Building modes — what the new-session picker offers.
@@ -767,12 +771,9 @@ class _HowItWorksCard extends StatelessWidget {
         // user-facing help no longer exposes the internal "block"
         // scaffolding; it just describes the card's contents.)
         HowItWorksSection(es ? 'Qué se crea' : 'What gets built', [
-          HowItWorksBlock.paragraph(
-              'You don\'t drive any of this — the architect fills the '
-              'whole card for you in order, saving the wrap-up '
-              '(tagline, creator notes, tags) for last so it can '
-              'reference everything that came before. A character '
-              'card covers:'),
+          HowItWorksBlock.paragraph(es
+    ? 'No tienes que dirigir esta parte: el arquitecto completa toda la tarjeta en orden y deja el cierre (eslogan, notas del creador y etiquetas) para el final, de modo que pueda tomar en cuenta todo lo anterior. Una tarjeta de personaje incluye:'
+    : 'You do not drive any of this — the architect fills the whole card for you in order, saving the wrap-up (tagline, creator notes, tags) for last so it can reference everything that came before. A character card covers:'),
           HowItWorksBlock.bullet(
               es ? 'Apariencia — aspecto, complexión y rasgos distintivos' : 'Appearance — look, build, distinctive features'),
           HowItWorksBlock.bullet(es ? 'Personalidad y psicología' : 'Personality & psychology'),
