@@ -1,0 +1,24 @@
+name: Clean API localization residue
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          old=" : 'On — replies keep generating if you switch apps (silent notification while active).') //\n                  : (AppStrings"
+          new=" : 'On — replies keep generating if you switch apps (silent notification while active).')\n                  : (AppStrings"
+          if old not in s: raise SystemExit('residue not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Clean API localization residue'
+          git push origin HEAD:spanish-localization
