@@ -972,7 +972,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
             .toList();
       }
     } catch (e) {
-      throw FormatException('Backup parse failed (likely corrupted): $e');
+      throw FormatException(AppStrings.of(context).es ? 'No se pudo interpretar la copia de seguridad (probablemente está dañada): $e' : 'Backup parse failed (likely corrupted): $e');
     }
 
     // Audit 2026-06-04 (High): only overwrite the active-* pointers when the
