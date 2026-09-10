@@ -358,10 +358,11 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     final hasAvatar = avatar != null && avatar!.isNotEmpty;
     final display = username.trim().isNotEmpty
         ? username.trim()
-        : (editMode ? 'No username set' : 'Anonymous creator');
+        : (editMode ? (es ? 'Sin nombre de usuario' : 'No username set') : (es ? 'Creador anónimo' : 'Anonymous creator'));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -386,23 +387,23 @@ class _ProfileHeader extends StatelessWidget {
               if (!hasAvatar)
                 _MiniAction(
                   icon: Icons.add_a_photo_outlined,
-                  label: 'Add profile picture',
+                  label: es ? 'Añadir foto de perfil' : 'Add profile picture',
                   onTap: onTapAvatarPicker,
                 ),
               if (hasAvatar) ...[
                 _MiniAction(
                   icon: Icons.swap_horiz,
-                  label: 'Change',
+                  label: es ? 'Cambiar' : 'Change',
                   onTap: onTapAvatarPicker,
                 ),
                 _MiniAction(
                   icon: Icons.crop,
-                  label: 'Recrop',
+                  label: es ? 'Recortar de nuevo' : 'Recrop',
                   onTap: onRecrop,
                 ),
                 _MiniAction(
                   icon: Icons.delete_outline,
-                  label: 'Remove',
+                  label: es ? 'Eliminar' : 'Remove',
                   onTap: onRemove,
                   danger: true,
                 ),
@@ -577,6 +578,7 @@ class _IdentityEditCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -588,7 +590,7 @@ class _IdentityEditCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'IDENTITY',
+            es ? 'IDENTIDAD' : 'IDENTITY',
             style: TextStyle(
               color: EmberColors.primary,
               fontWeight: FontWeight.w700,
@@ -598,7 +600,7 @@ class _IdentityEditCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Username',
+            es ? 'Nombre de usuario' : 'Username',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
