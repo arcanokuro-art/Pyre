@@ -3309,7 +3309,7 @@ Future<String?> _promptFolderName(BuildContext context,
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: EmberColors.bgPanel,
-      title: Text(initial.isEmpty ? 'New folder' : 'Rename folder'),
+      title: Text(AppStrings.of(ctx).es ? (initial.isEmpty ? 'Nueva carpeta' : 'Renombrar carpeta') : (initial.isEmpty ? 'New folder' : 'Rename folder')),
       content: TextField(
         controller: controller,
         autofocus: true,
@@ -3319,11 +3319,11 @@ Future<String?> _promptFolderName(BuildContext context,
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Cancel'),
+          child: Text(AppStrings.of(ctx).es ? 'Cancelar' : 'Cancel'),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(ctx).pop(controller.text.trim()),
-          child: const Text('Save'),
+          child: Text(AppStrings.of(ctx).es ? 'Guardar' : 'Save'),
         ),
       ],
     ),
@@ -3350,7 +3350,7 @@ Future<void> _showTagPickerSheet(
   }
   if (usage.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('No tags found on any character yet.')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Aún no se encontraron etiquetas en ningún personaje.' : 'No tags found on any character yet.')),
     );
     return;
   }
@@ -3384,7 +3384,7 @@ Future<void> _showTagPickerSheet(
                     children: [
                       Expanded(
                         child: Text(
-                          'Filter by tags',
+                          AppStrings.of(sheetCtx).es ? 'Filtrar por etiquetas' : 'Filter by tags',
                           style: TextStyle(
                             color: EmberColors.textHigh,
                             fontWeight: FontWeight.w600,
@@ -3452,7 +3452,7 @@ Future<void> _showTagPickerSheet(
                       TextButton(
                         onPressed: () =>
                             setSheetState(() => draft.clear()),
-                        child: const Text('Clear all'),
+                        child: Text(AppStrings.of(sheetCtx).es ? 'Borrar todo' : 'Clear all'),
                       ),
                       const Spacer(),
                       ElevatedButton(
@@ -3465,7 +3465,7 @@ Future<void> _showTagPickerSheet(
                           }
                           Navigator.of(sheetCtx).pop();
                         },
-                        child: Text('Apply (${draft.length})'),
+                        child: Text(AppStrings.of(sheetCtx).es ? 'Aplicar (${draft.length})' : 'Apply (${draft.length})'),
                       ),
                     ],
                   ),
