@@ -584,7 +584,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Resume a draft or start fresh',
+                  AppStrings.of(context).es ? 'Continuar un borrador o empezar de cero' : 'Resume a draft or start fresh',
                   style: TextStyle(
                     color: EmberColors.textHigh,
                     fontSize: 17,
@@ -618,7 +618,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                 itemBuilder: (_, i) {
                   final d = drafts[i];
                   final title = d.name.trim().isEmpty
-                      ? '(unnamed draft)'
+                      ? (AppStrings.of(context).es ? '(borrador sin nombre)' : '(unnamed draft)')
                       : d.name;
                   return ListTile(
                     leading: Icon(Icons.drafts_outlined,
@@ -647,14 +647,14 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                         context: context,
                         builder: (ctx) => AlertDialog(
                           backgroundColor: EmberColors.bgPanel,
-                          title: const Text('Delete draft?'),
+                          title: Text(AppStrings.of(context).es ? '¿Eliminar borrador?' : 'Delete draft?'),
                           content: Text(
                               'Permanently discard "$title"? '
                               'This cannot be undone.'),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
-                              child: const Text('Cancel'),
+                              child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -664,7 +664,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                                 Navigator.pop(ctx);
                                 store.removeDraft(d.id);
                               },
-                              child: const Text('Delete'),
+                              child: Text(AppStrings.of(context).es ? 'Eliminar' : 'Delete'),
                             ),
                           ],
                         ),
