@@ -1,10 +1,3 @@
-// Avatar crop modal — pan + zoom interaction port of js/cropper.js.
-//
-// Uses InteractiveViewer to position the source image inside a fixed-size
-// square viewport. The "Save" action rasterises the viewport's visible
-// region into a 512x512 PNG, base64-encoded into a data: URL — matching
-// the rest of the app's avatar storage format.
-
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -12,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../l10n/app_strings.dart';
 import '../theme.dart';
 
 class AvatarCropScreen extends StatefulWidget {
@@ -27,6 +21,8 @@ class _AvatarCropScreenState extends State<AvatarCropScreen> {
   final TransformationController _tx = TransformationController();
   bool _saving = false;
 
+  String _t(String spanish, String english) => AppStrings.of(context).es ? spanish : english;
+
   @override
   void dispose() {
     _tx.dispose();
@@ -36,34 +32,33 @@ class _AvatarCropScreenState extends State<AvatarCropScreen> {
   Future<void> _save() async {
     setState(() => _saving = true);
     try {
-      final boundary = _captureKey.currentContext!
-          .findRenderObject() as RenderRepaintBoundary;
-      // Render at 2x for crisp 512px output from a 256pt viewport.
+      final boundary = _captureKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 2);
-      final bytes =
-          await image.toByteData(format: ui.ImageByteFormat.png);
-      if (bytes == null) throw 'failed to encode';
+      final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (bytes == null) throw _t('no se pudo codificar la imagen', 'failed to encode');
       final data = bytes.buffer.asUint8List();
       if (!mounted) return;
       Navigator.of(context).pop(data);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Crop failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_t('Error al recortar: $e', 'Crop failed: $e'))),
+      );
       setState(() => _saving = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    String t(String spanish, String english) => AppStrings.of(context).es ? spanish : english;
     return Scaffold(
       backgroundColor: EmberColors.bgDeep,
       appBar: AppBar(
-        title: const Text('Crop avatar'),
+        title: Text(t('Recortar avatar', 'Crop avatar')),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: 'Reset',
+            tooltip: t('Restablecer', 'Reset'),
             onPressed: () => _tx.value = Matrix4.identity(),
           ),
         ],
@@ -73,12 +68,8 @@ class _AvatarCropScreenState extends State<AvatarCropScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 16),
-            Text(
-              'Pinch to zoom · drag to position',
-              style: TextStyle(color: EmberColors.textMid),
-            ),
+            Text(t('Pellizca para ampliar · arrastra para posicionar', 'Pinch to zoom · drag to position'), style: TextStyle(color: EmberColors.textMid)),
             const SizedBox(height: 16),
-            // Square cropper viewport at 256 logical px → 512 px output.
             ClipOval(
               child: RepaintBoundary(
                 key: _captureKey,
@@ -91,11 +82,7 @@ class _AvatarCropScreenState extends State<AvatarCropScreen> {
                       transformationController: _tx,
                       minScale: 0.5,
                       maxScale: 4,
-                      child: Image.memory(
-                        widget.sourceBytes,
-                        fit: BoxFit.contain,
-                        gaplessPlayback: true,
-                      ),
+                      child: Image.memory(widget.sourceBytes, fit: BoxFit.contain, gaplessPlayback: true),
                     ),
                   ),
                 ),
@@ -106,15 +93,13 @@ class _AvatarCropScreenState extends State<AvatarCropScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: _saving
-                      ? null
-                      : () => Navigator.of(context).pop(null),
-                  child: const Text('Cancel'),
+                  onPressed: _saving ? null : () => Navigator.of(context).pop(null),
+                  child: Text(t('Cancelar', 'Cancel')),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.check),
-                  label: const Text('Use this crop'),
+                  label: Text(t('Usar este recorte', 'Use this crop')),
                   onPressed: _saving ? null : _save,
                 ),
               ],
@@ -126,10 +111,7 @@ class _AvatarCropScreenState extends State<AvatarCropScreen> {
   }
 }
 
-/// Push the crop screen and return the resulting PNG bytes (or null if
-/// the user cancelled).
-Future<Uint8List?> cropAvatar(
-    BuildContext context, Uint8List sourceBytes) async {
+Future<Uint8List?> cropAvatar(BuildContext context, Uint8List sourceBytes) async {
   return Navigator.of(context).push<Uint8List>(
     MaterialPageRoute(
       fullscreenDialog: true,
