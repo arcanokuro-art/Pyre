@@ -1,0 +1,28 @@
+name: Storage wipe simple
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/storage_screen.dart')
+          s=p.read_text()
+          s=s.replace("title: Text(AppStrings.of(context).es ? '¿Borrar biblioteca?' : 'Clear library?'),\n        content: const Text(", "title: Text(AppStrings.of(context).es ? '¿Borrar biblioteca?' : 'Clear library?'),\n        content: Text(AppStrings.of(context).es ? 'Esto elimina permanentemente los datos de tu biblioteca. Tus ajustes se conservan. No se puede deshacer.' : 'This permanently deletes your library data. Your settings are kept. There is no undo.'),\n        /* original English detail removed from visible UI */\n        /*\n        content: const Text(", 1)
+          s=s.replace("        actions: [", "        */\n        actions: [", 1)
+          s=s.replace("child: const Text('Cancel'),", "child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),", 1)
+          s=s.replace("child: const Text('Clear'),", "child: Text(AppStrings.of(context).es ? 'Borrar' : 'Clear'),", 1)
+          s=s.replace("const SnackBar(content: Text('Library cleared.'))", "SnackBar(content: Text(AppStrings.of(context).es ? 'Biblioteca borrada.' : 'Library cleared.'))", 1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/storage_screen.dart
+          git commit -m 'Localize storage wipe confirmation'
+          git push origin HEAD:spanish-localization
