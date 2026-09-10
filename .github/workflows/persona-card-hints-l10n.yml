@@ -1,0 +1,33 @@
+name: Persona card hints l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/characters_screen.dart'); s=p.read_text()
+          a=s.index('class _PersonaAllFiledHintItem')
+          b=s.index('Widget _menuSectionLabel', a)
+          block=s[a:b]
+          pairs=[
+            ("Widget build(AppStore store) => const AllFiledHint(\n        message: 'All your personas are in folders.\\n'\n            'Open a folder above to pick one.',\n      );", "Widget build(AppStore store) => Builder(\n        builder: (context) => AllFiledHint(\n          message: AppStrings.of(context).es\n              ? 'Todas tus personas están en carpetas.\\nAbre una carpeta de arriba para elegir una.'\n              : 'All your personas are in folders.\\nOpen a folder above to pick one.',\n        ),\n      );"),
+            ("                  'DEFAULT',", "                  AppStrings.of(context).es ? 'PREDETERMINADA' : 'DEFAULT',"),
+            ("tooltip: p.favorite\n                  ? 'Remove from favorites'\n                  : 'Add to favorites',", "tooltip: p.favorite\n                  ? (AppStrings.of(context).es ? 'Quitar de favoritos' : 'Remove from favorites')\n                  : (AppStrings.of(context).es ? 'Añadir a favoritos' : 'Add to favorites'),"),
+            ("tooltip: 'Persona actions',", "tooltip: AppStrings.of(context).es ? 'Acciones de la persona' : 'Persona actions',"),
+          ]
+          for x,y in pairs:
+            if block.count(x)!=1: raise SystemExit(f'matches {block.count(x)}')
+            block=block.replace(x,y,1)
+          p.write_text(s[:a]+block+s[b:])
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/characters_screen.dart
+          git commit -m 'Localize persona card and folder hint'
+          git push origin HEAD:spanish-localization
