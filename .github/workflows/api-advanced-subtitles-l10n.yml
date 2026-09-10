@@ -1,0 +1,40 @@
+name: API advanced subtitles l10n
+'on': push
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: spanish-localization}
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/api_connections_screen.dart'); s=p.read_text()
+          pos=s.index('class _AdvancedFallbackTile'); h=s[:pos]; t=s[pos:]
+          a="""on
+                  ? 'On — if a provider fails or refuses, Pyre offers the '
+                      'next one.'
+                  : 'Off — a failed reply just surfaces the error.',"""
+          b="""on
+                  ? (AppStrings.of(context).es ? 'Activado — si un proveedor falla o rechaza la solicitud, Pyre ofrece el siguiente.' : 'On — if a provider fails or refuses, Pyre offers the next one.')
+                  : (AppStrings.of(context).es ? 'Desactivado — una respuesta fallida simplemente muestra el error.' : 'Off — a failed reply just surfaces the error.'),"""
+          if a not in t: raise SystemExit('fallback subtitle')
+          t=t.replace(a,b,1)
+          a="""store.uiPrefs.backgroundGeneration
+                  ? 'On — replies keep generating if you switch apps '
+                      '(silent notification while active).'
+                  : 'Off — switching apps mid-reply may drop the connection.',"""
+          b="""store.uiPrefs.backgroundGeneration
+                  ? (AppStrings.of(context).es ? 'Activado — las respuestas siguen generándose si cambias de aplicación (notificación silenciosa mientras está activo).' : 'On — replies keep generating if you switch apps (silent notification while active).')
+                  : (AppStrings.of(context).es ? 'Desactivado — cambiar de aplicación durante una respuesta puede interrumpir la conexión.' : 'Off — switching apps mid-reply may drop the connection.'),"""
+          if a not in t: raise SystemExit('background subtitle')
+          t=t.replace(a,b,1)
+          p.write_text(h+t)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/api_connections_screen.dart
+          git commit -m 'Localize API advanced status text'
+          git push origin HEAD:spanish-localization
