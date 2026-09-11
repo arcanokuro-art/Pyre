@@ -796,22 +796,23 @@ class _PersonaPickerScreenState extends State<PersonaPickerScreen> {
                 // Optional empty-state shown right under the header.
                 Widget? emptyState;
                 if (store.personas.isEmpty) {
-                  emptyState = const Padding(
-                    padding: EdgeInsets.all(32),
+                  emptyState = Padding(
+                    padding: const EdgeInsets.all(32),
                     child: EmptyState(
                       icon: Icons.face_outlined,
-                      title: 'No personas yet',
-                      subtitle:
-                          'Create one from the Personas tab to play as a specific identity.',
+                      title: AppStrings.of(context).es ? 'Aún no hay personas' : 'No personas yet',
+                      subtitle: AppStrings.of(context).es
+                          ? 'Crea una desde la pestaña Personas para usar una identidad específica.'
+                          : 'Create one from the Personas tab to play as a specific identity.',
                     ),
                   );
                 } else if (filtered.isEmpty) {
-                  emptyState = const Padding(
-                    padding: EdgeInsets.all(32),
+                  emptyState = Padding(
+                    padding: const EdgeInsets.all(32),
                     child: EmptyState(
                       icon: Icons.search_off,
-                      title: 'No matches',
-                      subtitle: 'Nothing matches your search.',
+                      title: AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches',
+                      subtitle: AppStrings.of(context).es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.',
                     ),
                   );
                 }
