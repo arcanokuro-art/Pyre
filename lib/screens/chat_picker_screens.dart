@@ -640,8 +640,8 @@ class _GroupCharacterPickerScreenState
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16),
                     activeThumbColor: EmberColors.primary,
-                    title: const Text('Party mode',
-                        style: TextStyle(fontSize: 14)),
+                    title: Text(AppStrings.of(context).es ? 'Modo grupo' : 'Party mode',
+                        style: const TextStyle(fontSize: 14)),
                     subtitle: Text(
                       'Everyone replies together in one scene.',
                       style: TextStyle(
