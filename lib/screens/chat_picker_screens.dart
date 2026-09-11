@@ -427,7 +427,7 @@ class _OrganizedCharacterPickerBodyState
       rows.add(() => const SizedBox(height: 8));
     }
     if (organized.favs.isNotEmpty) {
-      rows.add(() => _sectionLabel('FAVORITES'));
+      rows.add(() => _sectionLabel(AppStrings.of(context).es ? 'FAVORITOS' : 'FAVORITES'));
       for (final c in organized.favs) {
         rows.add(() => widget.buildRow(c));
       }
