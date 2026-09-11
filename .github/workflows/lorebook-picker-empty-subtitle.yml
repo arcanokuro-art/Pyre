@@ -1,0 +1,27 @@
+name: Lorebook picker empty subtitle l10n
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/chat_picker_screens.dart')
+          s=p.read_text()
+          a="subtitle:\n                          'Create or import lorebooks from the Lorebooks '\n                          'section of the Library tab.',"
+          b="subtitle: AppStrings.of(context).es\n                          ? 'Crea o importa libros de lore desde la sección Lorebooks de la pestaña Biblioteca.'\n                          : 'Create or import lorebooks from the Lorebooks section of the Library tab.',"
+          if s.count(a)!=1: raise SystemExit('subtitle target missing')
+          p.write_text(s.replace(a,b,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/chat_picker_screens.dart
+          git commit -m 'Localize lorebook picker empty subtitle'
+          git push origin HEAD:spanish-localization
