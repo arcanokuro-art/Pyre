@@ -225,7 +225,7 @@ Future<void> startNewChatFlow(BuildContext context) async {
             leading: Icon(Icons.person_outline, color: EmberColors.primary),
             title: const Text('Chat'),
             subtitle: Text(
-              'Pick one character to talk to.',
+              AppStrings.of(context).es ? 'Elige un personaje con quien hablar.' : 'Pick one character to talk to.',
               style: TextStyle(color: EmberColors.textMid, fontSize: 12),
             ),
             onTap: () => Navigator.pop(sheet, 'solo'),
