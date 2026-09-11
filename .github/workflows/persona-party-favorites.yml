@@ -1,0 +1,27 @@
+name: Persona party favorites l10n
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/chat_picker_screens.dart')
+          s=p.read_text()
+          target="              'FAVORITES',"
+          replacement="              AppStrings.of(context).es ? 'FAVORITOS' : 'FAVORITES',"
+          if s.count(target)!=1: raise SystemExit('unexpected count '+str(s.count(target)))
+          p.write_text(s.replace(target,replacement,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/chat_picker_screens.dart
+          git commit -m 'Localize persona party favorites heading'
+          git push origin HEAD:spanish-localization
