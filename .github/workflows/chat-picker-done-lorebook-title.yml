@@ -1,0 +1,30 @@
+name: Picker done lorebook title l10n
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/chat_picker_screens.dart')
+          s=p.read_text()
+          pairs=[
+            ("child: const Text('Done'),", "child: Text(AppStrings.of(context).es ? 'Listo' : 'Done'),"),
+            ("appBar: AppBar(title: const Text('Attach lorebooks to this chat')),", "appBar: AppBar(title: Text(AppStrings.of(context).es ? 'Adjuntar libros de lore a este chat' : 'Attach lorebooks to this chat')),")]
+          for a,b in pairs:
+            if s.count(a)!=1: raise SystemExit('unexpected target '+a)
+            s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/chat_picker_screens.dart
+          git commit -m 'Localize picker done and lorebook title'
+          git push origin HEAD:spanish-localization
