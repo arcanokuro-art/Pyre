@@ -939,10 +939,10 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
     );
     final n = _selected.length;
     final status = n == 0
-        ? 'No persona'
+        ? (AppStrings.of(context).es ? 'Sin persona' : 'No persona')
         : n == 1
             ? 'Solo — 1 persona'
-            : 'Persona party — $n personas (your messages = the whole group)';
+            : (AppStrings.of(context).es ? 'Grupo de personas — $n personas (tus mensajes = todo el grupo)' : 'Persona party — $n personas (your messages = the whole group)');
 
     Widget row(Persona p) => CheckboxListTile(
           value: _selected.contains(p.id),
