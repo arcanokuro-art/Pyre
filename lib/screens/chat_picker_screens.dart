@@ -1030,8 +1030,8 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
                           ? Icons.face_outlined
                           : Icons.search_off,
                       title: store.personas.where((p) => !p.deleted).isEmpty
-                          ? 'No personas yet'
-                          : 'No matches',
+                          ? (AppStrings.of(context).es ? 'Aún no hay personas' : 'No personas yet')
+                          : (AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches'),
                       subtitle: store.personas
                               .where((p) => !p.deleted)
                               .isEmpty
