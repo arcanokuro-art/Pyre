@@ -1001,8 +1001,8 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(
-              'Pick one to play solo, or several for a persona party. '
-              'Uncheck everything for no persona. Only affects this chat.',
+              AppStrings.of(context).es ? 'Elige una para jugar en solitario o varias para un grupo de personas. ' : 'Pick one to play solo, or several for a persona party. '
+              + (AppStrings.of(context).es ? 'Desmarca todas para no usar ninguna persona. Solo afecta a este chat.' : 'Uncheck everything for no persona. Only affects this chat.'),
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
