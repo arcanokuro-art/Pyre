@@ -302,8 +302,8 @@ Future<void> startNewGroupChat(
   if (store.chatSettings.askPersonaOnNewChat) {
     personaPicks = await navigator.push<List<String>>(
       MaterialPageRoute(
-        builder: (_) => const PersonaPartyPickerScreen(
-          title: 'Personas for the new group chat',
+        builder: (_) => PersonaPartyPickerScreen(
+          title: AppStrings.of(context).es ? 'Personas para el nuevo chat grupal' : 'Personas for the new group chat',
         ),
       ),
     );
