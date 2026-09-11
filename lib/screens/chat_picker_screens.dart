@@ -510,7 +510,7 @@ class _OrganizedCharacterPickerBodyState
                 TextButton.icon(
                   onPressed: () => setState(() => _folderId = null),
                   icon: const Icon(Icons.arrow_back, size: 16),
-                  label: const Text('All characters'),
+                  label: Text(AppStrings.of(context).es ? 'Todos los personajes' : 'All characters'),
                 ),
                 const SizedBox(width: 4),
                 Icon(Icons.folder_outlined,
