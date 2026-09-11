@@ -252,7 +252,7 @@ Future<void> startNewChatFlow(BuildContext context) async {
     MaterialPageRoute(
       builder: (_) => CharacterPickerScreen(
         title: AppStrings.of(context).es ? 'Chat nuevo' : 'New chat',
-        subtitle: 'Pick who to chat with.',
+        subtitle: AppStrings.of(context).es ? 'Elige con quién chatear.' : 'Pick who to chat with.',
       ),
     ),
   );
