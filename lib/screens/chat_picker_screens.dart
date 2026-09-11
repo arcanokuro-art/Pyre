@@ -1135,9 +1135,9 @@ class _LorebookAttachPickerScreenState
           Padding(
             padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(
-              'Books toggled here are injected ONLY in this chat. '
-              'Books bound to a character or persona aren\'t listed '
-              'here — manage those from the previous screen.',
+              AppStrings.of(context).es
+                  ? 'Los libros activados aquí se inyectan SOLO en este chat. Los libros vinculados a un personaje o persona no aparecen aquí; adminístralos desde la pantalla anterior.'
+                  : 'Books toggled here are injected ONLY in this chat. Books bound to a character or persona aren\'t listed here — manage those from the previous screen.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
