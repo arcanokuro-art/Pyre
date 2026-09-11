@@ -778,9 +778,9 @@ class _PersonaPickerScreenState extends State<PersonaPickerScreen> {
                 final noPersonaTile = ListTile(
                   leading: Icon(Icons.person_off_outlined,
                       color: EmberColors.textDim),
-                  title: const Text('No persona'),
+                  title: Text(AppStrings.of(context).es ? 'Sin persona' : 'No persona'),
                   subtitle: Text(
-                    'Send messages without a {{user}} identity.',
+                    AppStrings.of(context).es ? 'Envía mensajes sin una identidad de {{user}}.' : 'Send messages without a {{user}} identity.',
                     style: TextStyle(
                         color: EmberColors.textMid, fontSize: 12),
                   ),
