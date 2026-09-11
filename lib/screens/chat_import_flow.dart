@@ -65,7 +65,17 @@ Future<void> runPyreChatImport(BuildContext context, AppStore store) async {
       existingChatIds: store.chats.map((c) => c.id).toSet(),
     );
   } on ChatImportException catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    final message = es
+        ? switch (e.kind) {
+            ChatImportErrorKind.notReadable =>
+              'No se pudo leer el archivo como un chat válido de Pyre o SillyTavern.',
+            ChatImportErrorKind.unsupported =>
+              'El archivo de chat no es compatible o contiene datos dañados.',
+            ChatImportErrorKind.empty =>
+              'El archivo de chat no contiene mensajes.',
+          }
+        : e.message;
+    messenger.showSnackBar(SnackBar(content: Text(message)));
     return;
   } catch (e) {
     messenger.showSnackBar(SnackBar(content: Text(t('Error al importar: $e', 'Import failed: $e'))));
