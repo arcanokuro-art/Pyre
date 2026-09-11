@@ -109,10 +109,32 @@ Future<void> _showChatImportSummary(BuildContext context, ChatImportSummary summ
     ChatImportFormat.foreignJsonl => 'SillyTavern JSONL',
   };
 
+  final displayTitle = es && summary.title == 'Imported chat'
+      ? 'Chat importado'
+      : summary.title;
+
+  String localizedWarning(String warning) {
+    if (!es) return warning;
+    if (warning.startsWith('A chat with the same id already exists')) {
+      return 'Ya existe un chat con el mismo identificador; se importó como una copia nueva.';
+    }
+    if (warning.startsWith('JSONL import restores the message timeline only')) {
+      return 'La importación JSONL restaura únicamente la cronología de mensajes; el título del chat, la memoria y las instantáneas de ramas están disponibles en la exportación JSON de Pyre con fidelidad completa.';
+    }
+    if (warning.contains("isn't in your library")) {
+      final match = RegExp(r"The character '(.+)' isn't in your library").firstMatch(warning);
+      if (match != null) {
+        return 'El personaje «${match.group(1)}» no está en tu biblioteca; se importó como una copia independiente.';
+      }
+      return 'El personaje de este chat no está en tu biblioteca; se importó como un chat independiente.';
+    }
+    return warning;
+  }
+
   final lines = <String>[
     t(
-      'Se importó «${summary.title}» — ${quantity(summary.messageCount, 'mensaje', 'mensajes', 'message', 'messages')}.',
-      'Imported "${summary.title}" — ${quantity(summary.messageCount, 'mensaje', 'mensajes', 'message', 'messages')}.',
+      'Se importó «$displayTitle» — ${quantity(summary.messageCount, 'mensaje', 'mensajes', 'message', 'messages')}.',
+      'Imported "$displayTitle" — ${quantity(summary.messageCount, 'mensaje', 'mensajes', 'message', 'messages')}.',
     ),
   ];
   if (summary.variantCount > 0) {
@@ -125,7 +147,7 @@ Future<void> _showChatImportSummary(BuildContext context, ChatImportSummary summ
       ? t('Vinculado con su personaje de tu biblioteca.', 'Linked to its character in your library.')
       : t('Importado como chat independiente.', 'Imported as a standalone chat.'));
   lines.add(t('Formato: $formatLabel.', 'Format: $formatLabel.'));
-  lines.addAll(summary.warnings);
+  lines.addAll(summary.warnings.map(localizedWarning));
 
   await showDialog<void>(
     context: context,
