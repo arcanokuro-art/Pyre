@@ -1,0 +1,27 @@
+name: Persona party empty titles
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/chat_picker_screens.dart')
+          s=p.read_text()
+          a="                          ? 'No personas yet'\n                          : 'No matches',"
+          b="                          ? (AppStrings.of(context).es ? 'Aún no hay personas' : 'No personas yet')\n                          : (AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches'),"
+          if s.count(a)!=1: raise SystemExit('target missing')
+          p.write_text(s.replace(a,b,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/chat_picker_screens.dart
+          git commit -m 'Localize persona party empty titles'
+          git push origin HEAD:spanish-localization
