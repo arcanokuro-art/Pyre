@@ -758,9 +758,9 @@ class _PersonaPickerScreenState extends State<PersonaPickerScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search, size: 18),
-                hintText: 'Search personas…',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search, size: 18),
+                hintText: AppStrings.of(context).es ? 'Buscar personas…' : 'Search personas…',
                 isDense: true,
               ),
               onChanged: (v) => setState(() => _query = v),
@@ -1012,9 +1012,9 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search, size: 18),
-                hintText: 'Search personas…',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search, size: 18),
+                hintText: AppStrings.of(context).es ? 'Buscar personas…' : 'Search personas…',
                 isDense: true,
               ),
               onChanged: (v) => setState(() => _query = v),
