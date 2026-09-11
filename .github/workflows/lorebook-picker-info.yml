@@ -1,0 +1,27 @@
+name: Lorebook picker info l10n
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/chat_picker_screens.dart')
+          s=p.read_text()
+          a="'Books toggled here are injected ONLY in this chat. '\n              'Books bound to a character or persona aren\\'t listed '\n              'here — manage those from the previous screen.',"
+          b="AppStrings.of(context).es\n                  ? 'Los libros activados aquí se inyectan SOLO en este chat. Los libros vinculados a un personaje o persona no aparecen aquí; adminístralos desde la pantalla anterior.'\n                  : 'Books toggled here are injected ONLY in this chat. Books bound to a character or persona aren\\'t listed here — manage those from the previous screen.',"
+          if s.count(a)!=1: raise SystemExit('info target missing')
+          p.write_text(s.replace(a,b,1))
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/chat_picker_screens.dart
+          git commit -m 'Localize lorebook picker information'
+          git push origin HEAD:spanish-localization
