@@ -1148,9 +1148,9 @@ class _LorebookAttachPickerScreenState
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search, size: 18),
-                hintText: 'Search lorebooks…',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search, size: 18),
+                hintText: AppStrings.of(context).es ? 'Buscar libros de lore…' : 'Search lorebooks…',
                 isDense: true,
               ),
               onChanged: (v) => setState(() => _query = v),
@@ -1180,7 +1180,7 @@ class _LorebookAttachPickerScreenState
                         activeColor: EmberColors.primary,
                         title: Text(l.name),
                         subtitle: Text(
-                          '${l.entries.length} entries',
+                          AppStrings.of(context).es ? '${l.entries.length} entradas' : '${l.entries.length} entries',
                           style: TextStyle(
                               color: EmberColors.textMid, fontSize: 12),
                         ),
