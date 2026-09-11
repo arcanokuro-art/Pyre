@@ -417,7 +417,7 @@ class _OrganizedCharacterPickerBodyState
                   Icon(Icons.folder_outlined, color: EmberColors.textMid),
               title: Text(f.name),
               subtitle: Text(
-                '$count character${count == 1 ? '' : 's'}',
+                AppStrings.of(context).es ? '$count personaje${count == 1 ? '' : 's'}' : '$count character${count == 1 ? '' : 's'}',
                 style: TextStyle(color: EmberColors.textMid, fontSize: 12),
               ),
               trailing: const Icon(Icons.chevron_right, size: 18),
