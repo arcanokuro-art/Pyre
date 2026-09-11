@@ -1,0 +1,30 @@
+name: Persona party status simple
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/chat_picker_screens.dart')
+          s=p.read_text()
+          pairs=[
+            ("? 'No persona'", "? (AppStrings.of(context).es ? 'Sin persona' : 'No persona')"),
+            (": 'Persona party — $n personas (your messages = the whole group)';", ": (AppStrings.of(context).es ? 'Grupo de personas — $n personas (tus mensajes = todo el grupo)' : 'Persona party — $n personas (your messages = the whole group)');")]
+          for a,b in pairs:
+            if s.count(a)!=1: raise SystemExit('unexpected target '+a)
+            s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/chat_picker_screens.dart
+          git commit -m 'Localize persona party status safely'
+          git push origin HEAD:spanish-localization
