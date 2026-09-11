@@ -460,10 +460,10 @@ class _OrganizedCharacterPickerBodyState
         child: EmptyState(
           icon: liveCount == 0 ? Icons.person_outline : Icons.search_off,
           title: liveCount == 0
-              ? 'No characters yet'
+              ? (AppStrings.of(context).es ? 'Aún no hay personajes' : 'No characters yet')
               : q.isNotEmpty
-                  ? 'No matches'
-                  : 'Every character is already in this chat',
+                  ? (AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches')
+                  : (AppStrings.of(context).es ? 'Todos los personajes ya están en este chat' : 'Every character is already in this chat'),
           subtitle: liveCount == 0
               ? 'Import or create one from the Library tab.'
               : q.isNotEmpty
