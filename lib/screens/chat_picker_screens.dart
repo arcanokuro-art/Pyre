@@ -596,7 +596,7 @@ class _GroupCharacterPickerScreenState
                   ),
                   title: Text(c.name),
                   subtitle: isPrimary
-                      ? Text('Opens the chat',
+                      ? Text(AppStrings.of(context).es ? 'Inicia el chat' : 'Opens the chat',
                           style: TextStyle(
                               color: EmberColors.primary, fontSize: 12))
                       : (c.tagline != null && c.tagline!.isNotEmpty
