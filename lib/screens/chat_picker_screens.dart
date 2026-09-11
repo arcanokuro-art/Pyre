@@ -409,7 +409,7 @@ class _OrganizedCharacterPickerBodyState
     // inflates on-screen rows — same virtualization as the library tab.
     final rows = <Widget Function()>[];
     if (onHome && liveFolders.isNotEmpty) {
-      rows.add(() => _sectionLabel('FOLDERS'));
+      rows.add(() => _sectionLabel(AppStrings.of(context).es ? 'CARPETAS' : 'FOLDERS'));
       for (final f in liveFolders) {
         final count = selectableIn(f);
         rows.add(() => ListTile(
