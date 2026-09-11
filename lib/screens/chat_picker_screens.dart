@@ -682,7 +682,7 @@ class _GroupCharacterPickerScreenState
                                   memberIds: List<String>.from(_selected),
                                   partyMode: _partyMode && n > 1,
                                 )),
-                        child: const Text('Create chat'),
+                        child: Text(AppStrings.of(context).es ? 'Crear chat' : 'Create chat'),
                       ),
                     ],
                   ),
