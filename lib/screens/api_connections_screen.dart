@@ -716,10 +716,10 @@ Future<void> _testConnection(
   // Security (audit round 16): never send the SAVED key to a CHANGED host.
   if (providerKeyStaleForChangedHost(
       existing: existing, currentUrl: base, currentKey: keyCtl.text)) {
-    messenger.showSnackBar(const SnackBar(
-        content: Text('You changed the host — enter a different API key (or '
-            'clear it) before testing. Your saved key is never sent to a new '
-            'host.')));
+    messenger.showSnackBar(SnackBar(
+        content: Text(AppStrings.of(context).es
+            ? 'Cambiaste el host; introduce una clave API diferente (o bórrala) antes de probar. Tu clave guardada nunca se envía a un host nuevo.'
+            : 'You changed the host — enter a different API key (or clear it) before testing. Your saved key is never sent to a new host.')));
     return;
   }
   // Mega-audit 2026-06-05 (H-7): SSRF gate. Refuse to probe a private /
