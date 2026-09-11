@@ -232,7 +232,7 @@ Future<void> startNewChatFlow(BuildContext context) async {
           ),
           ListTile(
             leading: Icon(Icons.groups_outlined, color: EmberColors.primary),
-            title: const Text('Group chat'),
+            title: Text(AppStrings.of(context).es ? 'Chat grupal' : 'Group chat'),
             subtitle: Text(
               'Pick the whole cast up front — everyone joins the scene.',
               style: TextStyle(color: EmberColors.textMid, fontSize: 12),
