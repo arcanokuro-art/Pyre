@@ -443,8 +443,9 @@ class _OrganizedCharacterPickerBodyState
       rows.add(() => Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Text(
-              'Everyone else lives inside a folder — open one above, or '
-              'search to look across all of them.',
+              AppStrings.of(context).es
+                  ? 'Todos los demás están dentro de una carpeta; abre una arriba o busca para verlos en todas las carpetas.'
+                  : 'Everyone else lives inside a folder — open one above, or search to look across all of them.',
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 12, height: 1.4),
             ),
