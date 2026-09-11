@@ -1163,9 +1163,9 @@ class _LorebookAttachPickerScreenState
                     child: EmptyState(
                       icon: Icons.menu_book_outlined,
                       title: AppStrings.of(context).es ? 'No hay libros de lore disponibles' : 'No lorebooks available',
-                      subtitle:
-                          'Create or import lorebooks from the Lorebooks '
-                          'section of the Library tab.',
+                      subtitle: AppStrings.of(context).es
+                          ? 'Crea o importa libros de lore desde la sección Lorebooks de la pestaña Biblioteca.'
+                          : 'Create or import lorebooks from the Lorebooks section of the Library tab.',
                     ),
                   )
                 : ListView.separated(
