@@ -1,0 +1,30 @@
+name: Lorebook picker empty l10n
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/chat_picker_screens.dart')
+          s=p.read_text()
+          a="title: 'No lorebooks available',"
+          b="title: AppStrings.of(context).es ? 'No hay libros de lore disponibles' : 'No lorebooks available',"
+          if s.count(a)!=1: raise SystemExit('title target missing')
+          s=s.replace("? const Padding(\n                    padding: EdgeInsets.all(32),", "? Padding(\n                    padding: const EdgeInsets.all(32),",1)
+          s=s.replace("child: EmptyState(\n                      icon: Icons.menu_book_outlined,", "child: EmptyState(\n                      icon: Icons.menu_book_outlined,",1)
+          s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/chat_picker_screens.dart
+          git commit -m 'Localize lorebook picker empty state'
+          git push origin HEAD:spanish-localization
