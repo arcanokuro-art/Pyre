@@ -976,7 +976,7 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
       rows.add(() => Padding(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
             child: Text(
-              'FAVORITES',
+              AppStrings.of(context).es ? 'FAVORITOS' : 'FAVORITES',
               style: TextStyle(
                 color: EmberColors.textDim,
                 fontSize: 11,
