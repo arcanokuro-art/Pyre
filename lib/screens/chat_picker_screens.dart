@@ -657,10 +657,10 @@ class _GroupCharacterPickerScreenState
                       Expanded(
                         child: Text(
                           n == 0
-                              ? 'Pick at least one member'
+                              ? (AppStrings.of(context).es ? 'Elige al menos un miembro' : 'Pick at least one member')
                               : n == 1
-                                  ? 'Just 1 member — a regular 1:1 chat'
-                                  : '$n members',
+                                  ? (AppStrings.of(context).es ? 'Solo 1 miembro — un chat 1:1 normal' : 'Just 1 member — a regular 1:1 chat')
+                                  : (AppStrings.of(context).es ? '$n miembros' : '$n members'),
                           style: TextStyle(
                             color: n > 1
                                 ? EmberColors.primary
