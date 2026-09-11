@@ -465,10 +465,10 @@ class _OrganizedCharacterPickerBodyState
                   ? (AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches')
                   : (AppStrings.of(context).es ? 'Todos los personajes ya están en este chat' : 'Every character is already in this chat'),
           subtitle: liveCount == 0
-              ? 'Import or create one from the Library tab.'
+              ? (AppStrings.of(context).es ? 'Importa o crea uno desde la pestaña Biblioteca.' : 'Import or create one from the Library tab.')
               : q.isNotEmpty
-                  ? 'Try a different search term.'
-                  : 'They\'re all members already.',
+                  ? (AppStrings.of(context).es ? 'Prueba con otro término de búsqueda.' : 'Try a different search term.')
+                  : (AppStrings.of(context).es ? 'Todos ya son miembros.' : 'They\'re all members already.'),
         ),
       );
     } else {
