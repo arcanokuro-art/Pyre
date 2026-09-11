@@ -510,10 +510,9 @@ class _CreatorProviderCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'By default every call uses your active chat provider. Pin a '
-              'different one here for the Creator or for image analysis — '
-              'e.g. DeepSeek for chat and creator text, Qwen-VL only for '
-              'vision. Vision falls back to creator → chat.',
+              AppStrings.of(context).es
+                  ? 'De forma predeterminada, cada solicitud usa tu proveedor de chat activo. Puedes fijar aquí otro para el Creador o para el análisis de imágenes; por ejemplo, DeepSeek para chat y texto del creador, y Qwen-VL solo para visión. Visión recurre a creador → chat si es necesario.'
+                  : 'By default every call uses your active chat provider. Pin a different one here for the Creator or for image analysis — e.g. DeepSeek for chat and creator text, Qwen-VL only for vision. Vision falls back to creator → chat.',
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 11, height: 1.4),
             ),
