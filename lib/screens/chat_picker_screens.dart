@@ -494,9 +494,9 @@ class _OrganizedCharacterPickerBodyState
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: TextField(
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.search, size: 18),
-              hintText: 'Search characters…',
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search, size: 18),
+              hintText: AppStrings.of(context).es ? 'Buscar personajes…' : 'Search characters…',
               isDense: true,
             ),
             onChanged: (v) => setState(() => _query = v),
