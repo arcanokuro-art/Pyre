@@ -1,0 +1,30 @@
+name: Persona picker empty states l10n
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lib/screens/chat_picker_screens.dart')
+          s=p.read_text()
+          pairs=[
+            ("emptyState = const Padding(\n                    padding: EdgeInsets.all(32),\n                    child: EmptyState(\n                      icon: Icons.face_outlined,\n                      title: 'No personas yet',\n                      subtitle:\n                          'Create one from the Personas tab to play as a specific identity.',", "emptyState = Padding(\n                    padding: const EdgeInsets.all(32),\n                    child: EmptyState(\n                      icon: Icons.face_outlined,\n                      title: AppStrings.of(context).es ? 'Aún no hay personas' : 'No personas yet',\n                      subtitle: AppStrings.of(context).es\n                          ? 'Crea una desde la pestaña Personas para usar una identidad específica.'\n                          : 'Create one from the Personas tab to play as a specific identity.',"),
+            ("emptyState = const Padding(\n                    padding: EdgeInsets.all(32),\n                    child: EmptyState(\n                      icon: Icons.search_off,\n                      title: 'No matches',\n                      subtitle: 'Nothing matches your search.',", "emptyState = Padding(\n                    padding: const EdgeInsets.all(32),\n                    child: EmptyState(\n                      icon: Icons.search_off,\n                      title: AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches',\n                      subtitle: AppStrings.of(context).es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.',")]
+          for a,b in pairs:
+            if s.count(a)!=1: raise SystemExit('target missing')
+            s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add lib/screens/chat_picker_screens.dart
+          git commit -m 'Localize persona picker empty states'
+          git push origin HEAD:spanish-localization
