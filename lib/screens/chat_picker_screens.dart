@@ -1158,11 +1158,11 @@ class _LorebookAttachPickerScreenState
           ),
           Expanded(
             child: available.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(32),
+                ? Padding(
+                    padding: const EdgeInsets.all(32),
                     child: EmptyState(
                       icon: Icons.menu_book_outlined,
-                      title: 'No lorebooks available',
+                      title: AppStrings.of(context).es ? 'No hay libros de lore disponibles' : 'No lorebooks available',
                       subtitle:
                           'Create or import lorebooks from the Lorebooks '
                           'section of the Library tab.',
