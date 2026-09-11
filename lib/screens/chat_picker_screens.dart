@@ -570,7 +570,7 @@ class _GroupCharacterPickerScreenState
     final primaryId =
         widget.primary?.id ?? (_selected.isEmpty ? null : _selected.first);
     return Scaffold(
-      appBar: AppBar(title: const Text('New group chat')),
+      appBar: AppBar(title: Text(AppStrings.of(context).es ? 'Nuevo chat grupal' : 'New group chat')),
       body: Column(
         children: [
           Expanded(
