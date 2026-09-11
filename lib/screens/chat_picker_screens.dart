@@ -643,7 +643,7 @@ class _GroupCharacterPickerScreenState
                     title: Text(AppStrings.of(context).es ? 'Modo grupo' : 'Party mode',
                         style: const TextStyle(fontSize: 14)),
                     subtitle: Text(
-                      'Everyone replies together in one scene.',
+                      AppStrings.of(context).es ? 'Todos responden juntos en una sola escena.' : 'Everyone replies together in one scene.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
