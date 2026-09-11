@@ -1070,7 +1070,7 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
                     ),
                     onPressed: () =>
                         Navigator.pop(context, List<String>.from(_selected)),
-                    child: const Text('Done'),
+                    child: Text(AppStrings.of(context).es ? 'Listo' : 'Done'),
                   ),
                 ],
               ),
@@ -1129,7 +1129,7 @@ class _LorebookAttachPickerScreenState
       return l.name.toLowerCase().contains(q);
     }).toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('Attach lorebooks to this chat')),
+      appBar: AppBar(title: Text(AppStrings.of(context).es ? 'Adjuntar libros de lore a este chat' : 'Attach lorebooks to this chat')),
       body: Column(
         children: [
           Padding(
