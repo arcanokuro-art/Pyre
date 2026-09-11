@@ -250,8 +250,8 @@ Future<void> startNewChatFlow(BuildContext context) async {
   }
   final picked = await navigator.push<String>(
     MaterialPageRoute(
-      builder: (_) => const CharacterPickerScreen(
-        title: 'New chat',
+      builder: (_) => CharacterPickerScreen(
+        title: AppStrings.of(context).es ? 'Chat nuevo' : 'New chat',
         subtitle: 'Pick who to chat with.',
       ),
     ),
