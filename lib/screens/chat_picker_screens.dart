@@ -234,7 +234,7 @@ Future<void> startNewChatFlow(BuildContext context) async {
             leading: Icon(Icons.groups_outlined, color: EmberColors.primary),
             title: Text(AppStrings.of(context).es ? 'Chat grupal' : 'Group chat'),
             subtitle: Text(
-              'Pick the whole cast up front — everyone joins the scene.',
+              AppStrings.of(context).es ? 'Elige todo el elenco desde el principio; todos se unirán a la escena.' : 'Pick the whole cast up front — everyone joins the scene.',
               style: TextStyle(color: EmberColors.textMid, fontSize: 12),
             ),
             onTap: () => Navigator.pop(sheet, 'group'),
