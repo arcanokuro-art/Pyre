@@ -123,10 +123,19 @@ Future<void> _showChatImportSummary(BuildContext context, ChatImportSummary summ
     }
     if (warning.contains("isn't in your library")) {
       final match = RegExp(r"The character '(.+)' isn't in your library").firstMatch(warning);
-      if (match != null) {
-        return 'El personaje «${match.group(1)}» no está en tu biblioteca; se importó como una copia independiente.';
+      final name = match?.group(1);
+      final subject = name != null
+          ? 'El personaje «$name» no está en tu biblioteca'
+          : 'El personaje de este chat no está en tu biblioteca';
+      if (warning.contains('standalone copy')) {
+        final snapshotNote = warning.contains('snapshot saved in the file')
+            ? ' (usa la instantánea guardada en el archivo)'
+            : '';
+        return '$subject; se importó como una copia independiente$snapshotNote.';
       }
-      return 'El personaje de este chat no está en tu biblioteca; se importó como un chat independiente.';
+      if (warning.contains('standalone chat')) {
+        return '$subject; se importó como un chat independiente.';
+      }
     }
     return warning;
   }
