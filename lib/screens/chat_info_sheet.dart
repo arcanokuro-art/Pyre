@@ -88,9 +88,9 @@ class _ChatInfoSheetState extends State<ChatInfoSheet> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Approximate token weight of every component sent to the '
-                'model on the next turn. Counts use the chars/4 heuristic '
-                '(close enough for the "is this big or small" question).',
+                'Peso aproximado en tokens de cada componente enviado al '
+                'modelo en el siguiente turno. Los conteos usan la heurística '
+                'de caracteres/4 (suficiente para estimar si algo es grande o pequeño).',
                 style: TextStyle(color: EmberColors.textMid, fontSize: 12, height: 1.4),
               ),
               const SizedBox(height: 16),
@@ -104,7 +104,7 @@ class _ChatInfoSheetState extends State<ChatInfoSheet> {
                 child: Row(children: [
                   Icon(Icons.toll, color: EmberColors.primary, size: 22),
                   const SizedBox(width: 10),
-                  Expanded(child: Text('Total context', style: TextStyle(color: EmberColors.textHigh, fontWeight: FontWeight.w600))),
+                  Expanded(child: Text('Contexto total', style: TextStyle(color: EmberColors.textHigh, fontWeight: FontWeight.w600))),
                   Text(formatTokenCount(breakdown.total) ?? '~0 tokens', style: TextStyle(color: EmberColors.primary, fontWeight: FontWeight.w700, fontSize: 16, fontFeatures: [FontFeature.tabularFigures()])),
                 ]),
               ),
@@ -114,15 +114,15 @@ class _ChatInfoSheetState extends State<ChatInfoSheet> {
                 builder: (ctx, snap) => _ContextWindowRow(loading: snap.connectionState == ConnectionState.waiting, window: snap.data, used: breakdown.total),
               ),
               const SizedBox(height: 12),
-              ..._row('Preset', 'mainPrompt + post-history', breakdown.preset, breakdown.total, Icons.tune),
+              ..._row('Preajuste', 'prompt principal + post-historial', breakdown.preset, breakdown.total, Icons.tune),
               ..._charactersRow(breakdown),
-              ..._row('Persona', breakdown.personaName ?? '(no persona)', breakdown.persona, breakdown.total, Icons.face),
-              ..._row(breakdown.lorebookNames.length > 1 ? 'Lorebooks (${breakdown.lorebookNames.length})' : 'Lorebooks', breakdown.lorebookNames.isEmpty ? '(none active)' : breakdown.lorebookNames.join(', '), breakdown.lorebooks, breakdown.total, Icons.menu_book_outlined),
+              ..._row('Persona', breakdown.personaName ?? '(sin persona)', breakdown.persona, breakdown.total, Icons.face),
+              ..._row(breakdown.lorebookNames.length > 1 ? 'Libros de lore (${breakdown.lorebookNames.length})' : 'Libros de lore', breakdown.lorebookNames.isEmpty ? '(ninguno activo)' : breakdown.lorebookNames.join(', '), breakdown.lorebooks, breakdown.total, Icons.menu_book_outlined),
               ..._loreActivationSection(breakdown),
-              if (breakdown.liveSheet > 0) ..._row('Live Sheet', 'active state snapshot', breakdown.liveSheet, breakdown.total, Icons.track_changes_outlined),
-              if (breakdown.script > 0) ..._row('Script', 'story beats roadmap', breakdown.script, breakdown.total, Icons.auto_stories_outlined),
-              ..._row('Memory summary', breakdown.memoryNote, breakdown.memory, breakdown.total, Icons.psychology),
-              ..._row('Messages', '${breakdown.messageCount} kept in window', breakdown.messages, breakdown.total, Icons.chat_bubble_outline),
+              if (breakdown.liveSheet > 0) ..._row('Hoja en vivo', 'instantánea del estado activo', breakdown.liveSheet, breakdown.total, Icons.track_changes_outlined),
+              if (breakdown.script > 0) ..._row('Guion', 'hoja de ruta de la historia', breakdown.script, breakdown.total, Icons.auto_stories_outlined),
+              ..._row('Resumen de memoria', breakdown.memoryNote, breakdown.memory, breakdown.total, Icons.psychology),
+              ..._row('Mensajes', '${breakdown.messageCount} conservados en la ventana', breakdown.messages, breakdown.total, Icons.chat_bubble_outline),
             ],
           ),
         ),
@@ -140,9 +140,9 @@ class _ChatInfoSheetState extends State<ChatInfoSheet> {
     if (breakdown.lorebookNames.isEmpty) return const [];
     final fired = breakdown.loreFired;
     final total = breakdown.loreTotal;
-    final widgets = <Widget>[Padding(padding: const EdgeInsets.fromLTRB(26, 0, 0, 4), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Icon(Icons.bolt, size: 13, color: EmberColors.textMid), const SizedBox(width: 5), Expanded(child: Text('Lore active: $fired of $total ${total == 1 ? 'entry' : 'entries'}', style: TextStyle(color: EmberColors.textMid, fontSize: 11, fontWeight: FontWeight.w600)))]))];
+    final widgets = <Widget>[Padding(padding: const EdgeInsets.fromLTRB(26, 0, 0, 4), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Icon(Icons.bolt, size: 13, color: EmberColors.textMid), const SizedBox(width: 5), Expanded(child: Text('Lore activo: $fired de $total ${total == 1 ? 'entrada' : 'entradas'}', style: TextStyle(color: EmberColors.textMid, fontSize: 11, fontWeight: FontWeight.w600)))]))];
     if (fired == 0) {
-      widgets.add(Padding(padding: const EdgeInsets.fromLTRB(31, 0, 0, 8), child: Text(total == 0 ? 'no enabled entries in the attached lorebooks' : 'no entries matched the recent conversation yet', style: TextStyle(color: EmberColors.textMid, fontSize: 11, fontStyle: FontStyle.italic))));
+      widgets.add(Padding(padding: const EdgeInsets.fromLTRB(31, 0, 0, 8), child: Text(total == 0 ? 'no hay entradas habilitadas en los libros de lore adjuntos' : 'ninguna entrada coincide todavía con la conversación reciente', style: TextStyle(color: EmberColors.textMid, fontSize: 11, fontStyle: FontStyle.italic))));
     } else {
       for (final line in breakdown.loreTrace) { widgets.add(Padding(padding: const EdgeInsets.fromLTRB(31, 0, 0, 2), child: Text(line, style: TextStyle(color: EmberColors.textMid, fontSize: 11)))); }
       widgets.add(const SizedBox(height: 6));
@@ -153,7 +153,7 @@ class _ChatInfoSheetState extends State<ChatInfoSheet> {
   List<Widget> _charactersRow(_ChatBreakdown breakdown) {
     final names = breakdown.characterNames;
     final hasMany = names.length > 1;
-    final headerTitle = hasMany ? 'Characters (${names.length})' : 'Character';
+    final headerTitle = hasMany ? 'Personajes (${names.length})' : 'Personaje';
     final headerSubtitle = names.join(', ');
     final pct = breakdown.total == 0 ? 0.0 : (breakdown.characters / breakdown.total).clamp(0.0, 1.0);
     final tokenLabel = formatTokenCount(breakdown.characters) ?? '~0 tokens';
@@ -193,7 +193,7 @@ _ChatBreakdown _buildBreakdown(AppStore store, Chat chat) {
   final loreScan = scanLorebookHits(attachedBooks, chat.messages, rng: Random(chat.messages.length), fillMacros: (s) => fillNamePlaceholders(s, charName: charNames.isNotEmpty ? charNames.first : null, personaName: partyPersonas.length > 1 ? partyPersonas.map((p) => p.name).join(', ') : (persona?.name ?? 'You')), sceneCharacterNames: charNames, effectiveTextOf: (m) { if (hiddenByGreetingVariant(chat.messages, m)) return null; switch (m.kind) { case MessageKind.user: return applyRegexRules(m.text, store.regexRules, stream: RegexStream.userInput, stage: RegexStage.prompt); case MessageKind.char: return applyRegexRules(stripStreamArtifacts(m.text), store.regexRules, stream: RegexStream.aiOutput, stage: RegexStage.prompt); default: return m.text; } });
   final loreFired = loreScan.hits.length; final loreTotal = loreScan.totalScanned - loreScan.skippedDisabled;
   final validCheckpoints = ltm.findValidCheckpoints(chat); var memTokens = 0; for (final c in validCheckpoints) { memTokens += approxTokens(c.summary); }
-  final memNote = validCheckpoints.isEmpty ? '(no checkpoints yet)' : '${validCheckpoints.length} checkpoint${validCheckpoints.length == 1 ? "" : "s"}';
+  final memNote = validCheckpoints.isEmpty ? '(aún no hay puntos de control)' : '${validCheckpoints.length} ${validCheckpoints.length == 1 ? "punto de control" : "puntos de control"}';
   final liveSheetTokens = approxTokens(lsheet.buildLiveSheetBlock(chat));
   final scriptTokens = approxTokens(roadmap.buildStoryRoadmapBlock(chat, beatsCap: store.scriptSettings.beatsCap));
   final ltmStart = ltm.firstUncoveredIndex(chat); final recent = chat.messages.sublist(ltmStart.clamp(0, chat.messages.length)); var msgTokens = 0; for (final m in recent) { msgTokens += approxTokens(m.text); }
@@ -209,9 +209,9 @@ class _ContextWindowRow extends StatelessWidget {
   const _ContextWindowRow({required this.loading, required this.window, required this.used});
   static String _compact(int n) { if (n < 1000) return '$n'; if (n < 1000000) { final k = n / 1000; return k >= 100 ? '${k.round()}k' : '${k.toStringAsFixed(k.truncateToDouble() == k ? 0 : 1)}k'; } final m = n / 1000000; return '${m.toStringAsFixed(m.truncateToDouble() == m ? 0 : 1)}M'; }
   @override Widget build(BuildContext context) {
-    if (loading) return Padding(padding: EdgeInsets.symmetric(vertical: 2), child: Text('Checking model context window…', style: TextStyle(color: EmberColors.textDim, fontSize: 11)));
-    if (window == null || window! <= 0) return Padding(padding: EdgeInsets.symmetric(vertical: 2), child: Text('Context window: unknown — set it manually in More → API Connections if you want the usage bar.', style: TextStyle(color: EmberColors.textDim, fontSize: 11)));
+    if (loading) return Padding(padding: EdgeInsets.symmetric(vertical: 2), child: Text('Comprobando la ventana de contexto del modelo…', style: TextStyle(color: EmberColors.textDim, fontSize: 11)));
+    if (window == null || window! <= 0) return Padding(padding: EdgeInsets.symmetric(vertical: 2), child: Text('Ventana de contexto: desconocida — configúrala manualmente en Más → Conexiones API si quieres ver la barra de uso.', style: TextStyle(color: EmberColors.textDim, fontSize: 11)));
     final pct = (used / window!).clamp(0.0, 1.0); final pctLabel = (pct * 100).clamp(0, 100).toStringAsFixed(0); final Color barColor = pct >= 0.9 ? Colors.redAccent : (pct >= 0.7 ? Colors.amber : EmberColors.primary);
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Icon(Icons.data_usage, size: 14, color: EmberColors.textMid), const SizedBox(width: 6), Expanded(child: Text('${_compact(used)} of ~${_compact(window!)} window', style: TextStyle(color: EmberColors.textMid, fontSize: 12))), Text('$pctLabel%', style: TextStyle(color: barColor, fontSize: 12, fontWeight: FontWeight.w700, fontFeatures: const [FontFeature.tabularFigures()]))]), const SizedBox(height: 4), ClipRRect(borderRadius: BorderRadius.circular(3), child: LinearProgressIndicator(value: pct, minHeight: 5, backgroundColor: EmberColors.bgDeep, valueColor: AlwaysStoppedAnimation<Color>(barColor)))]);
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Icon(Icons.data_usage, size: 14, color: EmberColors.textMid), const SizedBox(width: 6), Expanded(child: Text('${_compact(used)} de ~${_compact(window!)} de ventana', style: TextStyle(color: EmberColors.textMid, fontSize: 12))), Text('$pctLabel%', style: TextStyle(color: barColor, fontSize: 12, fontWeight: FontWeight.w700, fontFeatures: const [FontFeature.tabularFigures()]))]), const SizedBox(height: 4), ClipRRect(borderRadius: BorderRadius.circular(3), child: LinearProgressIndicator(value: pct, minHeight: 5, backgroundColor: EmberColors.bgDeep, valueColor: AlwaysStoppedAnimation<Color>(barColor)))]);
   }
 }
