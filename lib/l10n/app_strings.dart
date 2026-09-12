@@ -113,6 +113,23 @@ class AppStrings {
   String deleteDraftWarning(String title) => es
       ? '¿Descartar "$title" permanentemente? Esta acción no se puede deshacer.'
       : 'Permanently discard "$title"? This cannot be undone.';
+  String personasForChat(String characterName) => es
+      ? 'Personas para el chat con $characterName'
+      : 'Personas for the chat with $characterName';
+  String groupMemberPickerHelp(String? primaryName) => primaryName != null
+      ? (es
+          ? 'Elige los miembros. $primaryName inicia el chat (su saludo lo comienza); todos se unen a la escena.'
+          : 'Pick the members. $primaryName opens the chat (their greeting starts it); everyone joins the scene.')
+      : (es
+          ? 'Elige los miembros. El primero que elijas inicia el chat (su saludo lo comienza); todos se unen a la escena.'
+          : 'Pick the members. The first one you pick opens the chat (their greeting starts it); everyone joins the scene.');
+  String get personaForThisChat =>
+      es ? 'Persona para este chat' : 'Persona for this chat';
+  String get createPersonaIdentityHelp => es
+      ? 'Crea una desde la pestaña Personas para usar una identidad específica.'
+      : 'Create one from the Personas tab to play as a specific identity.';
+  String get nothingMatchesSearch =>
+      es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.';
   String get noChats => es ? 'Aún no hay chats' : 'No chats yet';
   String get noCharacters => es ? 'Aún no hay personajes' : 'No characters yet';
   String get allChats => es ? 'Todos los chats' : 'All Chats';
