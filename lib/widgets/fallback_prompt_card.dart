@@ -43,7 +43,7 @@ class FallbackPromptCard extends StatelessWidget {
     String t(String spanish, String english) => es ? spanish : english;
     final isRefusal = reason == FallbackReason.refusal;
     final title = isRefusal
-        ? t('Parece que $failedName rechazó esta solicitud.', 'Looks like $failedName declined this.')
+        ? t('Parece que $failedName rechazó la solicitud.', 'Looks like $failedName declined this.')
         : t('$failedName no respondió.', '$failedName didn\'t respond.');
     final icon = isRefusal ? Icons.block : Icons.cloud_off;
 
