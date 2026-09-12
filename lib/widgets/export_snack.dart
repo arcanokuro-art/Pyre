@@ -84,7 +84,7 @@ Future<void> deliverExport(
         messenger,
         savedPath != null
             ? t('Guardado en tu dispositivo', 'Saved to your device')
-            : t('No se guardó. ¿Quieres compartirlo?', 'Not saved — share it?'),
+            : t('No se guardó. ¿Quieres compartir el archivo?', 'Not saved — share it?'),
         share,
         spanish: es,
       );
