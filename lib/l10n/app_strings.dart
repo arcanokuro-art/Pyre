@@ -130,6 +130,10 @@ class AppStrings {
       : 'Create one from the Personas tab to play as a specific identity.';
   String get nothingMatchesSearch =>
       es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.';
+  String get soloPersonaStatus => es ? 'Solo — 1 persona' : 'Solo — 1 persona';
+  String personaPartyStatus(int count) => es
+      ? 'Grupo de personas — $count personas (tus mensajes = todo el grupo)'
+      : 'Persona party — $count personas (your messages = the whole group)';
   String get noChats => es ? 'Aún no hay chats' : 'No chats yet';
   String get noCharacters => es ? 'Aún no hay personajes' : 'No characters yet';
   String get allChats => es ? 'Todos los chats' : 'All Chats';
