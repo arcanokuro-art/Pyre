@@ -48,6 +48,27 @@ class AppStrings {
   String get about => es ? 'Acerca de' : 'About';
   String get newChat => es ? 'Nuevo chat' : 'New chat';
   String get newCharacter => es ? 'Nuevo personaje' : 'New character';
+  String get editCharacter => es ? 'Editar personaje' : 'Edit character';
+  String get editThisChatOnly =>
+      es ? 'Editar (solo este chat)' : 'Edit (this chat only)';
+  String get drafts => es ? 'Borradores' : 'Drafts';
+  String get changeAvatar => es ? 'Cambiar avatar' : 'Change avatar';
+  String get recrop => es ? 'Recortar de nuevo' : 'Recrop';
+  String get chatBubbleColor =>
+      es ? 'Color de burbuja del chat' : 'Chat bubble color';
+  String get identity => es ? 'Identidad' : 'Identity';
+  String get descriptionAndWorld =>
+      es ? 'Descripción y mundo' : 'Description & World';
+  String get exampleDialogue =>
+      es ? 'Diálogo de ejemplo' : 'Example dialogue';
+  String get cardMetadata => es ? 'Metadatos de la tarjeta' : 'Card metadata';
+  String get creatorNotes => es ? 'Notas del creador' : 'Creator notes';
+  String get alternateGreetings =>
+      es ? 'Saludos alternativos' : 'Alternate greetings';
+  String get addGreeting => es ? 'Agregar saludo' : 'Add greeting';
+  String get deleteDraftQuestion =>
+      es ? '¿Eliminar borrador?' : 'Delete draft?';
+  String get noDraftsYet => es ? 'Aún no hay borradores.' : 'No drafts yet.';
   String get noChats => es ? 'Aún no hay chats' : 'No chats yet';
   String get noCharacters => es ? 'Aún no hay personajes' : 'No characters yet';
   String get allChats => es ? 'Todos los chats' : 'All Chats';
