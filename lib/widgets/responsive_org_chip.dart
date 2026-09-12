@@ -40,7 +40,7 @@ class ResponsiveOrgChip extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 color: EmberColors.textHigh,
                 fontSize: 12,
               ),
