@@ -34,6 +34,7 @@ class BubbleColorRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final es = AppStrings.of(context).es;
+    final defaultLabel = es ? 'Predeterminado' : 'Default';
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -42,7 +43,7 @@ class BubbleColorRow extends StatelessWidget {
         for (final argb in palette)
           if (argb == null)
             ChoiceChip(
-              label: Text(es ? 'Predeterminado' : 'Default'),
+              label: Text(defaultLabel),
               selected: selected == null,
               selectedColor: EmberColors.primary.withValues(alpha: 0.25),
               onSelected: (_) => onPick(null),
