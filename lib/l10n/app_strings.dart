@@ -69,6 +69,22 @@ class AppStrings {
   String get deleteDraftQuestion =>
       es ? '¿Eliminar borrador?' : 'Delete draft?';
   String get noDraftsYet => es ? 'Aún no hay borradores.' : 'No drafts yet.';
+  String get cardWeight => es ? 'Peso de la tarjeta' : 'Card weight';
+  String get greetingSection => es ? 'Saludo' : 'Greeting';
+  String get tagsCommaSeparated =>
+      es ? 'Etiquetas (separadas por comas)' : 'Tags (comma-separated)';
+  String get tagline => es ? 'Eslogan' : 'Tagline';
+  String get systemPromptOverride =>
+      es ? 'Sobrescritura del prompt del sistema' : 'System prompt override';
+  String get postHistoryInstructions => es
+      ? 'Instrucciones posteriores al historial'
+      : 'Post-history instructions';
+  String get creator => es ? 'Creador' : 'Creator';
+  String get characterVersion =>
+      es ? 'Versión del personaje' : 'Character version';
+  String get removeGreeting =>
+      es ? 'Eliminar este saludo' : 'Remove this greeting';
+  String get editing => es ? 'editando' : 'editing';
   String get noChats => es ? 'Aún no hay chats' : 'No chats yet';
   String get noCharacters => es ? 'Aún no hay personajes' : 'No characters yet';
   String get allChats => es ? 'Todos los chats' : 'All Chats';
