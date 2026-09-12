@@ -947,7 +947,7 @@ Future<void> _exportPersonaAsPng(BuildContext context, Persona p) async {
     final pngAvatarBytes = _ensurePngBytes(avatarBytes);
     if (pngAvatarBytes == null) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
                 AppStrings.of(context).es ? 'No se pudo leer la imagen del avatar para incluirla en la tarjeta. Prueba con otro avatar.' : "Couldn't read the avatar image to embed in the card. Try setting a different avatar.")),
       );
