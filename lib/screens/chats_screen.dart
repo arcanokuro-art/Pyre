@@ -79,7 +79,7 @@ class ChatsScreen extends StatelessWidget {
         Expanded(
           child: ListView.separated(
             itemCount: order.length,
-            separatorBuilder: (_, __) => Divider(color: EmberColors.stroke, height: 1, indent: 72, endIndent: 16),
+            separatorBuilder: (_, _) => Divider(color: EmberColors.stroke, height: 1, indent: 72, endIndent: 16),
             itemBuilder: (context, i) {
               final key = order[i];
               final list = groups[key]!;
