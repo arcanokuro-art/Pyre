@@ -59,7 +59,7 @@ Future<CardImportChoice> confirmCardImport(
             children: [
               Text(
                 t(
-                  'El texto de esta tarjeta se añade a cada prompt del sistema enviado a la IA. Revísalo antes de importarla: las tarjetas maliciosas pueden intentar una inyección de prompt.',
+                  'El texto de esta tarjeta se añade a cada prompt del sistema enviado a la IA. Revísalo antes de importarla: una tarjeta maliciosa puede intentar realizar una inyección de prompt.',
                   'This card\'s text is added to every system prompt sent to the AI. Review it before importing — malicious cards can attempt prompt injection.',
                 ),
                 style: TextStyle(
