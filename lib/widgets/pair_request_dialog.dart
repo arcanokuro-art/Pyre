@@ -22,7 +22,7 @@ Future<void> showPairRequestDialog(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(t(
-              'Un dispositivo quiere vincularse con esta PC y leer o modificar tu biblioteca mediante la red local.',
+              'Un dispositivo quiere vincularse con esta PC y leer o modificar tu biblioteca a través de la red local.',
               'A device wants to pair with this PC and read/write your library over the local network.',
             )),
             const SizedBox(height: 14),
