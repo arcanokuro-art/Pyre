@@ -85,6 +85,34 @@ class AppStrings {
   String get removeGreeting =>
       es ? 'Eliminar este saludo' : 'Remove this greeting';
   String get editing => es ? 'editando' : 'editing';
+  String get draftSavedResume => es
+      ? 'Borrador guardado. Continúa desde Crear → Continuar borrador.'
+      : 'Draft saved. Resume from Create → Resume draft.';
+  String get characterLorebookOverrideHelp => es
+      ? 'Añadir un libro aquí lo adjunta SOLO a este chat. Quitar uno solo lo desactiva para este chat; las vinculaciones propias del personaje (y los demás chats) no se ven afectadas.'
+      : 'Adding a book here attaches it to THIS chat only. Removing one only turns it off for this chat — the character\'s own bindings (and other chats) are unaffected.';
+  String get characterLorebookHelp => es
+      ? 'Estos libros se inyectan en cada chat con este personaje, además de los libros adjuntos a cada chat. Úsalo para el contexto del mundo o ambientación que acompaña al personaje.'
+      : 'These books inject in every chat with this character — on top of any books attached per-chat. Use this for world / setting context that travels with the character.';
+  String get characterAdvancedHelp => es
+      ? 'Personalidad (vacía por especificación), prompts del sistema, saludos alternativos y campos avanzados conservados.'
+      : 'Personality (kept empty by spec), system prompts, alternate greetings, and preserved advanced fields.';
+  String get legacyPersonality => es
+      ? 'Personalidad (campo heredado; normalmente vacío)'
+      : 'Personality (legacy field — usually empty)';
+  String get chatOnlyCharacterEditNotice => es
+      ? 'Los cambios realizados aquí solo afectan a este chat. No modifican el personaje global.'
+      : 'Edits here only affect this chat. They do not touch the global character.';
+  String get draftsHelp => es
+      ? 'Tarjetas en progreso guardadas automáticamente mientras escribes. Toca para cambiar; mantén pulsado para eliminar.'
+      : 'In-progress cards saved automatically as you type. Tap to switch; long-press to delete.';
+  String get unnamedDraft => es ? '(borrador sin nombre)' : '(unnamed draft)';
+  String get greetingHint => es
+      ? '*Ella levanta la mirada.* **"¿Otra vez aquí?"**'
+      : '*She glances up.* **"Back again?"**';
+  String deleteDraftWarning(String title) => es
+      ? '¿Descartar "$title" permanentemente? Esta acción no se puede deshacer.'
+      : 'Permanently discard "$title"? This cannot be undone.';
   String get noChats => es ? 'Aún no hay chats' : 'No chats yet';
   String get noCharacters => es ? 'Aún no hay personajes' : 'No characters yet';
   String get allChats => es ? 'Todos los chats' : 'All Chats';
