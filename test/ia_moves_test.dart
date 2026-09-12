@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 import 'package:pyre/models/models.dart';
-import 'package:pyre/screens/appearance_screen.dart';
+import 'package:pyre/screens/theme_settings_screen.dart';
 import 'package:pyre/screens/backup_restore_screen.dart';
 import 'package:pyre/services/store_backend.dart';
 import 'package:pyre/state/app_store.dart';
@@ -43,13 +43,13 @@ void main() {
   // (1) Appearance — UI scale is reachable here (moved out of More).
   //     Exercise the real slider so we prove the same clamp+persist path.
   // ===========================================================================
-  group('AppearanceScreen — hosts the UI scale control', () {
+  group('ThemeSettingsScreen — hosts the UI scale control', () {
     testWidgets('UI scale slider updates the persisted preference',
         (tester) async {
       _useRoomyView(tester);
       final store = AppStore(storage: _NoopBackend());
 
-      await tester.pumpWidget(_host(store, const AppearanceScreen()));
+      await tester.pumpWidget(_host(store, const ThemeSettingsScreen()));
       await tester.pumpAndSettle();
 
       // Drag the slider thumb to the right; onChangeEnd commits via setUiScale,
