@@ -135,8 +135,7 @@ void main() {
 
           await tester.tap(find.widgetWithText(ElevatedButton, 'Crear'));
           await tester.pumpAndSettle();
-          await tester
-              .tap(find.widgetWithText(ListTile, 'Crear desde cero'));
+          await tester.tap(find.widgetWithText(ListTile, 'Crear desde cero'));
           await tester.pumpAndSettle();
 
           final startFresh = find.widgetWithText(ListTile, 'Empezar de cero');
@@ -151,8 +150,7 @@ void main() {
             reason: '"Empezar de cero" must not sit under the gesture-nav inset',
           );
 
-          final sheetTitle =
-              find.text('Continuar un borrador o empezar de cero');
+          final sheetTitle = find.text('Continuar un borrador o empezar de cero');
           final cappedBox = find.ancestor(
             of: sheetTitle,
             matching: find.byType(ConstrainedBox),
@@ -173,8 +171,7 @@ void main() {
         (tester) async {
           final store = _store();
           store.addCharacter(Character(id: 'c1', name: 'Aria'));
-          final chat =
-              store.addImportedChat(Chat(id: 'chat1', characterIds: ['c1']));
+          final chat = store.addImportedChat(Chat(id: 'chat1', characterIds: ['c1']));
 
           await pumpInEnv(
             tester,
@@ -224,8 +221,8 @@ void main() {
           ),
         );
 
-        expect(find.text('Change avatar'), findsOneWidget);
-        expect(find.text('Recrop'), findsOneWidget);
+        expect(find.text('Cambiar avatar'), findsOneWidget);
+        expect(find.text('Recortar de nuevo'), findsOneWidget);
         expect(tester.takeException(), isNull);
 
         await tester.pump(const Duration(milliseconds: 700));
