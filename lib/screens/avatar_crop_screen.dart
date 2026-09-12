@@ -35,7 +35,7 @@ class _AvatarCropScreenState extends State<AvatarCropScreen> {
       final boundary = _captureKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 2);
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-      if (bytes == null) throw _t('no se pudo codificar la imagen', 'failed to encode');
+      if (bytes == null) throw _t('no se pudo codificar la imagen', 'failed to encode image');
       final data = bytes.buffer.asUint8List();
       if (!mounted) return;
       Navigator.of(context).pop(data);
