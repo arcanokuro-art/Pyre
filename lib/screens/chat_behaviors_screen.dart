@@ -81,7 +81,7 @@ class _ChatBehaviorsScreenState extends State<ChatBehaviorsScreen> {
                     selected: {_draft.deleteBehavior},
                     showSelectedIcon: false,
                     onSelectionChanged: (s) {
-                      setState(() => _draft.deleteBehavior = s.first);
+                      setState(() => _draft = _draft.copyWith(deleteBehavior: s.first));
                       _commit();
                     },
                     style: ButtonStyle(
@@ -107,7 +107,7 @@ class _ChatBehaviorsScreenState extends State<ChatBehaviorsScreen> {
               value: _draft.askPersonaOnNewChat,
               activeThumbColor: EmberColors.primary,
               onChanged: (v) {
-                setState(() => _draft.askPersonaOnNewChat = v);
+                setState(() => _draft = _draft.copyWith(askPersonaOnNewChat: v));
                 _commit();
               },
             ),
