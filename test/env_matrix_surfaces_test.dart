@@ -221,8 +221,8 @@ void main() {
           ),
         );
 
-        expect(find.text('Cambiar avatar'), findsOneWidget);
-        expect(find.text('Recortar de nuevo'), findsOneWidget);
+        expect(find.text('Change avatar'), findsOneWidget);
+        expect(find.text('Recrop'), findsOneWidget);
         expect(tester.takeException(), isNull);
 
         await tester.pump(const Duration(milliseconds: 700));
