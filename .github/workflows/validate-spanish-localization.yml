@@ -55,5 +55,7 @@ jobs:
         continue-on-error: true
         run: flutter analyze
 
+      # Functional tests are blocking; this also intentionally retriggers CI
+      # after the responsive organization-chip fix.
       - name: Run tests
         run: flutter test
