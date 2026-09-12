@@ -15,6 +15,7 @@ Future<bool> confirmDelete(
   String? cancelLabel,
 }) async {
   final es = AppStrings.of(context).es;
+  // Keep caller-provided labels verbatim; only localize the shared defaults.
   final resolvedConfirmLabel = confirmLabel ?? (es ? 'Eliminar' : 'Delete');
   final resolvedCancelLabel = cancelLabel ?? (es ? 'Cancelar' : 'Cancel');
   final result = await showDialog<bool>(
