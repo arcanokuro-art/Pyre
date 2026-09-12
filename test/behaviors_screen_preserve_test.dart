@@ -65,7 +65,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Toggle the delete behavior via the localized segmented button.
-    await tester.tap(find.text('Este mensaje y los siguientes'));
+    await tester.tap(find.text('Este y los posteriores'));
     await tester.pumpAndSettle();
 
     final cs = store.chatSettings;
