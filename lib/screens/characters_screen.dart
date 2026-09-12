@@ -34,6 +34,7 @@ import '../widgets/confirm_dialog.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/export_snack.dart';
 import '../widgets/menu_sheet.dart';
+import '../widgets/responsive_org_chip.dart';
 import 'character_assistant_screen.dart';
 import 'character_details_sheet.dart';
 import 'character_edit_screen.dart';
@@ -1899,33 +1900,11 @@ class _OrgChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: EmberColors.bgElevated,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: EmberColors.stroke),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: EmberColors.textMid),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style:
-                TextStyle(color: EmberColors.textHigh, fontSize: 12),
-          ),
-          if (trailingIcon != null) ...[
-            const SizedBox(width: 2),
-            Icon(trailingIcon, size: 14, color: EmberColors.textMid),
-          ],
-          if (trailing != null) ...[
-            const SizedBox(width: 6),
-            trailing!,
-          ],
-        ],
-      ),
+    return ResponsiveOrgChip(
+      icon: icon,
+      label: label,
+      trailingIcon: trailingIcon,
+      trailing: trailing,
     );
   }
 }
