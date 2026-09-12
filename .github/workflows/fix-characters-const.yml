@@ -1,0 +1,38 @@
+name: Fix localized avatar export compile error
+
+on:
+  push:
+    branches: [spanish-localization]
+    paths:
+      - '.github/workflows/fix-characters-const.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - name: Remove invalid const from localized SnackBar
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('lib/screens/characters_screen.dart')
+          s = p.read_text()
+          old = """        const SnackBar(\n            content: Text(\n                AppStrings.of(context).es ? 'No se pudo leer la imagen del avatar para incluirla en la tarjeta. Prueba con otro avatar.' : \"Couldn't read the avatar image to embed in the card. Try setting a different avatar.\")),"""
+          new = """        SnackBar(\n            content: Text(\n                AppStrings.of(context).es ? 'No se pudo leer la imagen del avatar para incluirla en la tarjeta. Prueba con otro avatar.' : \"Couldn't read the avatar image to embed in the card. Try setting a different avatar.\")),"""
+          if old not in s:
+              raise SystemExit('Expected localized SnackBar pattern not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add lib/screens/characters_screen.dart
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix localized avatar export compile error"
+          git push origin HEAD:spanish-localization
