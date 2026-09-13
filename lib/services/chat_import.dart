@@ -223,7 +223,7 @@ ChatImportResult _importJsonl(
       m.characterId = null;
     }
     if (candidateCharacterId != null) {
-      final name = (header?['character_name'] as String?)?.trim();
+      final name = _trimmedString(header?['character_name']);
       warnings.add(name != null && name.isNotEmpty
           ? "The character '$name' isn't in your library — imported as a standalone chat."
           : "This chat's character isn't in your library — imported as a standalone chat.");
@@ -254,7 +254,7 @@ ChatImportResult _importJsonl(
     warnings.add('JSONL import restores the message timeline only — chat title, memory, and branch snapshots are in the full-fidelity Pyre JSON export.');
   }
 
-  final title = (header?['character_name'] as String?)?.trim();
+  final title = _trimmedString(header?['character_name']);
   return ChatImportResult(
     chat: chat,
     summary: ChatImportSummary(
@@ -376,6 +376,9 @@ String _titleFor(Chat chat, String? characterName) {
   if (characterName != null && characterName.isNotEmpty) return characterName;
   return 'Imported chat';
 }
+
+String? _trimmedString(dynamic value) =>
+    value is String ? value.trim() : null;
 
 int _parseDate(dynamic v) {
   if (v is num) return v.toInt();
