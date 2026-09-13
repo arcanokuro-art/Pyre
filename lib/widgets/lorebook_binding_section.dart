@@ -137,7 +137,9 @@ class LorebookBindingSection extends StatelessWidget {
                   itemBuilder: (_, i) {
                     final b = all[i];
                     final alreadyBound = selectedIds.contains(b.id);
-                    final entriesLabel = es ? '${b.entries.length} ${b.entries.length == 1 ? 'entrada' : 'entradas'}' : '${b.entries.length} entries';
+                    final entriesLabel = es
+                        ? '${b.entries.length} ${b.entries.length == 1 ? 'entrada' : 'entradas'}'
+                        : '${b.entries.length} ${b.entries.length == 1 ? 'entry' : 'entries'}';
                     return Card(
                       child: ListTile(
                         enabled: !alreadyBound,
