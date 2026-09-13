@@ -107,7 +107,10 @@ class LorebookBindingSection extends StatelessWidget {
   Future<void> _openPicker(BuildContext context, AppStore store) async {
     final es = AppStrings.of(context).es;
     String t(String s, String e) => es ? s : e;
-    final all = store.lorebooks;
+    // Take a stable snapshot for the lifetime of the modal. Sync/import work
+    // can mutate the store while the picker is open; a live list could then
+    // change between itemCount and itemBuilder and produce an invalid index.
+    final all = List<Lorebook>.of(store.lorebooks);
     if (all.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('Todavía no tienes lorebooks. Crea uno en la sección Lorebooks de la pestaña Biblioteca y después vuelve aquí para vincularlo.', 'You don\'t have any lorebooks yet. Make one in the Lorebooks section of the Library tab, then come back to bind it.'))));
       return;
