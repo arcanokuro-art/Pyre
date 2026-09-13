@@ -47,6 +47,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     await tester.tap(
       find.text(locale.languageCode == 'es' ? 'Añadir lorebook' : 'Add lorebook'),
