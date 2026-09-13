@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:pyre/l10n/app_strings.dart';
 import 'package:pyre/models/models.dart';
 import 'package:pyre/state/app_store.dart';
 import 'package:pyre/widgets/lorebook_binding_section.dart';
@@ -30,8 +31,13 @@ void main() {
         value: store,
         child: MaterialApp(
           locale: locale,
-          supportedLocales: const [Locale('en'), Locale('es')],
-          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: AppStrings.supportedLocales,
+          localizationsDelegates: const [
+            AppStringsDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           home: const Scaffold(
             body: LorebookBindingSection(
               selectedIds: [],
