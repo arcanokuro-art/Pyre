@@ -4,6 +4,7 @@
 // the chat screen owns the decision and the regeneration.
 
 import 'package:flutter/material.dart';
+import '../l10n/app_strings.dart';
 import '../theme.dart';
 
 enum FallbackReason { infra, refusal }
@@ -38,10 +39,12 @@ class FallbackPromptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
+    String t(String spanish, String english) => es ? spanish : english;
     final isRefusal = reason == FallbackReason.refusal;
     final title = isRefusal
-        ? 'Looks like $failedName declined this.'
-        : '$failedName didn\'t respond.';
+        ? t('Parece que $failedName rechazó la solicitud.', 'Looks like $failedName declined this.')
+        : t('$failedName no respondió.', '$failedName didn\'t respond.');
     final icon = isRefusal ? Icons.block : Icons.cloud_off;
 
     return Container(
@@ -73,26 +76,23 @@ class FallbackPromptCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              // Refusal + clean alternative: lead with the clean one.
               if (isRefusal && cleanName != null && onTryClean != null)
                 ElevatedButton(
                   onPressed: onTryClean,
-                  child: Text('Try $cleanName'),
+                  child: Text(t('Probar $cleanName', 'Try $cleanName')),
                 ),
-              // Primary/next action. Demoted to outlined when a clean
-              // alternative is leading.
               (isRefusal && cleanName != null)
                   ? OutlinedButton(
                       onPressed: onTryNext,
-                      child: Text('Try $nextName anyway'),
+                      child: Text(t('Probar $nextName de todos modos', 'Try $nextName anyway')),
                     )
                   : ElevatedButton(
                       onPressed: onTryNext,
-                      child: Text('Try $nextName'),
+                      child: Text(t('Probar $nextName', 'Try $nextName')),
                     ),
               TextButton(
                 onPressed: onKeep,
-                child: const Text('Keep'),
+                child: Text(t('Conservar', 'Keep')),
               ),
             ],
           ),

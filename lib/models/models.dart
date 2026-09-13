@@ -2955,6 +2955,8 @@ SyncConflictMode parseSyncConflictMode(dynamic v) {
 }
 
 class UiPrefs {
+  /// UI language. Spanish is the default; English remains selectable.
+  String languageCode;
   String activeTab;
   String charactersSegment; // 'characters' | 'personas'
   /// Wave CY.18.46: desktop layout mode toggle. Default `false` =
@@ -3065,6 +3067,7 @@ class UiPrefs {
   double get clampedUiScale => uiScale.clamp(kUiScaleMin, kUiScaleMax);
 
   UiPrefs({
+    this.languageCode = 'es',
     this.activeTab = 'characters',
     this.charactersSegment = 'characters',
     // Wave CY.18.86: default ON. Desktop users open Pyre in a window
@@ -3091,6 +3094,7 @@ class UiPrefs {
         chatSwapProviderIds = chatSwapProviderIds ?? const [];
 
   factory UiPrefs.fromJson(Map<String, dynamic> j) => UiPrefs(
+        languageCode: j['languageCode'] == 'en' ? 'en' : 'es',
         activeTab: (j['activeTab'] as String?) ?? 'characters',
         charactersSegment:
             (j['charactersSegment'] as String?) ?? 'characters',
@@ -3174,6 +3178,7 @@ class UiPrefs {
   }
 
   Map<String, dynamic> toJson() => {
+        if (languageCode != 'es') 'languageCode': languageCode,
         'activeTab': activeTab,
         'charactersSegment': charactersSegment,
         // Wave CY.18.86: default flipped to true. Only persist when

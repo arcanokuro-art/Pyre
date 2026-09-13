@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
+import '../l10n/app_strings.dart';
 import '../services/chat_api.dart';
 import '../services/hub_provider.dart';
 import '../services/lan_client.dart';
@@ -54,24 +55,25 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
       final host = Uri.parse(baseUrl).host;
       final parts = host.split('.').where((p) => p.isNotEmpty).toList();
       final core = parts.length >= 2 ? parts[parts.length - 2] : host;
-      return core.isEmpty ? 'AI provider' : core[0].toUpperCase() + core.substring(1);
+      return core.isEmpty ? (AppStrings.of(context).es ? 'Proveedor de IA' : 'AI provider') : core[0].toUpperCase() + core.substring(1);
     } catch (_) {
-      return 'AI provider';
+      return AppStrings.of(context).es ? 'Proveedor de IA' : 'AI provider';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
+    final es = AppStrings.of(context).es;
     final webHeadless =
         kIsWeb && LanClient.instance.isPaired && _hub?.supported == true;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('API Connections'),
+        title: Text(es ? 'Conexiones API' : 'API Connections'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Add provider',
+            tooltip: es ? 'Añadir proveedor' : 'Add provider',
             onPressed: () => _editProvider(context, null),
           ),
         ],
@@ -85,12 +87,9 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
           // where a key comes from. Use the house empty-state with a real CTA.
           ? EmptyState(
               icon: Icons.cloud_outlined,
-              title: 'Connect an AI provider',
-              subtitle:
-                  'Pyre needs an AI service to write replies — it brings no '
-                  'model of its own. Add one (OpenRouter has free models to '
-                  'start), then paste the API key from that service\'s site.',
-              ctaLabel: 'Add a provider',
+              title: es ? 'Conecta un proveedor de IA' : 'Connect an AI provider',
+              subtitle: es ? 'Pyre necesita un servicio de IA para escribir respuestas; no incluye un modelo propio. Añade uno (OpenRouter tiene modelos gratuitos para empezar) y pega la clave API obtenida en el sitio de ese servicio.' : 'Pyre needs an AI service to write replies — it brings no model of its own. Add one (OpenRouter has free models to start), then paste the API key from that service\'s site.',
+              ctaLabel: es ? 'Añadir un proveedor' : 'Add a provider',
               onCta: () => _editProvider(context, null),
             )
           : Column(
@@ -98,33 +97,21 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                 // 2026-07-03: the app's make-or-break screen was the only
                 // major one without the house "How it works" explainer (regex,
                 // fallback, memory, script all have one). Collapsed by default.
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: HowItWorksCard(
-                    title: 'How connections work',
-                    subtitle: 'BYOK — your key, your model, on your device.',
+                    title: es ? 'Cómo funcionan las conexiones' : 'How connections work',
+                    subtitle: es ? 'BYOK: tu clave, tu modelo, en tu dispositivo.' : 'BYOK — your key, your model, on your device.',
                     sections: [
-                      HowItWorksSection('What a provider is', [
-                        HowItWorksBlock.paragraph(
-                            'Pyre brings no AI of its own — it connects to a '
-                            'service that writes the replies (OpenRouter, '
-                            'OpenAI, a local model…). You add the service and '
-                            'paste **its** API key.'),
+                      HowItWorksSection(es ? 'Qué es un proveedor' : 'What a provider is', [
+                        HowItWorksBlock.paragraph(es ? 'Pyre no incluye una IA propia: se conecta a un servicio que escribe las respuestas (OpenRouter, OpenAI, un modelo local…). Añades el servicio y pegas **su** clave API.' : 'Pyre brings no AI of its own — it connects to a service that writes the replies (OpenRouter, OpenAI, a local model…). You add the service and paste **its** API key.'),
                       ]),
-                      HowItWorksSection('Your key stays yours', [
-                        HowItWorksBlock.paragraph(
-                            'Keys are kept in your device\'s secure store, '
-                            'never leave the device, and are left out of '
-                            'backups unless you tick that box.'),
+                      HowItWorksSection(es ? 'Tu clave sigue siendo tuya' : 'Your key stays yours', [
+                        HowItWorksBlock.paragraph(es ? 'Las claves se guardan en el almacenamiento seguro de tu dispositivo, nunca salen de él y no se incluyen en las copias de seguridad salvo que marques esa opción.' : 'Keys are kept in your device\'s secure store, never leave the device, and are left out of backups unless you tick that box.'),
                       ]),
-                      HowItWorksSection('Tapping + the order', [
-                        HowItWorksBlock.bullet(
-                            '**Tap a connection** to make it the one your '
-                            'chats use (the CHAT badge moves to it).'),
-                        HowItWorksBlock.bullet(
-                            '**The list is the fallback order** — if one '
-                            'fails or refuses, Pyre offers the next. Drag to '
-                            'reorder.'),
+                      HowItWorksSection(es ? 'Selección y orden' : 'Tapping + the order', [
+                        HowItWorksBlock.bullet(es ? '**Pulsa una conexión** para convertirla en la que usan tus chats (la insignia CHAT se moverá a ella).' : '**Tap a connection** to make it the one your chats use (the CHAT badge moves to it).'),
+                        HowItWorksBlock.bullet(es ? '**La lista define el orden alternativo**: si una conexión falla o rechaza la solicitud, Pyre ofrece la siguiente. Arrastra para reordenar.' : '**The list is the fallback order** — if one fails or refuses, Pyre offers the next. Drag to reorder.'),
                       ]),
                     ],
                   ),
@@ -142,9 +129,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 12, 20, 4),
                     child: Text(
-                      'If a provider fails or refuses, Pyre offers to '
-                      'switch to the next one. Drag to set the order — '
-                      'the CHAT provider is always tried first.',
+                      es ? 'Si un proveedor falla o rechaza la solicitud, Pyre ofrece cambiar al siguiente. Arrastra para establecer el orden; el proveedor CHAT siempre se prueba primero.' : 'If a provider fails or refuses, Pyre offers to switch to the next one. Drag to set the order — the CHAT provider is always tried first.',
                       style: TextStyle(
                           color: EmberColors.textDim, fontSize: 12,
                           height: 1.4),
@@ -209,14 +194,14 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                               if (isCreator) ...[
                                 const SizedBox(width: 6),
                                 _ProviderBadge(
-                                  label: 'CREATOR',
+                                  label: es ? 'CREADOR' : 'CREATOR',
                                   color: Colors.amber,
                                 ),
                               ],
                               if (isVision) ...[
                                 const SizedBox(width: 6),
                                 _ProviderBadge(
-                                  label: 'VISION',
+                                  label: es ? 'VISIÓN' : 'VISION',
                                   color: const Color(0xFF6FBEFF),
                                 ),
                               ],
@@ -234,7 +219,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                     fontSize: 12),
                               ),
                               Text(
-                                'model: ${p.model.isEmpty ? "(none)" : p.model}',
+                                es ? 'modelo: ${p.model.isEmpty ? "(ninguno)" : p.model}' : 'model: ${p.model.isEmpty ? "(none)" : p.model}',
                                 style: TextStyle(
                                     color: EmberColors.textMid,
                                     fontSize: 12),
@@ -261,7 +246,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                         ? EmberColors.primary
                                         : EmberColors.textDim,
                                   ),
-                                  tooltip: 'Show in chat quick-swap',
+                                  tooltip: es ? 'Mostrar en cambio rápido del chat' : 'Show in chat quick-swap',
                                   onPressed: () =>
                                       store.toggleChatSwapProvider(p.id),
                                 );
@@ -285,22 +270,20 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                       builder: (dctx) => AlertDialog(
                                         backgroundColor: EmberColors.bgPanel,
                                         title:
-                                            const Text('Delete provider?'),
+                                            Text(es ? '¿Eliminar proveedor?' : 'Delete provider?'),
                                         content: Text(
-                                          'Remove "${p.name}" and its saved '
-                                          'API key from this device? This '
-                                          'can\'t be undone.',
+                                          es ? '¿Quitar "${p.name}" y su clave API guardada de este dispositivo? Esta acción no se puede deshacer.' : 'Remove "${p.name}" and its saved API key from this device? This can\'t be undone.',
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(dctx, false),
-                                            child: const Text('Cancel'),
+                                            child: Text(es ? 'Cancelar' : 'Cancel'),
                                           ),
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(dctx, true),
-                                            child: const Text('Delete',
+                                            child: Text(es ? 'Eliminar' : 'Delete',
                                                 style: TextStyle(
                                                     color: Colors.redAccent)),
                                           ),
@@ -312,15 +295,15 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                     }
                                   }
                                 },
-                                itemBuilder: (_) => const [
+                                itemBuilder: (_) => [
                                   PopupMenuItem(
-                                      value: 'edit', child: Text('Edit')),
+                                      value: 'edit', child: Text(es ? 'Editar' : 'Edit')),
                                   PopupMenuItem(
                                       value: 'duplicate',
-                                      child: Text('Duplicate')),
+                                      child: Text(es ? 'Duplicar' : 'Duplicate')),
                                   PopupMenuItem(
                                       value: 'delete',
-                                      child: Text('Delete',
+                                      child: Text(es ? 'Eliminar' : 'Delete',
                                           style: TextStyle(
                                               color: Colors.redAccent))),
                                 ],
@@ -360,17 +343,13 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        const HowItWorksCard(
-          title: 'How connections work',
-          subtitle: 'Set once on the server — every device that connects uses it.',
+        HowItWorksCard(
+          title: AppStrings.of(context).es ? 'Cómo funcionan las conexiones' : 'How connections work',
+          subtitle: AppStrings.of(context).es ? 'Configúralo una vez en el servidor: todos los dispositivos conectados lo usarán.' : 'Set once on the server — every device that connects uses it.',
           sections: [
-            HowItWorksSection('Shared by the server', [
-              HowItWorksBlock.paragraph(
-                  'You\'re connected to a self-host server. Its AI provider is '
-                  'set here and shared by **every** device that connects — no '
-                  'need to configure each browser.'),
-              HowItWorksBlock.bullet(
-                  'The API key is stored on the server, never shown back.'),
+            HowItWorksSection(AppStrings.of(context).es ? 'Compartido por el servidor' : 'Shared by the server', [
+              HowItWorksBlock.paragraph(AppStrings.of(context).es ? 'Estás conectado a un servidor autoalojado. Su proveedor de IA se configura aquí y se comparte con **todos** los dispositivos que se conecten; no es necesario configurar cada navegador.' : 'You\'re connected to a self-host server. Its AI provider is set here and shared by **every** device that connects — no need to configure each browser.'),
+              HowItWorksBlock.bullet(AppStrings.of(context).es ? 'La clave API se guarda en el servidor y nunca vuelve a mostrarse.' : 'The API key is stored on the server, never shown back.'),
             ]),
           ],
         ),
@@ -409,28 +388,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                   ),
                 ],
               ),
-              subtitle: Text(
-                '${s.baseUrl}\nmodel: ${s.model}',
-                style: TextStyle(color: EmberColors.textMid, fontSize: 12),
-              ),
-              isThreeLine: true,
-              trailing: Icon(Icons.chevron_right,
-                  color: EmberColors.textDim, size: 22),
-              onTap: () => _editProvider(context, null),
-            ),
-          )
-        else
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: EmptyState(
-              icon: Icons.cloud_outlined,
-              title: 'Connect an AI provider',
-              subtitle:
-                  'This server has no AI yet. Add one (OpenRouter has free '
-                  'models to start) and paste its API key — it\'s saved on the '
-                  'server for every device that connects.',
-              ctaLabel: 'Add a provider',
-              onCta: () => _editProvider(context, null),
+              subtitle: Text(AppStrings.of(context).es ? 'Este servidor todavía no tiene IA. Añade un proveedor (OpenRouter tiene modelos gratuitos para empezar) y pega su clave de API; se guardará en el servidor para todos los dispositivos que se conecten.' : "This server has no AI yet. Add one (OpenRouter has free models to start) and paste its API key — it's saved on the server for every device that connects."),
             ),
           ),
         const SizedBox(height: 8),
@@ -438,7 +396,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
             configured
-                ? 'Tap the connection (or +) to change the server\'s provider.'
+                ? (AppStrings.of(context).es ? 'Toca la conexión (o +) para cambiar el proveedor del servidor.' : 'Tap the connection (or +) to change the server\'s provider.')
                 : '',
             style: TextStyle(color: EmberColors.textDim, fontSize: 12),
           ),
@@ -468,19 +426,18 @@ class _AdvancedFallbackTile extends StatelessWidget {
       data: Theme.of(context)
           .copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
-        title: const Text('Advanced',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        title: Text(AppStrings.of(context).es ? 'Avanzado' : 'Advanced',
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
         childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         children: [
           ListTile(
             leading: Icon(Icons.alt_route, color: EmberColors.textMid),
-            title: const Text('Smart provider fallback',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            title: Text(AppStrings.of(context).es ? 'Cambio inteligente de proveedor' : 'Smart provider fallback',
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             subtitle: Text(
               on
-                  ? 'On — if a provider fails or refuses, Pyre offers the '
-                      'next one.'
-                  : 'Off — a failed reply just surfaces the error.',
+                  ? (AppStrings.of(context).es ? 'Activado — si un proveedor falla o rechaza la solicitud, Pyre ofrece el siguiente.' : 'On — if a provider fails or refuses, Pyre offers the next one.')
+                  : (AppStrings.of(context).es ? 'Desactivado — una respuesta fallida simplemente muestra el error.' : 'Off — a failed reply just surfaces the error.'),
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 12, height: 1.4),
             ),
@@ -499,13 +456,12 @@ class _AdvancedFallbackTile extends StatelessWidget {
           SwitchListTile(
             secondary:
                 Icon(Icons.play_circle_outline, color: EmberColors.textMid),
-            title: const Text('Background generation',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            title: Text(AppStrings.of(context).es ? 'Generación en segundo plano' : 'Background generation',
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             subtitle: Text(
               store.uiPrefs.backgroundGeneration
-                  ? 'On — replies keep generating if you switch apps '
-                      '(silent notification while active).'
-                  : 'Off — switching apps mid-reply may drop the connection.',
+                  ? (AppStrings.of(context).es ? 'Activado — las respuestas siguen generándose si cambias de aplicación (notificación silenciosa mientras está activo).' : 'On — replies keep generating if you switch apps (silent notification while active).')
+                  : (AppStrings.of(context).es ? 'Desactivado — cambiar de aplicación durante una respuesta puede interrumpir la conexión.' : 'Off — switching apps mid-reply may drop the connection.'),
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 12, height: 1.4),
             ),
@@ -540,35 +496,34 @@ class _CreatorProviderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
                 Icon(Icons.auto_awesome,
                     color: Colors.amber, size: 16),
                 SizedBox(width: 8),
                 Text(
-                  'Per-feature provider overrides',
-                  style: TextStyle(
+                  AppStrings.of(context).es ? 'Proveedores por función' : 'Per-feature provider overrides',
+                  style: const TextStyle(
                       fontWeight: FontWeight.w600, fontSize: 13),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             Text(
-              'By default every call uses your active chat provider. Pin a '
-              'different one here for the Creator or for image analysis — '
-              'e.g. DeepSeek for chat and creator text, Qwen-VL only for '
-              'vision. Vision falls back to creator → chat.',
+              AppStrings.of(context).es
+                  ? 'De forma predeterminada, cada solicitud usa tu proveedor de chat activo. Puedes fijar aquí otro para el Creador o para el análisis de imágenes; por ejemplo, DeepSeek para chat y texto del creador, y Qwen-VL solo para visión. Visión recurre a creador → chat si es necesario.'
+                  : 'By default every call uses your active chat provider. Pin a different one here for the Creator or for image analysis — e.g. DeepSeek for chat and creator text, Qwen-VL only for vision. Vision falls back to creator → chat.',
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 11, height: 1.4),
             ),
             const SizedBox(height: 12),
             // Creator provider — used for the design conversation and
             // canvas updates inside Character Creator.
-            const Padding(
-              padding: EdgeInsets.only(bottom: 4),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                'CREATOR',
-                style: TextStyle(
+                AppStrings.of(context).es ? 'CREADOR' : 'CREATOR',
+                style: const TextStyle(
                   color: Colors.amber,
                   fontWeight: FontWeight.w700,
                   fontSize: 10,
@@ -584,9 +539,9 @@ class _CreatorProviderCard extends StatelessWidget {
                     horizontal: 12, vertical: 8),
               ),
               items: [
-                const DropdownMenuItem<String?>(
+                DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('Same as chat provider'),
+                  child: Text(AppStrings.of(context).es ? 'Igual que el proveedor de chat' : 'Same as chat provider'),
                 ),
                 for (final p in store.providers)
                   DropdownMenuItem<String?>(
@@ -620,9 +575,9 @@ class _CreatorProviderCard extends StatelessWidget {
                     horizontal: 12, vertical: 8),
               ),
               items: [
-                const DropdownMenuItem<String?>(
+                DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('Same as creator provider'),
+                  child: Text(AppStrings.of(context).es ? 'Igual que el proveedor del creador' : 'Same as creator provider'),
                 ),
                 for (final p in store.providers)
                   DropdownMenuItem<String?>(
@@ -755,16 +710,16 @@ Future<void> _testConnection(
   final base = urlCtl.text.trim();
   if (base.isEmpty) {
     messenger.showSnackBar(
-        const SnackBar(content: Text('Fill in the base URL first.')));
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Primero introduce la URL base.' : 'Fill in the base URL first.')));
     return;
   }
   // Security (audit round 16): never send the SAVED key to a CHANGED host.
   if (providerKeyStaleForChangedHost(
       existing: existing, currentUrl: base, currentKey: keyCtl.text)) {
-    messenger.showSnackBar(const SnackBar(
-        content: Text('You changed the host — enter a different API key (or '
-            'clear it) before testing. Your saved key is never sent to a new '
-            'host.')));
+    messenger.showSnackBar(SnackBar(
+        content: Text(AppStrings.of(context).es
+            ? 'Cambiaste el host; introduce una clave API diferente (o bórrala) antes de probar. Tu clave guardada nunca se envía a un host nuevo.'
+            : 'You changed the host — enter a different API key (or clear it) before testing. Your saved key is never sent to a new host.')));
     return;
   }
   // Mega-audit 2026-06-05 (H-7): SSRF gate. Refuse to probe a private /
@@ -773,9 +728,10 @@ Future<void> _testConnection(
   // local server (LM Studio/Ollama) is exactly what it's for.
   if (!isProviderHostAllowed(base,
       isLocalhostKind: kind == ProviderKind.localhost)) {
-    messenger.showSnackBar(const SnackBar(
-        content: Text('That URL points at a private or internal address. '
-            'For a local server, set the type to Localhost.')));
+    messenger.showSnackBar(SnackBar(
+        content: Text(AppStrings.of(context).es
+            ? 'Esa URL apunta a una dirección privada o interna. Para un servidor local, establece el tipo en Localhost.'
+            : 'That URL points at a private or internal address. For a local server, set the type to Localhost.')));
     return;
   }
   final url = buildChatUrl(base, 'models');
@@ -798,20 +754,20 @@ Future<void> _testConnection(
         apiKey: keyCtl.text.trim(),
       );
       final hint = (resp.statusCode == 401 || resp.statusCode == 403)
-          ? 'The key was rejected — check you pasted the whole key.'
+          ? (AppStrings.of(context).es ? 'La clave fue rechazada; comprueba que pegaste la clave completa.' : 'The key was rejected — check you pasted the whole key.')
           : (resp.statusCode == 404)
-              ? 'Nothing answered at this URL — check the Base URL.'
-              : 'The provider returned an error.';
+              ? (AppStrings.of(context).es ? 'No hubo respuesta en esta URL; comprueba la URL base.' : 'Nothing answered at this URL — check the Base URL.')
+              : (AppStrings.of(context).es ? 'El proveedor devolvió un error.' : 'The provider returned an error.');
       messenger.showSnackBar(SnackBar(
           content: Text('$hint (HTTP ${resp.statusCode}: $scrubbed)')));
       return;
     }
     // Test only verifies the endpoint + key; it doesn't check the model name.
     final modelNote = modelCtl.text.trim().isEmpty
-        ? ' — but no model is set yet, so pick one before chatting.'
+        ? (AppStrings.of(context).es ? ' — pero todavía no hay un modelo configurado; elige uno antes de chatear.' : ' — but no model is set yet, so pick one before chatting.')
         : '';
     messenger.showSnackBar(
-      SnackBar(content: Text('Connection OK ✓$modelNote')),
+      SnackBar(content: Text('${AppStrings.of(context).es ? 'Conexión correcta' : 'Connection OK'} ✓$modelNote')),
     );
   } catch (e) {
     // A thrown exception here is a transport failure (DNS, socket, TLS,

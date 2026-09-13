@@ -1,24 +1,16 @@
-// WS-J — IA moves: two relocations with no behaviour change.
+// 1.2.1 #1/#2: moved IA controls remain reachable from their new homes.
 //
-//   (1) "App text size" lives on the appearance screen (ThemeSettingsScreen,
-//       titled "Appearance" since Display+Theme merged 2026-07-03), wired to
-//       AppStore.setUiScale — verified here by pumping that screen.
-//   (2) "Import from SillyTavern" moved OUT of the More list and INTO the
-//       Backup & Restore screen, where it is reachable (an entry that runs
-//       the same bulk-import flow).
-//
-// Harness conventions mirror new_features_ui_test.dart: a no-op StoreBackend
-// so the debounced persist never touches disk, a ChangeNotifierProvider +
-// MaterialApp host, and a roomy logical surface so content lays out and is
-// hit-testable. Each test flushes the persist debounce at the end.
+// This file intentionally tests the destination screens rather than the old
+// More list, so regressions catch an accidentally removed entry at the place
+// users now expect to find it.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:pyre/models/models.dart' show UiPrefs;
-import 'package:pyre/screens/backup_restore_screen.dart';
+import 'package:pyre/models/models.dart';
 import 'package:pyre/screens/theme_settings_screen.dart';
+import 'package:pyre/screens/backup_restore_screen.dart';
 import 'package:pyre/services/store_backend.dart';
 import 'package:pyre/state/app_store.dart';
 
@@ -48,31 +40,14 @@ void _useRoomyView(WidgetTester tester) {
 
 void main() {
   // ===========================================================================
-  // (1) Appearance screen — hosts the App text size slider, and dragging it
-  //     commits through AppStore.setUiScale (identical behaviour).
+  // (1) Appearance — UI scale is reachable here (moved out of More).
+  //     Exercise the real slider so we prove the same clamp+persist path.
   // ===========================================================================
-  group('Appearance screen — hosts the App text size slider', () {
-    testWidgets('renders the "App text size" control with a Slider',
+  group('ThemeSettingsScreen — hosts the UI scale control', () {
+    testWidgets('UI scale slider updates the persisted preference',
         (tester) async {
       _useRoomyView(tester);
       final store = AppStore(storage: _NoopBackend());
-
-      await tester.pumpWidget(_host(store, const ThemeSettingsScreen()));
-      await tester.pumpAndSettle();
-
-      // The relocated control's label + its slider are present on this screen.
-      expect(find.text('App text size'), findsOneWidget);
-      expect(find.byType(Slider), findsOneWidget);
-
-      await store.flushPersist();
-    });
-
-    testWidgets('dragging the slider commits a new scale via setUiScale',
-        (tester) async {
-      _useRoomyView(tester);
-      final store = AppStore(storage: _NoopBackend());
-      // Start at the default 1.0.
-      expect(store.uiPrefs.clampedUiScale, 1.0);
 
       await tester.pumpWidget(_host(store, const ThemeSettingsScreen()));
       await tester.pumpAndSettle();
@@ -107,7 +82,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // The ST import entry is reachable from Backup & Restore (label present).
-      expect(find.text('Import from SillyTavern'), findsOneWidget);
+      expect(find.text('Importar desde SillyTavern'), findsOneWidget);
 
       await store.flushPersist();
     });

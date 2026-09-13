@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -28,6 +29,7 @@ import 'services/single_instance.dart';
 import 'services/sync_engine.dart';
 import 'services/store_backend.dart';
 import 'services/update_check.dart';
+import 'l10n/app_strings.dart';
 import 'models/models.dart' show UiPrefs;
 import 'state/app_store.dart';
 import 'theme.dart';
@@ -302,7 +304,7 @@ Future<void> _scheduleUpdateCheck(AppStore store) async {
   final controller = messenger.showSnackBar(
     SnackBar(
       content: Text(
-        'Pyre ${info.latestVersion} is out'
+        '${AppStrings.of(ctx).es ? 'Ya está disponible Pyre ${info.latestVersion}' : 'Pyre ${info.latestVersion} is out'}'
         '${info.notes.isNotEmpty ? " — ${info.notes}" : ""}',
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
@@ -314,7 +316,7 @@ Future<void> _scheduleUpdateCheck(AppStore store) async {
       action: info.url.isEmpty
           ? null
           : SnackBarAction(
-              label: 'View',
+              label: AppStrings.of(ctx).es ? 'Ver' : 'View',
               onPressed: () async {
                 store.dismissUpdate(info.latestVersion);
                 final uri = Uri.tryParse(info.url);
@@ -613,6 +615,14 @@ class _PyreAppState extends State<PyreApp>
         builder: (context, store, _) {
           return MaterialApp(
             title: 'Pyre',
+            locale: Locale(store.uiPrefs.languageCode),
+            supportedLocales: AppStrings.supportedLocales,
+            localizationsDelegates: const [
+              AppStringsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
             debugShowCheckedModeBanner: false,
             // Wave CY.18.1.3: re-evaluated on every rebuild. EmberColors.*
             // are getters backed by EmberColors.active, so calling
@@ -927,7 +937,10 @@ class _RootShellState extends State<RootShell> {
       ActiveTabGate(
           active: index == 3, childBuilder: (_) => MoreScreen()),
     ];
-    const labels = ['Chats', 'Library', 'Discover', 'More'];
+    final es = AppStrings.of(context).es;
+    final labels = es
+        ? const ['Chats', 'Biblioteca', 'Descubrir', 'Más']
+        : const ['Chats', 'Library', 'Discover', 'More'];
     const icons = [
       Icons.chat_bubble_outline,
       Icons.people_outline,
@@ -1076,13 +1089,13 @@ class _RootShellState extends State<RootShell> {
         if (!store.hasUnshownPersistError) return; // recovered before frame
         store.acknowledgePersistError();
         final ctx = _rootNavKey.currentContext ?? context;
+        final es = AppStrings.of(ctx).es;
         ScaffoldMessenger.of(ctx).showSnackBar(
-          const SnackBar(
-            duration: Duration(seconds: 8),
-            content: Text(
-                "Couldn't save your changes — check that the device isn't "
-                'out of storage. Your work is still here for now, but it '
-                'may not survive a restart until a save succeeds.'),
+          SnackBar(
+            duration: const Duration(seconds: 8),
+            content: Text(es
+                ? 'No se pudieron guardar tus cambios; comprueba que el dispositivo tenga espacio disponible. Tu trabajo sigue aquí por ahora, pero podría perderse al reiniciar hasta que se complete un guardado correctamente.'
+                : "Couldn't save your changes — check that the device isn't out of storage. Your work is still here for now, but it may not survive a restart until a save succeeds."),
           ),
         );
       });

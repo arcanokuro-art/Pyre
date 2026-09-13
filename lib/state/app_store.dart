@@ -2018,6 +2018,14 @@ class AppStore extends ChangeNotifier {
     _bump();
   }
 
+  /// Change the device-local UI language and persist it.
+  void setLanguageCode(String code) {
+    final normalized = code == 'en' ? 'en' : 'es';
+    if (uiPrefs.languageCode == normalized) return;
+    uiPrefs.languageCode = normalized;
+    _bump();
+  }
+
   /// Reorder a provider in the list — list order IS the fallback order
   /// (after the primary). Used by the API Connections drag handle.
   void reorderProvider(int oldIndex, int newIndex) {

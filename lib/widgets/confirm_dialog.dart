@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../theme.dart';
 
-/// Shows a small "Are you sure?" dialog for destructive actions.
+/// Shows a small confirmation dialog for destructive actions.
 ///
 /// Returns `true` when the user explicitly confirms via the danger-coloured
-/// button. Tapping Cancel or dismissing the dialog (back / scrim tap)
-/// resolves to `false`. Callers wire this in as a one-liner:
-///
-/// ```dart
-/// if (!await confirmDelete(context,
-///       title: 'Delete chat?',
-///       message: 'This conversation will be lost forever.')) return;
-/// store.removeChat(id);
-/// ```
-///
-/// Use sparingly — only for actions that destroy persistent data the user
-/// can't trivially recreate (entire chat, character, persona, lorebook,
-/// preset). Individual messages already require a long-press to reach the
-/// delete option, which is a sufficient guard.
+/// button. Tapping cancel or dismissing the dialog resolves to `false`.
 Future<bool> confirmDelete(
   BuildContext context, {
   required String title,
   required String message,
-  String confirmLabel = 'Delete',
-  String cancelLabel = 'Cancel',
+  String? confirmLabel,
+  String? cancelLabel,
 }) async {
+  final es = AppStrings.of(context).es;
+  // Keep caller-provided labels verbatim; only localize the shared defaults.
+  final resolvedConfirmLabel = confirmLabel ?? (es ? 'Eliminar' : 'Delete');
+  final resolvedCancelLabel = cancelLabel ?? (es ? 'Cancelar' : 'Cancel');
   final result = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
@@ -38,12 +30,12 @@ Future<bool> confirmDelete(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, false),
-          child: Text(cancelLabel),
+          child: Text(resolvedCancelLabel),
         ),
         TextButton(
           onPressed: () => Navigator.pop(ctx, true),
           style: TextButton.styleFrom(foregroundColor: EmberColors.danger),
-          child: Text(confirmLabel),
+          child: Text(resolvedConfirmLabel),
         ),
       ],
     ),
