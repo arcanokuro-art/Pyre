@@ -7,8 +7,7 @@ import 'package:pyre/state/app_store.dart';
 import 'package:pyre/widgets/lorebook_binding_section.dart';
 
 void main() {
-  testWidgets('lorebook picker pluralizes entry counts in Spanish',
-      (tester) async {
+  Future<void> pumpPicker(WidgetTester tester, Locale locale) async {
     final store = AppStore();
     store.lorebooks.addAll([
       Lorebook(
@@ -30,7 +29,7 @@ void main() {
       ChangeNotifierProvider<AppStore>.value(
         value: store,
         child: MaterialApp(
-          locale: const Locale('es'),
+          locale: locale,
           home: const Scaffold(
             body: LorebookBindingSection(
               selectedIds: [],
@@ -41,11 +40,24 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Añadir lorebook'));
+    await tester.tap(find.text(locale.languageCode == 'es' ? 'Añadir lorebook' : 'Add lorebook'));
     await tester.pumpAndSettle();
+  }
+
+  testWidgets('lorebook picker pluralizes entry counts in Spanish',
+      (tester) async {
+    await pumpPicker(tester, const Locale('es'));
 
     expect(find.textContaining('1 entrada'), findsOneWidget);
     expect(find.textContaining('2 entradas'), findsOneWidget);
+  });
+
+  testWidgets('lorebook picker pluralizes entry counts in English',
+      (tester) async {
+    await pumpPicker(tester, const Locale('en'));
+
+    expect(find.textContaining('1 entry'), findsOneWidget);
+    expect(find.textContaining('2 entries'), findsOneWidget);
   });
 }
 
