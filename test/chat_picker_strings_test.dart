@@ -27,5 +27,14 @@ void main() {
       expect(es.nothingMatchesSearch, 'Nada coincide con tu búsqueda.');
       expect(en.nothingMatchesSearch, 'Nothing matches your search.');
     });
+
+    test('persona party statuses stay localized', () {
+      expect(es.soloPersonaStatus, 'Solo — 1 persona');
+      expect(en.soloPersonaStatus, 'Solo — 1 persona');
+      expect(es.personaPartyStatus(3), contains('3 personas'));
+      expect(es.personaPartyStatus(3), contains('tus mensajes'));
+      expect(en.personaPartyStatus(3), contains('3 personas'));
+      expect(en.personaPartyStatus(3), contains('your messages'));
+    });
   });
 }
