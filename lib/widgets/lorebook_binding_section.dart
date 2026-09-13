@@ -79,7 +79,9 @@ class LorebookBindingSection extends StatelessWidget {
                   backgroundColor: EmberColors.primary.withValues(alpha: 0.12),
                   side: BorderSide(color: EmberColors.primary.withValues(alpha: 0.30)),
                   avatar: Icon(Icons.menu_book_outlined, size: 14, color: EmberColors.primary),
-                  label: Text('${b.name} · ${b.entries.length}', style: TextStyle(color: EmberColors.textHigh, fontSize: 12)),
+                  label: Text(es
+                      ? '${b.name} · ${b.entries.length} ${b.entries.length == 1 ? 'entrada' : 'entradas'}'
+                      : '${b.name} · ${b.entries.length} ${b.entries.length == 1 ? 'entry' : 'entries'}', style: TextStyle(color: EmberColors.textHigh, fontSize: 12)),
                   deleteIcon: readOnly ? null : const Icon(Icons.close, size: 16),
                   onDeleted: readOnly ? null : () {
                     final next = List<String>.from(selectedIds)..remove(b.id);
