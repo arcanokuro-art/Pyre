@@ -29,12 +29,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build release APK
-        run: flutter build apk --release
+      - name: Build release APKs per ABI
+        run: flutter build apk --release --split-per-abi
 
-      - name: Upload APK
+      - name: Upload Android APKs
         uses: actions/upload-artifact@v4
         with:
-          name: Pyre-Android-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: Pyre-Android-ABI-release
+          path: build/app/outputs/flutter-apk/*.apk
           if-no-files-found: error
