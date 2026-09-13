@@ -12,6 +12,12 @@ void main() {
       expect(en.personasForChat('Luna'), 'Personas for the chat with Luna');
     });
 
+    test('solo chat persona title preserves punctuation and unicode names', () {
+      const name = 'María-José ✨';
+      expect(es.personasForChat(name), 'Personas para el chat con $name');
+      expect(en.personasForChat(name), 'Personas for the chat with $name');
+    });
+
     test('group member help covers locked and first-picked flows', () {
       expect(es.groupMemberPickerHelp('Luna'), contains('Luna inicia el chat'));
       expect(en.groupMemberPickerHelp('Luna'), contains('Luna opens the chat'));
@@ -31,10 +37,10 @@ void main() {
     test('persona party statuses stay localized', () {
       expect(es.soloPersonaStatus, 'Solo — 1 persona');
       expect(en.soloPersonaStatus, 'Solo — 1 persona');
-      expect(es.personaPartyStatus(3), contains('3 personas'));
-      expect(es.personaPartyStatus(3), contains('tus mensajes'));
-      expect(en.personaPartyStatus(3), contains('3 personas'));
-      expect(en.personaPartyStatus(3), contains('your messages'));
+      expect(es.personaPartyStatus(3),
+          'Grupo de personas — 3 personas (tus mensajes = todo el grupo)');
+      expect(en.personaPartyStatus(3),
+          'Persona party — 3 personas (your messages = the whole group)');
     });
   });
 }
