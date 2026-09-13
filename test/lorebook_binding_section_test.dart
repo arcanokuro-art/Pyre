@@ -50,16 +50,20 @@ void main() {
       (tester) async {
     await pumpPicker(tester, const Locale('es'));
 
-    expect(find.textContaining('1 entrada'), findsOneWidget);
-    expect(find.textContaining('2 entradas'), findsOneWidget);
+    expect(find.text('Elige un lorebook'), findsOneWidget);
+    expect(find.text('1 entrada'), findsOneWidget);
+    expect(find.text('2 entradas'), findsOneWidget);
+    expect(find.text('Pick a lorebook'), findsNothing);
   });
 
   testWidgets('lorebook picker pluralizes entry counts in English',
       (tester) async {
     await pumpPicker(tester, const Locale('en'));
 
-    expect(find.textContaining('1 entry'), findsOneWidget);
-    expect(find.textContaining('2 entries'), findsOneWidget);
+    expect(find.text('Pick a lorebook'), findsOneWidget);
+    expect(find.text('1 entry'), findsOneWidget);
+    expect(find.text('2 entries'), findsOneWidget);
+    expect(find.text('Elige un lorebook'), findsNothing);
   });
 }
 
