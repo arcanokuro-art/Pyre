@@ -11,11 +11,18 @@ void main() {
       (tester) async {
     final store = AppStore();
     store.lorebooks.addAll([
-      Lorebook(id: 'one', name: 'Uno', entries: [LorebookEntry()]),
+      Lorebook(
+        id: 'one',
+        name: 'Uno',
+        entries: [LoreEntry(id: 'e1', keys: const [], content: '')],
+      ),
       Lorebook(
         id: 'two',
         name: 'Dos',
-        entries: [LorebookEntry(), LorebookEntry()],
+        entries: [
+          LoreEntry(id: 'e2', keys: const [], content: ''),
+          LoreEntry(id: 'e3', keys: const [], content: ''),
+        ],
       ),
     ]);
 
