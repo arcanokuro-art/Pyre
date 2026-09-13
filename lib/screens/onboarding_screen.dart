@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../state/app_store.dart';
+import '../l10n/app_strings.dart';
 import '../theme.dart';
 
 /// First-run onboarding. Shown once when the user opens Pyre on a
@@ -36,6 +37,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -58,15 +60,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text(
-                'Welcome to Pyre',
+              Text(
+                es ? 'Bienvenido a Pyre' : 'Welcome to Pyre',
                 style:
                     TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
               Text(
-                'A powerful, private roleplay frontend. You bring the AI — '
-                'Pyre is the interface.',
+                es ? 'Una interfaz potente y privada para roleplay. Tú eliges la IA; Pyre es la interfaz.' : 'A powerful, private roleplay frontend. You bring the AI — Pyre is the interface.',
                 style: TextStyle(
                   color: EmberColors.textMid,
                   fontSize: 14,
@@ -79,45 +80,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     _bulletRow(
                       Icons.vpn_key_outlined,
-                      'Bring your own key',
-                      'Pyre talks directly to the AI provider you choose. '
-                          'No middle-man server.',
+                      es ? 'Usa tu propia clave' : 'Bring your own key',
+                      es ? 'Pyre se comunica directamente con el proveedor de IA que elijas. No hay ningún servidor intermediario.' : 'Pyre talks directly to the AI provider you choose. No middle-man server.',
                     ),
                     _bulletRow(
                       Icons.shield_outlined,
-                      'Your data stays on this device',
-                      'Characters, chats, API keys — all local. We don\'t '
-                          'have a backend that sees them.',
+                      es ? 'Tus datos permanecen en este dispositivo' : 'Your data stays on this device',
+                      es ? 'Personajes, chats y claves de API: todo permanece en local. No tenemos un servidor que pueda verlos.' : 'Characters, chats, API keys — all local. We don\'t have a backend that sees them.',
                     ),
                     _bulletRow(
                       Icons.tune_outlined,
-                      'Built for roleplay',
-                      'SillyTavern card import, group chats, presets, '
-                          'lorebooks, branching variants.',
+                      es ? 'Creado para roleplay' : 'Built for roleplay',
+                      es ? 'Importación de tarjetas de SillyTavern, chats grupales, presets, lorebooks y variantes ramificadas.' : 'SillyTavern card import, group chats, presets, lorebooks, branching variants.',
                     ),
                     _bulletRow(
                       Icons.explore_outlined,
-                      'Discover marketplace',
-                      'Browse botbooru.com inside the app and import '
-                          'characters in one tap.',
+                      es ? 'Explora el catálogo' : 'Discover marketplace',
+                      es ? 'Explora botbooru.com desde la aplicación e importa personajes con un solo toque.' : 'Browse botbooru.com inside the app and import characters in one tap.',
                     ),
                     _bulletRow(
                       Icons.auto_awesome,
-                      'Power tools',
-                      'AI Character Creator for characters, scenarios & '
-                          'personas, branch-aware Checkpoints, Live '
-                          'Sheet state tracking, Script story-direction, and '
-                          'scene-aware dynamic backgrounds.',
+                      es ? 'Herramientas avanzadas' : 'Power tools',
+                      es ? 'Creador de personajes con IA para personajes, escenarios y personas; Checkpoints compatibles con ramas, seguimiento de estado con Live Sheet, dirección narrativa con Script y fondos dinámicos según la escena.' : 'AI Character Creator for characters, scenarios & personas, branch-aware Checkpoints, Live Sheet state tracking, Script story-direction, and scene-aware dynamic backgrounds.',
                     ),
                     _bulletRow(
                       Icons.check_circle_outline,
-                      'Set up once, you\'re good',
-                      'Add an API provider in More → API Connections, '
-                          'grab a card (or build one), maybe make a persona '
-                          '— that\'s it. Pyre ships with best-practice '
-                          'prompts tuned for roleplay, so you don\'t need '
-                          'to fiddle with nerd settings to get a good '
-                          'experience out of the box.',
+                      es ? 'Configúralo una vez y listo' : 'Set up once, you\'re good',
+                      es ? 'Añade un proveedor en Más → Conexiones API, consigue una tarjeta (o crea una) y, si quieres, crea una persona. Eso es todo. Pyre incluye prompts optimizados para roleplay, así que no necesitas ajustar configuraciones técnicas para obtener una buena experiencia desde el principio.' : 'Add an API provider in More → API Connections, grab a card (or build one), maybe make a persona — that\'s it. Pyre ships with best-practice prompts tuned for roleplay, so you don\'t need to fiddle with nerd settings to get a good experience out of the box.',
                     ),
                   ],
                 ),
@@ -135,15 +124,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             height: 18,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Get started',
-                            style: TextStyle(fontSize: 15)),
+                        : Text(es ? 'Comenzar' : 'Get started',
+                            style: const TextStyle(fontSize: 15)),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
               Text(
-                'By continuing, you accept the Terms of Use and Privacy '
-                'Policy.',
+                es ? 'Al continuar, aceptas los Términos de uso y la Política de privacidad.' : 'By continuing, you accept the Terms of Use and Privacy Policy.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: EmberColors.textMid,

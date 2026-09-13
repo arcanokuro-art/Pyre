@@ -70,9 +70,9 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Talia'));
     await tester.pump();
-    expect(find.text('3 members'), findsOneWidget);
+    expect(find.text('3 miembros'), findsOneWidget);
 
-    await tester.tap(find.text('Create chat'));
+    await tester.tap(find.text('Crear chat'));
     await tester.pumpAndSettle();
 
     expect(popped?.memberIds, ['ca', 'cc', 'cb']); // primary first, then tap order
@@ -122,10 +122,10 @@ void main() {
     await tester.pumpAndSettle(); // sheet pops + picker pushes
 
     // The picker must be up (primary locked). Add Talia and create.
-    expect(find.text('New group chat'), findsOneWidget);
+    expect(find.text('Nuevo chat grupal'), findsOneWidget);
     await tester.tap(find.text('Talia'));
     await tester.pump();
-    await tester.tap(find.text('Create chat'));
+    await tester.tap(find.text('Crear chat'));
     await tester.pumpAndSettle();
 
     // THE bug: with a dead context the flow silently bailed — no chat.
@@ -147,6 +147,6 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('a regular 1:1 chat'), findsOneWidget);
+    expect(find.textContaining('un chat 1:1 normal'), findsOneWidget);
   });
 }

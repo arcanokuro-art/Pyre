@@ -24,18 +24,6 @@ class _NoopBackend implements StoreBackend {
   Future<void> clear() async {}
 }
 
-/// Captures the serialized blob (SAVE side) AND can replay it (LOAD side), so a
-/// full persist→load round-trip can be exercised through the real code paths.
-class _CaptureBackend implements StoreBackend {
-  Map<String, dynamic>? captured;
-  @override
-  Future<Map<String, dynamic>?> load() async => captured;
-  @override
-  Future<void> save(Map<String, dynamic> blob) async => captured = blob;
-  @override
-  Future<void> clear() async => captured = null;
-}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

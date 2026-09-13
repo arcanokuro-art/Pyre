@@ -5,27 +5,21 @@
 
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../theme.dart';
 
-/// Pyre 1.1 — F2: the curated bubble palette. A few Ember-warm tones plus
-/// dark neutrals — enough to differentiate speakers without a full
-/// color-picker dependency. The leading `null` entry is the "Default" chip
-/// (clears the override).
 const List<int?> kBubbleColorPalette = <int?>[
-  null, // Default
-  0xFF14141B, // bgPanel (the legacy base, explicit)
-  0xFF1B1B24, // bgElevated (slightly lighter neutral)
-  0xFF2A1D17, // warm umber
-  0xFF3A2018, // ember brown
-  0xFF1A2230, // cool slate blue
-  0xFF152619, // deep green
-  0xFF241526, // muted plum
-  0xFF2C2233, // dusk violet
+  null,
+  0xFF14141B,
+  0xFF1B1B24,
+  0xFF2A1D17,
+  0xFF3A2018,
+  0xFF1A2230,
+  0xFF152619,
+  0xFF241526,
+  0xFF2C2233,
 ];
 
-/// A row of tappable color swatches plus a leading "Default" chip. Tapping a
-/// swatch reports its ARGB int; tapping Default reports `null`. The
-/// currently-selected entry gets a ring.
 class BubbleColorRow extends StatelessWidget {
   final int? selected;
   final List<int?> palette;
@@ -39,6 +33,8 @@ class BubbleColorRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
+    final defaultLabel = es ? 'Predeterminado' : 'Default';
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -47,7 +43,7 @@ class BubbleColorRow extends StatelessWidget {
         for (final argb in palette)
           if (argb == null)
             ChoiceChip(
-              label: const Text('Default'),
+              label: Text(defaultLabel),
               selected: selected == null,
               selectedColor: EmberColors.primary.withValues(alpha: 0.25),
               onSelected: (_) => onPick(null),
@@ -63,7 +59,6 @@ class BubbleColorRow extends StatelessWidget {
   }
 }
 
-/// A single circular color swatch with a selection ring.
 class BubbleColorSwatch extends StatelessWidget {
   final Color color;
   final bool selected;

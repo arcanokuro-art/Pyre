@@ -44,13 +44,6 @@ void main() {
         lorebookIds: lorebookIds,
       );
 
-  Persona basePersona({List<String> lorebookIds = const []}) => Persona(
-        id: 'persona-1',
-        name: 'Ash',
-        description: 'A traveler.',
-        lorebookIds: lorebookIds,
-      );
-
   /// The chat used by every case: the sentinel lorebook is CHAT-attached
   /// (collection scope isn't the bug — injection is), one member, one
   /// user message. `withLore: false` builds the "no lore fired" control

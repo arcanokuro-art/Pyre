@@ -1,39 +1,16 @@
 // Wave CY.18.128: reusable native gallery editor section.
-//
-// Used by both the character editor (`character_edit_screen.dart`) and the
-// persona editor (`persona_editor.dart`). Renders the current gallery as a
-// thumbnail grid + an "+ Add image" file-picker flow that stores bytes via the
-// content-addressed `AttachmentStore` (a `pyre://attachment/<sha256>` ref is
-// appended — NEVER inline base64). Per-thumb: remove and "Use as avatar".
-//
-// On web (`kIsWeb`) the section is read-only — `AttachmentStore.store` returns
-// null there, and inlining gallery bytes as data URLs would bloat the synced
-// JSON (the exact thing AttachmentStore exists to avoid). So on web we hide the
-// Add button and show a short note; existing refs synced from a desktop still
-// render via the avatar resolution path's web handling (broken-image fallback
-// until the bytes arrive).
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../services/attachment_store.dart';
 import '../services/image_pick.dart';
 import '../theme.dart';
 
-/// A labelled "Gallery" section with a thumbnail grid + add/remove/
-/// use-as-avatar affordances. Stateless in the sense that the owning editor
-/// holds the canonical `gallery` list and rebuilds it from `onChanged`.
 class GalleryEditorSection extends StatefulWidget {
-  /// Current ordered list of `pyre://attachment/<hash>` refs.
   final List<String> gallery;
-
-  /// Called with a NEW list whenever the gallery changes (add / remove).
-  /// The owning editor stores it and rebuilds.
   final void Function(List<String>) onChanged;
-
-  /// Optional — when provided, each thumbnail offers a "Use as avatar"
-  /// action that calls this with the tapped index. The caller repoints
-  /// the avatar to `gallery[index]` (a ref copy, never new bytes).
   final void Function(int index)? onUseAsAvatar;
 
   const GalleryEditorSection({
@@ -58,13 +35,9 @@ class _GalleryEditorSectionState extends State<GalleryEditorSection> {
       if (picked == null) return;
       final bytes = picked.bytes;
       if (bytes.isEmpty) return;
-      // Best-effort mime from the picked extension; AttachmentStore keeps a
-      // sidecar so the bytes can be served with the right content-type later.
       final ext = picked.ext;
       final mime = ext.isEmpty ? 'image/png' : 'image/$ext';
       final ref = await AttachmentStore.store(bytes, mime: mime);
-      // Web (or a store failure) → ref is null. NEVER inline bytes as base64
-      // into the gallery list; just bail.
       if (ref == null) return;
       if (!mounted) return;
       widget.onChanged([...widget.gallery, ref]);
@@ -81,6 +54,8 @@ class _GalleryEditorSectionState extends State<GalleryEditorSection> {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
+    String t(String spanish, String english) => es ? spanish : english;
     final gallery = widget.gallery;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +63,7 @@ class _GalleryEditorSectionState extends State<GalleryEditorSection> {
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 16, 0, 4),
           child: Text(
-            'GALLERY',
+            t('GALERÍA', 'GALLERY'),
             style: TextStyle(
               color: EmberColors.primary,
               fontWeight: FontWeight.w700,
@@ -98,21 +73,20 @@ class _GalleryEditorSectionState extends State<GalleryEditorSection> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.only(bottom: 8),
           child: Text(
-            'Extra images beyond the avatar. Tap a thumbnail for options.',
-            style: TextStyle(
-              color: EmberColors.textMid,
-              fontSize: 12,
-              height: 1.4,
+            t(
+              'Imágenes adicionales aparte del avatar. Toca una miniatura para ver las opciones.',
+              'Extra images beyond the avatar. Tap a thumbnail for options.',
             ),
+            style: TextStyle(color: EmberColors.textMid, fontSize: 12, height: 1.4),
           ),
         ),
         if (gallery.isEmpty)
           Padding(
-            padding: EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-              'No gallery images yet.',
+              t('Todavía no hay imágenes en la galería.', 'No gallery images yet.'),
               style: TextStyle(color: EmberColors.textDim, fontSize: 13),
             ),
           )
@@ -134,9 +108,12 @@ class _GalleryEditorSectionState extends State<GalleryEditorSection> {
           ),
         if (kIsWeb)
           Padding(
-            padding: EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: 4),
             child: Text(
-              'Add gallery images on desktop or mobile.',
+              t(
+                'Añade imágenes a la galería desde la aplicación de escritorio o móvil.',
+                'Add gallery images on desktop or mobile.',
+              ),
               style: TextStyle(color: EmberColors.textDim, fontSize: 12),
             ),
           )
@@ -151,7 +128,7 @@ class _GalleryEditorSectionState extends State<GalleryEditorSection> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.add_photo_alternate_outlined, size: 18),
-              label: const Text('Add image'),
+              label: Text(t('Añadir imagen', 'Add image')),
               onPressed: _adding ? null : _addImage,
             ),
           ),
@@ -160,10 +137,6 @@ class _GalleryEditorSectionState extends State<GalleryEditorSection> {
   }
 }
 
-/// A single gallery thumbnail. Renders the `pyre://` ref via the same
-/// `AttachmentStore.fileForSync` resolution the avatar uses, with a
-/// broken-image fallback on miss. Tap opens a small action sheet
-/// (remove + optional use-as-avatar).
 class _GalleryThumb extends StatelessWidget {
   final String ref;
   final int index;
@@ -185,6 +158,8 @@ class _GalleryThumb extends StatelessWidget {
   }
 
   void _showActions(BuildContext context) {
+    final es = AppStrings.of(context).es;
+    String t(String spanish, String english) => es ? spanish : english;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: EmberColors.bgPanel,
@@ -198,18 +173,16 @@ class _GalleryThumb extends StatelessWidget {
           children: [
             if (onUseAsAvatar != null)
               ListTile(
-                leading: Icon(Icons.account_circle_outlined,
-                    color: EmberColors.textMid),
-                title: const Text('Use as avatar'),
+                leading: Icon(Icons.account_circle_outlined, color: EmberColors.textMid),
+                title: Text(t('Usar como avatar', 'Use as avatar')),
                 onTap: () {
                   Navigator.pop(sheet);
                   onUseAsAvatar!();
                 },
               ),
             ListTile(
-              leading:
-                  Icon(Icons.delete_outline, color: EmberColors.danger),
-              title: const Text('Remove from gallery'),
+              leading: Icon(Icons.delete_outline, color: EmberColors.danger),
+              title: Text(t('Quitar de la galería', 'Remove from gallery')),
               onTap: () {
                 Navigator.pop(sheet);
                 onRemove();
@@ -234,17 +207,11 @@ class _GalleryThumb extends StatelessWidget {
           color: EmberColors.bgDeep,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: EmberColors.stroke),
-          image: image == null
-              ? null
-              : DecorationImage(image: image, fit: BoxFit.cover),
+          image: image == null ? null : DecorationImage(image: image, fit: BoxFit.cover),
         ),
         child: image == null
             ? Center(
-                child: Icon(
-                  Icons.broken_image_outlined,
-                  color: EmberColors.textDim,
-                  size: 28,
-                ),
+                child: Icon(Icons.broken_image_outlined, color: EmberColors.textDim, size: 28),
               )
             : null,
       ),

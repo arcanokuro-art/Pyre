@@ -42,8 +42,8 @@ void main() {
     await tester.pumpAndSettle();
 
     // Section header + the button that runs the import flow.
-    expect(find.text('Import a chat'), findsOneWidget);
-    final button = find.widgetWithText(OutlinedButton, 'Choose chat file…');
+    expect(find.text('Importar un chat'), findsOneWidget);
+    final button = find.widgetWithText(OutlinedButton, 'Elegir archivo de chat…');
     expect(button, findsOneWidget);
     // Tappable without throwing (the picker itself is a no-op in tests).
     await tester.ensureVisible(button);

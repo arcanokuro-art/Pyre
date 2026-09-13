@@ -28,29 +28,19 @@ import '../theme.dart';
 import 'display_settings_screen.dart'
     show AppTextSizeCard, WideLayoutCard, isDesktopLikePlatform;
 
-// ---------------------------------------------------------------------------
-// Accent swatch palette (curated, ~10 options).
-// Mirrors the _bubblePalette spirit from chat_appearance_screen.dart but
-// with theme-appropriate accent-grade hues rather than dark bubble tones.
-// A leading `null` entry = "Match theme" (clears the accent override).
-// ---------------------------------------------------------------------------
 const List<int?> _kAccentPalette = <int?>[
-  null, // Match theme — accent = null → primary comes from the palette itself
-  0xFFFF6A3D, // Ember orange
-  0xFF8FA8FF, // Moonlit periwinkle
-  0xFFE8A24C, // Hearth amber
-  0xFFD46A9E, // Rose pink
-  0xFF64C8A0, // Mint teal
-  0xFF6EC6FF, // Sky blue
-  0xFFB388FF, // Lavender
-  0xFFFF7B7B, // Coral red
-  0xFFFFC84A, // Sunflower
-  0xFF80CBC4, // Seafoam
+  null,
+  0xFFFF6A3D,
+  0xFF8FA8FF,
+  0xFFE8A24C,
+  0xFFD46A9E,
+  0xFF64C8A0,
+  0xFF6EC6FF,
+  0xFFB388FF,
+  0xFFFF7B7B,
+  0xFFFFC84A,
+  0xFF80CBC4,
 ];
-
-// ---------------------------------------------------------------------------
-// Public screen widget
-// ---------------------------------------------------------------------------
 
 class ThemeSettingsScreen extends StatelessWidget {
   const ThemeSettingsScreen({super.key});
@@ -62,15 +52,11 @@ class ThemeSettingsScreen extends StatelessWidget {
     final accentArgb = store.uiPrefs.accentArgb;
 
     return Scaffold(
-      // 2026-07-03: "Display" + "Theme" merged into one "Appearance" screen —
-      // theme palette, accent color, app text size, and layout are all the
-      // same concept (how the app looks) and now sync as one unit.
-      appBar: AppBar(title: const Text('Appearance')),
+      appBar: AppBar(title: const Text('Apariencia')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 32),
         children: [
-          // ── Section: Theme ───────────────────────────────────────────────
-          _SectionLabel(label: 'Theme'),
+          _SectionLabel(label: 'Tema'),
           const SizedBox(height: 8),
           Card(
             margin: EdgeInsets.zero,
@@ -87,21 +73,22 @@ class ThemeSettingsScreen extends StatelessWidget {
                   _ThemeTile(
                     palette: kCuratedPalettes[i],
                     isSelected: kCuratedPalettes[i].id == activeId,
-                    onTap: () =>
-                        context.read<AppStore>().setActiveTheme(kCuratedPalettes[i].id),
+                    onTap: () => context
+                        .read<AppStore>()
+                        .setActiveTheme(kCuratedPalettes[i].id),
                   ),
                 ],
               ],
             ),
           ),
           const SizedBox(height: 20),
-          // ── Section: Accent color ─────────────────────────────────────────
-          _SectionLabel(label: 'Accent color'),
+          _SectionLabel(label: 'Color de acento'),
           const SizedBox(height: 4),
           Text(
-            'Replaces the primary color across the active theme. '
-            '"Match theme" restores the theme\'s built-in accent.',
-            style: TextStyle(color: EmberColors.textMid, fontSize: 12, height: 1.4),
+            'Reemplaza el color principal del tema activo. '
+            '“Igualar al tema” restaura el color de acento original del tema.',
+            style: TextStyle(
+                color: EmberColors.textMid, fontSize: 12, height: 1.4),
           ),
           const SizedBox(height: 10),
           Card(
@@ -116,14 +103,12 @@ class ThemeSettingsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          // ── Section: Text size (was the "Display" screen) ────────────────
-          _SectionLabel(label: 'Text size'),
+          _SectionLabel(label: 'Tamaño del texto'),
           const SizedBox(height: 8),
           const AppTextSizeCard(),
-          // ── Section: Layout (desktop + web only) ─────────────────────────
           if (isDesktopLikePlatform) ...[
             const SizedBox(height: 20),
-            _SectionLabel(label: 'Layout'),
+            _SectionLabel(label: 'Diseño'),
             const SizedBox(height: 8),
             const WideLayoutCard(),
           ],
@@ -133,11 +118,6 @@ class ThemeSettingsScreen extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Section label — matches the "YOUR BUBBLE COLOR" label style used by the
-// chat appearance screen but adopts the More-screen card header style
-// (textMid, all-caps, small).
-// ---------------------------------------------------------------------------
 class _SectionLabel extends StatelessWidget {
   final String label;
   const _SectionLabel({required this.label});
@@ -159,10 +139,6 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _ThemeTile — one row per palette.  Shows the name, a 5-chip swatch
-// preview, and a selected-state border + check.
-// ---------------------------------------------------------------------------
 class _ThemeTile extends StatelessWidget {
   final EmberPalette palette;
   final bool isSelected;
@@ -193,7 +169,6 @@ class _ThemeTile extends StatelessWidget {
             : null,
         child: Row(
           children: [
-            // Palette name + swatch preview
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +186,6 @@ class _ThemeTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            // Check or empty placeholder
             if (isSelected)
               Icon(Icons.check_circle_rounded,
                   color: EmberColors.primary, size: 22)
@@ -224,17 +198,12 @@ class _ThemeTile extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _PaletteSwatchRow — 5 rectangular chips showing bgDeep / bgPanel /
-// bgElevated / primary / textHigh for at-a-glance preview.
-// ---------------------------------------------------------------------------
 class _PaletteSwatchRow extends StatelessWidget {
   final EmberPalette palette;
   const _PaletteSwatchRow({required this.palette});
 
   @override
   Widget build(BuildContext context) {
-    // 5 chips: three backgrounds, the accent, and the text color.
     final chips = [
       palette.bgDeep,
       palette.bgPanel,
@@ -264,11 +233,6 @@ class _PaletteSwatchRow extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _AccentRow — "Match theme" ChoiceChip + circular color swatches.
-// Reuses the same circular-swatch pattern as chat_appearance_screen.dart's
-// _BubbleColorRow / _Swatch, kept private here to avoid coupling.
-// ---------------------------------------------------------------------------
 class _AccentRow extends StatelessWidget {
   final int? selectedArgb;
   final ValueChanged<int?> onPick;
@@ -287,9 +251,8 @@ class _AccentRow extends StatelessWidget {
       children: [
         for (final argb in _kAccentPalette)
           if (argb == null)
-            // "Match theme" chip
             ChoiceChip(
-              label: const Text('Match theme'),
+              label: const Text('Igualar al tema'),
               selected: selectedArgb == null,
               selectedColor: EmberColors.primary.withValues(alpha: 0.22),
               onSelected: (_) => onPick(null),
@@ -305,11 +268,6 @@ class _AccentRow extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// _AccentSwatch — circular tappable swatch with a selection ring + check.
-// Identical behaviour to chat_appearance_screen.dart's _Swatch; kept private
-// so that screen's internals are not imported.
-// ---------------------------------------------------------------------------
 class _AccentSwatch extends StatelessWidget {
   final Color color;
   final bool selected;
@@ -337,9 +295,6 @@ class _AccentSwatch extends StatelessWidget {
           ),
         ),
         child: selected
-            // 2026-07-03 review (L3): accent swatches include light hues
-            // (Sunflower/Sky/Seafoam) where the cream check was invisible —
-            // pick the readable foreground per swatch.
             ? Icon(Icons.check, size: 16, color: foregroundOnAccent(color))
             : null,
       ),
