@@ -3,7 +3,7 @@ import 'package:pyre/services/memory_capacity.dart';
 
 void main() {
   group('managed memory capacity', () {
-    test('uses the requested 1M / 2M / 10M tiers', () {
+    test('uses exactly the requested 1M / 2M / 10M tiers', () {
       expect(MemoryCapacityTier.minimum.tokens, 1000000);
       expect(MemoryCapacityTier.standard.tokens, 2000000);
       expect(MemoryCapacityTier.maximum.tokens, 10000000);
@@ -15,13 +15,16 @@ void main() {
       expect(normalizeMemoryCapacityTokens(-1), 2000000);
     });
 
-    test('clamps persisted values to the supported range', () {
+    test('normalizes imported values to an exact supported tier', () {
       expect(normalizeMemoryCapacityTokens(500000), 1000000);
-      expect(normalizeMemoryCapacityTokens(1500000), 1500000);
+      expect(normalizeMemoryCapacityTokens(1500000), 1000000);
+      expect(normalizeMemoryCapacityTokens(1800000), 2000000);
+      expect(normalizeMemoryCapacityTokens(6000000), 2000000);
+      expect(normalizeMemoryCapacityTokens(7000000), 10000000);
       expect(normalizeMemoryCapacityTokens(12000000), 10000000);
     });
 
-    test('maps values to the nearest user-facing tier', () {
+    test('maps exact values to their user-facing tier', () {
       expect(nearestMemoryCapacityTier(1000000), MemoryCapacityTier.minimum);
       expect(nearestMemoryCapacityTier(2000000), MemoryCapacityTier.standard);
       expect(nearestMemoryCapacityTier(10000000), MemoryCapacityTier.maximum);
