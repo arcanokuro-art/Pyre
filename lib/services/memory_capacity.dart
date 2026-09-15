@@ -28,20 +28,23 @@ extension MemoryCapacityTierValue on MemoryCapacityTier {
   }
 }
 
-/// Keeps persisted/imported values inside Pyre's supported managed-memory
-/// range. A missing or invalid value resolves to the 2M standard.
+/// Converts persisted/imported values to one of Pyre's three supported
+/// managed-memory tiers. A missing or invalid value resolves to the 2M
+/// standard. This deliberately prevents hidden/custom capacities from
+/// creating a fourth memory mode outside the 1M / 2M / 10M design.
 int normalizeMemoryCapacityTokens(int? value) {
   if (value == null || value <= 0) return kMemoryCapacityDefaultTokens;
-  if (value < kMemoryCapacityMinimumTokens) return kMemoryCapacityMinimumTokens;
-  if (value > kMemoryCapacityMaximumTokens) return kMemoryCapacityMaximumTokens;
-  return value;
+  return nearestMemoryCapacityTier(value).tokens;
 }
 
+/// Returns the supported tier nearest to [value]. Ties prefer the smaller
+/// tier so an imported value never unexpectedly increases memory usage.
 MemoryCapacityTier nearestMemoryCapacityTier(int? value) {
-  final normalized = normalizeMemoryCapacityTokens(value);
-  final dMin = (normalized - kMemoryCapacityMinimumTokens).abs();
-  final dStd = (normalized - kMemoryCapacityDefaultTokens).abs();
-  final dMax = (normalized - kMemoryCapacityMaximumTokens).abs();
+  if (value == null || value <= 0) return MemoryCapacityTier.standard;
+
+  final dMin = (value - kMemoryCapacityMinimumTokens).abs();
+  final dStd = (value - kMemoryCapacityDefaultTokens).abs();
+  final dMax = (value - kMemoryCapacityMaximumTokens).abs();
 
   if (dMin <= dStd && dMin <= dMax) return MemoryCapacityTier.minimum;
   if (dStd <= dMax) return MemoryCapacityTier.standard;
