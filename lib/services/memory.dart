@@ -42,6 +42,7 @@ import '../models/models.dart';
 import 'chat_api.dart';
 import 'chat_fingerprint.dart';
 import 'llm_debug_log.dart';
+import 'managed_memory_migration.dart';
 
 // The branch/content fingerprints live in chat_fingerprint.dart (shared with
 // Live Sheet). Re-export so existing `import 'memory.dart' show computePathHash`
@@ -180,14 +181,6 @@ const int _summarizeThreshold = 10;
 /// context when generating a fresh one, and how many we inject into
 /// the chat's system prompt. Keeps prompt size bounded on long chats.
 const int kMaxCheckpointsInPrompt = 5;
-
-/// Cap on how many checkpoints we RETAIN per chat. Each is a full narrative
-/// summary blob; the append-only chain grows without bound on long chats and
-/// serializes on every persist, sync and backup. Bound it going forward: keep
-/// the most-recent [_kMaxRetainedCheckpoints] (by append order) — far more than
-/// the [kMaxCheckpointsInPrompt] / [kRecapCharBudget] the runtime ever reads,
-/// so the visible recap is unaffected; we only shed ancient history blobs.
-const int _kMaxRetainedCheckpoints = 60;
 
 /// Wave CY.18.220: soft character budget for the recap block injected into the
 /// chat system prompt every turn. Recaps are narrative (~600-750 words ≈
@@ -948,11 +941,9 @@ Future<MemoryCheckpoint?> _regenerateCheckpointBody({
   }
 }
 
-/// Append a freshly-generated checkpoint to the chat's memory chain, then
-/// prune to [_kMaxRetainedCheckpoints] oldest-first. Checkpoints are
-/// append-only, so the OLDEST sit at the FRONT; dropping from there can never
-/// strand the recent valid set the runtime reads (the cap is an order of
-/// magnitude larger than [kMaxCheckpointsInPrompt]).
+/// Append a freshly-generated checkpoint through the managed-memory
+/// retention seam. Historical retention is capacity-aware (1M / 2M / 10M)
+/// rather than a fixed checkpoint-count cap.
 /// 2026-07-13 (community request): build a checkpoint the user wrote BY HAND —
 /// no LLM call, no lock. [anchorMessageIdx] is the message it covers up to
 /// (inclusive, an index into `chat.messages`); pathHash/contentHash are
@@ -981,11 +972,7 @@ MemoryCheckpoint? buildManualCheckpoint({
 }
 
 void applyCheckpoint(Chat chat, MemoryCheckpoint c) {
-  chat.memoryCheckpoints.add(c);
-  if (chat.memoryCheckpoints.length > _kMaxRetainedCheckpoints) {
-    chat.memoryCheckpoints.removeRange(
-        0, chat.memoryCheckpoints.length - _kMaxRetainedCheckpoints);
-  }
+  applyCheckpointWithManagedRetention(chat, c);
 }
 
 /// Swap an existing checkpoint with its regenerated copy, preserving
