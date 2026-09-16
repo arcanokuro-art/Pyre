@@ -38,4 +38,38 @@ void main() {
     expect(policy.promptBudgetTokens, lessThan(128000));
     expect(policy.canUseManagedMemory, isTrue);
   });
+
+  test('all supported tiers survive the complete persistence lifecycle', () {
+    const cases = <MemoryCapacityTier, int>{
+      MemoryCapacityTier.minimum: 1000000,
+      MemoryCapacityTier.standard: 2000000,
+      MemoryCapacityTier.maximum: 10000000,
+    };
+
+    for (final entry in cases.entries) {
+      final source = <String, dynamic>{
+        'memoryLimit': 1000,
+        'managedMemoryTokens': 2000000,
+      };
+      final session = ManagedMemoryAppStoreAdapter.fromSettingsJson(source);
+      Map<String, dynamic>? persisted;
+
+      session.selectTierAndPersist(
+        entry.key,
+        source,
+        (json) => persisted = json,
+      );
+
+      final restored =
+          ManagedMemoryAppStoreAdapter.fromSettingsJson(persisted!);
+      final policy = restored.policyForContext(128000);
+
+      expect(restored.tier, entry.key);
+      expect(restored.capacityTokens, entry.value);
+      expect(persisted!['managedMemoryTokens'], entry.value);
+      expect(persisted!['memoryLimit'], 1000);
+      expect(policy.historicalCapacityTokens, entry.value);
+      expect(policy.promptBudgetTokens, lessThan(128000));
+    }
+  });
 }
