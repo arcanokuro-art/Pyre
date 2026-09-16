@@ -11,10 +11,12 @@ MemoryCheckpoint _checkpoint(int index) => MemoryCheckpoint(
       contentHash: 'content-$index',
     );
 
+Chat _chat(String id) => Chat(id: id, characterIds: const ['character']);
+
 void main() {
   group('managed checkpoint retention', () {
     test('prunes oldest checkpoints and preserves newest order', () {
-      final chat = Chat(name: 'Retention test');
+      final chat = _chat('retention-test');
       chat.memoryCheckpoints.addAll(List.generate(13, _checkpoint));
       final settings = ManagedMemorySettings(capacityTokens: 1000000);
 
@@ -32,7 +34,7 @@ void main() {
     });
 
     test('append helper enforces selected capacity immediately', () {
-      final chat = Chat(name: 'Append test');
+      final chat = _chat('append-test');
       chat.memoryCheckpoints.addAll(List.generate(10, _checkpoint));
       final settings = ManagedMemorySettings(capacityTokens: 1000000);
 
@@ -49,8 +51,8 @@ void main() {
     });
 
     test('larger tier retains history that the minimum tier would prune', () {
-      final minimumChat = Chat(name: 'Minimum');
-      final maximumChat = Chat(name: 'Maximum');
+      final minimumChat = _chat('minimum');
+      final maximumChat = _chat('maximum');
       minimumChat.memoryCheckpoints.addAll(List.generate(50, _checkpoint));
       maximumChat.memoryCheckpoints.addAll(List.generate(50, _checkpoint));
 
