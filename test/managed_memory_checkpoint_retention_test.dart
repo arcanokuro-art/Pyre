@@ -62,10 +62,42 @@ void main() {
         _checkpoint(8, summaryLength: 1000000),
       );
 
-      // 2M historical tokens map to an ~8M-character retention budget.
-      // Nine 1M-character checkpoints therefore prune only the oldest one.
       expect(chat.memoryCheckpoints.length, 8);
       expect(chat.memoryCheckpoints.first.id, 'mc-1');
+      expect(chat.memoryCheckpoints.last.id, 'mc-8');
+    });
+
+    test('migration seam accepts the selected 1M tier', () {
+      final chat = _chat('selected-minimum');
+      chat.memoryCheckpoints.addAll(
+        List.generate(8, (index) => _checkpoint(index, summaryLength: 1000000)),
+      );
+
+      applyConfiguredManagedCheckpoint(
+        chat,
+        _checkpoint(8, summaryLength: 1000000),
+        settings: ManagedMemorySettings(capacityTokens: 1000000),
+      );
+
+      expect(chat.memoryCheckpoints.length, 4);
+      expect(chat.memoryCheckpoints.first.id, 'mc-5');
+      expect(chat.memoryCheckpoints.last.id, 'mc-8');
+    });
+
+    test('migration seam accepts the selected 10M tier', () {
+      final chat = _chat('selected-maximum');
+      chat.memoryCheckpoints.addAll(
+        List.generate(8, (index) => _checkpoint(index, summaryLength: 1000000)),
+      );
+
+      applyConfiguredManagedCheckpoint(
+        chat,
+        _checkpoint(8, summaryLength: 1000000),
+        settings: ManagedMemorySettings(capacityTokens: 10000000),
+      );
+
+      expect(chat.memoryCheckpoints.length, 9);
+      expect(chat.memoryCheckpoints.first.id, 'mc-0');
       expect(chat.memoryCheckpoints.last.id, 'mc-8');
     });
 
