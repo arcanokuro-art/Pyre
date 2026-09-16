@@ -50,10 +50,21 @@ jobs:
                   cap_end += 1
               s = s[:cap_start] + s[cap_end:]
 
-          stale_apply_comment = "/// Append a freshly-generated checkpoint to the chat's memory chain, then\n/// prune to [_kMaxRetainedCheckpoints] oldest-first. Checkpoints are\n/// append-only, so the OLDEST sit at the FRONT; dropping from there can never\n/// strand the recent valid set the runtime reads (the cap is an order of\n/// magnitude larger than [kMaxCheckpointsInPrompt]).\n"
-          managed_apply_comment = "/// Append a freshly-generated checkpoint through the managed-memory\n/// retention seam. Historical retention is capacity-aware (1M / 2M / 10M)\n/// rather than a fixed checkpoint-count cap.\n"
-          if stale_apply_comment in s:
-              s = s.replace(stale_apply_comment, managed_apply_comment, 1)
+          # The old applyCheckpoint documentation also names the fixed cap.
+          # Replace the whole comment prefix instead of depending on wrapping
+          # or punctuation from one historical revision of memory.dart.
+          apply_doc_start = s.find('/// Append a freshly-generated checkpoint to the chat\'s memory chain, then')
+          manual_doc_marker = '/// 2026-07-13 (community request): build a checkpoint the user wrote BY HAND —\n'
+          if apply_doc_start >= 0:
+              manual_doc_start = s.find(manual_doc_marker, apply_doc_start)
+              if manual_doc_start < 0:
+                  raise SystemExit('manual checkpoint documentation anchor missing')
+              managed_apply_comment = (
+                  '/// Append a freshly-generated checkpoint through the managed-memory\n'
+                  '/// retention seam. Historical retention is capacity-aware (1M / 2M / 10M)\n'
+                  '/// rather than a fixed checkpoint-count cap.\n'
+              )
+              s = s[:apply_doc_start] + managed_apply_comment + s[manual_doc_start:]
 
           if '_kMaxRetainedCheckpoints' in s:
               raise SystemExit('legacy fixed checkpoint cap still referenced')
