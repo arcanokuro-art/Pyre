@@ -67,5 +67,37 @@ void main() {
       expect(policy.promptBudgetTokens, 0);
       expect(policy.canUseManagedMemory, isFalse);
     });
+
+    test('negative provider reservations cannot inflate prompt budget', () {
+      final normal = ManagedMemoryPolicy.forTier(
+        tier: MemoryCapacityTier.standard,
+        contextWindowTokens: 128000,
+        reservedOutputTokens: 0,
+        reservedCorePromptTokens: 0,
+      );
+      final malformed = ManagedMemoryPolicy.forTier(
+        tier: MemoryCapacityTier.standard,
+        contextWindowTokens: 128000,
+        reservedOutputTokens: -50000,
+        reservedCorePromptTokens: -50000,
+      );
+
+      expect(malformed.promptBudgetTokens, normal.promptBudgetTokens);
+      expect(malformed.promptBudgetTokens, lessThan(128000));
+    });
+
+    test('oversized reservations disable managed-memory prompt injection', () {
+      final policy = ManagedMemoryPolicy.forTier(
+        tier: MemoryCapacityTier.maximum,
+        contextWindowTokens: 8192,
+        reservedOutputTokens: 8192,
+        reservedCorePromptTokens: 8192,
+      );
+
+      expect(policy.promptBudgetTokens, 0);
+      expect(policy.recallBudgetTokens, 0);
+      expect(policy.recentConversationBudgetTokens, 0);
+      expect(policy.canUseManagedMemory, isFalse);
+    });
   });
 }
