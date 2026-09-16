@@ -35,6 +35,13 @@ class ManagedMemoryStoreBridge {
     _controller.setTier(tier);
   }
 
+  /// Replaces the managed-memory state from a freshly loaded settings blob.
+  /// AppStore can call this after restore/import without replacing the bridge
+  /// instance observed by the rest of the app.
+  void replaceFromSettingsJson(Map<String, dynamic> settingsJson) {
+    _controller = ManagedMemoryController.fromJson(settingsJson);
+  }
+
   /// Builds the context-safe runtime policy from the same persisted state that
   /// AppStore exposes to the UI. This keeps the selected 1M / 2M / 10M tier
   /// and the model's actual context-window budget on one source of truth.
