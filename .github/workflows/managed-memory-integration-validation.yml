@@ -37,6 +37,7 @@ jobs:
             lib/services/managed_memory_retention.dart \
             lib/services/managed_memory_checkpoint_retention.dart \
             lib/services/managed_memory_migration.dart \
+            lib/services/managed_memory_release_gate.dart \
             lib/widgets/managed_memory_capacity_selector.dart
 
       - name: Run managed memory tests
@@ -44,6 +45,9 @@ jobs:
 
       - name: Run end-to-end memory lifecycle test explicitly
         run: flutter test test/managed_memory_end_to_end_test.dart
+
+      - name: Run release-readiness gate explicitly
+        run: flutter test test/managed_memory_release_readiness_test.dart
 
       - name: Verify replacement invariants
         run: |
@@ -54,6 +58,7 @@ jobs:
           selector = Path('lib/widgets/managed_memory_capacity_selector.dart').read_text()
           capacity = Path('lib/services/memory_capacity.dart').read_text()
           end_to_end = Path('test/managed_memory_end_to_end_test.dart').read_text()
+          release_gate = Path('lib/services/managed_memory_release_gate.dart').read_text()
 
           assert '_kMaxRetainedCheckpoints' not in memory
           assert 'applyCheckpointWithManagedRetention(chat, c);' in memory
@@ -65,5 +70,6 @@ jobs:
           assert "label: Text('10M')" in selector
           assert 'selectTierAndPersist' in end_to_end
           assert 'policyForContext(128000)' in end_to_end
-          print('Managed memory replacement and end-to-end invariants verified.')
+          assert 'managedMemoryReleaseGatePasses' in release_gate
+          print('Managed memory replacement, end-to-end, and release-gate invariants verified.')
           PY
