@@ -1,0 +1,89 @@
+name: Managed memory migration
+
+on:
+  push:
+    branches: [pyre-memory-1m-10m]
+    paths:
+      - '.github/workflows/managed-memory-migration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-memory-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: pyre-memory-1m-10m
+          fetch-depth: 0
+
+      - name: Replace fixed checkpoint cap with managed retention
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('lib/services/memory.dart')
+          s = p.read_text()
+
+          import_anchor = "import 'llm_debug_log.dart';\n"
+          managed_import = "import 'managed_memory_migration.dart';\n"
+          if managed_import not in s:
+              if import_anchor not in s:
+                  raise SystemExit('memory.dart import anchor missing')
+              s = s.replace(import_anchor, import_anchor + managed_import, 1)
+
+          cap_block = '''/// Cap on how many checkpoints we RETAIN per chat. Each is a full narrative
+/// summary blob; the append-only chain grows without bound on long chats and
+/// serializes on every persist, sync and backup. Bound it going forward: keep
+/// the most-recent [_kMaxRetainedCheckpoints] (by append order) — far more than
+/// the [kMaxCheckpointsInPrompt] / [kRecapCharBudget] the runtime ever reads,
+/// so the visible recap is unaffected; we only shed ancient history blobs.
+const int _kMaxRetainedCheckpoints = 60;
+
+'''
+          if cap_block in s:
+              s = s.replace(cap_block, '', 1)
+
+          old_apply = '''void applyCheckpoint(Chat chat, MemoryCheckpoint c) {
+  chat.memoryCheckpoints.add(c);
+  if (chat.memoryCheckpoints.length > _kMaxRetainedCheckpoints) {
+    chat.memoryCheckpoints.removeRange(
+        0, chat.memoryCheckpoints.length - _kMaxRetainedCheckpoints);
+  }
+}
+'''
+          new_apply = '''void applyCheckpoint(Chat chat, MemoryCheckpoint c) {
+  applyCheckpointWithManagedRetention(chat, c);
+}
+'''
+          if old_apply in s:
+              s = s.replace(old_apply, new_apply, 1)
+          elif new_apply not in s:
+              raise SystemExit('legacy applyCheckpoint block missing')
+
+          if '_kMaxRetainedCheckpoints' in s:
+              raise SystemExit('legacy fixed checkpoint cap still referenced')
+          if "import 'managed_memory_migration.dart';" not in s:
+              raise SystemExit('managed memory migration import missing')
+          if 'applyCheckpointWithManagedRetention(chat, c);' not in s:
+              raise SystemExit('managed applyCheckpoint delegation missing')
+
+          p.write_text(s)
+          PY
+
+      - name: Format migrated service
+        run: dart format lib/services/memory.dart
+
+      - name: Commit migration
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lib/services/memory.dart
+          if git diff --cached --quiet; then
+            echo 'memory.dart already uses managed retention.'
+          else
+            git commit -m 'Replace fixed checkpoint cap with managed retention'
+            git push origin HEAD:pyre-memory-1m-10m
+          fi
