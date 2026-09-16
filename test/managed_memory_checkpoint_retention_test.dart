@@ -51,6 +51,24 @@ void main() {
       expect(chat.memoryCheckpoints.last.id, 'mc-4');
     });
 
+    test('default migration seam uses the 2M standard capacity', () {
+      final chat = _chat('default-standard');
+      chat.memoryCheckpoints.addAll(
+        List.generate(8, (index) => _checkpoint(index, summaryLength: 1000000)),
+      );
+
+      applyDefaultManagedCheckpoint(
+        chat,
+        _checkpoint(8, summaryLength: 1000000),
+      );
+
+      // 2M historical tokens map to an ~8M-character retention budget.
+      // Nine 1M-character checkpoints therefore prune only the oldest one.
+      expect(chat.memoryCheckpoints.length, 8);
+      expect(chat.memoryCheckpoints.first.id, 'mc-1');
+      expect(chat.memoryCheckpoints.last.id, 'mc-8');
+    });
+
     test('larger tier retains history that the minimum tier prunes', () {
       final minimumChat = _chat('minimum');
       final maximumChat = _chat('maximum');
