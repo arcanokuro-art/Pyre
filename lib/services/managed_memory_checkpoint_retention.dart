@@ -24,6 +24,28 @@ void pruneCheckpointsForManagedMemory(
   chat.memoryCheckpoints.removeRange(0, overflow);
 }
 
+/// Applies managed retention to a branch-valid checkpoint view and returns the
+/// checkpoints that remain eligible for prompt recall. The source chat keeps
+/// its existing checkpoint objects and hashes; only capacity pruning is
+/// performed after validity has already been decided by Pyre's branch logic.
+List<MemoryCheckpoint> retainValidCheckpointsForManagedMemory(
+  Chat chat,
+  Iterable<MemoryCheckpoint> validCheckpoints, {
+  required ManagedMemorySettings settings,
+  int estimatedTokensPerCheckpoint =
+      ManagedMemoryRetentionPolicy.defaultEstimatedTokensPerCheckpoint,
+}) {
+  final validIds = validCheckpoints.map((checkpoint) => checkpoint.id).toSet();
+  pruneCheckpointsForManagedMemory(
+    chat,
+    settings: settings,
+    estimatedTokensPerCheckpoint: estimatedTokensPerCheckpoint,
+  );
+  return chat.memoryCheckpoints
+      .where((checkpoint) => validIds.contains(checkpoint.id))
+      .toList(growable: false);
+}
+
 /// Appends a checkpoint and immediately enforces the selected managed-memory
 /// tier. Kept separate from legacy applyCheckpoint until its callers are
 /// migrated, which lets us replace the old behavior incrementally and safely.
