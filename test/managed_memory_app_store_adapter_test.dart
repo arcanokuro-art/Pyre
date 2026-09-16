@@ -32,6 +32,30 @@ void main() {
       expect(source.containsKey('managedMemoryTokens'), isFalse);
     });
 
+    test('persisted tier selection writes complete AppStore settings', () {
+      final source = <String, dynamic>{
+        'memoryLimit': 1000,
+        'theme': 'dark',
+        'managedMemoryTokens': 2000000,
+      };
+      final adapter = ManagedMemoryAppStoreAdapter.fromSettingsJson(source);
+      Map<String, dynamic>? written;
+
+      adapter.selectTierAndPersist(
+        MemoryCapacityTier.minimum,
+        source,
+        (json) => written = json,
+      );
+
+      expect(adapter.tier, MemoryCapacityTier.minimum);
+      expect(adapter.capacityTokens, 1000000);
+      expect(written, isNotNull);
+      expect(written!['managedMemoryTokens'], 1000000);
+      expect(written!['memoryLimit'], 1000);
+      expect(written!['theme'], 'dark');
+      expect(source['managedMemoryTokens'], 2000000);
+    });
+
     test('reload follows imported memory tier', () {
       final adapter = ManagedMemoryAppStoreAdapter.fromSettingsJson(
         const <String, dynamic>{'managedMemoryTokens': 1000000},
