@@ -51,16 +51,24 @@ class ManagedMemoryPolicy {
     );
   }
 
+  int get _safeReservedOutputTokens =>
+      reservedOutputTokens < 0 ? 0 : reservedOutputTokens;
+
+  int get _safeReservedCorePromptTokens =>
+      reservedCorePromptTokens < 0 ? 0 : reservedCorePromptTokens;
+
   /// Tokens available for recent chat + retrieved long-term memories.
   ///
   /// A safety margin keeps provider-side tokenisation differences and small
   /// prompt additions from overflowing the advertised model context window.
+  /// Invalid negative reservation values are treated as zero so a malformed
+  /// provider configuration can never increase the available prompt budget.
   int get promptBudgetTokens {
     if (contextWindowTokens <= 0) return 0;
     final safetyMargin = (contextWindowTokens * 0.05).ceil();
     final available = contextWindowTokens -
-        reservedOutputTokens -
-        reservedCorePromptTokens -
+        _safeReservedOutputTokens -
+        _safeReservedCorePromptTokens -
         safetyMargin;
     if (available <= 0) return 0;
     return available > historicalCapacityTokens
