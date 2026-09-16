@@ -39,30 +39,49 @@ class ManagedMemoryCapacitySelector extends StatelessWidget {
               style: TextStyle(color: EmberColors.textMid, fontSize: 12),
             ),
             const SizedBox(height: 12),
-            SegmentedButton<MemoryCapacityTier>(
-              segments: const [
-                ButtonSegment(
-                  value: MemoryCapacityTier.minimum,
-                  label: Text('1M'),
-                ),
-                ButtonSegment(
-                  value: MemoryCapacityTier.standard,
-                  label: Text('2M · Estándar'),
-                ),
-                ButtonSegment(
-                  value: MemoryCapacityTier.maximum,
-                  label: Text('10M'),
-                ),
-              ],
-              selected: {settings.tier},
-              showSelectedIcon: false,
-              onSelectionChanged: (selection) {
-                if (selection.isNotEmpty) onChanged(selection.first);
-              },
+            SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<MemoryCapacityTier>(
+                segments: const [
+                  ButtonSegment(
+                    value: MemoryCapacityTier.minimum,
+                    label: Text('1M'),
+                  ),
+                  ButtonSegment(
+                    value: MemoryCapacityTier.standard,
+                    label: Text('2M · Estándar'),
+                  ),
+                  ButtonSegment(
+                    value: MemoryCapacityTier.maximum,
+                    label: Text('10M'),
+                  ),
+                ],
+                selected: {settings.tier},
+                showSelectedIcon: false,
+                onSelectionChanged: (selection) {
+                  if (selection.isNotEmpty) onChanged(selection.first);
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _selectionDescription(settings.tier),
+              style: TextStyle(color: EmberColors.textMid, fontSize: 12),
             ),
           ],
         ),
       ),
     );
+  }
+
+  String _selectionDescription(MemoryCapacityTier tier) {
+    switch (tier) {
+      case MemoryCapacityTier.minimum:
+        return '1M · Menor uso de almacenamiento histórico.';
+      case MemoryCapacityTier.standard:
+        return '2M · Capacidad estándar y predeterminada de Pyre.';
+      case MemoryCapacityTier.maximum:
+        return '10M · Máxima capacidad de historial administrado.';
+    }
   }
 }
