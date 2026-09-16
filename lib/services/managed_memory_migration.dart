@@ -18,3 +18,20 @@ void applyCheckpointWithManagedRetention(
     settings: settings ?? ManagedMemorySettings(),
   );
 }
+
+/// Settings-aware entry point for callers that already persist the replacement
+/// managed-memory configuration as JSON. Missing or invalid capacity values
+/// normalize through [ManagedMemorySettings.fromJson], so legacy installs
+/// safely migrate to the 2M standard tier while explicit 1M/10M selections
+/// are preserved.
+void applyCheckpointWithPersistedManagedRetention(
+  Chat chat,
+  MemoryCheckpoint checkpoint,
+  Map<String, dynamic> settingsJson,
+) {
+  applyCheckpointWithManagedRetention(
+    chat,
+    checkpoint,
+    settings: ManagedMemorySettings.fromJson(settingsJson),
+  );
+}
