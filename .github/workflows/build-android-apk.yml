@@ -7,6 +7,9 @@ on:
       - pyre-memory-1m-10m
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
@@ -33,23 +36,47 @@ jobs:
       - name: Build release APKs per ABI
         run: flutter build apk --release --split-per-abi
 
-      - name: Upload ARM64 APK
+      - name: Prepare downloadable APK names
+        run: |
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk Pyre-Android-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk Pyre-Android-armeabi-v7a.apk
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk Pyre-Android-x86_64.apk
+
+      - name: Upload ARM64 APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: Pyre-Android-arm64-v8a
-          path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          path: Pyre-Android-arm64-v8a.apk
           if-no-files-found: error
 
-      - name: Upload ARMv7 APK
+      - name: Upload ARMv7 APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: Pyre-Android-armeabi-v7a
-          path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+          path: Pyre-Android-armeabi-v7a.apk
           if-no-files-found: error
 
-      - name: Upload x86_64 APK
+      - name: Upload x86_64 APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: Pyre-Android-x86_64
-          path: build/app/outputs/flutter-apk/app-x86_64-release.apk
+          path: Pyre-Android-x86_64.apk
           if-no-files-found: error
+
+      - name: Publish APKs as GitHub Release
+        if: github.ref == 'refs/heads/pyre-memory-1m-10m'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="pyre-memory-latest"
+          git tag -f "$TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$TAG" --force
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+          git tag -f "$TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$TAG" --force
+          gh release create "$TAG" \
+            Pyre-Android-arm64-v8a.apk \
+            Pyre-Android-armeabi-v7a.apk \
+            Pyre-Android-x86_64.apk \
+            --title "Pyre Android - Managed Memory 1M 2M 10M" \
+            --notes "APK de Pyre con memoria administrada 1M / 2M / 10M. Para teléfonos Android ARM64 modernos, descarga Pyre-Android-arm64-v8a.apk."
