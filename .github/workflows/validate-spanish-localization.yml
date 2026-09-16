@@ -2,7 +2,7 @@ name: Validate Spanish localization
 
 on:
   push:
-    branches: [spanish-localization]
+    branches: [spanish-localization, pyre-memory-1m-10m]
     paths:
       - 'lib/**'
       - 'test/**'
