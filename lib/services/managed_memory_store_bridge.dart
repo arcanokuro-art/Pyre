@@ -1,4 +1,5 @@
 import 'managed_memory_controller.dart';
+import 'managed_memory_policy.dart';
 import 'memory_capacity.dart';
 
 /// Small persistence bridge for wiring managed memory into Pyre's settings
@@ -27,6 +28,13 @@ class ManagedMemoryStoreBridge {
 
   void setTier(MemoryCapacityTier tier) {
     _controller.setTier(tier);
+  }
+
+  /// Builds the context-safe runtime policy from the same persisted state that
+  /// AppStore exposes to the UI. This keeps the selected 1M / 2M / 10M tier
+  /// and the model's actual context-window budget on one source of truth.
+  ManagedMemoryPolicy policyForContext(int contextWindowTokens) {
+    return _controller.policyForContext(contextWindowTokens);
   }
 
   /// Returns a copy so callers never lose unrelated Pyre settings.
