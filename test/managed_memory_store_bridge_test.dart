@@ -44,5 +44,31 @@ void main() {
       expect(bridge.tier, MemoryCapacityTier.maximum);
       expect(merged['managedMemoryTokens'], 10000000);
     });
+
+    test('runtime policy follows the persisted tier and model context window', () {
+      final bridge = ManagedMemoryStoreBridge.fromSettingsJson(
+        const <String, dynamic>{'managedMemoryTokens': 10000000},
+      );
+
+      final policy = bridge.policyForContext(128000);
+
+      expect(policy.historicalCapacityTokens, 10000000);
+      expect(policy.contextWindowTokens, 128000);
+      expect(policy.promptBudgetTokens, 109312);
+      expect(policy.recallBudgetTokens, 65587);
+      expect(policy.recentConversationBudgetTokens, 43725);
+      expect(policy.canUseManagedMemory, isTrue);
+    });
+
+    test('changing tier immediately changes the runtime policy source', () {
+      final bridge = ManagedMemoryStoreBridge();
+      expect(bridge.policyForContext(4000000).historicalCapacityTokens, 2000000);
+
+      bridge.setTier(MemoryCapacityTier.minimum);
+      expect(bridge.policyForContext(4000000).historicalCapacityTokens, 1000000);
+
+      bridge.setTier(MemoryCapacityTier.maximum);
+      expect(bridge.policyForContext(4000000).historicalCapacityTokens, 10000000);
+    });
   });
 }
