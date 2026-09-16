@@ -42,6 +42,9 @@ jobs:
       - name: Run managed memory tests
         run: flutter test test/managed_memory_*.dart
 
+      - name: Run end-to-end memory lifecycle test explicitly
+        run: flutter test test/managed_memory_end_to_end_test.dart
+
       - name: Verify replacement invariants
         run: |
           python3 - <<'PY'
@@ -50,6 +53,7 @@ jobs:
           memory = Path('lib/services/memory.dart').read_text()
           selector = Path('lib/widgets/managed_memory_capacity_selector.dart').read_text()
           capacity = Path('lib/services/memory_capacity.dart').read_text()
+          end_to_end = Path('test/managed_memory_end_to_end_test.dart').read_text()
 
           assert '_kMaxRetainedCheckpoints' not in memory
           assert 'applyCheckpointWithManagedRetention(chat, c);' in memory
@@ -59,5 +63,7 @@ jobs:
           assert "label: Text('1M')" in selector
           assert "label: Text('2M · Estándar')" in selector
           assert "label: Text('10M')" in selector
-          print('Managed memory replacement invariants verified.')
+          assert 'selectTierAndPersist' in end_to_end
+          assert 'policyForContext(128000)' in end_to_end
+          print('Managed memory replacement and end-to-end invariants verified.')
           PY
