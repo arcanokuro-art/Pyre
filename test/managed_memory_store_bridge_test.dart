@@ -70,5 +70,26 @@ void main() {
       bridge.setTier(MemoryCapacityTier.maximum);
       expect(bridge.policyForContext(4000000).historicalCapacityTokens, 10000000);
     });
+
+    test('atomic tier update returns persistence-ready settings', () {
+      final source = <String, dynamic>{
+        'theme': 'dark',
+        'memoryLimit': 1000,
+        'managedMemoryTokens': 2000000,
+      };
+      final bridge = ManagedMemoryStoreBridge.fromSettingsJson(source);
+
+      final merged = bridge.setTierAndMergeIntoSettingsJson(
+        MemoryCapacityTier.maximum,
+        source,
+      );
+
+      expect(bridge.tier, MemoryCapacityTier.maximum);
+      expect(bridge.capacityTokens, 10000000);
+      expect(merged['managedMemoryTokens'], 10000000);
+      expect(merged['memoryLimit'], 1000);
+      expect(merged['theme'], 'dark');
+      expect(source['managedMemoryTokens'], 2000000);
+    });
   });
 }
