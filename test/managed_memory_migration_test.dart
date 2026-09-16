@@ -62,5 +62,39 @@ void main() {
       expect(chat.memoryCheckpoints.first.id, 'migration-0');
       expect(chat.memoryCheckpoints.last.id, 'migration-8');
     });
+
+    test('persisted settings default missing capacity to 2M', () {
+      final chat = _chat('persisted-default');
+      chat.memoryCheckpoints.addAll(
+        List.generate(8, (index) => _checkpoint(index)),
+      );
+
+      applyCheckpointWithPersistedManagedRetention(
+        chat,
+        _checkpoint(8),
+        const <String, dynamic>{},
+      );
+
+      expect(chat.memoryCheckpoints.length, 8);
+      expect(chat.memoryCheckpoints.first.id, 'migration-1');
+      expect(chat.memoryCheckpoints.last.id, 'migration-8');
+    });
+
+    test('persisted settings preserve explicit 10M selection', () {
+      final chat = _chat('persisted-maximum');
+      chat.memoryCheckpoints.addAll(
+        List.generate(8, (index) => _checkpoint(index)),
+      );
+
+      applyCheckpointWithPersistedManagedRetention(
+        chat,
+        _checkpoint(8),
+        const <String, dynamic>{'managedMemoryTokens': 10000000},
+      );
+
+      expect(chat.memoryCheckpoints.length, 9);
+      expect(chat.memoryCheckpoints.first.id, 'migration-0');
+      expect(chat.memoryCheckpoints.last.id, 'migration-8');
+    });
   });
 }
