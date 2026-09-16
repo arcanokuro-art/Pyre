@@ -31,6 +31,14 @@ jobs:
               if import_anchor not in s:
                   raise SystemExit('memory.dart import anchor missing')
               s = s.replace(import_anchor, import_anchor + managed_import, 1)
+
+          old_apply = "void applyCheckpoint(Chat chat, MemoryCheckpoint c) {\n  chat.memoryCheckpoints.add(c);\n  if (chat.memoryCheckpoints.length > _kMaxRetainedCheckpoints) {\n    chat.memoryCheckpoints.removeRange(\n        0, chat.memoryCheckpoints.length - _kMaxRetainedCheckpoints);\n  }\n}\n"
+          new_apply = "void applyCheckpoint(Chat chat, MemoryCheckpoint c) {\n  applyCheckpointWithManagedRetention(chat, c);\n}\n"
+          if old_apply in s:
+              s = s.replace(old_apply, new_apply, 1)
+          elif new_apply not in s:
+              raise SystemExit('legacy applyCheckpoint block missing')
+
           cap_start = s.find('/// Cap on how many checkpoints we RETAIN per chat.')
           cap_end_marker = 'const int _kMaxRetainedCheckpoints = 60;\n'
           if cap_start >= 0:
@@ -41,12 +49,7 @@ jobs:
               while cap_end < len(s) and s[cap_end] == '\n':
                   cap_end += 1
               s = s[:cap_start] + s[cap_end:]
-          old_apply = "void applyCheckpoint(Chat chat, MemoryCheckpoint c) {\n  chat.memoryCheckpoints.add(c);\n  if (chat.memoryCheckpoints.length > _kMaxRetainedCheckpoints) {\n    chat.memoryCheckpoints.removeRange(\n        0, chat.memoryCheckpoints.length - _kMaxRetainedCheckpoints);\n  }\n}\n"
-          new_apply = "void applyCheckpoint(Chat chat, MemoryCheckpoint c) {\n  applyCheckpointWithManagedRetention(chat, c);\n}\n"
-          if old_apply in s:
-              s = s.replace(old_apply, new_apply, 1)
-          elif new_apply not in s:
-              raise SystemExit('legacy applyCheckpoint block missing')
+
           if '_kMaxRetainedCheckpoints' in s:
               raise SystemExit('legacy fixed checkpoint cap still referenced')
           if managed_import not in s:
