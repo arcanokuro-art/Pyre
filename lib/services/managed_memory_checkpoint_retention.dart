@@ -45,3 +45,15 @@ void applyManagedCheckpoint(
   chat.memoryCheckpoints.add(checkpoint);
   pruneCheckpointsForManagedMemory(chat, settings: settings);
 }
+
+/// Backward-compatible migration seam for memory.dart. Existing checkpoint
+/// callers can move off the legacy fixed 60-item cap without first depending
+/// on UI/AppStore state. Until persisted settings are wired into that flow,
+/// the unified memory system uses its required 2M standard tier by default.
+void applyDefaultManagedCheckpoint(Chat chat, MemoryCheckpoint checkpoint) {
+  applyManagedCheckpoint(
+    chat,
+    checkpoint,
+    settings: ManagedMemorySettings(),
+  );
+}
