@@ -1,3 +1,4 @@
+import 'managed_memory_settings.dart';
 import 'memory_capacity.dart';
 
 /// Runtime policy for Pyre's replacement long-term memory system.
@@ -27,6 +28,23 @@ class ManagedMemoryPolicy {
   }) {
     return ManagedMemoryPolicy(
       historicalCapacityTokens: tier.tokens,
+      contextWindowTokens: contextWindowTokens,
+      reservedOutputTokens: reservedOutputTokens,
+      reservedCorePromptTokens: reservedCorePromptTokens,
+    );
+  }
+
+  /// Builds the runtime budget directly from the persisted managed-memory
+  /// setting. This is the bridge between the user's 1M / 2M / 10M selection
+  /// and context-safe prompt construction.
+  factory ManagedMemoryPolicy.forSettings({
+    required ManagedMemorySettings settings,
+    required int contextWindowTokens,
+    int reservedOutputTokens = 4096,
+    int reservedCorePromptTokens = 8192,
+  }) {
+    return ManagedMemoryPolicy.forTier(
+      tier: settings.tier,
       contextWindowTokens: contextWindowTokens,
       reservedOutputTokens: reservedOutputTokens,
       reservedCorePromptTokens: reservedCorePromptTokens,
