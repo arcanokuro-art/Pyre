@@ -91,5 +91,29 @@ void main() {
       expect(merged['theme'], 'dark');
       expect(source['managedMemoryTokens'], 2000000);
     });
+
+    test('AppStore persistence callback receives selected tier and full settings', () {
+      final source = <String, dynamic>{
+        'theme': 'dark',
+        'memoryLimit': 1000,
+        'managedMemoryTokens': 2000000,
+      };
+      final bridge = ManagedMemoryStoreBridge.fromSettingsJson(source);
+      Map<String, dynamic>? persisted;
+
+      bridge.setTierAndPersist(
+        MemoryCapacityTier.minimum,
+        source,
+        (json) => persisted = json,
+      );
+
+      expect(bridge.tier, MemoryCapacityTier.minimum);
+      expect(bridge.capacityTokens, 1000000);
+      expect(persisted, isNotNull);
+      expect(persisted!['managedMemoryTokens'], 1000000);
+      expect(persisted!['memoryLimit'], 1000);
+      expect(persisted!['theme'], 'dark');
+      expect(source['managedMemoryTokens'], 2000000);
+    });
   });
 }
