@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pyre/services/managed_memory_policy.dart';
+import 'package:pyre/services/managed_memory_settings.dart';
 import 'package:pyre/services/memory_capacity.dart';
 
 void main() {
@@ -13,6 +14,24 @@ void main() {
       expect(policy.historicalCapacityTokens, 2000000);
       expect(policy.promptBudgetTokens, lessThan(128000));
       expect(policy.recallBudgetTokens, lessThan(policy.promptBudgetTokens));
+    });
+
+    test('runtime policy follows the persisted user tier', () {
+      final settings = ManagedMemorySettings(capacityTokens: 10000000);
+      final policy = ManagedMemoryPolicy.forSettings(
+        settings: settings,
+        contextWindowTokens: 128000,
+      );
+
+      expect(policy.historicalCapacityTokens, 10000000);
+      expect(policy.promptBudgetTokens, lessThan(128000));
+
+      settings.setTier(MemoryCapacityTier.minimum);
+      final reduced = ManagedMemoryPolicy.forSettings(
+        settings: settings,
+        contextWindowTokens: 128000,
+      );
+      expect(reduced.historicalCapacityTokens, 1000000);
     });
 
     test('10M tier still respects a small model context window', () {
