@@ -3,6 +3,8 @@ import 'managed_memory_policy.dart';
 import 'managed_memory_settings.dart';
 import 'memory_capacity.dart';
 
+typedef ManagedMemorySettingsWriter = void Function(Map<String, dynamic> json);
+
 /// Small persistence bridge for wiring managed memory into Pyre's settings
 /// blob without conflating it with the legacy checkpoint `memoryLimit`.
 ///
@@ -43,6 +45,17 @@ class ManagedMemoryStoreBridge {
   ) {
     setTier(tier);
     return mergeIntoSettingsJson(source);
+  }
+
+  /// AppStore integration seam: update the tier and synchronously hand the
+  /// merged settings blob to Pyre's existing persistence callback. This keeps
+  /// UI selection, runtime policy and saved state in lockstep.
+  void setTierAndPersist(
+    MemoryCapacityTier tier,
+    Map<String, dynamic> source,
+    ManagedMemorySettingsWriter writeSettings,
+  ) {
+    writeSettings(setTierAndMergeIntoSettingsJson(tier, source));
   }
 
   /// Replaces the managed-memory state from a freshly loaded settings blob.
