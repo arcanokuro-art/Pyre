@@ -1,0 +1,63 @@
+name: Managed memory integration validation
+
+on:
+  push:
+    branches: [pyre-memory-1m-10m]
+    paths:
+      - 'lib/services/managed_memory_*.dart'
+      - 'lib/services/memory_capacity.dart'
+      - 'lib/widgets/managed_memory_capacity_selector.dart'
+      - 'test/managed_memory_*.dart'
+      - '.github/workflows/managed-memory-integration-validation.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-managed-memory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze managed memory integration
+        run: |
+          dart analyze \
+            lib/services/memory_capacity.dart \
+            lib/services/managed_memory_policy.dart \
+            lib/services/managed_memory_settings.dart \
+            lib/services/managed_memory_controller.dart \
+            lib/services/managed_memory_store_bridge.dart \
+            lib/services/managed_memory_app_store_adapter.dart \
+            lib/services/managed_memory_retention.dart \
+            lib/services/managed_memory_checkpoint_retention.dart \
+            lib/services/managed_memory_migration.dart \
+            lib/widgets/managed_memory_capacity_selector.dart
+
+      - name: Run managed memory tests
+        run: flutter test test/managed_memory_*.dart
+
+      - name: Verify replacement invariants
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          memory = Path('lib/services/memory.dart').read_text()
+          selector = Path('lib/widgets/managed_memory_capacity_selector.dart').read_text()
+          capacity = Path('lib/services/memory_capacity.dart').read_text()
+
+          assert '_kMaxRetainedCheckpoints' not in memory
+          assert 'applyCheckpointWithManagedRetention(chat, c);' in memory
+          assert 'kMemoryCapacityMinimumTokens = 1000000' in capacity
+          assert 'kMemoryCapacityDefaultTokens = 2000000' in capacity
+          assert 'kMemoryCapacityMaximumTokens = 10000000' in capacity
+          assert "label: Text('1M')" in selector
+          assert "label: Text('2M · Estándar')" in selector
+          assert "label: Text('10M')" in selector
+          print('Managed memory replacement invariants verified.')
+          PY
