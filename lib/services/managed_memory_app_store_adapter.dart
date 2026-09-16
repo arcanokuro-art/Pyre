@@ -32,6 +32,17 @@ class ManagedMemoryAppStoreAdapter {
     return _bridge.setTierAndMergeIntoSettingsJson(tier, settingsJson);
   }
 
+  /// Final AppStore write seam. The UI can select 1M / 2M / 10M through this
+  /// method and let AppStore's existing settings writer persist the merged
+  /// blob immediately, while preserving every unrelated Pyre setting.
+  void selectTierAndPersist(
+    MemoryCapacityTier tier,
+    Map<String, dynamic> settingsJson,
+    ManagedMemorySettingsWriter writeSettings,
+  ) {
+    _bridge.setTierAndPersist(tier, settingsJson, writeSettings);
+  }
+
   void reload(Map<String, dynamic> settingsJson) {
     _bridge.replaceFromSettingsJson(settingsJson);
   }
