@@ -4,50 +4,59 @@ import 'memory_capacity.dart';
 /// Capacity-aware replacement for Pyre's old fixed 60-checkpoint retention.
 ///
 /// The historical-memory tier is expressed in tokens, while checkpoints are
-/// variable-size narrative summaries. Retention therefore works from an
-/// estimated token cost per checkpoint and never treats 1M/2M/10M as a prompt
-/// size. Prompt construction remains governed separately by ManagedMemoryPolicy.
+/// variable-size narrative summaries. Retention therefore uses the actual
+/// summary lengths instead of assuming every checkpoint costs the same amount.
+/// Prompt construction remains governed separately by ManagedMemoryPolicy.
 class ManagedMemoryRetentionPolicy {
-  static const int defaultEstimatedTokensPerCheckpoint = 1024;
+  /// A deterministic storage estimate. This is not provider tokenization: it
+  /// only translates the user's historical token tier into a text-retention
+  /// budget. Four characters per token is a conservative common approximation.
+  static const int approximateCharactersPerToken = 4;
 
   final int historicalCapacityTokens;
-  final int estimatedTokensPerCheckpoint;
 
   const ManagedMemoryRetentionPolicy({
     required this.historicalCapacityTokens,
-    this.estimatedTokensPerCheckpoint = defaultEstimatedTokensPerCheckpoint,
   });
 
   factory ManagedMemoryRetentionPolicy.forSettings(
-    ManagedMemorySettings settings, {
-    int estimatedTokensPerCheckpoint = defaultEstimatedTokensPerCheckpoint,
-  }) {
+    ManagedMemorySettings settings,
+  ) {
     return ManagedMemoryRetentionPolicy(
       historicalCapacityTokens: settings.capacityTokens,
-      estimatedTokensPerCheckpoint: estimatedTokensPerCheckpoint,
     );
   }
 
-  factory ManagedMemoryRetentionPolicy.forTier(
-    MemoryCapacityTier tier, {
-    int estimatedTokensPerCheckpoint = defaultEstimatedTokensPerCheckpoint,
-  }) {
+  factory ManagedMemoryRetentionPolicy.forTier(MemoryCapacityTier tier) {
     return ManagedMemoryRetentionPolicy(
       historicalCapacityTokens: tier.tokens,
-      estimatedTokensPerCheckpoint: estimatedTokensPerCheckpoint,
     );
   }
 
-  int get maxRetainedCheckpoints {
-    if (estimatedTokensPerCheckpoint <= 0) return 0;
-    return historicalCapacityTokens ~/ estimatedTokensPerCheckpoint;
+  int get approximateCharacterCapacity =>
+      historicalCapacityTokens * approximateCharactersPerToken;
+
+  /// Returns the first index to retain from an oldest-first checkpoint list.
+  /// The newest checkpoint is always retained even if it alone exceeds the
+  /// budget, preserving the most recent continuity.
+  int firstRetainedIndex(List<int> summaryCharacterLengths) {
+    if (summaryCharacterLengths.isEmpty) return 0;
+
+    final budget = approximateCharacterCapacity;
+    var used = 0;
+    for (var i = summaryCharacterLengths.length - 1; i >= 0; i--) {
+      final length = summaryCharacterLengths[i] < 0
+          ? 0
+          : summaryCharacterLengths[i];
+      final isNewest = i == summaryCharacterLengths.length - 1;
+      if (!isNewest && used + length > budget) return i + 1;
+      used += length;
+    }
+    return 0;
   }
 
-  /// Returns how many oldest entries should be removed after an append.
-  int overflowCount(int checkpointCount) {
-    if (checkpointCount <= 0) return 0;
-    final max = maxRetainedCheckpoints;
-    if (max <= 0) return checkpointCount;
-    return checkpointCount > max ? checkpointCount - max : 0;
-  }
+  /// Convenience helper for callers that only need the number of oldest
+  /// checkpoints to prune.
+  int overflowCountForSummaryLengths(List<int> summaryCharacterLengths) =>
+      firstRetainedIndex(summaryCharacterLengths);
 }
