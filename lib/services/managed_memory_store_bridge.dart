@@ -1,5 +1,6 @@
 import 'managed_memory_controller.dart';
 import 'managed_memory_policy.dart';
+import 'managed_memory_settings.dart';
 import 'memory_capacity.dart';
 
 /// Small persistence bridge for wiring managed memory into Pyre's settings
@@ -25,6 +26,10 @@ class ManagedMemoryStoreBridge {
 
   MemoryCapacityTier get tier => _controller.tier;
   int get capacityTokens => _controller.capacityTokens;
+
+  /// Snapshot intended for AppStore/UI consumers. Returning a copy prevents a
+  /// widget from mutating persisted state without going through [setTier].
+  ManagedMemorySettings get settings => _controller.settings;
 
   void setTier(MemoryCapacityTier tier) {
     _controller.setTier(tier);
