@@ -50,6 +50,11 @@ jobs:
                   cap_end += 1
               s = s[:cap_start] + s[cap_end:]
 
+          stale_apply_comment = "/// Append a freshly-generated checkpoint to the chat's memory chain, then\n/// prune to [_kMaxRetainedCheckpoints] oldest-first. Checkpoints are\n/// append-only, so the OLDEST sit at the FRONT; dropping from there can never\n/// strand the recent valid set the runtime reads (the cap is an order of\n/// magnitude larger than [kMaxCheckpointsInPrompt]).\n"
+          managed_apply_comment = "/// Append a freshly-generated checkpoint through the managed-memory\n/// retention seam. Historical retention is capacity-aware (1M / 2M / 10M)\n/// rather than a fixed checkpoint-count cap.\n"
+          if stale_apply_comment in s:
+              s = s.replace(stale_apply_comment, managed_apply_comment, 1)
+
           if '_kMaxRetainedCheckpoints' in s:
               raise SystemExit('legacy fixed checkpoint cap still referenced')
           if managed_import not in s:
