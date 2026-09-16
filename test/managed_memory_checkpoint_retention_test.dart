@@ -70,5 +70,26 @@ void main() {
       expect(minimumChat.memoryCheckpoints.length, 10);
       expect(maximumChat.memoryCheckpoints.length, 50);
     });
+
+    test('capacity pruning never reintroduces branch-invalid checkpoints', () {
+      final chat = _chat('branch-validity');
+      chat.memoryCheckpoints.addAll(List.generate(12, _checkpoint));
+      final valid = chat.memoryCheckpoints.where((checkpoint) {
+        final index = int.parse(checkpoint.id.substring(3));
+        return index.isEven;
+      }).toList();
+
+      final retained = retainValidCheckpointsForManagedMemory(
+        chat,
+        valid,
+        settings: ManagedMemorySettings(capacityTokens: 1000000),
+        estimatedTokensPerCheckpoint: 100000,
+      );
+
+      expect(chat.memoryCheckpoints.length, 10);
+      expect(chat.memoryCheckpoints.first.id, 'mc-2');
+      expect(retained.map((checkpoint) => checkpoint.id),
+          ['mc-2', 'mc-4', 'mc-6', 'mc-8', 'mc-10']);
+    });
   });
 }
