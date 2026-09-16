@@ -1,0 +1,176 @@
+name: Final Managed Memory Integration
+
+on:
+  push:
+    branches:
+      - pyre-memory-1m-10m
+    paths:
+      - .github/workflows/managed-memory-final-integration.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: pyre-memory-1m-10m
+          fetch-depth: 0
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+
+      - name: Replace legacy memory settings screen and wire AppStore
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          app = Path('lib/state/app_store.dart')
+          s = app.read_text()
+          import_anchor = "import '../services/token_estimate.dart';\n"
+          assert import_anchor in s
+          if "managed_memory_app_store_adapter.dart" not in s:
+              s = s.replace(import_anchor, import_anchor + "import '../services/managed_memory_app_store_adapter.dart';\nimport '../services/memory_capacity.dart';\n")
+
+          marker = "  void updateMemorySettings(MemorySettings ms) {\n    memorySettings = ms;\n    _touchSettings();\n    _bump();\n  }"
+          assert marker in s
+          replacement = marker + "\n\n  MemoryCapacityTier get managedMemoryTier =>\n      ManagedMemoryAppStoreAdapter.fromSettingsJson(memorySettings.toJson()).tier;\n\n  int get managedMemoryCapacityTokens =>\n      ManagedMemoryAppStoreAdapter.fromSettingsJson(memorySettings.toJson()).capacityTokens;\n\n  void updateManagedMemoryTier(MemoryCapacityTier tier) {\n    final source = memorySettings.toJson();\n    final adapter = ManagedMemoryAppStoreAdapter.fromSettingsJson(source);\n    final merged = adapter.selectTier(tier, source);\n    memorySettings = MemorySettings.fromJson(merged);\n    _touchSettings();\n    _bump();\n  }"
+          s = s.replace(marker, replacement, 1)
+          app.write_text(s)
+
+          models = Path('lib/models/models.dart')
+          m = models.read_text()
+          assert "class MemorySettings" in m
+          class_start = m.index('class MemorySettings')
+          class_end = m.index('\n}\n', class_start) + 3
+          old = m[class_start:class_end]
+          assert 'memoryLimit' in old and 'summaryPrompt' in old and 'autoEvery' in old
+          new = '''class MemorySettings {
+            int managedMemoryTokens;
+
+            MemorySettings({this.managedMemoryTokens = 2000000});
+
+            factory MemorySettings.fromJson(Map<String, dynamic> j) {
+              final raw = j['managedMemoryTokens'];
+              final value = raw is num ? raw.toInt() : 2000000;
+              final supported = <int>[1000000, 2000000, 10000000];
+              var nearest = supported.first;
+              var distance = (value - nearest).abs();
+              for (final candidate in supported.skip(1)) {
+                final d = (value - candidate).abs();
+                if (d < distance) {
+                  nearest = candidate;
+                  distance = d;
+                }
+              }
+              return MemorySettings(managedMemoryTokens: nearest);
+            }
+
+            Map<String, dynamic> toJson() => {
+                  'managedMemoryTokens': managedMemoryTokens,
+                };
+          }
+          '''
+          m = m[:class_start] + new + m[class_end:]
+          models.write_text(m)
+
+          screen = Path('lib/screens/long_term_memory_screen.dart')
+          screen.write_text('''import 'package:flutter/material.dart';
+          import 'package:provider/provider.dart';
+
+          import '../services/memory_capacity.dart';
+          import '../state/app_store.dart';
+          import '../theme.dart';
+
+          class LongTermMemoryScreen extends StatelessWidget {
+            const LongTermMemoryScreen({super.key});
+
+            @override
+            Widget build(BuildContext context) {
+              final store = context.watch<AppStore>();
+              final selected = store.managedMemoryTier;
+              return Scaffold(
+                appBar: AppBar(title: const Text('Memoria')),
+                body: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    const Text(
+                      'Capacidad general de memoria',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Selecciona cuánta memoria histórica administrará Pyre. 2M es la configuración estándar.',
+                      style: TextStyle(color: EmberColors.textMid),
+                    ),
+                    const SizedBox(height: 20),
+                    SegmentedButton<MemoryCapacityTier>(
+                      segments: const [
+                        ButtonSegment(value: MemoryCapacityTier.minimum, label: Text('1M')),
+                        ButtonSegment(value: MemoryCapacityTier.standard, label: Text('2M · Estándar')),
+                        ButtonSegment(value: MemoryCapacityTier.maximum, label: Text('10M')),
+                      ],
+                      selected: {selected},
+                      showSelectedIcon: true,
+                      onSelectionChanged: (values) {
+                        if (values.isNotEmpty) store.updateManagedMemoryTier(values.first);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          selected == MemoryCapacityTier.minimum
+                              ? '1M · Memoria mínima'
+                              : selected == MemoryCapacityTier.maximum
+                                  ? '10M · Memoria máxima'
+                                  : '2M · Memoria estándar y predeterminada',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          }
+          ''')
+          PY
+
+      - name: Verify legacy configuration is gone
+        run: |
+          ! grep -q "Auto-checkpoint frequency" lib/screens/long_term_memory_screen.dart
+          ! grep -q "Target words per checkpoint" lib/screens/long_term_memory_screen.dart
+          ! grep -q "Summary Prompt" lib/screens/long_term_memory_screen.dart
+          grep -q "1M" lib/screens/long_term_memory_screen.dart
+          grep -q "2M · Estándar" lib/screens/long_term_memory_screen.dart
+          grep -q "10M" lib/screens/long_term_memory_screen.dart
+          grep -q "managedMemoryTokens" lib/models/models.dart
+
+      - name: Format
+        run: dart format lib/models/models.dart lib/state/app_store.dart lib/screens/long_term_memory_screen.dart
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze integration
+        run: flutter analyze lib/screens/long_term_memory_screen.dart lib/state/app_store.dart lib/models/models.dart lib/services/managed_memory_app_store_adapter.dart lib/services/managed_memory_policy.dart
+
+      - name: Run managed memory tests
+        run: flutter test test/managed_memory_settings_test.dart test/managed_memory_controller_test.dart test/managed_memory_app_store_adapter_test.dart test/managed_memory_release_readiness_test.dart
+
+      - name: Commit final integration
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add lib/models/models.dart lib/state/app_store.dart lib/screens/long_term_memory_screen.dart
+          if ! git diff --cached --quiet; then
+            git commit -m "Make managed memory the general Pyre memory configuration"
+            git push origin HEAD:pyre-memory-1m-10m
+          fi
