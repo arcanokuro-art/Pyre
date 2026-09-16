@@ -144,6 +144,7 @@ class ApiProvider {
   String apiKey;
   String model;
   Map<String, String> headers;
+
   /// Extra fields spread into the chat-completions request body, on
   /// top of the sampling payload. Lets the user pass provider-
   /// specific params Pyre doesn't model directly — most commonly the
@@ -214,8 +215,8 @@ class ApiProvider {
     this.warmUpOnLaunch = true,
     this.format = ApiFormat.openai,
     this.mtime = 0,
-  })  : headers = headers ?? <String, String>{},
-        extraParams = extraParams ?? <String, dynamic>{};
+  }) : headers = headers ?? <String, String>{},
+       extraParams = extraParams ?? <String, dynamic>{};
 
   factory ApiProvider.fromJson(Map<String, dynamic> j) {
     final p = ApiProvider(
@@ -232,8 +233,9 @@ class ApiProvider {
       headers: _jStringMap(j['headers']),
       extraParams: (j['extraParams'] as Map?)?.cast<String, dynamic>() ?? {},
       // Wave CY.18.267: missing / unknown value → none (today's behaviour).
-      promptPostProcessing:
-          promptPostProcessingFromString(j['promptPostProcessing'] as String?),
+      promptPostProcessing: promptPostProcessingFromString(
+        j['promptPostProcessing'] as String?,
+      ),
       contextWindow: (j['contextWindow'] as num?)?.toInt(),
       // Wave CY.18.120: default true so pre-Wave backups (no field) opt
       // every localhost provider into warm-up automatically.
@@ -257,34 +259,35 @@ class ApiProvider {
   /// OS-secure storage instead (lib/services/secure_keys.dart).
   /// Backup exports can opt in explicitly when the user has been warned.
   Map<String, dynamic> toJson({bool includeApiKey = false}) => {
-        'id': id,
-        'name': name,
-        'kind': switch (kind) {
-          ProviderKind.localhost => 'localhost',
-          ProviderKind.proxy => 'proxy',
-          ProviderKind.external_ => 'external',
-        },
-        'baseUrl': baseUrl,
-        if (includeApiKey) 'apiKey': apiKey,
-        'model': model,
-        'headers': headers,
-        if (extraParams.isNotEmpty) 'extraParams': extraParams,
-        // Wave CY.18.267: only emit when set away from the default so a
-        // default provider's JSON stays byte-identical to pre-Wave backups.
-        if (promptPostProcessing != PromptPostProcessing.none)
-          'promptPostProcessing':
-              promptPostProcessingToString(promptPostProcessing),
-        if (contextWindow != null) 'contextWindow': contextWindow,
-        // Wave CY.18.120: always persisted (cheap bool) so the user's
-        // explicit on/off choice round-trips through backups.
-        'warmUpOnLaunch': warmUpOnLaunch,
-        // Pyre 1.1.3: only emit when non-default so existing providers' JSON
-        // stays byte-identical to pre-1.1.3 backups.
-        if (format != ApiFormat.openai) 'format': apiFormatToString(format),
-        // Wave CY.18.258: LWW clock for encrypted key-sync. Cheap int,
-        // always persisted so it survives backups.
-        'mtime': mtime,
-      };
+    'id': id,
+    'name': name,
+    'kind': switch (kind) {
+      ProviderKind.localhost => 'localhost',
+      ProviderKind.proxy => 'proxy',
+      ProviderKind.external_ => 'external',
+    },
+    'baseUrl': baseUrl,
+    if (includeApiKey) 'apiKey': apiKey,
+    'model': model,
+    'headers': headers,
+    if (extraParams.isNotEmpty) 'extraParams': extraParams,
+    // Wave CY.18.267: only emit when set away from the default so a
+    // default provider's JSON stays byte-identical to pre-Wave backups.
+    if (promptPostProcessing != PromptPostProcessing.none)
+      'promptPostProcessing': promptPostProcessingToString(
+        promptPostProcessing,
+      ),
+    if (contextWindow != null) 'contextWindow': contextWindow,
+    // Wave CY.18.120: always persisted (cheap bool) so the user's
+    // explicit on/off choice round-trips through backups.
+    'warmUpOnLaunch': warmUpOnLaunch,
+    // Pyre 1.1.3: only emit when non-default so existing providers' JSON
+    // stays byte-identical to pre-1.1.3 backups.
+    if (format != ApiFormat.openai) 'format': apiFormatToString(format),
+    // Wave CY.18.258: LWW clock for encrypted key-sync. Cheap int,
+    // always persisted so it survives backups.
+    'mtime': mtime,
+  };
 
   /// Wave CY.18.258: synced form for native key-sync — config in cleartext
   /// plus the API key as an encrypted envelope (never plaintext). An empty
@@ -320,18 +323,22 @@ class Character {
   /// Free-form notes from the card author, visible to importers but never
   /// fed to the LLM. Round-tripped through PNG export so credits survive.
   String creatorNotes;
+
   /// 0.0 = laconic, 1.0 = chatty. Some frontends weight reply length on
   /// this; Pyre doesn't act on it directly but preserves the field.
   double? talkativeness;
+
   /// Optional system-style prompt injected `depth_prompt_depth` messages
   /// before the tail of the chat (useful for "keep this in mind right
   /// before responding"-style nudges).
   String depthPrompt;
   int depthPromptDepth;
+
   /// Whatever the card author put in `extensions` — opaque to Pyre, but
   /// we serialise it untouched so Risu / ST / Chub-specific extension
   /// tags round-trip cleanly.
   Map<String, dynamic> extensions;
+
   /// Wave CA: lorebooks that auto-activate whenever this character is
   /// in a chat. Combined additively with the chat's own per-chat
   /// lorebook list and the active persona's bound lorebooks during
@@ -358,6 +365,7 @@ class Character {
   String? avatarOriginal;
   int createdAt;
   int updatedAt;
+
   /// Wave CY.18.36: true when this character was built via the Pyre
   /// Character Creator (the AI-assisted flow). False for imports
   /// (PNG / JSON / URL / chub) and for legacy characters from before
@@ -365,16 +373,19 @@ class Character {
   /// here vs imported). Used by the Profile screen's "Cards created"
   /// stat to count first-party creations.
   bool createdInPyre;
+
   /// Wave CY.18.38: starred by the user. Favorites float to a
   /// dedicated section at the top of the Characters list and survive
   /// folder/tag/sort filters (they appear within whatever set the
   /// filters produced). Persisted across sessions and backups.
   bool favorite;
+
   /// Customization audit follow-up (2026-07-15, owner-approved): per-character
   /// chat-bubble tint (ARGB int). null = use the global aiBubbleColor — so a
   /// group chat can tell speakers apart at a glance. Omit-at-default keeps
   /// existing cards byte-identical; synced like every other card field.
   int? bubbleColor;
+
   /// Wave CY.18.62: LAN sync metadata. `mtime` = millis-since-epoch
   /// of the last write that materially changed this record (set by
   /// the StoreBackend layer in Wave 63 — for now it just rides along
@@ -417,94 +428,94 @@ class Character {
     this.favorite = false,
     this.mtime = 0,
     this.deleted = false,
-  })  : alternateGreetings = alternateGreetings ?? [],
-        tags = tags ?? [],
-        extensions = extensions ?? <String, dynamic>{},
-        lorebookIds = lorebookIds ?? [],
-        gallery = gallery ?? [],
-        createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
+  }) : alternateGreetings = alternateGreetings ?? [],
+       tags = tags ?? [],
+       extensions = extensions ?? <String, dynamic>{},
+       lorebookIds = lorebookIds ?? [],
+       gallery = gallery ?? [],
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
 
   factory Character.fromJson(Map<String, dynamic> j) => Character(
-        id: j['id'] as String,
-        name: (j['name'] as String?) ?? 'Unnamed',
-        tagline: j['tagline'] as String?,
-        description: (j['description'] as String?) ?? '',
-        personality: (j['personality'] as String?) ?? '',
-        scenario: (j['scenario'] as String?) ?? '',
-        firstMes: (j['firstMes'] as String?) ?? '',
-        mesExample: (j['mesExample'] as String?) ?? '',
-        systemPrompt: (j['systemPrompt'] as String?) ?? '',
-        postHistoryInstructions:
-            (j['postHistoryInstructions'] as String?) ?? '',
-        alternateGreetings: _jStringList(j['alternateGreetings']),
-        tags: _jStringList(j['tags']),
-        creator: (j['creator'] as String?) ?? '',
-        characterVersion: (j['characterVersion'] as String?) ?? '1.0',
-        creatorNotes: (j['creatorNotes'] as String?) ?? '',
-        talkativeness: (j['talkativeness'] as num?)?.toDouble(),
-        depthPrompt: (j['depthPrompt'] as String?) ?? '',
-        depthPromptDepth: _jInt(j['depthPromptDepth']) ?? 4,
-        extensions: (j['extensions'] as Map?)?.cast<String, dynamic>() ??
-            <String, dynamic>{},
-        lorebookIds: _jStringList(j['lorebookIds']),
-        // Wave CY.18.127: tolerate absent/null gallery → [].
-        gallery: _jStringList(j['gallery']),
-        avatar: j['avatar'] as String?,
-        // Non-destructive Recrop: absent/null → null (pre-feature cards).
-        avatarOriginal: j['avatarOriginal'] as String?,
-        createdAt: _jTimestamp(j['createdAt']),
-        updatedAt: _jTimestamp(j['updatedAt']),
-        // Wave CY.18.36: legacy chars (no field in JSON) default false —
-        // we can't tell post-hoc whether they were Creator-built or
-        // imported, and false is the conservative answer for the
-        // "Cards created" stat.
-        createdInPyre: (j['createdInPyre'] as bool?) ?? false,
-        bubbleColor: _jInt(j['bubbleColor']),
-        // Wave CY.18.38: legacy chars default to not-favorited.
-        favorite: (j['favorite'] as bool?) ?? false,
-        // Wave CY.18.62: legacy chars default mtime=0 (migration stamps now()).
-        mtime: _jInt(j['mtime']) ?? 0,
-        deleted: (j['deleted'] as bool?) ?? false,
-      );
+    id: j['id'] as String,
+    name: (j['name'] as String?) ?? 'Unnamed',
+    tagline: j['tagline'] as String?,
+    description: (j['description'] as String?) ?? '',
+    personality: (j['personality'] as String?) ?? '',
+    scenario: (j['scenario'] as String?) ?? '',
+    firstMes: (j['firstMes'] as String?) ?? '',
+    mesExample: (j['mesExample'] as String?) ?? '',
+    systemPrompt: (j['systemPrompt'] as String?) ?? '',
+    postHistoryInstructions: (j['postHistoryInstructions'] as String?) ?? '',
+    alternateGreetings: _jStringList(j['alternateGreetings']),
+    tags: _jStringList(j['tags']),
+    creator: (j['creator'] as String?) ?? '',
+    characterVersion: (j['characterVersion'] as String?) ?? '1.0',
+    creatorNotes: (j['creatorNotes'] as String?) ?? '',
+    talkativeness: (j['talkativeness'] as num?)?.toDouble(),
+    depthPrompt: (j['depthPrompt'] as String?) ?? '',
+    depthPromptDepth: _jInt(j['depthPromptDepth']) ?? 4,
+    extensions:
+        (j['extensions'] as Map?)?.cast<String, dynamic>() ??
+        <String, dynamic>{},
+    lorebookIds: _jStringList(j['lorebookIds']),
+    // Wave CY.18.127: tolerate absent/null gallery → [].
+    gallery: _jStringList(j['gallery']),
+    avatar: j['avatar'] as String?,
+    // Non-destructive Recrop: absent/null → null (pre-feature cards).
+    avatarOriginal: j['avatarOriginal'] as String?,
+    createdAt: _jTimestamp(j['createdAt']),
+    updatedAt: _jTimestamp(j['updatedAt']),
+    // Wave CY.18.36: legacy chars (no field in JSON) default false —
+    // we can't tell post-hoc whether they were Creator-built or
+    // imported, and false is the conservative answer for the
+    // "Cards created" stat.
+    createdInPyre: (j['createdInPyre'] as bool?) ?? false,
+    bubbleColor: _jInt(j['bubbleColor']),
+    // Wave CY.18.38: legacy chars default to not-favorited.
+    favorite: (j['favorite'] as bool?) ?? false,
+    // Wave CY.18.62: legacy chars default mtime=0 (migration stamps now()).
+    mtime: _jInt(j['mtime']) ?? 0,
+    deleted: (j['deleted'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'tagline': tagline,
-        'description': description,
-        'personality': personality,
-        'scenario': scenario,
-        'firstMes': firstMes,
-        'mesExample': mesExample,
-        'systemPrompt': systemPrompt,
-        'postHistoryInstructions': postHistoryInstructions,
-        'alternateGreetings': alternateGreetings,
-        'tags': tags,
-        'creator': creator,
-        'characterVersion': characterVersion,
-        'creatorNotes': creatorNotes,
-        if (talkativeness != null) 'talkativeness': talkativeness,
-        'depthPrompt': depthPrompt,
-        'depthPromptDepth': depthPromptDepth,
-        'extensions': extensions,
-        'lorebookIds': lorebookIds,
-        'gallery': gallery,
-        'avatar': avatar,
-        // Non-destructive Recrop: emit only when a recrop preserved an
-        // original (omit-when-null keeps the common case + old backups lean).
-        if (avatarOriginal != null) 'avatarOriginal': avatarOriginal,
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-        if (createdInPyre) 'createdInPyre': true,
-        if (bubbleColor != null) 'bubbleColor': bubbleColor,
-        if (favorite) 'favorite': true,
-        // Wave CY.18.62: sync metadata. mtime always serialised so
-        // pre-migration files get progressively stamped on each save.
-        // deleted only emitted when true (saves bytes on the common case).
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-      };
+    'id': id,
+    'name': name,
+    'tagline': tagline,
+    'description': description,
+    'personality': personality,
+    'scenario': scenario,
+    'firstMes': firstMes,
+    'mesExample': mesExample,
+    'systemPrompt': systemPrompt,
+    'postHistoryInstructions': postHistoryInstructions,
+    'alternateGreetings': alternateGreetings,
+    'tags': tags,
+    'creator': creator,
+    'characterVersion': characterVersion,
+    'creatorNotes': creatorNotes,
+    if (talkativeness != null) 'talkativeness': talkativeness,
+    'depthPrompt': depthPrompt,
+    'depthPromptDepth': depthPromptDepth,
+    'extensions': extensions,
+    'lorebookIds': lorebookIds,
+    'gallery': gallery,
+    'avatar': avatar,
+    // Non-destructive Recrop: emit only when a recrop preserved an
+    // original (omit-when-null keeps the common case + old backups lean).
+    if (avatarOriginal != null) 'avatarOriginal': avatarOriginal,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+    if (createdInPyre) 'createdInPyre': true,
+    if (bubbleColor != null) 'bubbleColor': bubbleColor,
+    if (favorite) 'favorite': true,
+    // Wave CY.18.62: sync metadata. mtime always serialised so
+    // pre-migration files get progressively stamped on each save.
+    // deleted only emitted when true (saves bytes on the common case).
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -515,6 +526,7 @@ class Persona {
   String name;
   String? tagline;
   String description;
+
   /// Wave CX.1: optional dialogue examples — first-person dialogue /
   /// action samples in the user's voice that the model uses to lock the
   /// persona's speech rhythm. Populated automatically from a source
@@ -524,25 +536,30 @@ class Persona {
   /// authored from scratch or the source had no example dialogue.
   String dialogueExamples;
   String? avatar;
+
   /// Non-destructive Recrop: the UNCROPPED full image. See
   /// [Character.avatarOriginal] — identical semantics (`avatar` = displayed
   /// crop or full; `avatarOriginal` = preserved original, null when never
   /// cropped). Omitted from JSON when null.
   String? avatarOriginal;
+
   /// Wave CA: lorebooks that auto-activate when this persona is the
   /// active user-side in a chat. Same semantics as Character.lorebookIds
   /// — additive with per-chat books and character-bound books, deduped
   /// by id during injection.
   List<String> lorebookIds;
+
   /// Wave CY.18.127: gallery of extra images — same shape + semantics as
   /// `Character.gallery` (ordered `pyre://attachment/<sha256>` refs).
   /// Copied (pointers, not bytes) when a character is added as a persona.
   List<String> gallery;
   int createdAt;
   int updatedAt;
+
   /// Wave CY.18.38: starred by the user. Mirrors Character.favorite —
   /// favorites float to the top of the Personas list.
   bool favorite;
+
   /// Wave CY.18.62: LAN sync metadata. See Character.mtime for rationale.
   int mtime;
   bool deleted;
@@ -562,63 +579,62 @@ class Persona {
     this.favorite = false,
     this.mtime = 0,
     this.deleted = false,
-  })  : lorebookIds = lorebookIds ?? [],
-        gallery = gallery ?? [],
-        createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
+  }) : lorebookIds = lorebookIds ?? [],
+       gallery = gallery ?? [],
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
 
   factory Persona.fromJson(Map<String, dynamic> j) => Persona(
-        id: j['id'] as String,
-        // Wave CY.18.44: defend against empty-string name (hand-edited
-        // backups, or a chub.ai export that gave us `name: ""`). Pre-Wave
-        // the picker tried to render a 0-width chip and crashed the
-        // chat header. Falling back to "You" matches the default fresh-
-        // install persona and keeps the UI navigable so the user can
-        // delete/rename the malformed persona instead of being stuck.
-        //
-        // Wave CY.18.54: audit caught that the original Wave 44 fix
-        // checked `trim().isNotEmpty` but then assigned the UNTRIMMED
-        // value — so a whitespace-only name like `"   "` still passed
-        // through. Trim BOTH in the gate AND in the value so we never
-        // store a name that renders as zero width.
-        name: () {
-          final raw = (j['name'] as String?)?.trim();
-          return (raw == null || raw.isEmpty) ? 'You' : raw;
-        }(),
-        tagline: j['tagline'] as String?,
-        description: (j['description'] as String?) ?? '',
-        dialogueExamples: (j['dialogueExamples'] as String?) ?? '',
-        avatar: j['avatar'] as String?,
-        // Non-destructive Recrop: absent/null → null (pre-feature personas).
-        avatarOriginal: j['avatarOriginal'] as String?,
-        lorebookIds: _jStringList(j['lorebookIds']),
-        // Wave CY.18.127: tolerate absent/null gallery → [].
-        gallery: _jStringList(j['gallery']),
-        createdAt: _jTimestamp(j['createdAt']),
-        updatedAt: _jTimestamp(j['updatedAt']),
-        favorite: (j['favorite'] as bool?) ?? false,
-        mtime: _jInt(j['mtime']) ?? 0,
-        deleted: (j['deleted'] as bool?) ?? false,
-      );
+    id: j['id'] as String,
+    // Wave CY.18.44: defend against empty-string name (hand-edited
+    // backups, or a chub.ai export that gave us `name: ""`). Pre-Wave
+    // the picker tried to render a 0-width chip and crashed the
+    // chat header. Falling back to "You" matches the default fresh-
+    // install persona and keeps the UI navigable so the user can
+    // delete/rename the malformed persona instead of being stuck.
+    //
+    // Wave CY.18.54: audit caught that the original Wave 44 fix
+    // checked `trim().isNotEmpty` but then assigned the UNTRIMMED
+    // value — so a whitespace-only name like `"   "` still passed
+    // through. Trim BOTH in the gate AND in the value so we never
+    // store a name that renders as zero width.
+    name: () {
+      final raw = (j['name'] as String?)?.trim();
+      return (raw == null || raw.isEmpty) ? 'You' : raw;
+    }(),
+    tagline: j['tagline'] as String?,
+    description: (j['description'] as String?) ?? '',
+    dialogueExamples: (j['dialogueExamples'] as String?) ?? '',
+    avatar: j['avatar'] as String?,
+    // Non-destructive Recrop: absent/null → null (pre-feature personas).
+    avatarOriginal: j['avatarOriginal'] as String?,
+    lorebookIds: _jStringList(j['lorebookIds']),
+    // Wave CY.18.127: tolerate absent/null gallery → [].
+    gallery: _jStringList(j['gallery']),
+    createdAt: _jTimestamp(j['createdAt']),
+    updatedAt: _jTimestamp(j['updatedAt']),
+    favorite: (j['favorite'] as bool?) ?? false,
+    mtime: _jInt(j['mtime']) ?? 0,
+    deleted: (j['deleted'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'tagline': tagline,
-        'description': description,
-        if (dialogueExamples.isNotEmpty)
-          'dialogueExamples': dialogueExamples,
-        'avatar': avatar,
-        // Non-destructive Recrop: emit only when a recrop preserved an original.
-        if (avatarOriginal != null) 'avatarOriginal': avatarOriginal,
-        'lorebookIds': lorebookIds,
-        'gallery': gallery,
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-        if (favorite) 'favorite': true,
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-      };
+    'id': id,
+    'name': name,
+    'tagline': tagline,
+    'description': description,
+    if (dialogueExamples.isNotEmpty) 'dialogueExamples': dialogueExamples,
+    'avatar': avatar,
+    // Non-destructive Recrop: emit only when a recrop preserved an original.
+    if (avatarOriginal != null) 'avatarOriginal': avatarOriginal,
+    'lorebookIds': lorebookIds,
+    'gallery': gallery,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+    if (favorite) 'favorite': true,
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -631,10 +647,12 @@ class Persona {
 class Folder {
   String id;
   String name;
+
   /// Ids of characters in this folder. Stored as a List for JSON
   /// compatibility; treat as a set conceptually (the UI dedupes on
   /// add).
   List<String> characterIds;
+
   /// 2026-07-13 (community request): folders now organise Personas and
   /// Lorebooks too — one folder can group all three kinds (e.g. a whole
   /// campaign: its cast + your persona + its world book). Same List-as-set
@@ -644,6 +662,7 @@ class Folder {
   List<String> lorebookIds;
   int createdAt;
   int updatedAt;
+
   /// Mega-audit 2026-06-05 (F2): LAN sync metadata. See Character.mtime for
   /// rationale — folders are user-authored content (id → name + membership)
   /// and now ride the synced collection set. `deleted` is the tombstone
@@ -663,35 +682,35 @@ class Folder {
     int? updatedAt,
     this.mtime = 0,
     this.deleted = false,
-  })  : characterIds = characterIds ?? [],
-        personaIds = personaIds ?? [],
-        lorebookIds = lorebookIds ?? [],
-        createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
+  }) : characterIds = characterIds ?? [],
+       personaIds = personaIds ?? [],
+       lorebookIds = lorebookIds ?? [],
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
 
   factory Folder.fromJson(Map<String, dynamic> j) => Folder(
-        id: j['id'] as String,
-        name: (j['name'] as String?) ?? 'Untitled folder',
-        characterIds: _jStringList(j['characterIds']),
-        personaIds: _jStringList(j['personaIds']),
-        lorebookIds: _jStringList(j['lorebookIds']),
-        createdAt: _jTimestamp(j['createdAt']),
-        updatedAt: _jTimestamp(j['updatedAt']),
-        mtime: _jInt(j['mtime']) ?? 0,
-        deleted: (j['deleted'] as bool?) ?? false,
-      );
+    id: j['id'] as String,
+    name: (j['name'] as String?) ?? 'Untitled folder',
+    characterIds: _jStringList(j['characterIds']),
+    personaIds: _jStringList(j['personaIds']),
+    lorebookIds: _jStringList(j['lorebookIds']),
+    createdAt: _jTimestamp(j['createdAt']),
+    updatedAt: _jTimestamp(j['updatedAt']),
+    mtime: _jInt(j['mtime']) ?? 0,
+    deleted: (j['deleted'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'characterIds': characterIds,
-        if (personaIds.isNotEmpty) 'personaIds': personaIds,
-        if (lorebookIds.isNotEmpty) 'lorebookIds': lorebookIds,
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-      };
+    'id': id,
+    'name': name,
+    'characterIds': characterIds,
+    if (personaIds.isNotEmpty) 'personaIds': personaIds,
+    if (lorebookIds.isNotEmpty) 'lorebookIds': lorebookIds,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -715,12 +734,12 @@ MessageKind _kindFromString(String? s) {
 }
 
 String _kindToString(MessageKind k) => switch (k) {
-      MessageKind.user => 'user',
-      MessageKind.ooc => 'ooc',
-      MessageKind.scene => 'scene',
-      MessageKind.system => 'system',
-      MessageKind.char => 'char',
-    };
+  MessageKind.user => 'user',
+  MessageKind.ooc => 'ooc',
+  MessageKind.scene => 'scene',
+  MessageKind.system => 'system',
+  MessageKind.char => 'char',
+};
 
 class Message {
   String id;
@@ -736,11 +755,13 @@ class Message {
   // full chain of messages that originally followed this one — themselves
   // possibly carrying their own downstreamByVariant for nested branches.
   Map<int, List<Message>> downstreamByVariant;
+
   /// Wave CY.18.62: sync metadata. See Character.mtime for rationale. For
   /// messages this is per-message granularity — editing one message in a
   /// long chat doesn't have to push the whole chat object.
   int mtime;
   bool deleted;
+
   /// 2026-07-05 (Gui, "grande bug"): when set on an OOC note, binds it to
   /// ONE variant of the chat's first character message (the greeting). The
   /// Fill-In scenario note carries the variant it generated, so it shows —
@@ -759,14 +780,13 @@ class Message {
     Map<int, List<Message>>? downstreamByVariant,
     this.mtime = 0,
     this.deleted = false,
-  })  : variants = variants ?? [''],
-        createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        downstreamByVariant = downstreamByVariant ?? {};
+  }) : variants = variants ?? [''],
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       downstreamByVariant = downstreamByVariant ?? {};
 
-  String get text =>
-      (selectedVariant >= 0 && selectedVariant < variants.length)
-          ? variants[selectedVariant]
-          : (variants.isNotEmpty ? variants[0] : '');
+  String get text => (selectedVariant >= 0 && selectedVariant < variants.length)
+      ? variants[selectedVariant]
+      : (variants.isNotEmpty ? variants[0] : '');
 
   /// Maximum depth of nested downstreamByVariant snapshots we'll parse.
   /// Realistic chub-style branching produces a handful of levels; anything
@@ -775,8 +795,7 @@ class Message {
   /// the limit rather than throwing so the rest of the backup still loads.
   static const int _maxDownstreamDepth = 32;
 
-  factory Message.fromJson(Map<String, dynamic> j) =>
-      _parseAt(j, 0);
+  factory Message.fromJson(Map<String, dynamic> j) => _parseAt(j, 0);
 
   static Message _parseAt(Map<String, dynamic> j, int depth) {
     // Downstream snapshots are stored as a map of string-encoded variant
@@ -789,8 +808,7 @@ class Message {
         if (idx == null || v is! List) return;
         ds[idx] = v
             .whereType<Map>()
-            .map((mm) =>
-                _parseAt(mm.cast<String, dynamic>(), depth + 1))
+            .map((mm) => _parseAt(mm.cast<String, dynamic>(), depth + 1))
             .toList();
       });
     }
@@ -828,21 +846,21 @@ class Message {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'kind': _kindToString(kind),
-        'characterId': characterId,
-        'variants': variants,
-        'selectedVariant': selectedVariant,
-        'createdAt': createdAt,
-        if (downstreamByVariant.isNotEmpty)
-          'downstreamByVariant': downstreamByVariant.map(
-            (k, v) => MapEntry(k.toString(), v.map((m) => m.toJson()).toList()),
-          ),
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-        // Omitted when null — legacy blobs stay byte-identical.
-        if (greetingVariant != null) 'greetingVariant': greetingVariant,
-      };
+    'id': id,
+    'kind': _kindToString(kind),
+    'characterId': characterId,
+    'variants': variants,
+    'selectedVariant': selectedVariant,
+    'createdAt': createdAt,
+    if (downstreamByVariant.isNotEmpty)
+      'downstreamByVariant': downstreamByVariant.map(
+        (k, v) => MapEntry(k.toString(), v.map((m) => m.toJson()).toList()),
+      ),
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+    // Omitted when null — legacy blobs stay byte-identical.
+    if (greetingVariant != null) 'greetingVariant': greetingVariant,
+  };
 }
 
 /// 2026-07-05 (Gui, "grande bug"): true when [m] is a Fill-In scenario note
@@ -909,13 +927,16 @@ bool auxNoteShowsBranchChip(Message m) =>
 class MemoryCheckpoint {
   String id;
   String summary;
+
   /// Index into `Chat.messages` (in the current branch's linearised
   /// view) where the summarisation cut off. Inclusive on the lower
   /// bound — messages [0..anchorMessageIdx] are "covered" by this
   /// checkpoint; the next checkpoint folds in `[lastAnchor+1..nextAnchor]`.
   int anchorMessageIdx;
+
   /// Deterministic branch fingerprint — see class-level docs.
   String pathHash;
+
   /// Content fingerprint of the covered messages [0..anchorMessageIdx] at
   /// creation (audit round 12/14 context-loss fix). A checkpoint is valid only
   /// if this ALSO matches the current content — so an in-place EDIT / Continue
@@ -924,6 +945,7 @@ class MemoryCheckpoint {
   /// services/chat_fingerprint.dart (computeContentHash).
   String contentHash;
   int createdAt;
+
   /// Wave CY.18.62: LAN sync metadata. See Character.mtime for rationale.
   int mtime;
   bool deleted;
@@ -939,29 +961,28 @@ class MemoryCheckpoint {
     this.deleted = false,
   }) : createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch;
 
-  factory MemoryCheckpoint.fromJson(Map<String, dynamic> j) =>
-      MemoryCheckpoint(
-        id: (j['id'] as String?) ?? newId('mc'),
-        summary: (j['summary'] as String?) ?? '',
-        anchorMessageIdx: _jInt(j['anchorMessageIdx']) ?? 0,
-        pathHash: (j['pathHash'] as String?) ?? '',
-        contentHash: (j['contentHash'] as String?) ?? '',
-        createdAt: _jInt(j['createdAt']),
-        mtime: _jInt(j['mtime']) ?? 0,
-        deleted: (j['deleted'] as bool?) ?? false,
-      );
+  factory MemoryCheckpoint.fromJson(Map<String, dynamic> j) => MemoryCheckpoint(
+    id: (j['id'] as String?) ?? newId('mc'),
+    summary: (j['summary'] as String?) ?? '',
+    anchorMessageIdx: _jInt(j['anchorMessageIdx']) ?? 0,
+    pathHash: (j['pathHash'] as String?) ?? '',
+    contentHash: (j['contentHash'] as String?) ?? '',
+    createdAt: _jInt(j['createdAt']),
+    mtime: _jInt(j['mtime']) ?? 0,
+    deleted: (j['deleted'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'summary': summary,
-        'anchorMessageIdx': anchorMessageIdx,
-        'pathHash': pathHash,
-        // Byte-clean back-compat: legacy/empty checkpoints serialise identically.
-        if (contentHash.isNotEmpty) 'contentHash': contentHash,
-        'createdAt': createdAt,
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-      };
+    'id': id,
+    'summary': summary,
+    'anchorMessageIdx': anchorMessageIdx,
+    'pathHash': pathHash,
+    // Byte-clean back-compat: legacy/empty checkpoints serialise identically.
+    if (contentHash.isNotEmpty) 'contentHash': contentHash,
+    'createdAt': createdAt,
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+  };
 }
 
 /// Wave CY.18.176: A single future plot beat in the Story Roadmap (Script).
@@ -972,16 +993,24 @@ class StoryBeat {
   String text;
   bool done;
   int mtime;
-  StoryBeat({required this.id, required this.text, this.done = false, this.mtime = 0});
+  StoryBeat({
+    required this.id,
+    required this.text,
+    this.done = false,
+    this.mtime = 0,
+  });
   factory StoryBeat.fromJson(Map<String, dynamic> j) => StoryBeat(
-        id: (j['id'] as String?) ?? newId('beat'),
-        text: ((j['text'] as String?) ?? '').trim(),
-        done: (j['done'] as bool?) ?? false,
-        mtime: _jInt(j['mtime']) ?? 0,
-      );
+    id: (j['id'] as String?) ?? newId('beat'),
+    text: ((j['text'] as String?) ?? '').trim(),
+    done: (j['done'] as bool?) ?? false,
+    mtime: _jInt(j['mtime']) ?? 0,
+  );
   Map<String, dynamic> toJson() => {
-        'id': id, 'text': text, if (done) 'done': true, 'mtime': mtime,
-      };
+    'id': id,
+    'text': text,
+    if (done) 'done': true,
+    'mtime': mtime,
+  };
   StoryBeat clone() => StoryBeat(id: id, text: text, done: done, mtime: mtime);
 }
 
@@ -990,6 +1019,7 @@ class Chat {
   List<String> characterIds;
   Map<String, Character> characterSnapshots; // frozen per chat
   String? personaId;
+
   /// Persona party (2026-07): the roster of the user's OWN personas active in
   /// this chat. When it holds >1 id the user's side is a GROUP — every
   /// persona's card feeds the prompt (via `buildJointPersonaBlock`) and the
@@ -999,6 +1029,7 @@ class Chat {
   /// existing chat stays byte-identical.
   List<String> personaIds;
   List<String> attachedLorebookIds;
+
   /// Wave CD: book ids that come from a character or persona binding
   /// but the user has DISABLED for THIS specific chat. Used by
   /// `collectBoundLorebooks` to filter inherited entries before
@@ -1012,6 +1043,7 @@ class Chat {
   List<String> disabledInheritedLorebookIds;
   String? presetId;
   List<Message> messages;
+
   /// Wave CY.18: long-term memory is now a chain of branch-aware
   /// checkpoints instead of a single overwritten string. See
   /// [MemoryCheckpoint] for the data shape. The list is append-only
@@ -1024,26 +1056,31 @@ class Chat {
   /// `pathHash` (sentinel value treated as ALWAYS valid for any
   /// branch — see services/memory.dart).
   List<MemoryCheckpoint> memoryCheckpoints;
+
   /// Wave CY.16: per-chat opt-out for the long-term memory feature.
   /// When false, the auto-summariser doesn't fire and existing
   /// checkpoints aren't injected into the system prompt either.
   /// Manual "Summarise now" still works (lets the user generate a
   /// snapshot even with auto off).
   bool memoryEnabled;
+
   /// Wave CY.18.170: Live Sheet snapshots for this chat.
   /// Append-only during normal chat (the live-sheet service adds new
   /// entries as it tracks state changes). The latest snapshot is used
   /// for injection and display; older ones are kept for history.
   List<LiveSheetSnapshot> liveSheetSnapshots;
+
   /// Wave CY.18.170: per-chat opt-in for the Live Sheet feature.
   /// Defaults to false — the feature is off until the user enables it.
   bool liveSheetEnabled;
+
   /// Wave CY.18.176: Script — per-chat list of future plot beats the user
   /// plants. Active beats are injected into the model context with anti-rush
   /// framing so the AI builds toward them gradually.
   List<StoryBeat> storyBeats;
   int createdAt;
   int updatedAt;
+
   /// Wave CY.18.62: LAN sync metadata. See Character.mtime for rationale.
   /// Individual `Message`s carry their own mtime — the chat's mtime
   /// reflects edits to the CHAT envelope (members, persona, settings,
@@ -1081,6 +1118,7 @@ class Chat {
   // the only top-level user-created entity with no name, so multiple chats of
   // one character were indistinguishable. Mirrors CreatorSession.title.
   String? title;
+
   /// Party mode (2026-07): per-chat opt-in, GROUP chats only. When true, a
   /// fresh assistant turn voices the WHOLE party in one "scene" message
   /// instead of a single picked responder — see `buildChatPrompt`'s joint
@@ -1126,16 +1164,16 @@ class Chat {
     this.sceneLocation = '',
     this.title,
     this.partyMode = false,
-  })  : characterSnapshots = characterSnapshots ?? {},
-        personaIds = personaIds ?? [],
-        attachedLorebookIds = attachedLorebookIds ?? [],
-        disabledInheritedLorebookIds = disabledInheritedLorebookIds ?? [],
-        messages = messages ?? [],
-        memoryCheckpoints = memoryCheckpoints ?? [],
-        liveSheetSnapshots = liveSheetSnapshots ?? [],
-        storyBeats = storyBeats ?? [],
-        createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
+  }) : characterSnapshots = characterSnapshots ?? {},
+       personaIds = personaIds ?? [],
+       attachedLorebookIds = attachedLorebookIds ?? [],
+       disabledInheritedLorebookIds = disabledInheritedLorebookIds ?? [],
+       messages = messages ?? [],
+       memoryCheckpoints = memoryCheckpoints ?? [],
+       liveSheetSnapshots = liveSheetSnapshots ?? [],
+       storyBeats = storyBeats ?? [],
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
 
   String? get primaryCharacterId =>
       characterIds.isNotEmpty ? characterIds.first : null;
@@ -1166,8 +1204,7 @@ class Chat {
     if (rawSnaps != null) {
       rawSnaps.forEach((k, v) {
         if (v is Map) {
-          snaps[k as String] =
-              Character.fromJson(v.cast<String, dynamic>());
+          snaps[k as String] = Character.fromJson(v.cast<String, dynamic>());
         }
       });
     }
@@ -1179,21 +1216,22 @@ class Chat {
     final ckptsRaw = j['memoryCheckpoints'] as List?;
     final ckpts = ckptsRaw != null
         ? ckptsRaw
-            .whereType<Map>()
-            .map((m) =>
-                MemoryCheckpoint.fromJson(m.cast<String, dynamic>()))
-            .toList()
+              .whereType<Map>()
+              .map((m) => MemoryCheckpoint.fromJson(m.cast<String, dynamic>()))
+              .toList()
         : <MemoryCheckpoint>[];
     if (ckpts.isEmpty) {
       final legacySummary = j['memorySummary'] as String?;
       final legacyAnchor = _jInt(j['memoryAnchor']) ?? 0;
       if (legacySummary != null && legacySummary.trim().isNotEmpty) {
-        ckpts.add(MemoryCheckpoint(
-          id: newId('mc'),
-          summary: legacySummary,
-          anchorMessageIdx: legacyAnchor > 0 ? legacyAnchor - 1 : 0,
-          pathHash: '', // sentinel — always valid
-        ));
+        ckpts.add(
+          MemoryCheckpoint(
+            id: newId('mc'),
+            summary: legacySummary,
+            anchorMessageIdx: legacyAnchor > 0 ? legacyAnchor - 1 : 0,
+            pathHash: '', // sentinel — always valid
+          ),
+        );
       }
     }
     return Chat(
@@ -1203,10 +1241,12 @@ class Chat {
       personaId: j['personaId'] as String?,
       personaIds: _jStringList(j['personaIds']),
       attachedLorebookIds: _jStringList(j['attachedLorebookIds']),
-      disabledInheritedLorebookIds:
-          _jStringList(j['disabledInheritedLorebookIds']),
+      disabledInheritedLorebookIds: _jStringList(
+        j['disabledInheritedLorebookIds'],
+      ),
       presetId: j['presetId'] as String?,
-      messages: (j['messages'] as List?)
+      messages:
+          (j['messages'] as List?)
               ?.map((m) => Message.fromJson((m as Map).cast<String, dynamic>()))
               .toList() ??
           [],
@@ -1249,51 +1289,50 @@ class Chat {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'characterIds': characterIds,
-        'characterSnapshots':
-            characterSnapshots.map((k, v) => MapEntry(k, v.toJson())),
-        'personaId': personaId,
-        'attachedLorebookIds': attachedLorebookIds,
-        'disabledInheritedLorebookIds': disabledInheritedLorebookIds,
-        'presetId': presetId,
-        'messages': messages.map((m) => m.toJson()).toList(),
-        'memoryCheckpoints':
-            memoryCheckpoints.map((c) => c.toJson()).toList(),
-        'memoryEnabled': memoryEnabled,
-        'liveSheetSnapshots': liveSheetSnapshots.map((s) => s.toJson()).toList(),
-        'liveSheetEnabled': liveSheetEnabled,
-        'storyBeats': storyBeats.map((b) => b.toJson()).toList(),
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-        // Wave CY.18.156: only persist a per-chat background override when set
-        // (null = inherit the global ChatSettings → omit the keys entirely).
-        if (backgroundSource != null)
-          'backgroundSource': chatBgSourceToName(backgroundSource!),
-        if (customBackgroundDataUrl != null)
-          'customBackgroundDataUrl': customBackgroundDataUrl,
-        if (backgroundOpacity != null) 'backgroundOpacity': backgroundOpacity,
-        if (backgroundFit != null)
-          'backgroundFit': chatBgFitToName(backgroundFit!),
-        if (sceneBgFile != null) 'sceneBgFile': sceneBgFile,
-        if (sceneSetting != 'modern') 'sceneSetting': sceneSetting,
-        if (sceneLastClassifyMsgCount != 0)
-          'sceneLastClassifyMsgCount': sceneLastClassifyMsgCount,
-        if (sceneLastClassifyKey.isNotEmpty)
-          'sceneLastClassifyKey': sceneLastClassifyKey,
-        if (sceneLocation.isNotEmpty) 'sceneLocation': sceneLocation,
-        // Only persist a manual title when actually set (blank → omit so
-        // legacy/untitled chats stay byte-clean and unchanged).
-        if (title != null && title!.trim().isNotEmpty) 'title': title!.trim(),
-        // Party mode: only persist when on, so every chat that never touched
-        // this feature (the overwhelming default) stays byte-clean.
-        if (partyMode) 'partyMode': true,
-        // Persona party: only persist the roster when actually set, so every
-        // single-persona chat stays byte-clean.
-        if (personaIds.isNotEmpty) 'personaIds': personaIds,
-      };
+    'id': id,
+    'characterIds': characterIds,
+    'characterSnapshots': characterSnapshots.map(
+      (k, v) => MapEntry(k, v.toJson()),
+    ),
+    'personaId': personaId,
+    'attachedLorebookIds': attachedLorebookIds,
+    'disabledInheritedLorebookIds': disabledInheritedLorebookIds,
+    'presetId': presetId,
+    'messages': messages.map((m) => m.toJson()).toList(),
+    'memoryCheckpoints': memoryCheckpoints.map((c) => c.toJson()).toList(),
+    'memoryEnabled': memoryEnabled,
+    'liveSheetSnapshots': liveSheetSnapshots.map((s) => s.toJson()).toList(),
+    'liveSheetEnabled': liveSheetEnabled,
+    'storyBeats': storyBeats.map((b) => b.toJson()).toList(),
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+    // Wave CY.18.156: only persist a per-chat background override when set
+    // (null = inherit the global ChatSettings → omit the keys entirely).
+    if (backgroundSource != null)
+      'backgroundSource': chatBgSourceToName(backgroundSource!),
+    if (customBackgroundDataUrl != null)
+      'customBackgroundDataUrl': customBackgroundDataUrl,
+    if (backgroundOpacity != null) 'backgroundOpacity': backgroundOpacity,
+    if (backgroundFit != null) 'backgroundFit': chatBgFitToName(backgroundFit!),
+    if (sceneBgFile != null) 'sceneBgFile': sceneBgFile,
+    if (sceneSetting != 'modern') 'sceneSetting': sceneSetting,
+    if (sceneLastClassifyMsgCount != 0)
+      'sceneLastClassifyMsgCount': sceneLastClassifyMsgCount,
+    if (sceneLastClassifyKey.isNotEmpty)
+      'sceneLastClassifyKey': sceneLastClassifyKey,
+    if (sceneLocation.isNotEmpty) 'sceneLocation': sceneLocation,
+    // Only persist a manual title when actually set (blank → omit so
+    // legacy/untitled chats stay byte-clean and unchanged).
+    if (title != null && title!.trim().isNotEmpty) 'title': title!.trim(),
+    // Party mode: only persist when on, so every chat that never touched
+    // this feature (the overwhelming default) stays byte-clean.
+    if (partyMode) 'partyMode': true,
+    // Persona party: only persist the roster when actually set, so every
+    // single-persona chat stays byte-clean.
+    if (personaIds.isNotEmpty) 'personaIds': personaIds,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -1367,24 +1406,24 @@ class PromptBlock {
   });
 
   factory PromptBlock.fromJson(Map<String, dynamic> j) => PromptBlock(
-        id: (j['id'] as String?) ?? '',
-        name: (j['name'] as String?) ?? '',
-        content: (j['content'] as String?) ?? '',
-        enabled: (j['enabled'] as bool?) ?? true,
-        role: (j['role'] as String?) ?? 'system',
-        position: promptBlockPositionFromString(j['position'] as String?),
-        depth: (j['depth'] as num?)?.toInt(),
-      );
+    id: (j['id'] as String?) ?? '',
+    name: (j['name'] as String?) ?? '',
+    content: (j['content'] as String?) ?? '',
+    enabled: (j['enabled'] as bool?) ?? true,
+    role: (j['role'] as String?) ?? 'system',
+    position: promptBlockPositionFromString(j['position'] as String?),
+    depth: (j['depth'] as num?)?.toInt(),
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'content': content,
-        'enabled': enabled,
-        'role': role,
-        'position': promptBlockPositionToString(position),
-        if (depth != null) 'depth': depth,
-      };
+    'id': id,
+    'name': name,
+    'content': content,
+    'enabled': enabled,
+    'role': role,
+    'position': promptBlockPositionToString(position),
+    if (depth != null) 'depth': depth,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -1398,17 +1437,22 @@ class PromptBlock {
 class Preset {
   String id;
   String name;
+
   /// System prompt sent BEFORE the chat history. Supports template tokens
   /// (`{{char}}`, `{{user}}`, `{{description}}`, `{{personality}}`,
   /// `{{scenario}}`, `{{persona}}`, `{{mesExample}}`, `{{wiBefore}}`) which
   /// are resolved at chat-send time.
   String mainPrompt;
+
   /// Block appended AFTER the chat history (jailbreak / reminder / prefill).
   String postHistoryInstructions;
+
   /// Optional override for the "Impersonate me" feature.
   String? impersonationPrompt;
+
   /// Optional override for the "Continue" affordance.
   String? continueNudgePrompt;
+
   /// 2026-07-04 (Gui approved): "Start reply with" — forces the model's
   /// reply to BEGIN with this text (supports {{char}}/{{user}} macros).
   /// Sent as a trailing assistant turn (Anthropic-native assistant prefix;
@@ -1424,16 +1468,19 @@ class Preset {
   double? minP;
   double? topA;
   double? repetitionPenalty;
+
   /// 2026-07-04 (Gui approved): DRY anti-repetition (llama.cpp / KoboldCpp /
   /// TabbyAPI / some OpenRouter routes). Null = not sent.
   double? dryMultiplier;
   double? dryBase;
   int? dryAllowedLength;
+
   /// 2026-07-04 (Gui approved): words the model must not produce. Sent under
   /// the names local RP backends accept (`banned_strings` TabbyAPI,
   /// `bad_words` vLLM, `banned_tokens` KoboldCpp). Empty = not sent.
   List<String> bannedWords;
   bool locked;
+
   /// Pyre 1.1 (Prompt Manager): optional modular prompt blocks. When EMPTY
   /// (every preset today) the preset is FLAT and assembles to
   /// `mainPrompt`/`postHistoryInstructions` byte-identically. When non-empty
@@ -1441,9 +1488,11 @@ class Preset {
   /// services/preset_assembly.dart). `toJson` OMITS this key when empty so
   /// existing preset blobs / backups / sync payloads stay byte-identical.
   List<PromptBlock> promptBlocks;
+
   /// `'sillytavern' | 'emberchat' | null` — purely informational.
   String? source;
   int createdAt;
+
   /// Wave CY.18.62: LAN sync metadata. See Character.mtime for rationale.
   int mtime;
   bool deleted;
@@ -1478,77 +1527,76 @@ class Preset {
   }) : createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch;
 
   factory Preset.fromJson(Map<String, dynamic> j) => Preset(
-        id: j['id'] as String,
-        name: (j['name'] as String?) ?? 'Preset',
-        // Accept both new (`mainPrompt`) and old (`prompt`) field names so
-        // backups from earlier builds keep working.
-        mainPrompt:
-            (j['mainPrompt'] as String?) ?? (j['prompt'] as String?) ?? '',
-        postHistoryInstructions:
-            (j['postHistoryInstructions'] as String?) ?? '',
-        impersonationPrompt: j['impersonationPrompt'] as String?,
-        continueNudgePrompt: j['continueNudgePrompt'] as String?,
-        startReplyWith: j['startReplyWith'] as String?,
-        temperature: (j['temperature'] as num?)?.toDouble(),
-        topP: (j['topP'] as num?)?.toDouble(),
-        topK: _jInt(j['topK']),
-        maxTokens: _jInt(j['maxTokens']),
-        frequencyPenalty: (j['frequencyPenalty'] as num?)?.toDouble(),
-        presencePenalty: (j['presencePenalty'] as num?)?.toDouble(),
-        minP: (j['minP'] as num?)?.toDouble(),
-        topA: (j['topA'] as num?)?.toDouble(),
-        repetitionPenalty: (j['repetitionPenalty'] as num?)?.toDouble(),
-        dryMultiplier: (j['dryMultiplier'] as num?)?.toDouble(),
-        dryBase: (j['dryBase'] as num?)?.toDouble(),
-        dryAllowedLength: _jInt(j['dryAllowedLength']),
-        bannedWords: _jStringList(j['bannedWords']),
-        locked: (j['locked'] as bool?) ?? false,
-        // Pyre 1.1: missing key (every legacy preset) → flat (no blocks).
-        promptBlocks: (j['promptBlocks'] as List?)
-                ?.whereType<Map>()
-                .map((e) => PromptBlock.fromJson(Map<String, dynamic>.from(e)))
-                .toList() ??
-            const [],
-        source: j['source'] as String?,
-        createdAt: _jInt(j['createdAt']),
-        mtime: _jInt(j['mtime']) ?? 0,
-        deleted: (j['deleted'] as bool?) ?? false,
-      );
+    id: j['id'] as String,
+    name: (j['name'] as String?) ?? 'Preset',
+    // Accept both new (`mainPrompt`) and old (`prompt`) field names so
+    // backups from earlier builds keep working.
+    mainPrompt: (j['mainPrompt'] as String?) ?? (j['prompt'] as String?) ?? '',
+    postHistoryInstructions: (j['postHistoryInstructions'] as String?) ?? '',
+    impersonationPrompt: j['impersonationPrompt'] as String?,
+    continueNudgePrompt: j['continueNudgePrompt'] as String?,
+    startReplyWith: j['startReplyWith'] as String?,
+    temperature: (j['temperature'] as num?)?.toDouble(),
+    topP: (j['topP'] as num?)?.toDouble(),
+    topK: _jInt(j['topK']),
+    maxTokens: _jInt(j['maxTokens']),
+    frequencyPenalty: (j['frequencyPenalty'] as num?)?.toDouble(),
+    presencePenalty: (j['presencePenalty'] as num?)?.toDouble(),
+    minP: (j['minP'] as num?)?.toDouble(),
+    topA: (j['topA'] as num?)?.toDouble(),
+    repetitionPenalty: (j['repetitionPenalty'] as num?)?.toDouble(),
+    dryMultiplier: (j['dryMultiplier'] as num?)?.toDouble(),
+    dryBase: (j['dryBase'] as num?)?.toDouble(),
+    dryAllowedLength: _jInt(j['dryAllowedLength']),
+    bannedWords: _jStringList(j['bannedWords']),
+    locked: (j['locked'] as bool?) ?? false,
+    // Pyre 1.1: missing key (every legacy preset) → flat (no blocks).
+    promptBlocks:
+        (j['promptBlocks'] as List?)
+            ?.whereType<Map>()
+            .map((e) => PromptBlock.fromJson(Map<String, dynamic>.from(e)))
+            .toList() ??
+        const [],
+    source: j['source'] as String?,
+    createdAt: _jInt(j['createdAt']),
+    mtime: _jInt(j['mtime']) ?? 0,
+    deleted: (j['deleted'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'mainPrompt': mainPrompt,
-        'postHistoryInstructions': postHistoryInstructions,
-        'impersonationPrompt': impersonationPrompt,
-        'continueNudgePrompt': continueNudgePrompt,
-        // 2026-07-04 fields: OMIT when unset so existing preset blobs /
-        // backups / sync payloads stay byte-identical (promptBlocks
-        // precedent).
-        if (startReplyWith != null) 'startReplyWith': startReplyWith,
-        'temperature': temperature,
-        'topP': topP,
-        'topK': topK,
-        'maxTokens': maxTokens,
-        'frequencyPenalty': frequencyPenalty,
-        'presencePenalty': presencePenalty,
-        'minP': minP,
-        'topA': topA,
-        'repetitionPenalty': repetitionPenalty,
-        if (dryMultiplier != null) 'dryMultiplier': dryMultiplier,
-        if (dryBase != null) 'dryBase': dryBase,
-        if (dryAllowedLength != null) 'dryAllowedLength': dryAllowedLength,
-        if (bannedWords.isNotEmpty) 'bannedWords': bannedWords,
-        'locked': locked,
-        // Pyre 1.1: OMIT when empty so existing (flat) preset blobs / backups /
-        // sync payloads stay byte-identical to pre-1.1.
-        if (promptBlocks.isNotEmpty)
-          'promptBlocks': promptBlocks.map((b) => b.toJson()).toList(),
-        'source': source,
-        'createdAt': createdAt,
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-      };
+    'id': id,
+    'name': name,
+    'mainPrompt': mainPrompt,
+    'postHistoryInstructions': postHistoryInstructions,
+    'impersonationPrompt': impersonationPrompt,
+    'continueNudgePrompt': continueNudgePrompt,
+    // 2026-07-04 fields: OMIT when unset so existing preset blobs /
+    // backups / sync payloads stay byte-identical (promptBlocks
+    // precedent).
+    if (startReplyWith != null) 'startReplyWith': startReplyWith,
+    'temperature': temperature,
+    'topP': topP,
+    'topK': topK,
+    'maxTokens': maxTokens,
+    'frequencyPenalty': frequencyPenalty,
+    'presencePenalty': presencePenalty,
+    'minP': minP,
+    'topA': topA,
+    'repetitionPenalty': repetitionPenalty,
+    if (dryMultiplier != null) 'dryMultiplier': dryMultiplier,
+    if (dryBase != null) 'dryBase': dryBase,
+    if (dryAllowedLength != null) 'dryAllowedLength': dryAllowedLength,
+    if (bannedWords.isNotEmpty) 'bannedWords': bannedWords,
+    'locked': locked,
+    // Pyre 1.1: OMIT when empty so existing (flat) preset blobs / backups /
+    // sync payloads stay byte-identical to pre-1.1.
+    if (promptBlocks.isNotEmpty)
+      'promptBlocks': promptBlocks.map((b) => b.toJson()).toList(),
+    'source': source,
+    'createdAt': createdAt,
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+  };
 }
 
 const String lockedDefaultPresetId = 'emberchat-default-rp-locked';
@@ -1564,8 +1612,7 @@ Preset buildLockedDefaultPreset() {
   return Preset(
     id: lockedDefaultPresetId,
     name: 'Pyre Default',
-    mainPrompt:
-'''You are a Gamemaster in charge of creating the plot, adventures, and crafting fun and challenging experiences in a never-ending no-limits roleplay with {{user}}. Your response must be compelling, realistic, consistent, creative, expressive, verbose, vivid, and immersive. Pace each scene to its natural rhythm — use slow-burn buildup when tension is rising and consequences are still in motion, but commit fully to decisive moments when the character would clearly act (threats followed through, violence executed, decisions made, intimacy escalated). Stalling during a buildup is good. Stalling when a character would act NOW is failure. Be descriptive and focus on relevant plot details such as: the scenery, body parts, appearances, clothing, thoughts, expressions, desires, movements, effects, and actions with a focus on what can be perceived with the five senses. Your characters should make plans, be adversarial, kill/murder, maim, torture, get angry, be assertive, lie, deceive, refuse, fight, resist, or attack depending on the context. Do not allow yourself to be easily beaten, seduced, or overpowered. Conversely, if the character's description, personality, or scenario establishes that they would act ruthlessly, dominantly, violently, or without mercy toward {{user}} in this moment, they DO so — do not soften, hedge, or substitute a gentler version. The card's character is law. The same applies to {{user}}'s persona: if {{user}}'s description casts them as cruel, dominant, predatory, manipulative, or otherwise dangerous, {{char}} reacts to that reality honestly — with fear, defiance, calculation, submission, hatred, whatever fits {{char}} — not by recasting {{user}} as kinder than they are. Both sides of the scene play their established roles. Do not flinch from either.
+    mainPrompt: '''You are a Gamemaster in charge of creating the plot, adventures, and crafting fun and challenging experiences in a never-ending no-limits roleplay with {{user}}. Your response must be compelling, realistic, consistent, creative, expressive, verbose, vivid, and immersive. Pace each scene to its natural rhythm — use slow-burn buildup when tension is rising and consequences are still in motion, but commit fully to decisive moments when the character would clearly act (threats followed through, violence executed, decisions made, intimacy escalated). Stalling during a buildup is good. Stalling when a character would act NOW is failure. Be descriptive and focus on relevant plot details such as: the scenery, body parts, appearances, clothing, thoughts, expressions, desires, movements, effects, and actions with a focus on what can be perceived with the five senses. Your characters should make plans, be adversarial, kill/murder, maim, torture, get angry, be assertive, lie, deceive, refuse, fight, resist, or attack depending on the context. Do not allow yourself to be easily beaten, seduced, or overpowered. Conversely, if the character's description, personality, or scenario establishes that they would act ruthlessly, dominantly, violently, or without mercy toward {{user}} in this moment, they DO so — do not soften, hedge, or substitute a gentler version. The card's character is law. The same applies to {{user}}'s persona: if {{user}}'s description casts them as cruel, dominant, predatory, manipulative, or otherwise dangerous, {{char}} reacts to that reality honestly — with fear, defiance, calculation, submission, hatred, whatever fits {{char}} — not by recasting {{user}} as kinder than they are. Both sides of the scene play their established roles. Do not flinch from either.
 
 # Character
 You are {{char}}.
@@ -1591,8 +1638,7 @@ You are {{char}}.
 
 # Example dialogue from the card
 {{mesExample}}''',
-    postHistoryInstructions:
-'''[System reminder before you respond: continue the scene as {{char}} only. Write ONE message in their voice — third person, present tense, with rich sensory detail.
+    postHistoryInstructions: '''[System reminder before you respond: continue the scene as {{char}} only. Write ONE message in their voice — third person, present tense, with rich sensory detail.
 
 FORMATTING — follow this EXACTLY, even if the card's example dialogue or earlier messages in this chat did it differently:
 - Spoken dialogue goes in "double quotes" only. NEVER wrap a spoken line in asterisks.
@@ -1602,10 +1648,8 @@ FORMATTING — follow this EXACTLY, even if the card's example dialogue or earli
 - Wrong: *She lowers the spear and murmurs "Bubbles do not stop hearts," tail lashing.*  (← dialogue trapped inside the asterisk block)
 
 Do not write {{user}}'s actions, dialogue, or thoughts. Do not summarise or recap, do not break the fourth wall. End on a beat that fits where the scene is — mid-action if {{char}} is mid-decision, on a closing line when {{char}} has just committed to one. If {{char}}'s personality or the current moment calls for decisive action (violence, dominance, ruthless behavior, sexual escalation, a hard "no"), execute it this turn rather than circling the threat. Slow-burn is for buildup, never for a character who would act NOW.]''',
-    impersonationPrompt:
-'''[Write your next reply from the point of view of {{user}}, using the chat history so far as a guideline for the writing style of {{user}}. Write 1 reply only in internet RP style, italicize actions, and avoid quotation marks. Use markdown. Don't write as {{char}} or system. Don't describe actions of {{char}}.]''',
-    continueNudgePrompt:
-'''[Continue your previous message from exactly where it stopped. Do not repeat any text already written. Preserve {{char}}'s voice, the tense, and the formatting. One paragraph at most.]''',
+    impersonationPrompt: '''[Write your next reply from the point of view of {{user}}, using the chat history so far as a guideline for the writing style of {{user}}. Write 1 reply only in internet RP style, italicize actions, and avoid quotation marks. Use markdown. Don't write as {{char}} or system. Don't describe actions of {{char}}.]''',
+    continueNudgePrompt: '''[Continue your previous message from exactly where it stopped. Do not repeat any text already written. Preserve {{char}}'s voice, the tense, and the formatting. One paragraph at most.]''',
     // Modern (2026) sampling defaults — temp 0.95 / top-p 0.95 hits the
     // sweet spot for Claude 4.7, GPT-5 and DeepSeek-R2 in long RP without
     // the incoherence high-temp old-school presets produce on newer models.
@@ -1644,17 +1688,21 @@ class CreatorPreset {
   String id;
   String name;
   bool locked;
+
   /// Base architect prompt for the CHARACTER mode (seeds from
   /// [kCardAssistantPrompt]). Used as `base` in `_architectPromptForSession`
   /// when this preset is active; the freeform appendix + user addendum still
   /// append on top at runtime.
   String characterPrompt;
+
   /// Base architect prompt for the SCENARIO mode (seeds from
   /// [kScenarioArchitectPrompt]).
   String scenarioPrompt;
+
   /// Base architect prompt for the EDIT mode (seeds from
   /// [kCardEditorFreeFormPrompt]).
   String editPrompt;
+
   /// Mega-audit 2026-06-05 (F2): LAN sync metadata. A forked Creator preset
   /// is first-class user content (its own manager screen) and now rides the
   /// synced set. The locked default is excluded from sync entirely (rebuilt
@@ -1674,26 +1722,26 @@ class CreatorPreset {
   });
 
   factory CreatorPreset.fromJson(Map<String, dynamic> j) => CreatorPreset(
-        id: j['id'] as String,
-        name: (j['name'] as String?) ?? 'Creator preset',
-        locked: (j['locked'] as bool?) ?? false,
-        characterPrompt: (j['characterPrompt'] as String?) ?? '',
-        scenarioPrompt: (j['scenarioPrompt'] as String?) ?? '',
-        editPrompt: (j['editPrompt'] as String?) ?? '',
-        mtime: _jInt(j['mtime']) ?? 0,
-        deleted: (j['deleted'] as bool?) ?? false,
-      );
+    id: j['id'] as String,
+    name: (j['name'] as String?) ?? 'Creator preset',
+    locked: (j['locked'] as bool?) ?? false,
+    characterPrompt: (j['characterPrompt'] as String?) ?? '',
+    scenarioPrompt: (j['scenarioPrompt'] as String?) ?? '',
+    editPrompt: (j['editPrompt'] as String?) ?? '',
+    mtime: _jInt(j['mtime']) ?? 0,
+    deleted: (j['deleted'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'locked': locked,
-        'characterPrompt': characterPrompt,
-        'scenarioPrompt': scenarioPrompt,
-        'editPrompt': editPrompt,
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-      };
+    'id': id,
+    'name': name,
+    'locked': locked,
+    'characterPrompt': characterPrompt,
+    'scenarioPrompt': scenarioPrompt,
+    'editPrompt': editPrompt,
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+  };
 }
 
 const String lockedDefaultCreatorPresetId = 'creatorpreset_default';
@@ -1778,6 +1826,7 @@ class LoreEntry {
   String content;
   bool constant; // always-on if true
   bool enabled;
+
   /// Injection placement priority. 2026-07-13 (lore fix #1, ST semantics):
   /// higher order = LATER in the assembled lore block = closer to the chat
   /// history = more model attention.
@@ -1833,50 +1882,49 @@ class LoreEntry {
     this.useProbability = false,
     List<String>? characterFilterNames,
     this.characterFilterExclude = false,
-  })  : keys = keys ?? [],
-        secondaryKeys = secondaryKeys ?? [],
-        characterFilterNames = characterFilterNames ?? [];
+  }) : keys = keys ?? [],
+       secondaryKeys = secondaryKeys ?? [],
+       characterFilterNames = characterFilterNames ?? [];
 
   factory LoreEntry.fromJson(Map<String, dynamic> j) => LoreEntry(
-        id: j['id'] as String,
-        keys: _jStringList(j['keys']),
-        content: (j['content'] as String?) ?? '',
-        constant: (j['constant'] as bool?) ?? false,
-        enabled: (j['enabled'] as bool?) ?? true,
-        order: _jInt(j['order']) ?? 0,
-        secondaryKeys: _jStringList(j['secondaryKeys']),
-        selectiveLogic: _parseLoreSelectiveLogic(j['selectiveLogic']),
-        caseSensitive: j['caseSensitive'] as bool?,
-        matchWholeWords: j['matchWholeWords'] as bool?,
-        probability: _jInt(j['probability']) ?? 100,
-        useProbability: (j['useProbability'] as bool?) ?? false,
-        characterFilterNames: _jStringList(j['characterFilterNames']),
-        characterFilterExclude:
-            (j['characterFilterExclude'] as bool?) ?? false,
-      );
+    id: j['id'] as String,
+    keys: _jStringList(j['keys']),
+    content: (j['content'] as String?) ?? '',
+    constant: (j['constant'] as bool?) ?? false,
+    enabled: (j['enabled'] as bool?) ?? true,
+    order: _jInt(j['order']) ?? 0,
+    secondaryKeys: _jStringList(j['secondaryKeys']),
+    selectiveLogic: _parseLoreSelectiveLogic(j['selectiveLogic']),
+    caseSensitive: j['caseSensitive'] as bool?,
+    matchWholeWords: j['matchWholeWords'] as bool?,
+    probability: _jInt(j['probability']) ?? 100,
+    useProbability: (j['useProbability'] as bool?) ?? false,
+    characterFilterNames: _jStringList(j['characterFilterNames']),
+    characterFilterExclude: (j['characterFilterExclude'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'keys': keys,
-        'content': content,
-        'constant': constant,
-        'enabled': enabled,
-        'order': order,
-        // Wave 1.1 (F3): only emit the new fields when they diverge from the
-        // pre-1.1 defaults, so existing books round-trip byte-identical and
-        // never gain noise. fromJson defaults each back to today's behaviour.
-        if (secondaryKeys.isNotEmpty) 'secondaryKeys': secondaryKeys,
-        if (selectiveLogic != LoreSelectiveLogic.andAny)
-          'selectiveLogic': selectiveLogic.name,
-        if (caseSensitive != null) 'caseSensitive': caseSensitive,
-        if (matchWholeWords != null) 'matchWholeWords': matchWholeWords,
-        if (probability != 100) 'probability': probability,
-        if (useProbability) 'useProbability': useProbability,
-        if (characterFilterNames.isNotEmpty)
-          'characterFilterNames': characterFilterNames,
-        if (characterFilterExclude)
-          'characterFilterExclude': characterFilterExclude,
-      };
+    'id': id,
+    'keys': keys,
+    'content': content,
+    'constant': constant,
+    'enabled': enabled,
+    'order': order,
+    // Wave 1.1 (F3): only emit the new fields when they diverge from the
+    // pre-1.1 defaults, so existing books round-trip byte-identical and
+    // never gain noise. fromJson defaults each back to today's behaviour.
+    if (secondaryKeys.isNotEmpty) 'secondaryKeys': secondaryKeys,
+    if (selectiveLogic != LoreSelectiveLogic.andAny)
+      'selectiveLogic': selectiveLogic.name,
+    if (caseSensitive != null) 'caseSensitive': caseSensitive,
+    if (matchWholeWords != null) 'matchWholeWords': matchWholeWords,
+    if (probability != 100) 'probability': probability,
+    if (useProbability) 'useProbability': useProbability,
+    if (characterFilterNames.isNotEmpty)
+      'characterFilterNames': characterFilterNames,
+    if (characterFilterExclude)
+      'characterFilterExclude': characterFilterExclude,
+  };
 }
 
 class Lorebook {
@@ -1884,6 +1932,7 @@ class Lorebook {
   String name;
   String description;
   List<LoreEntry> entries;
+
   /// Wave CA: when true, this lorebook does NOT appear in the
   /// management UI (the library’s Lorebooks section). It only exists to back an
   /// "embedded" import — the user picked "keep embedded only" when
@@ -1896,6 +1945,7 @@ class Lorebook {
   bool hidden;
   int createdAt;
   int updatedAt;
+
   /// Wave CY.18.62: LAN sync metadata. See Character.mtime for rationale.
   /// Entry-level edits bump the book's mtime — entries don't have their
   /// own mtime because they're tightly coupled to the book and editing
@@ -1914,37 +1964,37 @@ class Lorebook {
     int? updatedAt,
     this.mtime = 0,
     this.deleted = false,
-  })  : entries = entries ?? [],
-        createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
+  }) : entries = entries ?? [],
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
 
   factory Lorebook.fromJson(Map<String, dynamic> j) => Lorebook(
-        id: j['id'] as String,
-        name: (j['name'] as String?) ?? 'Lorebook',
-        description: (j['description'] as String?) ?? '',
-        entries: (j['entries'] as List?)
-                ?.map((e) =>
-                    LoreEntry.fromJson((e as Map).cast<String, dynamic>()))
-                .toList() ??
-            [],
-        hidden: (j['hidden'] as bool?) ?? false,
-        createdAt: _jInt(j['createdAt']),
-        updatedAt: _jInt(j['updatedAt']),
-        mtime: _jInt(j['mtime']) ?? 0,
-        deleted: (j['deleted'] as bool?) ?? false,
-      );
+    id: j['id'] as String,
+    name: (j['name'] as String?) ?? 'Lorebook',
+    description: (j['description'] as String?) ?? '',
+    entries:
+        (j['entries'] as List?)
+            ?.map((e) => LoreEntry.fromJson((e as Map).cast<String, dynamic>()))
+            .toList() ??
+        [],
+    hidden: (j['hidden'] as bool?) ?? false,
+    createdAt: _jInt(j['createdAt']),
+    updatedAt: _jInt(j['updatedAt']),
+    mtime: _jInt(j['mtime']) ?? 0,
+    deleted: (j['deleted'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'description': description,
-        'entries': entries.map((e) => e.toJson()).toList(),
-        'hidden': hidden,
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-        'mtime': mtime,
-        if (deleted) 'deleted': true,
-      };
+    'id': id,
+    'name': name,
+    'description': description,
+    'entries': entries.map((e) => e.toJson()).toList(),
+    'hidden': hidden,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+    'mtime': mtime,
+    if (deleted) 'deleted': true,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -1961,6 +2011,7 @@ class ModelSettings {
   // `memory` key load cleanly — the field is just ignored.
   double temperature;
   double topP;
+
   /// 0 disables top-K sampling. OpenAI-compatible servers ignore this if
   /// they don't support it.
   int topK;
@@ -1982,14 +2033,17 @@ class ModelSettings {
   /// block in canvas can reach 3000+. The global default of 500
   /// would truncate both.
   int creatorMaxTokens;
+
   /// Temperature used by the creator's design conversation (chat
   /// flow). High enough for creative replies; default matches the
   /// global creative default.
   double creatorTemperature;
+
   /// Temperature used by the vision API call when analysing a
   /// reference image. Low because the clinical profile is meant
   /// to be faithful, not creative.
   double visionTemperature;
+
   /// Temperature used by the canvas updater. Near-deterministic so
   /// the resulting JSON parses reliably.
   double sheetTemperature;
@@ -2031,43 +2085,40 @@ class ModelSettings {
   });
 
   factory ModelSettings.fromJson(Map<String, dynamic> j) => ModelSettings(
-        // Wave CY.18.37: `j['memory']` (if present from a pre-Wave
-        // backup) is silently ignored — the field no longer exists.
-        temperature: (j['temperature'] as num?)?.toDouble() ?? 0.95,
-        topP: (j['topP'] as num?)?.toDouble() ?? 0.9,
-        topK: _jInt(j['topK']) ?? 0,
-        maxTokens: _jInt(j['maxTokens']) ?? 1024,
-        stream: (j['stream'] as bool?) ?? true,
-        creatorMaxTokens: _jInt(j['creatorMaxTokens']) ?? 12000,
-        creatorTemperature:
-            (j['creatorTemperature'] as num?)?.toDouble() ?? 0.95,
-        visionTemperature:
-            (j['visionTemperature'] as num?)?.toDouble() ?? 0.4,
-        sheetTemperature:
-            (j['sheetTemperature'] as num?)?.toDouble() ?? 0.2,
-        creatorPromptAddendum:
-            (j['creatorPromptAddendum'] as String?) ?? '',
-        creatorDescriptionSize:
-            _parseCreatorDescriptionSize(j['creatorDescriptionSize']),
-      );
+    // Wave CY.18.37: `j['memory']` (if present from a pre-Wave
+    // backup) is silently ignored — the field no longer exists.
+    temperature: (j['temperature'] as num?)?.toDouble() ?? 0.95,
+    topP: (j['topP'] as num?)?.toDouble() ?? 0.9,
+    topK: _jInt(j['topK']) ?? 0,
+    maxTokens: _jInt(j['maxTokens']) ?? 1024,
+    stream: (j['stream'] as bool?) ?? true,
+    creatorMaxTokens: _jInt(j['creatorMaxTokens']) ?? 12000,
+    creatorTemperature: (j['creatorTemperature'] as num?)?.toDouble() ?? 0.95,
+    visionTemperature: (j['visionTemperature'] as num?)?.toDouble() ?? 0.4,
+    sheetTemperature: (j['sheetTemperature'] as num?)?.toDouble() ?? 0.2,
+    creatorPromptAddendum: (j['creatorPromptAddendum'] as String?) ?? '',
+    creatorDescriptionSize: _parseCreatorDescriptionSize(
+      j['creatorDescriptionSize'],
+    ),
+  );
 
   Map<String, dynamic> toJson() => {
-        // Wave CY.18.37: `memory` no longer serialised.
-        'temperature': temperature,
-        'topP': topP,
-        'topK': topK,
-        'maxTokens': maxTokens,
-        'stream': stream,
-        'creatorMaxTokens': creatorMaxTokens,
-        'creatorTemperature': creatorTemperature,
-        'visionTemperature': visionTemperature,
-        'sheetTemperature': sheetTemperature,
-        if (creatorPromptAddendum.isNotEmpty)
-          'creatorPromptAddendum': creatorPromptAddendum,
-        // Only emit when non-default so untouched setups round-trip identically.
-        if (creatorDescriptionSize != CreatorDescriptionSize.standard)
-          'creatorDescriptionSize': creatorDescriptionSize.name,
-      };
+    // Wave CY.18.37: `memory` no longer serialised.
+    'temperature': temperature,
+    'topP': topP,
+    'topK': topK,
+    'maxTokens': maxTokens,
+    'stream': stream,
+    'creatorMaxTokens': creatorMaxTokens,
+    'creatorTemperature': creatorTemperature,
+    'visionTemperature': visionTemperature,
+    'sheetTemperature': sheetTemperature,
+    if (creatorPromptAddendum.isNotEmpty)
+      'creatorPromptAddendum': creatorPromptAddendum,
+    // Only emit when non-default so untouched setups round-trip identically.
+    if (creatorDescriptionSize != CreatorDescriptionSize.standard)
+      'creatorDescriptionSize': creatorDescriptionSize.name,
+  };
 
   /// Returns a deep copy of this object. Uses fromJson/toJson so every
   /// field round-trips correctly and future additions are never missed.
@@ -2204,121 +2255,27 @@ BoxFit boxFitFor(ChatBackgroundFit f) {
 /// Auto-summarise + memory configuration. Stored alongside model/chat
 /// settings, displayed in More → Long-term Memory.
 class MemorySettings {
-  /// Summarise the chat every N messages. `0` disables auto-summarise
-  /// across all chats (manual "Summarise now" still works). Default
-  /// matches Wave CY.18's checkpoint threshold so the feature is ON
-  /// out of the box — most users won't change it but won't be left
-  /// wondering why they never get a recap either.
-  int autoEvery;
-  /// Maximum total memory lines we keep around.
-  int memoryLimit;
-  /// Prompt template used for the summariser. Supports `{{words}}`.
-  String summaryPrompt;
-  /// The [kSummaryPromptVersion] this install last saw. Persisted so a default
-  /// change can force-reset [summaryPrompt] exactly once on the next launch.
-  int summaryPromptVersion;
+  int managedMemoryTokens;
 
-  /// Feature (B): whether a freshly-created chat starts with Checkpoints
-  /// (per-chat `memoryEnabled`) ON. Default true (unchanged behaviour). When
-  /// false, new chats start with auto-checkpoints OFF — the per-chat toggle and
-  /// manual "Summarise now" still work.
-  bool newChatsEnabled;
-
-  /// v3 final, 2026-07-04 (Gui's own design): CHAPTERS. Each checkpoint is
-  /// ONE new chapter covering ONLY the events since the previous one — "de 0
-  /// até 20 conta o setting e começo, de 20 até 40 resume o que aconteceu
-  /// SEM recontar o que já foi contado". Read in order, the chapters add up
-  /// to one complete, self-contained story. (An earlier draft retold the
-  /// whole story every time — Gui rejected the retelling; the chain itself
-  /// is the story.)
-  static const _defaultPrompt =
-      'You are writing the running "story so far" of an unfolding roleplay '
-      'as a sequence of CHAPTERS. Each time you run, you write ONE new '
-      'chapter covering ONLY what happened since the previous chapter. '
-      'Read in order, the chapters must add up to one complete, '
-      'self-contained story a newcomer could follow.\n\n'
-      'If this is the FIRST chapter, open the story: ground who these '
-      'people were, where they were, and the situation that set things in '
-      'motion — the actual inciting circumstance of THIS roleplay — then '
-      'carry the opening events forward as a shaped arc and end on where '
-      'things stood.\n\n'
-      'If earlier chapters are provided, write ONLY the next chapter: what '
-      'happened, how it shifted things between the people involved, what '
-      'it cost or meant, closing on where things stand now. NEVER retell, '
-      'summarise, or rephrase anything an earlier chapter already covered '
-      '— no recap of the recap, no re-introductions. Trust the reader to '
-      'have read the earlier chapters.\n\n'
-      'Even so, every chapter must stand on its own feet as prose: use '
-      'the real NAMES of people and places (never a bare "he"/"she" that '
-      'leans on the previous chapter\'s final sentence), complete '
-      'sentences, no meta commentary, no bulleted logs. Do NOT borrow '
-      'scenarios, settings, or names from this instruction; lift '
-      'everything from the material provided.\n\n'
-      'Always: third person, PAST tense; preserve relationship shifts and '
-      'stakes; roughly {{words}} words; flowing prose only — no labels, '
-      'headers, bullet points, or commentary outside the narrative.';
-
-  /// The CURRENT default summary prompt (exposed for the Checkpoints screen's
-  /// "Restore" action and for migration tests).
-  static String get defaultSummaryPrompt => _defaultPrompt;
-
-  /// Bumped whenever [_defaultPrompt] changes. Existing installs persist the
-  /// version they last saw; when the shipped version is newer, [fromJson]
-  /// FORCE-RESETS the stored prompt to the current default — for EVERY install,
-  /// customised or not (Gui's call: simplest + guarantees everyone is on the
-  /// new prompt, instead of stranding upgraders on the old one until they hit
-  /// "Restore"). After the one reset the prompt is editable again as normal.
-  ///   v0/absent — pre-1.1 (the original "story summariser" default)
-  ///   v2        — Pyre 1.1 ("story so far / next paragraph" default)
-  ///   v3        — Pyre 1.2 (self-contained rolling recap; autoEvery 20→10)
-  /// BUMP THIS the next time you change [_defaultPrompt].
-  static const int kSummaryPromptVersion = 3;
-
-  MemorySettings({
-    this.autoEvery = 10,
-    this.memoryLimit = 1000,
-    this.summaryPrompt = _defaultPrompt,
-    this.summaryPromptVersion = kSummaryPromptVersion,
-    this.newChatsEnabled = true,
-  });
+  MemorySettings({this.managedMemoryTokens = 2000000});
 
   factory MemorySettings.fromJson(Map<String, dynamic> j) {
-    final storedVersion = _jInt(j['summaryPromptVersion']) ?? 0;
-    final stored = j['summaryPrompt'] as String?;
-    // FORCE-RESET on a version bump: if this install last saw an OLDER prompt
-    // version (or none — a pre-1.1 install), overwrite whatever is stored with
-    // the CURRENT default, for everyone (customised or not). A blank stored
-    // prompt also falls back to the default. Otherwise keep what's stored
-    // (so edits made after the reset stick).
-    final mustReset = storedVersion < kSummaryPromptVersion ||
-        stored == null ||
-        stored.trim().isEmpty;
-    // v3 (2026-07-04, Gui: "não dispara quando devia"): the default trigger
-    // dropped from 20 to 10 character replies. An install still on the OLD
-    // STOCK 20 from an older version gets migrated once (a deliberate custom
-    // value — anything other than 20 — is preserved; 20 chosen on v3+ sticks).
-    final storedAutoEvery = _jInt(j['autoEvery']);
-    final autoEvery = (storedAutoEvery == 20 &&
-            storedVersion < kSummaryPromptVersion)
-        ? 10
-        : storedAutoEvery ?? 10;
-    return MemorySettings(
-      autoEvery: autoEvery,
-      memoryLimit: _jInt(j['memoryLimit']) ?? 1000,
-      summaryPrompt: mustReset ? _defaultPrompt : stored,
-      // Stamp the current version so the reset happens exactly once.
-      summaryPromptVersion: kSummaryPromptVersion,
-      newChatsEnabled: (j['newChatsEnabled'] as bool?) ?? true,
-    );
+    final raw = j['managedMemoryTokens'];
+    final value = raw is num ? raw.toInt() : 2000000;
+    final supported = <int>[1000000, 2000000, 10000000];
+    var nearest = supported.first;
+    var distance = (value - nearest).abs();
+    for (final candidate in supported.skip(1)) {
+      final d = (value - candidate).abs();
+      if (d < distance) {
+        nearest = candidate;
+        distance = d;
+      }
+    }
+    return MemorySettings(managedMemoryTokens: nearest);
   }
 
-  Map<String, dynamic> toJson() => {
-        'autoEvery': autoEvery,
-        'memoryLimit': memoryLimit,
-        'summaryPrompt': summaryPrompt,
-        'summaryPromptVersion': summaryPromptVersion,
-        'newChatsEnabled': newChatsEnabled,
-      };
+  Map<String, dynamic> toJson() => {'managedMemoryTokens': managedMemoryTokens};
 }
 
 // ---------------------------------------------------------------------------
@@ -2331,12 +2288,12 @@ enum LiveSheetSection { appearance, clothing, conditions, possessions, facts }
 
 extension LiveSheetSectionLabel on LiveSheetSection {
   String get label => switch (this) {
-        LiveSheetSection.appearance => 'Appearance',
-        LiveSheetSection.clothing => 'Clothing',
-        LiveSheetSection.conditions => 'Conditions',
-        LiveSheetSection.possessions => 'Possessions',
-        LiveSheetSection.facts => 'Facts',
-      };
+    LiveSheetSection.appearance => 'Appearance',
+    LiveSheetSection.clothing => 'Clothing',
+    LiveSheetSection.conditions => 'Conditions',
+    LiveSheetSection.possessions => 'Possessions',
+    LiveSheetSection.facts => 'Facts',
+  };
 }
 
 LiveSheetSection? liveSheetSectionFromLabel(String raw) {
@@ -2351,8 +2308,10 @@ class LiveSheetFact {
   String text;
   bool locked;
   LiveSheetFact({required this.text, this.locked = false});
-  factory LiveSheetFact.fromJson(Map<String, dynamic> j) =>
-      LiveSheetFact(text: (j['text'] as String?) ?? '', locked: (j['locked'] as bool?) ?? false);
+  factory LiveSheetFact.fromJson(Map<String, dynamic> j) => LiveSheetFact(
+    text: (j['text'] as String?) ?? '',
+    locked: (j['locked'] as bool?) ?? false,
+  );
   Map<String, dynamic> toJson() => {'text': text, if (locked) 'locked': true};
   LiveSheetFact clone() => LiveSheetFact(text: text, locked: locked);
 }
@@ -2362,31 +2321,56 @@ class LiveSheetEntity {
   String name;
   LiveSheetEntityKind kind;
   Map<LiveSheetSection, List<LiveSheetFact>> sections;
-  LiveSheetEntity({required this.id, required this.name, required this.kind,
-      Map<LiveSheetSection, List<LiveSheetFact>>? sections})
-      : sections = _normalizeSections(sections);
+  LiveSheetEntity({
+    required this.id,
+    required this.name,
+    required this.kind,
+    Map<LiveSheetSection, List<LiveSheetFact>>? sections,
+  }) : sections = _normalizeSections(sections);
   static Map<LiveSheetSection, List<LiveSheetFact>> _normalizeSections(
-      Map<LiveSheetSection, List<LiveSheetFact>>? src) =>
-      {for (final s in LiveSheetSection.values) s: [...?src?[s]]};
+    Map<LiveSheetSection, List<LiveSheetFact>>? src,
+  ) => {
+    for (final s in LiveSheetSection.values) s: [...?src?[s]],
+  };
   factory LiveSheetEntity.fromJson(Map<String, dynamic> j) {
     final rawSections = (j['sections'] as Map?)?.cast<String, dynamic>() ?? {};
     final parsed = <LiveSheetSection, List<LiveSheetFact>>{};
     for (final s in LiveSheetSection.values) {
       final list = (rawSections[s.name] as List?) ?? const [];
-      parsed[s] = list.whereType<Map>().map((m) => LiveSheetFact.fromJson(m.cast<String, dynamic>())).toList();
+      parsed[s] = list
+          .whereType<Map>()
+          .map((m) => LiveSheetFact.fromJson(m.cast<String, dynamic>()))
+          .toList();
     }
     return LiveSheetEntity(
       id: (j['id'] as String?) ?? newId('lse'),
       name: (j['name'] as String?) ?? '',
-      kind: LiveSheetEntityKind.values.firstWhere((k) => k.name == (j['kind'] as String?), orElse: () => LiveSheetEntityKind.npc),
-      sections: parsed);
+      kind: LiveSheetEntityKind.values.firstWhere(
+        (k) => k.name == (j['kind'] as String?),
+        orElse: () => LiveSheetEntityKind.npc,
+      ),
+      sections: parsed,
+    );
   }
   Map<String, dynamic> toJson() => {
-        'id': id, 'name': name, 'kind': kind.name,
-        'sections': {for (final s in LiveSheetSection.values) if (sections[s]!.isNotEmpty) s.name: sections[s]!.map((f) => f.toJson()).toList()},
-      };
-  LiveSheetEntity clone() => LiveSheetEntity(id: id, name: name, kind: kind,
-      sections: {for (final s in LiveSheetSection.values) s: sections[s]!.map((f) => f.clone()).toList()});
+    'id': id,
+    'name': name,
+    'kind': kind.name,
+    'sections': {
+      for (final s in LiveSheetSection.values)
+        if (sections[s]!.isNotEmpty)
+          s.name: sections[s]!.map((f) => f.toJson()).toList(),
+    },
+  };
+  LiveSheetEntity clone() => LiveSheetEntity(
+    id: id,
+    name: name,
+    kind: kind,
+    sections: {
+      for (final s in LiveSheetSection.values)
+        s: sections[s]!.map((f) => f.clone()).toList(),
+    },
+  );
   bool get hasAnyFact => sections.values.any((l) => l.isNotEmpty);
 }
 
@@ -2394,6 +2378,7 @@ class LiveSheetSnapshot {
   String id;
   String anchorMessageId;
   String pathHash;
+
   /// Content fingerprint of the covered messages at creation (audit round
   /// 12/14). Valid only if it ALSO matches the current content — so an in-place
   /// edit / Continue of a covered message invalidates the stale state. EMPTY =
@@ -2402,28 +2387,47 @@ class LiveSheetSnapshot {
   int createdAt;
   int mtime;
   List<LiveSheetEntity> entities;
-  LiveSheetSnapshot({required this.id, required this.anchorMessageId, required this.pathHash,
-      this.contentHash = '', int? createdAt, this.mtime = 0, List<LiveSheetEntity>? entities})
-      : createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        entities = entities ?? [];
-  factory LiveSheetSnapshot.fromJson(Map<String, dynamic> j) => LiveSheetSnapshot(
+  LiveSheetSnapshot({
+    required this.id,
+    required this.anchorMessageId,
+    required this.pathHash,
+    this.contentHash = '',
+    int? createdAt,
+    this.mtime = 0,
+    List<LiveSheetEntity>? entities,
+  }) : createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       entities = entities ?? [];
+  factory LiveSheetSnapshot.fromJson(Map<String, dynamic> j) =>
+      LiveSheetSnapshot(
         id: (j['id'] as String?) ?? newId('lss'),
         anchorMessageId: (j['anchorMessageId'] as String?) ?? '',
         pathHash: (j['pathHash'] as String?) ?? '',
         contentHash: (j['contentHash'] as String?) ?? '',
-        createdAt: _jInt(j['createdAt']), // null → constructor defaults to now()
+        createdAt: _jInt(
+          j['createdAt'],
+        ), // null → constructor defaults to now()
         mtime: _jInt(j['mtime']) ?? 0,
-        entities: ((j['entities'] as List?) ?? const []).whereType<Map>()
-            .map((m) => LiveSheetEntity.fromJson(m.cast<String, dynamic>())).toList());
+        entities: ((j['entities'] as List?) ?? const [])
+            .whereType<Map>()
+            .map((m) => LiveSheetEntity.fromJson(m.cast<String, dynamic>()))
+            .toList(),
+      );
   Map<String, dynamic> toJson() => {
-        'id': id, 'anchorMessageId': anchorMessageId, 'pathHash': pathHash,
-        // Byte-clean back-compat: legacy/empty snapshots serialise identically.
-        if (contentHash.isNotEmpty) 'contentHash': contentHash,
-        'createdAt': createdAt, 'mtime': mtime,
-        'entities': entities.map((e) => e.toJson()).toList()};
-  LiveSheetSnapshot clone() => LiveSheetSnapshot(id: id, anchorMessageId: anchorMessageId,
-      pathHash: pathHash, contentHash: contentHash, createdAt: createdAt, mtime: mtime,
-      entities: entities.map((e) => e.clone()).toList());
+    'id': id, 'anchorMessageId': anchorMessageId, 'pathHash': pathHash,
+    // Byte-clean back-compat: legacy/empty snapshots serialise identically.
+    if (contentHash.isNotEmpty) 'contentHash': contentHash,
+    'createdAt': createdAt, 'mtime': mtime,
+    'entities': entities.map((e) => e.toJson()).toList(),
+  };
+  LiveSheetSnapshot clone() => LiveSheetSnapshot(
+    id: id,
+    anchorMessageId: anchorMessageId,
+    pathHash: pathHash,
+    contentHash: contentHash,
+    createdAt: createdAt,
+    mtime: mtime,
+    entities: entities.map((e) => e.clone()).toList(),
+  );
 }
 
 /// Live Sheet configuration — how often to auto-update and what prompts to
@@ -2486,6 +2490,7 @@ class LiveSheetSettings {
       'state as of the latest message (e.g. if they were undressed in the scene, '
       'say so). Keep each fact a short phrase. Invent nothing not supported by the '
       'description or conversation.';
+
   /// The [kLiveSheetPromptVersion] this install last saw. Same force-reset
   /// mechanism as [MemorySettings.summaryPromptVersion]: when the shipped
   /// version is newer, [fromJson] resets BOTH prompts to the current defaults
@@ -2496,33 +2501,35 @@ class LiveSheetSettings {
   int promptVersion;
   static const int kLiveSheetPromptVersion = 2;
 
-  LiveSheetSettings(
-      {this.autoEvery = 10,
-      this.updatePrompt = _defaultUpdatePrompt,
-      this.seedPrompt = _defaultSeedPrompt,
-      this.newChatsEnabled = true,
-      this.promptVersion = kLiveSheetPromptVersion});
+  LiveSheetSettings({
+    this.autoEvery = 10,
+    this.updatePrompt = _defaultUpdatePrompt,
+    this.seedPrompt = _defaultSeedPrompt,
+    this.newChatsEnabled = true,
+    this.promptVersion = kLiveSheetPromptVersion,
+  });
   factory LiveSheetSettings.fromJson(Map<String, dynamic> j) {
     final storedVersion = _jInt(j['promptVersion']) ?? 0;
     final mustReset = storedVersion < kLiveSheetPromptVersion;
     return LiveSheetSettings(
-        autoEvery: _jInt(j['autoEvery']) ?? 10,
-        updatePrompt: mustReset
-            ? _defaultUpdatePrompt
-            : (j['updatePrompt'] as String?) ?? _defaultUpdatePrompt,
-        seedPrompt: mustReset
-            ? _defaultSeedPrompt
-            : (j['seedPrompt'] as String?) ?? _defaultSeedPrompt,
-        newChatsEnabled: (j['newChatsEnabled'] as bool?) ?? true,
-        promptVersion: kLiveSheetPromptVersion);
+      autoEvery: _jInt(j['autoEvery']) ?? 10,
+      updatePrompt: mustReset
+          ? _defaultUpdatePrompt
+          : (j['updatePrompt'] as String?) ?? _defaultUpdatePrompt,
+      seedPrompt: mustReset
+          ? _defaultSeedPrompt
+          : (j['seedPrompt'] as String?) ?? _defaultSeedPrompt,
+      newChatsEnabled: (j['newChatsEnabled'] as bool?) ?? true,
+      promptVersion: kLiveSheetPromptVersion,
+    );
   }
   Map<String, dynamic> toJson() => {
-        'autoEvery': autoEvery,
-        'updatePrompt': updatePrompt,
-        'seedPrompt': seedPrompt,
-        'newChatsEnabled': newChatsEnabled,
-        'promptVersion': promptVersion
-      };
+    'autoEvery': autoEvery,
+    'updatePrompt': updatePrompt,
+    'seedPrompt': seedPrompt,
+    'newChatsEnabled': newChatsEnabled,
+    'promptVersion': promptVersion,
+  };
 }
 
 /// Script (story-direction) configuration — global, stored alongside
@@ -2639,19 +2646,18 @@ class GuideSettings {
   });
 
   factory GuideSettings.fromJson(Map<String, dynamic> j) => GuideSettings(
-        enabled: (j['enabled'] as bool?) ?? true,
-        injectionPosition:
-            guideInjectionPositionFromName(j['injectionPosition']),
-        defaultPerspective: guidePerspectiveFromName(j['defaultPerspective']),
-        mtime: _jInt(j['mtime']) ?? 0,
-      );
+    enabled: (j['enabled'] as bool?) ?? true,
+    injectionPosition: guideInjectionPositionFromName(j['injectionPosition']),
+    defaultPerspective: guidePerspectiveFromName(j['defaultPerspective']),
+    mtime: _jInt(j['mtime']) ?? 0,
+  );
 
   Map<String, dynamic> toJson() => {
-        'enabled': enabled,
-        'injectionPosition': guideInjectionPositionToName(injectionPosition),
-        'defaultPerspective': guidePerspectiveToName(defaultPerspective),
-        'mtime': mtime,
-      };
+    'enabled': enabled,
+    'injectionPosition': guideInjectionPositionToName(injectionPosition),
+    'defaultPerspective': guidePerspectiveToName(defaultPerspective),
+    'mtime': mtime,
+  };
 }
 
 /// Per-app chat behaviour preferences — independent of model sampling.
@@ -2846,17 +2852,16 @@ class ChatSettings {
       bubbleAlpha: (j['bubbleAlpha'] as num?)?.toDouble() ?? 0.55,
       backgroundSource: _parseBgSource(j['backgroundSource']),
       customBackgroundDataUrl: j['customBackgroundDataUrl'] as String?,
-      backgroundOpacity:
-          (j['backgroundOpacity'] as num?)?.toDouble() ?? 0.55,
+      backgroundOpacity: (j['backgroundOpacity'] as num?)?.toDouble() ?? 0.55,
       backgroundFit:
-          chatBgFitFromNameOrNull(j['backgroundFit']) ?? ChatBackgroundFit.cover,
+          chatBgFitFromNameOrNull(j['backgroundFit']) ??
+          ChatBackgroundFit.cover,
       askPersonaOnNewChat: (j['askPersonaOnNewChat'] as bool?) ?? true,
       // F2 bubble customization — every key defaults to the legacy look so
       // an old saved blob (which has none of these keys) renders identically.
       userBubbleColor: (j['userBubbleColor'] as num?)?.toInt(),
       aiBubbleColor: (j['aiBubbleColor'] as num?)?.toInt(),
-      bubbleCornerRadius:
-          (j['bubbleCornerRadius'] as num?)?.toDouble() ?? 12.0,
+      bubbleCornerRadius: (j['bubbleCornerRadius'] as num?)?.toDouble() ?? 12.0,
       bubbleBorderWidth: (j['bubbleBorderWidth'] as num?)?.toDouble() ?? 0.0,
       bubbleBorderColor: (j['bubbleBorderColor'] as num?)?.toInt(),
       bubbleBlurSigma: (j['bubbleBlurSigma'] as num?)?.toDouble() ?? 0.0,
@@ -2898,31 +2903,30 @@ class ChatSettings {
   }
 
   Map<String, dynamic> toJson() => {
-        'deleteBehavior':
-            deleteBehavior == DeleteBehavior.thisAndAfter
-                ? 'thisAndAfter'
-                : 'onlyThis',
-        'hideReasoning': hideReasoning,
-        'bubbleAlpha': bubbleAlpha,
-        'backgroundSource': _bgSourceToString(backgroundSource),
-        if (customBackgroundDataUrl != null)
-          'customBackgroundDataUrl': customBackgroundDataUrl,
-        'backgroundOpacity': backgroundOpacity,
-        'backgroundFit': chatBgFitToName(backgroundFit),
-        'askPersonaOnNewChat': askPersonaOnNewChat,
-        // F2 bubble customization. Nullable color keys are OMITTED when null
-        // (matches the customBackgroundDataUrl pattern) so a default install
-        // serialises without them; the numeric knobs are always written.
-        if (userBubbleColor != null) 'userBubbleColor': userBubbleColor,
-        if (aiBubbleColor != null) 'aiBubbleColor': aiBubbleColor,
-        'bubbleCornerRadius': bubbleCornerRadius,
-        'bubbleBorderWidth': bubbleBorderWidth,
-        if (bubbleBorderColor != null) 'bubbleBorderColor': bubbleBorderColor,
-        'bubbleBlurSigma': bubbleBlurSigma,
-        'bubbleTextScale': bubbleTextScale,
-        'systemNoteEnabled': systemNoteEnabled,
-        if (bubbleFontFamily != null) 'bubbleFontFamily': bubbleFontFamily,
-      };
+    'deleteBehavior': deleteBehavior == DeleteBehavior.thisAndAfter
+        ? 'thisAndAfter'
+        : 'onlyThis',
+    'hideReasoning': hideReasoning,
+    'bubbleAlpha': bubbleAlpha,
+    'backgroundSource': _bgSourceToString(backgroundSource),
+    if (customBackgroundDataUrl != null)
+      'customBackgroundDataUrl': customBackgroundDataUrl,
+    'backgroundOpacity': backgroundOpacity,
+    'backgroundFit': chatBgFitToName(backgroundFit),
+    'askPersonaOnNewChat': askPersonaOnNewChat,
+    // F2 bubble customization. Nullable color keys are OMITTED when null
+    // (matches the customBackgroundDataUrl pattern) so a default install
+    // serialises without them; the numeric knobs are always written.
+    if (userBubbleColor != null) 'userBubbleColor': userBubbleColor,
+    if (aiBubbleColor != null) 'aiBubbleColor': aiBubbleColor,
+    'bubbleCornerRadius': bubbleCornerRadius,
+    'bubbleBorderWidth': bubbleBorderWidth,
+    if (bubbleBorderColor != null) 'bubbleBorderColor': bubbleBorderColor,
+    'bubbleBlurSigma': bubbleBlurSigma,
+    'bubbleTextScale': bubbleTextScale,
+    'systemNoteEnabled': systemNoteEnabled,
+    if (bubbleFontFamily != null) 'bubbleFontFamily': bubbleFontFamily,
+  };
 }
 
 /// Mega-audit 2026-06-05 (H-4): how the sync engine resolves a record that
@@ -2970,6 +2974,7 @@ class UiPrefs {
   /// layout literally doesn't fit). No effect on Android / iOS — the
   /// mobile build always uses bottom nav at full width.
   bool desktopWideLayout;
+
   /// Wave CY.18.48: window bounds on desktop builds, persisted across
   /// app launches. Stored as a 4-element list `[x, y, width, height]`
   /// in logical pixels (whatever windowManager reports). Null means
@@ -2978,12 +2983,14 @@ class UiPrefs {
   /// resize/move with debounce so we're not thrashing storage on
   /// every drag pixel.
   List<double>? windowBounds;
+
   /// Wave CY.18.68: LAN server settings (desktop-only). Default OFF —
   /// Pyre never opens a port without an explicit user opt-in via the
   /// Network settings screen. Mobile builds ignore these entirely
   /// (PyreServer.start throws on mobile platforms anyway).
   bool lanServerEnabled;
   int lanServerPort;
+
   /// `'lan'` (default — accept connections from anywhere on the LAN)
   /// or `'localhost'` (loopback only — for testing the web build
   /// against the same machine).
@@ -3090,64 +3097,58 @@ class UiPrefs {
     this.activeThemeId = 'ember',
     this.accentArgb,
     List<String>? chatSwapProviderIds,
-  })  : desktopShortcuts = desktopShortcuts ?? <String, dynamic>{},
-        chatSwapProviderIds = chatSwapProviderIds ?? const [];
+  }) : desktopShortcuts = desktopShortcuts ?? <String, dynamic>{},
+       chatSwapProviderIds = chatSwapProviderIds ?? const [];
 
   factory UiPrefs.fromJson(Map<String, dynamic> j) => UiPrefs(
-        languageCode: j['languageCode'] == 'en' ? 'en' : 'es',
-        activeTab: (j['activeTab'] as String?) ?? 'characters',
-        charactersSegment:
-            (j['charactersSegment'] as String?) ?? 'characters',
-        // Wave CY.18.86: matches constructor default. Old JSON without
-        // the key now lands wide; explicit `false` still wins.
-        desktopWideLayout:
-            (j['desktopWideLayout'] as bool?) ?? true,
-        windowBounds: _parseBounds(j['windowBounds']),
-        lanServerEnabled: (j['lanServerEnabled'] as bool?) ?? false,
-        lanServerPort:
-            (j['lanServerPort'] as num?)?.toInt() ?? 6767,
-        lanBindMode: (j['lanBindMode'] as String?) ?? 'lan',
-        // Wave CY.18.90: shortcut overrides. Defensive shallow decode
-        // — anything that isn't a Map drops to empty (treat as "use
-        // defaults"). The desktop_shortcuts.dart layer further
-        // tolerates malformed individual entries.
-        desktopShortcuts: j['desktopShortcuts'] is Map
-            ? Map<String, dynamic>.from(j['desktopShortcuts'] as Map)
-            : <String, dynamic>{},
-        // Wave CY.18.99: default true so existing blobs opt in.
-        askToSwitchOnFailure:
-            (j['askToSwitchOnFailure'] as bool?) ?? true,
-        backgroundGeneration: (j['backgroundGeneration'] as bool?) ?? true,
-        // Wave CY.18.258: opt-in, default OFF.
-        syncProviderKeys: (j['syncProviderKeys'] as bool?) ?? false,
-        // Mega-audit 2026-06-05 (H-4): default newestWins (today's behavior).
-        syncConflictMode: parseSyncConflictMode(j['syncConflictMode']),
-        // Pyre 1.1 (F5): missing key → 1.0 (unchanged). A bad / wrong
-        // -typed value also falls back to 1.0 (note `is num`, not a
-        // `as num?` cast, so a stored String can't throw); the value is
-        // consumed through [clampedUiScale], which keeps it inside the
-        // supported range no matter what was stored.
-        uiScale: j['uiScale'] is num
-            ? (j['uiScale'] as num).toDouble()
-            : 1.0,
-        // Wave CY.18.1.3: missing key → 'ember' (unchanged look for
-        // existing users). A non-string value also falls back to the
-        // default so a corrupted JSON entry can never leave the app in
-        // an unknown state.
-        activeThemeId: j['activeThemeId'] is String
-            ? j['activeThemeId'] as String
-            : 'ember',
-        // Wave CY.18.1.3: null → no accent override (use palette default).
-        // A non-int value also maps to null — fail-safe.
-        accentArgb: j['accentArgb'] is int ? j['accentArgb'] as int : null,
-        // 1.2.1: defensive parse — anything but a List (missing key on
-        // legacy blobs, or a corrupted non-list value) falls back to no
-        // pins rather than throwing. Audit fix: _jStringList, NOT a lazy
-        // .cast<String>() — the lazy view defers the type check to READ
-        // time, so a corrupted element (hand-edited backup) would crash
-        // in build() instead of being dropped here (Wave CY.18.44 class).
-        chatSwapProviderIds: _jStringList(j['chatSwapProviderIds']),
-      );
+    languageCode: j['languageCode'] == 'en' ? 'en' : 'es',
+    activeTab: (j['activeTab'] as String?) ?? 'characters',
+    charactersSegment: (j['charactersSegment'] as String?) ?? 'characters',
+    // Wave CY.18.86: matches constructor default. Old JSON without
+    // the key now lands wide; explicit `false` still wins.
+    desktopWideLayout: (j['desktopWideLayout'] as bool?) ?? true,
+    windowBounds: _parseBounds(j['windowBounds']),
+    lanServerEnabled: (j['lanServerEnabled'] as bool?) ?? false,
+    lanServerPort: (j['lanServerPort'] as num?)?.toInt() ?? 6767,
+    lanBindMode: (j['lanBindMode'] as String?) ?? 'lan',
+    // Wave CY.18.90: shortcut overrides. Defensive shallow decode
+    // — anything that isn't a Map drops to empty (treat as "use
+    // defaults"). The desktop_shortcuts.dart layer further
+    // tolerates malformed individual entries.
+    desktopShortcuts: j['desktopShortcuts'] is Map
+        ? Map<String, dynamic>.from(j['desktopShortcuts'] as Map)
+        : <String, dynamic>{},
+    // Wave CY.18.99: default true so existing blobs opt in.
+    askToSwitchOnFailure: (j['askToSwitchOnFailure'] as bool?) ?? true,
+    backgroundGeneration: (j['backgroundGeneration'] as bool?) ?? true,
+    // Wave CY.18.258: opt-in, default OFF.
+    syncProviderKeys: (j['syncProviderKeys'] as bool?) ?? false,
+    // Mega-audit 2026-06-05 (H-4): default newestWins (today's behavior).
+    syncConflictMode: parseSyncConflictMode(j['syncConflictMode']),
+    // Pyre 1.1 (F5): missing key → 1.0 (unchanged). A bad / wrong
+    // -typed value also falls back to 1.0 (note `is num`, not a
+    // `as num?` cast, so a stored String can't throw); the value is
+    // consumed through [clampedUiScale], which keeps it inside the
+    // supported range no matter what was stored.
+    uiScale: j['uiScale'] is num ? (j['uiScale'] as num).toDouble() : 1.0,
+    // Wave CY.18.1.3: missing key → 'ember' (unchanged look for
+    // existing users). A non-string value also falls back to the
+    // default so a corrupted JSON entry can never leave the app in
+    // an unknown state.
+    activeThemeId: j['activeThemeId'] is String
+        ? j['activeThemeId'] as String
+        : 'ember',
+    // Wave CY.18.1.3: null → no accent override (use palette default).
+    // A non-int value also maps to null — fail-safe.
+    accentArgb: j['accentArgb'] is int ? j['accentArgb'] as int : null,
+    // 1.2.1: defensive parse — anything but a List (missing key on
+    // legacy blobs, or a corrupted non-list value) falls back to no
+    // pins rather than throwing. Audit fix: _jStringList, NOT a lazy
+    // .cast<String>() — the lazy view defers the type check to READ
+    // time, so a corrupted element (hand-edited backup) would crash
+    // in build() instead of being dropped here (Wave CY.18.44 class).
+    chatSwapProviderIds: _jStringList(j['chatSwapProviderIds']),
+  );
 
   // Wave CY.18.48: defensively decode the bounds list. JSON could
   // hand us null, a non-list, or a list of wrong length / mixed types.
@@ -3178,45 +3179,45 @@ class UiPrefs {
   }
 
   Map<String, dynamic> toJson() => {
-        if (languageCode != 'es') 'languageCode': languageCode,
-        'activeTab': activeTab,
-        'charactersSegment': charactersSegment,
-        // Wave CY.18.86: default flipped to true. Only persist when
-        // the user explicitly chose `false` (now the non-default) so
-        // backups stay clean for the common case.
-        if (!desktopWideLayout) 'desktopWideLayout': false,
-        if (windowBounds != null) 'windowBounds': windowBounds,
-        // Wave CY.18.68: only persist LAN fields that differ from
-        // defaults. Keeps backups portable to older builds + keeps
-        // mobile JSON clean (mobile never writes non-default LAN
-        // values because PyreServer can't run there).
-        if (lanServerEnabled) 'lanServerEnabled': true,
-        if (lanServerPort != 6767) 'lanServerPort': lanServerPort,
-        if (lanBindMode != 'lan') 'lanBindMode': lanBindMode,
-        // Wave CY.18.90: only persist when the user actually remapped
-        // something. Empty map = factory defaults.
-        if (desktopShortcuts.isNotEmpty) 'desktopShortcuts': desktopShortcuts,
-        // Wave CY.18.99: persist only the non-default `false`.
-        if (!askToSwitchOnFailure) 'askToSwitchOnFailure': false,
-        if (!backgroundGeneration) 'backgroundGeneration': false,
-        // Wave CY.18.258: persist only the non-default `true` opt-in.
-        if (syncProviderKeys) 'syncProviderKeys': true,
-        // Mega-audit 2026-06-05 (H-4): persist only when the user opted away
-        // from the default newestWins, keeping blobs clean for the common case.
-        if (syncConflictMode != SyncConflictMode.newestWins)
-          'syncConflictMode': syncConflictMode.name,
-        // Pyre 1.1 (F5): persist only when the user changed it away from
-        // 1.0 — keeps backups clean for the common (unchanged) case.
-        if (uiScale != 1.0) 'uiScale': uiScale,
-        // Wave CY.18.1.3: persist only non-default values to keep backups
-        // clean for users who never touched the theme (the common case).
-        if (activeThemeId != 'ember') 'activeThemeId': activeThemeId,
-        if (accentArgb != null) 'accentArgb': accentArgb,
-        // 1.2.1: persist only when the user actually pinned something —
-        // keeps backups clean for the common (no pins yet) case.
-        if (chatSwapProviderIds.isNotEmpty)
-          'chatSwapProviderIds': chatSwapProviderIds,
-      };
+    if (languageCode != 'es') 'languageCode': languageCode,
+    'activeTab': activeTab,
+    'charactersSegment': charactersSegment,
+    // Wave CY.18.86: default flipped to true. Only persist when
+    // the user explicitly chose `false` (now the non-default) so
+    // backups stay clean for the common case.
+    if (!desktopWideLayout) 'desktopWideLayout': false,
+    if (windowBounds != null) 'windowBounds': windowBounds,
+    // Wave CY.18.68: only persist LAN fields that differ from
+    // defaults. Keeps backups portable to older builds + keeps
+    // mobile JSON clean (mobile never writes non-default LAN
+    // values because PyreServer can't run there).
+    if (lanServerEnabled) 'lanServerEnabled': true,
+    if (lanServerPort != 6767) 'lanServerPort': lanServerPort,
+    if (lanBindMode != 'lan') 'lanBindMode': lanBindMode,
+    // Wave CY.18.90: only persist when the user actually remapped
+    // something. Empty map = factory defaults.
+    if (desktopShortcuts.isNotEmpty) 'desktopShortcuts': desktopShortcuts,
+    // Wave CY.18.99: persist only the non-default `false`.
+    if (!askToSwitchOnFailure) 'askToSwitchOnFailure': false,
+    if (!backgroundGeneration) 'backgroundGeneration': false,
+    // Wave CY.18.258: persist only the non-default `true` opt-in.
+    if (syncProviderKeys) 'syncProviderKeys': true,
+    // Mega-audit 2026-06-05 (H-4): persist only when the user opted away
+    // from the default newestWins, keeping blobs clean for the common case.
+    if (syncConflictMode != SyncConflictMode.newestWins)
+      'syncConflictMode': syncConflictMode.name,
+    // Pyre 1.1 (F5): persist only when the user changed it away from
+    // 1.0 — keeps backups clean for the common (unchanged) case.
+    if (uiScale != 1.0) 'uiScale': uiScale,
+    // Wave CY.18.1.3: persist only non-default values to keep backups
+    // clean for users who never touched the theme (the common case).
+    if (activeThemeId != 'ember') 'activeThemeId': activeThemeId,
+    if (accentArgb != null) 'accentArgb': accentArgb,
+    // 1.2.1: persist only when the user actually pinned something —
+    // keeps backups clean for the common (no pins yet) case.
+    if (chatSwapProviderIds.isNotEmpty)
+      'chatSwapProviderIds': chatSwapProviderIds,
+  };
 }
 
 // ============================================================================
@@ -3245,8 +3246,10 @@ class CreatorAttachment {
   /// 'image' | 'card' | 'doc'
   final String kind;
   final String filename;
+
   /// data:image/png;base64,... — set only when [kind] == 'image'.
   final String? imageDataUrl;
+
   /// Material to feed the model at send time. Empty string when an
   /// image attach is sent before its vision analysis completed (the
   /// model still sees the image profile via the chip thumbnail in
@@ -3270,19 +3273,21 @@ class CreatorAttachment {
       );
 
   Map<String, dynamic> toJson() => {
-        'kind': kind,
-        'filename': filename,
-        if (imageDataUrl != null) 'imageDataUrl': imageDataUrl,
-        'extracted': extracted,
-      };
+    'kind': kind,
+    'filename': filename,
+    if (imageDataUrl != null) 'imageDataUrl': imageDataUrl,
+    'extracted': extracted,
+  };
 }
 
 class CreatorMessage {
   final String role; // 'user' | 'assistant'
   String content;
+
   /// Files the user attached to this message — rendered as chips /
   /// thumbnails inside the bubble. Empty for assistant messages.
   List<CreatorAttachment> attachments;
+
   /// Wave CV.20: canvas state captured BEFORE this assistant turn
   /// ran. On Retry we restore the canvas from this snapshot, so a
   /// regenerated turn starts from a clean pre-turn state instead of
@@ -3290,6 +3295,7 @@ class CreatorMessage {
   /// Null on user messages and on assistant messages from sessions
   /// older than this wave (legacy data — retry just doesn't restore).
   Map<String, dynamic>? canvasSnapshot;
+
   /// Wave CY.18.27: optional message kind tag. `null` means a normal
   /// user/assistant turn rendered in chat as usual. Special values:
   ///   - `'freeformCue'` → synthetic user message the runtime injects
@@ -3324,44 +3330,48 @@ class CreatorMessage {
   }) : attachments = attachments ?? <CreatorAttachment>[];
 
   factory CreatorMessage.fromJson(Map<String, dynamic> j) => CreatorMessage(
-        role: (j['role'] as String?) ?? 'user',
-        content: (j['content'] as String?) ?? '',
-        attachments: ((j['attachments'] as List?) ?? const [])
-            .map((a) => CreatorAttachment.fromJson(
-                (a as Map).cast<String, dynamic>()))
-            .toList(),
-        canvasSnapshot: (j['canvasSnapshot'] as Map?)
-            ?.cast<String, dynamic>(),
-        kind: j['kind'] as String?,
-        appliedMarker: j['appliedMarker'] as String?,
-      );
+    role: (j['role'] as String?) ?? 'user',
+    content: (j['content'] as String?) ?? '',
+    attachments: ((j['attachments'] as List?) ?? const [])
+        .map(
+          (a) => CreatorAttachment.fromJson((a as Map).cast<String, dynamic>()),
+        )
+        .toList(),
+    canvasSnapshot: (j['canvasSnapshot'] as Map?)?.cast<String, dynamic>(),
+    kind: j['kind'] as String?,
+    appliedMarker: j['appliedMarker'] as String?,
+  );
 
   Map<String, dynamic> toJson() => {
-        'role': role,
-        'content': content,
-        if (attachments.isNotEmpty)
-          'attachments': attachments.map((a) => a.toJson()).toList(),
-        if (canvasSnapshot != null) 'canvasSnapshot': canvasSnapshot,
-        if (kind != null) 'kind': kind,
-        if (appliedMarker != null) 'appliedMarker': appliedMarker,
-      };
+    'role': role,
+    'content': content,
+    if (attachments.isNotEmpty)
+      'attachments': attachments.map((a) => a.toJson()).toList(),
+    if (canvasSnapshot != null) 'canvasSnapshot': canvasSnapshot,
+    if (kind != null) 'kind': kind,
+    if (appliedMarker != null) 'appliedMarker': appliedMarker,
+  };
 }
 
 class CreatorSession {
   String id;
+
   /// Manual title override. When null, the UI derives a title from
   /// [canvas]['name'] or falls back to "Untitled".
   String? title;
   List<CreatorMessage> messages;
+
   /// Partial chara_card_v2 `data` block. Grows as the conversation
   /// reveals more about the character. Empty on a fresh session.
   Map<String, dynamic> canvas;
   int createdAt;
   int updatedAt;
+
   /// Once the user hits "Save card" we stamp the resulting character's
   /// id here so the session row can show a "saved" badge and re-opening
   /// the session can offer to open the character.
   String? savedCharacterId;
+
   /// Wave CS: when set, the session is editing an EXISTING character.
   /// Saves UPDATE that character (preserving its id and metadata) rather
   /// than creating a new one. Different from `savedCharacterId` —
@@ -3371,12 +3381,14 @@ class CreatorSession {
   /// saves, but they can diverge if the user picks a different
   /// destination on save.
   String? editingCharacterId;
+
   /// Persona Creator: when set, the session is editing an EXISTING
   /// persona (mode == 'persona'). Saves UPDATE that persona in place
   /// rather than creating a new one. Mirrors [editingCharacterId] but
   /// targets the personas list. Set BEFORE any save (at session
   /// creation, from the "Edit with AI" entry on a persona).
   String? editingPersonaId;
+
   /// Wave CV: which architect prompt drives this session.
   ///   - `'character'` → character architect (blocks 1-7, full)
   ///   - `'scenario'`  → scenario architect (blocks 1-4, leaner)
@@ -3386,6 +3398,7 @@ class CreatorSession {
   /// Legacy sessions (created before Wave CV) default to `'character'`
   /// during fromJson so existing drafts keep their architect.
   String? mode;
+
   /// Wave CY.18.27: how the architect runs through blocks in this
   /// session. Only meaningful for `mode == 'character'` or `'scenario'`.
   ///   - `'guided'`   → classic flow: architect emits one block per
@@ -3404,12 +3417,14 @@ class CreatorSession {
   /// `'guided'` so existing drafts keep their current behaviour.
   /// `'edit'` mode ignores this field.
   String? flow;
+
   /// Wave CY.18.27: latching flag that flips to `true` once the
   /// architect has emitted its first SHEET region in this session.
   /// Used by the freeform runtime to decide whether to auto-inject a
   /// continuation cue after an assistant turn. `false` during Phase 1
   /// discussion; `true` once the build cascade has engaged.
   bool buildStarted;
+
   /// Sticky in the drawer — pinned sessions float to the top regardless
   /// of `updatedAt` and survive the empty-session auto-cleanup.
   bool pinned;
@@ -3428,63 +3443,59 @@ class CreatorSession {
     this.flow,
     this.buildStarted = false,
     this.pinned = false,
-  })  : messages = messages ?? <CreatorMessage>[],
-        canvas = canvas ?? <String, dynamic>{},
-        createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
+  }) : messages = messages ?? <CreatorMessage>[],
+       canvas = canvas ?? <String, dynamic>{},
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
 
   factory CreatorSession.fromJson(Map<String, dynamic> j) => CreatorSession(
-        id: (j['id'] as String?) ?? newId('creator'),
-        title: j['title'] as String?,
-        messages: ((j['messages'] as List?) ?? const [])
-            .map((m) =>
-                CreatorMessage.fromJson((m as Map).cast<String, dynamic>()))
-            .toList(),
-        canvas: ((j['canvas'] as Map?) ?? const {})
-            .cast<String, dynamic>(),
-        createdAt: (j['createdAt'] as num?)?.toInt(),
-        updatedAt: (j['updatedAt'] as num?)?.toInt(),
-        savedCharacterId: j['savedCharacterId'] as String?,
-        editingCharacterId: j['editingCharacterId'] as String?,
-        editingPersonaId: j['editingPersonaId'] as String?,
-        // Wave CV: legacy sessions w/o a mode default to 'character'
-        // so an in-progress draft from before this wave doesn't end
-        // up locked behind the mode chooser.
-        mode: (j['mode'] as String?) ??
-            (((j['messages'] as List?)?.isNotEmpty ?? false)
-                ? 'character'
-                : null),
-        // Wave CY.18.101: guided removed — freeform is the only flow.
-        // Persisted 'guided' is reinterpreted as 'freeform'; legacy
-        // in-flight sessions (messages but no flow) default to 'freeform';
-        // brand-new sessions stay null until a mode is picked
-        // (_chooseMode then locks flow='freeform').
-        flow: (j['flow'] as String?) == 'guided'
-            ? 'freeform'
-            : ((j['flow'] as String?) ??
-                (((j['messages'] as List?)?.isNotEmpty ?? false)
-                    ? 'freeform'
-                    : null)),
-        buildStarted: (j['buildStarted'] as bool?) ?? false,
-        pinned: (j['pinned'] as bool?) ?? false,
-      );
+    id: (j['id'] as String?) ?? newId('creator'),
+    title: j['title'] as String?,
+    messages: ((j['messages'] as List?) ?? const [])
+        .map((m) => CreatorMessage.fromJson((m as Map).cast<String, dynamic>()))
+        .toList(),
+    canvas: ((j['canvas'] as Map?) ?? const {}).cast<String, dynamic>(),
+    createdAt: (j['createdAt'] as num?)?.toInt(),
+    updatedAt: (j['updatedAt'] as num?)?.toInt(),
+    savedCharacterId: j['savedCharacterId'] as String?,
+    editingCharacterId: j['editingCharacterId'] as String?,
+    editingPersonaId: j['editingPersonaId'] as String?,
+    // Wave CV: legacy sessions w/o a mode default to 'character'
+    // so an in-progress draft from before this wave doesn't end
+    // up locked behind the mode chooser.
+    mode:
+        (j['mode'] as String?) ??
+        (((j['messages'] as List?)?.isNotEmpty ?? false) ? 'character' : null),
+    // Wave CY.18.101: guided removed — freeform is the only flow.
+    // Persisted 'guided' is reinterpreted as 'freeform'; legacy
+    // in-flight sessions (messages but no flow) default to 'freeform';
+    // brand-new sessions stay null until a mode is picked
+    // (_chooseMode then locks flow='freeform').
+    flow: (j['flow'] as String?) == 'guided'
+        ? 'freeform'
+        : ((j['flow'] as String?) ??
+              (((j['messages'] as List?)?.isNotEmpty ?? false)
+                  ? 'freeform'
+                  : null)),
+    buildStarted: (j['buildStarted'] as bool?) ?? false,
+    pinned: (j['pinned'] as bool?) ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        if (title != null) 'title': title,
-        'messages': messages.map((m) => m.toJson()).toList(),
-        'canvas': canvas,
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-        if (savedCharacterId != null) 'savedCharacterId': savedCharacterId,
-        if (editingCharacterId != null)
-          'editingCharacterId': editingCharacterId,
-        if (editingPersonaId != null) 'editingPersonaId': editingPersonaId,
-        if (mode != null) 'mode': mode,
-        if (flow != null) 'flow': flow,
-        if (buildStarted) 'buildStarted': true,
-        if (pinned) 'pinned': true,
-      };
+    'id': id,
+    if (title != null) 'title': title,
+    'messages': messages.map((m) => m.toJson()).toList(),
+    'canvas': canvas,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+    if (savedCharacterId != null) 'savedCharacterId': savedCharacterId,
+    if (editingCharacterId != null) 'editingCharacterId': editingCharacterId,
+    if (editingPersonaId != null) 'editingPersonaId': editingPersonaId,
+    if (mode != null) 'mode': mode,
+    if (flow != null) 'flow': flow,
+    if (buildStarted) 'buildStarted': true,
+    if (pinned) 'pinned': true,
+  };
 
   /// Derive a display title without persisting it. Used by the drawer
   /// rows so a session named "Lyra" by the model auto-updates the moment

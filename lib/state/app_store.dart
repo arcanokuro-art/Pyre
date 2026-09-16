@@ -23,6 +23,8 @@ import '../services/regex_rules.dart';
 import '../services/secure_keys.dart';
 import '../services/store_backend.dart';
 import '../services/token_estimate.dart';
+import '../services/managed_memory_app_store_adapter.dart';
+import '../services/memory_capacity.dart';
 
 /// The provider-ROLE pointers (active/creator/vision) are DEVICE-LOCAL — each
 /// indexes into THIS device's own provider list. They must NOT cross to a peer
@@ -31,7 +33,9 @@ import '../services/token_estimate.dart';
 /// device clobber the other's (→ "No provider configured" / LAN-proxy 503/403).
 /// This strips them from a synced settings record before it crosses such a
 /// boundary. Pure; returns a copy and never mutates [settings].
-Map<String, dynamic> withoutProviderRolePointers(Map<String, dynamic> settings) {
+Map<String, dynamic> withoutProviderRolePointers(
+  Map<String, dynamic> settings,
+) {
   final m = Map<String, dynamic>.of(settings);
   m.remove('activeProviderId');
   m.remove('creatorProviderId');
@@ -62,11 +66,13 @@ class AppStore extends ChangeNotifier {
   // Collections
   List<ApiProvider> providers = [];
   String? activeProviderId;
+
   /// Wave CY.18.99: per-provider refusal counter (self-learning). Bumped
   /// when a provider's reply is classified as a content refusal. Powers
   /// the "this one tends to censor → try a clean one" suggestion. Keyed
   /// by provider id; persisted in the main JSON blob (tiny).
   Map<String, int> providerRefusals = {};
+
   /// Slice D-2 (2026-07-02): persisted "learned context-limit" cache.
   /// Keyed `'${provider.id}|${provider.model}'` (the model_metadata.dart:78
   /// convention — NOT providerRefusals' providerId-alone key, since the same
@@ -77,6 +83,7 @@ class AppStore extends ChangeNotifier {
   /// (ChatPromptInputs.learnedContextLimitTokens); nothing consults this map
   /// yet.
   Map<String, int> learnedContextLimits = {};
+
   /// Tier-1 H-1 (2026-07-02): "push-before-reap" anchor for tombstone GC.
   /// The last CLIENT-clock push cursor SyncEngine confirmed
   /// (`SyncEngine._lastPushTime`), mirrored here so [_gcTombstones] — which
@@ -291,6 +298,7 @@ class AppStore extends ChangeNotifier {
     }
     lastIssuedLocalMtime = hw;
   }
+
   /// Optional override: when non-null, the AI character builder uses
   /// this provider instead of [activeProviderId]. Useful when the user
   /// wants (a) an uncensored text model for chatting (DeepSeek, Soji),
@@ -298,6 +306,7 @@ class AppStore extends ChangeNotifier {
   /// the creator flow (Venice qwen, Grok, Pixtral, etc.). Null means
   /// "use the same one as chat".
   String? creatorProviderId;
+
   /// Optional override for IMAGE-ONLY calls (vision analysis when the
   /// user attaches a reference image). Falls back to [creatorProvider]
   /// (which itself falls back to [activeProvider]). Lets the user pin
@@ -679,8 +688,9 @@ class AppStore extends ChangeNotifier {
     if (raw == null) return <T>[];
     if (raw is! List) {
       loadErrors.add(
-          '$fieldName: expected a list, got ${raw.runtimeType} — '
-          'skipped entirely.');
+        '$fieldName: expected a list, got ${raw.runtimeType} — '
+        'skipped entirely.',
+      );
       return <T>[];
     }
     final out = <T>[];
@@ -700,8 +710,9 @@ class AppStore extends ChangeNotifier {
     }
     if (skipped > 0) {
       loadErrors.add(
-          '$fieldName: $skipped of ${raw.length} item(s) failed to '
-          'parse and were skipped.');
+        '$fieldName: $skipped of ${raw.length} item(s) failed to '
+        'parse and were skipped.',
+      );
     }
     return out;
   }
@@ -717,8 +728,10 @@ class AppStore extends ChangeNotifier {
   ) {
     if (raw == null) return fallback;
     if (raw is! Map) {
-      loadErrors.add('$fieldName: expected an object, got '
-          '${raw.runtimeType} — using defaults.');
+      loadErrors.add(
+        '$fieldName: expected an object, got '
+        '${raw.runtimeType} — using defaults.',
+      );
       return fallback;
     }
     try {
@@ -792,10 +805,11 @@ class AppStore extends ChangeNotifier {
           : (rawVer is num ? rawVer.toInt() : 0);
       if (fileVersion > schemaVersion) {
         loadErrors.add(
-            'Loaded data is schema v$fileVersion but this build only '
-            'understands v$schemaVersion. Some fields may be ignored. '
-            'If you upgraded the APK then downgraded, install the '
-            'newer build to restore full compatibility.');
+          'Loaded data is schema v$fileVersion but this build only '
+          'understands v$schemaVersion. Some fields may be ignored. '
+          'If you upgraded the APK then downgraded, install the '
+          'newer build to restore full compatibility.',
+        );
       }
       // v0 → v1: no actual transformation needed, the v0 schema is a
       // strict subset of v1 (we only added optional fields). The
@@ -806,7 +820,10 @@ class AppStore extends ChangeNotifier {
         // function (Map<String,dynamic> raw) → Map<String,dynamic>.
       }
       providers = _parseList<ApiProvider>(
-          raw['providers'], 'providers', ApiProvider.fromJson);
+        raw['providers'],
+        'providers',
+        ApiProvider.fromJson,
+      );
       activeProviderId = _jStr(raw['activeProviderId']);
       creatorProviderId = _jStr(raw['creatorProviderId']);
       visionProviderId = _jStr(raw['visionProviderId']);
@@ -861,19 +878,30 @@ class AppStore extends ChangeNotifier {
             p.apiKey = await SecureKeys.read(p.id);
           }
         } catch (e) {
-          loadErrors.add('provider "${p.name}": secure key hydration '
-              'failed ($e) — re-paste in API Connections.');
+          loadErrors.add(
+            'provider "${p.name}": secure key hydration '
+            'failed ($e) — re-paste in API Connections.',
+          );
         }
       }
 
       characters = _parseList<Character>(
-          raw['characters'], 'characters', Character.fromJson);
+        raw['characters'],
+        'characters',
+        Character.fromJson,
+      );
       personas = _parseList<Persona>(
-          raw['personas'], 'personas', Persona.fromJson);
+        raw['personas'],
+        'personas',
+        Persona.fromJson,
+      );
       activePersonaId = _jStr(raw['activePersonaId']);
       // Wave BG: in-progress drafts from the manual editor.
       characterDrafts = _parseList<Character>(
-          raw['characterDrafts'], 'characterDrafts', Character.fromJson);
+        raw['characterDrafts'],
+        'characterDrafts',
+        Character.fromJson,
+      );
       // Wave BC: botbooru creator handle. Defaults to '' so existing
       // backups without this field load cleanly.
       botbooruUsername = _jStr(raw['botbooruUsername']) ?? '';
@@ -889,23 +917,20 @@ class AppStore extends ChangeNotifier {
       // below, after the try/catch closes the load branch).
       botbooruTitle = _jStr(raw['botbooruTitle']) ?? '';
       botbooruPronouns = _jStr(raw['botbooruPronouns']) ?? '';
-      botbooruFeaturedCharacterId =
-          _jStr(raw['botbooruFeaturedCharacterId']);
+      botbooruFeaturedCharacterId = _jStr(raw['botbooruFeaturedCharacterId']);
       // The BotBooru profile sync watermark. Absent (pre-feature backups) → 0,
       // so the first incoming profile sync (any mtime > 0) wins.
       botbooruProfileMtime =
           (raw['botbooruProfileMtime'] as num?)?.toInt() ?? 0;
       installedAt = (raw['installedAt'] as num?)?.toInt();
 
-      folders = _parseList<Folder>(
-          raw['folders'], 'folders', Folder.fromJson);
+      folders = _parseList<Folder>(raw['folders'], 'folders', Folder.fromJson);
       charSortKey = _jStr(raw['charSortKey']) ?? 'recent';
       charSelectedTags = _jStringList(raw['charSelectedTags']);
       charFolderId = _jStr(raw['charFolderId']);
       charFavoritesExpanded = _jBool(raw['charFavoritesExpanded'], true);
       personaSortKey = _jStr(raw['personaSortKey']) ?? 'recent';
-      personaFavoritesExpanded =
-          _jBool(raw['personaFavoritesExpanded'], true);
+      personaFavoritesExpanded = _jBool(raw['personaFavoritesExpanded'], true);
       // 2026-07-13 (community request): persona/lorebook folder filters
       // (parity with charFolderId; missing on older blobs → null = "All").
       personaFolderId = _jStr(raw['personaFolderId']);
@@ -918,18 +943,21 @@ class AppStore extends ChangeNotifier {
       exampleContentSeeded = _jBool(raw['exampleContentSeeded'], false);
       // Wave CY.18.188: stale-Vesna-persona sweep latch. Missing on
       // pre-Wave-188 installs → false (sweep runs once on first load).
-      vesnaExamplePersonaSwept =
-          _jBool(raw['vesnaExamplePersonaSwept'], false);
+      vesnaExamplePersonaSwept = _jBool(raw['vesnaExamplePersonaSwept'], false);
       // Wave CY.18.204: persona-defaults migration latch. Missing on
       // pre-Wave-204 installs → false (the one-time adjustment runs once
       // on first load after upgrade).
-      personaDefaultsAdjustedV2 =
-          _jBool(raw['personaDefaultsAdjustedV2'], false);
+      personaDefaultsAdjustedV2 = _jBool(
+        raw['personaDefaultsAdjustedV2'],
+        false,
+      );
       // Wave CY.18.209: corrected persona-defaults migration latch (the v2
       // pass matched the wrong name and was a no-op). Missing on installs
       // that predate this wave → false, so the corrected pass runs once.
-      personaDefaultsAdjustedV3 =
-          _jBool(raw['personaDefaultsAdjustedV3'], false);
+      personaDefaultsAdjustedV3 = _jBool(
+        raw['personaDefaultsAdjustedV3'],
+        false,
+      );
       // Pyre 1.1: default-regex-rule seed latch. Missing on installs that
       // predate this build → false, so the one-time seed runs once on the
       // next launch (fresh installs AND upgrades).
@@ -937,53 +965,74 @@ class AppStore extends ChangeNotifier {
 
       chats = _parseList<Chat>(raw['chats'], 'chats', Chat.fromJson);
       lorebooks = _parseList<Lorebook>(
-          raw['lorebooks'], 'lorebooks', Lorebook.fromJson);
-      presets = _parseList<Preset>(
-          raw['presets'], 'presets', Preset.fromJson);
+        raw['lorebooks'],
+        'lorebooks',
+        Lorebook.fromJson,
+      );
+      presets = _parseList<Preset>(raw['presets'], 'presets', Preset.fromJson);
       activePresetId = _jStr(raw['activePresetId']);
       creatorPresets = _parseList<CreatorPreset>(
-          raw['creatorPresets'], 'creatorPresets', CreatorPreset.fromJson);
+        raw['creatorPresets'],
+        'creatorPresets',
+        CreatorPreset.fromJson,
+      );
       activeCreatorPresetId = _jStr(raw['activeCreatorPresetId']);
       // Pyre 1.1 (F4): regex find/replace rules. Missing key → empty list,
       // which leaves chat byte-identical to pre-1.1 behaviour.
       regexRules = _parseList<RegexRule>(
-          raw['regexRules'], 'regexRules', RegexRule.fromJson);
+        raw['regexRules'],
+        'regexRules',
+        RegexRule.fromJson,
+      );
 
       modelSettings = _parseObject<ModelSettings>(
-          raw['modelSettings'],
-          'modelSettings',
-          ModelSettings.fromJson,
-          modelSettings);
+        raw['modelSettings'],
+        'modelSettings',
+        ModelSettings.fromJson,
+        modelSettings,
+      );
       chatSettings = _parseObject<ChatSettings>(
-          raw['chatSettings'],
-          'chatSettings',
-          ChatSettings.fromJson,
-          chatSettings);
+        raw['chatSettings'],
+        'chatSettings',
+        ChatSettings.fromJson,
+        chatSettings,
+      );
       memorySettings = _parseObject<MemorySettings>(
-          raw['memorySettings'],
-          'memorySettings',
-          MemorySettings.fromJson,
-          memorySettings);
+        raw['memorySettings'],
+        'memorySettings',
+        MemorySettings.fromJson,
+        memorySettings,
+      );
       liveSheetSettings = _parseObject<LiveSheetSettings>(
-          raw['liveSheetSettings'],
-          'liveSheetSettings',
-          LiveSheetSettings.fromJson,
-          liveSheetSettings);
+        raw['liveSheetSettings'],
+        'liveSheetSettings',
+        LiveSheetSettings.fromJson,
+        liveSheetSettings,
+      );
       scriptSettings = _parseObject<ScriptSettings>(
-          raw['scriptSettings'],
-          'scriptSettings',
-          ScriptSettings.fromJson,
-          scriptSettings);
+        raw['scriptSettings'],
+        'scriptSettings',
+        ScriptSettings.fromJson,
+        scriptSettings,
+      );
       guideSettings = _parseObject<GuideSettings>(
-          raw['guideSettings'],
-          'guideSettings',
-          GuideSettings.fromJson,
-          guideSettings);
+        raw['guideSettings'],
+        'guideSettings',
+        GuideSettings.fromJson,
+        guideSettings,
+      );
       uiPrefs = _parseObject<UiPrefs>(
-          raw['uiPrefs'], 'uiPrefs', UiPrefs.fromJson, uiPrefs);
+        raw['uiPrefs'],
+        'uiPrefs',
+        UiPrefs.fromJson,
+        uiPrefs,
+      );
 
-      creatorSessions = _parseList<CreatorSession>(raw['creatorSessions'],
-          'creatorSessions', CreatorSession.fromJson);
+      creatorSessions = _parseList<CreatorSession>(
+        raw['creatorSessions'],
+        'creatorSessions',
+        CreatorSession.fromJson,
+      );
       activeCreatorSessionId = _jStr(raw['activeCreatorSessionId']);
 
       // Wave CY.18.256: synced tombstone log. Absent on pre-Wave backups
@@ -1040,8 +1089,9 @@ class AppStore extends ChangeNotifier {
     // overwriting in place is safe and avoids a stale prompt sticking
     // around after a release that changes the canonical text.
     final freshLockedDefault = buildLockedDefaultPreset();
-    final existingLockedIdx =
-        presets.indexWhere((p) => p.id == lockedDefaultPresetId);
+    final existingLockedIdx = presets.indexWhere(
+      (p) => p.id == lockedDefaultPresetId,
+    );
     if (existingLockedIdx >= 0) {
       presets[existingLockedIdx] = freshLockedDefault;
     } else {
@@ -1055,8 +1105,9 @@ class AppStore extends ChangeNotifier {
     // the build so prompt updates ship to every install. Default the active
     // id to it on a fresh install.
     final freshLockedCreatorDefault = buildLockedDefaultCreatorPreset();
-    final existingLockedCreatorIdx = creatorPresets
-        .indexWhere((p) => p.id == lockedDefaultCreatorPresetId);
+    final existingLockedCreatorIdx = creatorPresets.indexWhere(
+      (p) => p.id == lockedDefaultCreatorPresetId,
+    );
     if (existingLockedCreatorIdx >= 0) {
       creatorPresets[existingLockedCreatorIdx] = freshLockedCreatorDefault;
     } else {
@@ -1103,27 +1154,46 @@ class AppStore extends ChangeNotifier {
     // corrupt/hostile future value the counter never issued) is still clamped.
     // `lastIssuedLocalMtime` here is the PERSISTED value (the rebase runs later
     // in this method), i.e. the trusted high-water this device actually issued.
-    final clampCeiling =
-        mtimeNow > lastIssuedLocalMtime ? mtimeNow : lastIssuedLocalMtime;
+    final clampCeiling = mtimeNow > lastIssuedLocalMtime
+        ? mtimeNow
+        : lastIssuedLocalMtime;
     for (final c in characters) {
-      c.mtime = clampMtime(stampMtimeIfZero(c.mtime, c.updatedAt, mtimeNow), clampCeiling);
+      c.mtime = clampMtime(
+        stampMtimeIfZero(c.mtime, c.updatedAt, mtimeNow),
+        clampCeiling,
+      );
     }
     for (final p in personas) {
-      p.mtime = clampMtime(stampMtimeIfZero(p.mtime, p.updatedAt, mtimeNow), clampCeiling);
+      p.mtime = clampMtime(
+        stampMtimeIfZero(p.mtime, p.updatedAt, mtimeNow),
+        clampCeiling,
+      );
     }
     for (final ch in chats) {
-      ch.mtime = clampMtime(stampMtimeIfZero(ch.mtime, ch.updatedAt, mtimeNow), clampCeiling);
+      ch.mtime = clampMtime(
+        stampMtimeIfZero(ch.mtime, ch.updatedAt, mtimeNow),
+        clampCeiling,
+      );
     }
     for (final p in presets) {
       // Preset tracks `createdAt` instead of `updatedAt`.
-      p.mtime = clampMtime(stampMtimeIfZero(p.mtime, p.createdAt, mtimeNow), clampCeiling);
+      p.mtime = clampMtime(
+        stampMtimeIfZero(p.mtime, p.createdAt, mtimeNow),
+        clampCeiling,
+      );
     }
     for (final l in lorebooks) {
-      l.mtime = clampMtime(stampMtimeIfZero(l.mtime, l.updatedAt, mtimeNow), clampCeiling);
+      l.mtime = clampMtime(
+        stampMtimeIfZero(l.mtime, l.updatedAt, mtimeNow),
+        clampCeiling,
+      );
     }
     for (final r in regexRules) {
       // RegexRule has no `updatedAt`; only zero-fill + future-clamp apply.
-      r.mtime = clampMtime(stampMtimeIfZero(r.mtime, mtimeNow, mtimeNow), clampCeiling);
+      r.mtime = clampMtime(
+        stampMtimeIfZero(r.mtime, mtimeNow, mtimeNow),
+        clampCeiling,
+      );
     }
     // Wave CY.18.268: providers were MISSING from this repair pass, so a
     // provider created before the mtime field existed (or by the old
@@ -1132,7 +1202,9 @@ class AppStore extends ChangeNotifier {
     // installedAt is the stable fallback (now() on a fresh install).
     for (final p in providers) {
       p.mtime = clampMtime(
-          stampMtimeIfZero(p.mtime, installedAt ?? mtimeNow, mtimeNow), clampCeiling);
+        stampMtimeIfZero(p.mtime, installedAt ?? mtimeNow, mtimeNow),
+        clampCeiling,
+      );
     }
 
     // Wave CY.18.44: load-time reference-integrity sweep. Pre-Wave this
@@ -1282,7 +1354,9 @@ class AppStore extends ChangeNotifier {
     // No-op on web — `gcOrphans` returns 0 (no filesystem).
     if (!_attachmentGcRan) {
       _attachmentGcRan = true;
-      unawaited(AttachmentStore.gcOrphans(collectReferencedAttachmentHashes(this)));
+      unawaited(
+        AttachmentStore.gcOrphans(collectReferencedAttachmentHashes(this)),
+      );
     }
 
     // Wave CY.18.120: kick off model preloads for every opted-in local
@@ -1328,24 +1402,20 @@ class AppStore extends ChangeNotifier {
     final presetIds = presets.map((p) => p.id).toSet();
     final creatorPresetIds = creatorPresets.map((p) => p.id).toSet();
 
-    if (activeProviderId != null &&
-        !providerIds.contains(activeProviderId)) {
+    if (activeProviderId != null && !providerIds.contains(activeProviderId)) {
       activeProviderId = null;
     }
-    if (creatorProviderId != null &&
-        !providerIds.contains(creatorProviderId)) {
+    if (creatorProviderId != null && !providerIds.contains(creatorProviderId)) {
       creatorProviderId = null;
     }
-    if (visionProviderId != null &&
-        !providerIds.contains(visionProviderId)) {
+    if (visionProviderId != null && !providerIds.contains(visionProviderId)) {
       visionProviderId = null;
     }
     if (impersonateProviderId != null &&
         !providerIds.contains(impersonateProviderId)) {
       impersonateProviderId = null;
     }
-    if (guideProviderId != null &&
-        !providerIds.contains(guideProviderId)) {
+    if (guideProviderId != null && !providerIds.contains(guideProviderId)) {
       guideProviderId = null;
     }
     // Wave CY.18.99: drop refusal records for providers that no longer
@@ -1358,12 +1428,10 @@ class AppStore extends ChangeNotifier {
     learnedContextLimits.removeWhere(
       (key, _) => !providerIds.contains(key.split('|').first),
     );
-    if (activePersonaId != null &&
-        !personaIds.contains(activePersonaId)) {
+    if (activePersonaId != null && !personaIds.contains(activePersonaId)) {
       activePersonaId = null;
     }
-    if (activePresetId != null &&
-        !presetIds.contains(activePresetId)) {
+    if (activePresetId != null && !presetIds.contains(activePresetId)) {
       activePresetId = lockedDefaultPresetId;
     }
     if (activeCreatorPresetId != null &&
@@ -1385,11 +1453,14 @@ class AppStore extends ChangeNotifier {
       // Keep ids that resolve via the library OR via this chat's frozen
       // snapshot map. Snapshots are self-contained, so a snapshot-only
       // character is still usable.
-      chat.characterIds.removeWhere((id) =>
-          !characterIdSet.contains(id) &&
-          !chat.characterSnapshots.containsKey(id));
-      chat.characterSnapshots
-          .removeWhere((id, _) => !chat.characterIds.contains(id));
+      chat.characterIds.removeWhere(
+        (id) =>
+            !characterIdSet.contains(id) &&
+            !chat.characterSnapshots.containsKey(id),
+      );
+      chat.characterSnapshots.removeWhere(
+        (id, _) => !chat.characterIds.contains(id),
+      );
       // Do NOT null `personaId` for a missing persona. Personas sync too;
       // on a paired client the persona this chat points at (e.g. the
       // bundled Ren persona) may not have arrived yet. Nulling it here
@@ -1403,7 +1474,8 @@ class AppStore extends ChangeNotifier {
       // collection — see the note above). Injection skips unresolved ids.
       for (final m in chat.messages) {
         if (m.characterId != null && m.characterId!.isNotEmpty) {
-          final ok = characterIdSet.contains(m.characterId) ||
+          final ok =
+              characterIdSet.contains(m.characterId) ||
               chat.characterSnapshots.containsKey(m.characterId);
           if (!ok) m.characterId = null;
         }
@@ -1438,12 +1510,12 @@ class AppStore extends ChangeNotifier {
     // Single-device, NEVER synced: no peer can resurrect anything, so reap by
     // wall-clock exactly as before (keeps a solo user's blob from growing).
     final cutoff = DateTime.now().millisecondsSinceEpoch - _tombstoneTtlMs;
-    characters
-        .removeWhere((c) => c.deleted && c.mtime > 0 && c.mtime < cutoff);
+    characters.removeWhere((c) => c.deleted && c.mtime > 0 && c.mtime < cutoff);
     personas.removeWhere((p) => p.deleted && p.mtime > 0 && p.mtime < cutoff);
     chats.removeWhere((c) => c.deleted && c.mtime > 0 && c.mtime < cutoff);
     presets.removeWhere(
-        (p) => p.deleted && !p.locked && p.mtime > 0 && p.mtime < cutoff);
+      (p) => p.deleted && !p.locked && p.mtime > 0 && p.mtime < cutoff,
+    );
     lorebooks.removeWhere((l) => l.deleted && l.mtime > 0 && l.mtime < cutoff);
     tombstones.removeWhere((_, mtime) => mtime < cutoff);
   }
@@ -1627,8 +1699,7 @@ class AppStore extends ChangeNotifier {
       'personas': personas.map((p) => p.toJson()).toList(),
       'activePersonaId': activePersonaId,
       // Wave BG: persist in-progress drafts so resume-after-restart works.
-      'characterDrafts':
-          characterDrafts.map((c) => c.toJson()).toList(),
+      'characterDrafts': characterDrafts.map((c) => c.toJson()).toList(),
       // Wave BC: persist the botbooru creator handle for {{creator}}
       // substitution on Save Card.
       'botbooruUsername': botbooruUsername,
@@ -1647,7 +1718,8 @@ class AppStore extends ChangeNotifier {
         'botbooruFeaturedCharacterId': botbooruFeaturedCharacterId,
       // BotBooru profile sync watermark (omit when 0 to keep fresh blobs
       // clean; load() reads it back as `?? 0`).
-      if (botbooruProfileMtime > 0) 'botbooruProfileMtime': botbooruProfileMtime,
+      if (botbooruProfileMtime > 0)
+        'botbooruProfileMtime': botbooruProfileMtime,
       if (installedAt != null) 'installedAt': installedAt,
       // Wave CY.18.38: folders + Characters/Personas filter state.
       'folders': folders.map((f) => f.toJson()).toList(),
@@ -1690,8 +1762,7 @@ class AppStore extends ChangeNotifier {
       'scriptSettings': scriptSettings.toJson(),
       'guideSettings': guideSettings.toJson(),
       'uiPrefs': uiPrefs.toJson(),
-      'creatorSessions':
-          creatorSessions.map((s) => s.toJson()).toList(),
+      'creatorSessions': creatorSessions.map((s) => s.toJson()).toList(),
       'activeCreatorSessionId': activeCreatorSessionId,
       // Wave CY.18.256: deletion-propagation tombstone log (omit when
       // empty to keep fresh / never-synced blobs clean). GC'd to the
@@ -1915,7 +1986,8 @@ class AppStore extends ChangeNotifier {
   /// failover is preserved. Pure ordering lives in provider_fallback.dart.
   List<ApiProvider> chatFallbackChain(Chat chat) {
     final overrideId = chatProviderOverrides[chat.id];
-    final valid = overrideId != null && providers.any((p) => p.id == overrideId);
+    final valid =
+        overrideId != null && providers.any((p) => p.id == overrideId);
     return buildFallbackChain(
       all: providers,
       primaryId: valid ? overrideId : activeProviderId,
@@ -1955,8 +2027,9 @@ class AppStore extends ChangeNotifier {
     if (limitTokens <= 0) return;
     final key = '$providerId|$model';
     final existing = learnedContextLimits[key];
-    learnedContextLimits[key] =
-        existing == null ? limitTokens : min(existing, limitTokens);
+    learnedContextLimits[key] = existing == null
+        ? limitTokens
+        : min(existing, limitTokens);
     _bump();
   }
 
@@ -2449,7 +2522,6 @@ class AppStore extends ChangeNotifier {
   Persona convertCharacterToPersona(Character c) =>
       addPersona(buildPersonaFromCharacter(c));
 
-
   // -------------------------------------------------------------------------
   // Personas
 
@@ -2707,8 +2779,9 @@ class AppStore extends ChangeNotifier {
   void removeCharacterFromFolder(String folderId, String characterId) {
     final i = folders.indexWhere((f) => f.id == folderId);
     if (i < 0) return;
-    folders[i].characterIds =
-        folders[i].characterIds.where((id) => id != characterId).toList();
+    folders[i].characterIds = folders[i].characterIds
+        .where((id) => id != characterId)
+        .toList();
     folders[i].updatedAt = DateTime.now().millisecondsSinceEpoch;
     folders[i].mtime = nextSyncMtime(); // F2: sync membership change
     _bump();
@@ -2730,8 +2803,9 @@ class AppStore extends ChangeNotifier {
   void removePersonaFromFolder(String folderId, String personaId) {
     final i = folders.indexWhere((f) => f.id == folderId);
     if (i < 0) return;
-    folders[i].personaIds =
-        folders[i].personaIds.where((id) => id != personaId).toList();
+    folders[i].personaIds = folders[i].personaIds
+        .where((id) => id != personaId)
+        .toList();
     folders[i].updatedAt = DateTime.now().millisecondsSinceEpoch;
     folders[i].mtime = nextSyncMtime(); // F2: sync membership change
     _bump();
@@ -2750,8 +2824,9 @@ class AppStore extends ChangeNotifier {
   void removeLorebookFromFolder(String folderId, String lorebookId) {
     final i = folders.indexWhere((f) => f.id == folderId);
     if (i < 0) return;
-    folders[i].lorebookIds =
-        folders[i].lorebookIds.where((id) => id != lorebookId).toList();
+    folders[i].lorebookIds = folders[i].lorebookIds
+        .where((id) => id != lorebookId)
+        .toList();
     folders[i].updatedAt = DateTime.now().millisecondsSinceEpoch;
     folders[i].mtime = nextSyncMtime(); // F2: sync membership change
     _bump();
@@ -2889,10 +2964,10 @@ class AppStore extends ChangeNotifier {
         //    carry it (scenario + Vesna). Idempotent — the JSON already
         //    sets it; this just guarantees it regardless of asset edits.
         for (final c in content.characters) {
-          final wantsWorld = c.id == 'example-scenario-sunken-gate' ||
+          final wantsWorld =
+              c.id == 'example-scenario-sunken-gate' ||
               c.id == 'example-char-vesna';
-          if (wantsWorld &&
-              !c.lorebookIds.contains(kExampleWorldLorebookId)) {
+          if (wantsWorld && !c.lorebookIds.contains(kExampleWorldLorebookId)) {
             c.lorebookIds.add(kExampleWorldLorebookId);
           }
         }
@@ -3071,7 +3146,7 @@ class AppStore extends ChangeNotifier {
       // Feature (B): a new chat inherits the global "start new chats with
       // Checkpoints / Live Sheet ON/OFF" defaults (both default true → today's
       // behaviour). ensureLiveSheetSeed below no-ops when the sheet is off.
-      memoryEnabled: memorySettings.newChatsEnabled,
+      memoryEnabled: true,
       liveSheetEnabled: liveSheetSettings.newChatsEnabled,
     );
     // Seed with the character's first message + alternate greetings as variants
@@ -3083,13 +3158,15 @@ class AppStore extends ChangeNotifier {
           .where((g) => g.isNotEmpty),
     ];
     if (greetings.isNotEmpty) {
-      chat.messages.add(Message(
-        id: newId('msg'),
-        kind: MessageKind.char,
-        characterId: character.id,
-        variants: greetings,
-        selectedVariant: 0,
-      ));
+      chat.messages.add(
+        Message(
+          id: newId('msg'),
+          kind: MessageKind.char,
+          characterId: character.id,
+          variants: greetings,
+          selectedVariant: 0,
+        ),
+      );
     }
     // C-3: Live Sheet defaults ON (Chat.liveSheetEnabled = true) but nothing
     // ever seeded an initial snapshot at chat creation — so the default-ON flag
@@ -3099,8 +3176,7 @@ class AppStore extends ChangeNotifier {
     ensureLiveSheetSeed(
       chat: chat,
       personaNames: [
-        if (activePersona?.name.trim().isNotEmpty ?? false)
-          activePersona!.name,
+        if (activePersona?.name.trim().isNotEmpty ?? false) activePersona!.name,
       ],
       characters: [snapshot],
     );
@@ -3177,7 +3253,8 @@ class AppStore extends ChangeNotifier {
       // Use pinned index when provided AND still in range; fall back to
       // selectedVariant otherwise (e.g. variant was deleted while
       // streaming — extremely rare but worth defending against).
-      final idx = (variantIndex != null &&
+      final idx =
+          (variantIndex != null &&
               variantIndex >= 0 &&
               variantIndex < msg.variants.length)
           ? variantIndex
@@ -3269,8 +3346,9 @@ class AppStore extends ChangeNotifier {
   /// on the next Fill-In (owner-reported 2026-07-13: two identical "Scenario:"
   /// bubbles). No-op unless [messageId] is the first char message.
   void _reindexGreetingVariantNotes(Chat chat, String messageId, int removed) {
-    final firstCharIdx =
-        chat.messages.indexWhere((m) => m.kind == MessageKind.char);
+    final firstCharIdx = chat.messages.indexWhere(
+      (m) => m.kind == MessageKind.char,
+    );
     if (firstCharIdx < 0 || chat.messages[firstCharIdx].id != messageId) return;
     chat.messages.removeWhere((m) => m.greetingVariant == removed);
     for (final m in chat.messages) {
@@ -3309,8 +3387,7 @@ class AppStore extends ChangeNotifier {
 
     // Pick the new selected variant — prefer the one immediately
     // before the deleted index. Clamp into bounds.
-    msg.selectedVariant =
-        (removed - 1).clamp(0, msg.variants.length - 1);
+    msg.selectedVariant = (removed - 1).clamp(0, msg.variants.length - 1);
 
     // Restore the new selected variant's downstream (if it has one).
     final restored = msg.downstreamByVariant.remove(msg.selectedVariant);
@@ -3333,7 +3410,10 @@ class AppStore extends ChangeNotifier {
   /// and only drops the target variant + its stashed snapshot, shifting the
   /// downstream keys and the selection index so the same content stays selected.
   void removeMessageVariantAt(
-      String chatId, String messageId, int indexToRemove) {
+    String chatId,
+    String messageId,
+    int indexToRemove,
+  ) {
     final chat = _chatById(chatId);
     if (chat == null) return;
     final mi = chat.messages.indexWhere((m) => m.id == messageId);
@@ -3413,8 +3493,7 @@ class AppStore extends ChangeNotifier {
   /// on, also drop every message that follows (chub-style "delete from
   /// here"). The [cascadeOverride] parameter lets callers (e.g. the
   /// "Truncate from here" action) force-enable cascade regardless of pref.
-  void removeMessage(String chatId, String messageId,
-      {bool? cascadeOverride}) {
+  void removeMessage(String chatId, String messageId, {bool? cascadeOverride}) {
     final chat = _chatById(chatId);
     if (chat == null) return;
     // 2026-07-05 (Gui, "grande bug"): the preference-driven cascade NEVER
@@ -3424,7 +3503,8 @@ class AppStore extends ChangeNotifier {
     // timeline gesture; a note isn't a timeline point. The EXPLICIT
     // cascadeOverride ("Truncate from here") still cascades.
     final target = chat.messages.where((m) => m.id == messageId).toList();
-    final isAuxNote = target.isNotEmpty &&
+    final isAuxNote =
+        target.isNotEmpty &&
         (target.first.kind == MessageKind.ooc ||
             target.first.kind == MessageKind.scene ||
             target.first.kind == MessageKind.system);
@@ -3463,8 +3543,9 @@ class AppStore extends ChangeNotifier {
     if (chat == null) return;
     if (chat.characterIds.contains(character.id)) return;
     chat.characterIds.add(character.id);
-    chat.characterSnapshots[character.id] =
-        Character.fromJson(character.toJson());
+    chat.characterSnapshots[character.id] = Character.fromJson(
+      character.toJson(),
+    );
     // 2026-07-04 (Gui's LiveSheet review): a member joining the group becomes
     // a tracked entity right away — previously the update model had to
     // "discover" them on its own.
@@ -3485,11 +3566,7 @@ class AppStore extends ChangeNotifier {
     final members = chat.characterIds
         .map((id) => chat.characterSnapshots[id] ?? characterById(id))
         .whereType<Character>();
-    syncLiveSheetEntities(
-      chat: chat,
-      personaNames: names,
-      characters: members,
-    );
+    syncLiveSheetEntities(chat: chat, personaNames: names, characters: members);
   }
 
   /// Remove a character from a chat (group chat). Keeps the snapshot so
@@ -3551,8 +3628,7 @@ class AppStore extends ChangeNotifier {
     // until GC. Treat it as "No persona" via the explicit sentinel. The
     // null / kExplicitNoPersonaId sentinels are always allowed through.
     if (personaId != null && personaId != kExplicitNoPersonaId) {
-      final isLive =
-          personas.any((p) => p.id == personaId && !p.deleted);
+      final isLive = personas.any((p) => p.id == personaId && !p.deleted);
       if (!isLive) personaId = kExplicitNoPersonaId;
     }
     chat.personaId = personaId;
@@ -3871,8 +3947,7 @@ class AppStore extends ChangeNotifier {
   /// The editor's explicit "save" keeps using [addRegexRule] — a user
   /// duplicating a rule on purpose is not an import.
   bool addRegexRuleIfNew(RegexRule r) {
-    final dup =
-        regexRules.any((x) => !x.deleted && regexRulesEquivalent(x, r));
+    final dup = regexRules.any((x) => !x.deleted && regexRulesEquivalent(x, r));
     if (dup) return false;
     addRegexRule(r);
     return true;
@@ -3953,8 +4028,7 @@ class AppStore extends ChangeNotifier {
   /// Pure: touches no SecureKeys / disk, so it's unit-testable on a bare store.
   Map<String, dynamic> syncedSettingsToJson() {
     // Strip the local-only background from the chat-settings copy.
-    final chatJson = chatSettings.toJson()
-      ..remove('customBackgroundDataUrl');
+    final chatJson = chatSettings.toJson()..remove('customBackgroundDataUrl');
     return <String, dynamic>{
       'mtime': settingsMtime,
       'modelSettings': modelSettings.toJson(),
@@ -4151,6 +4225,23 @@ class AppStore extends ChangeNotifier {
     _bump();
   }
 
+  MemoryCapacityTier get managedMemoryTier =>
+      ManagedMemoryAppStoreAdapter.fromSettingsJson(memorySettings.toJson())
+          .tier;
+
+  int get managedMemoryCapacityTokens =>
+      ManagedMemoryAppStoreAdapter.fromSettingsJson(memorySettings.toJson())
+          .capacityTokens;
+
+  void updateManagedMemoryTier(MemoryCapacityTier tier) {
+    final source = memorySettings.toJson();
+    final adapter = ManagedMemoryAppStoreAdapter.fromSettingsJson(source);
+    final merged = adapter.selectTier(tier, source);
+    memorySettings = MemorySettings.fromJson(merged);
+    _touchSettings();
+    _bump();
+  }
+
   /// Update the global Guide settings. Bumps `mtime` so the change is
   /// sync-eligible under LWW (GuideSettings carries an mtime, unlike
   /// LiveSheet/Script which sync via the whole-state blob); mirrors the
@@ -4222,8 +4313,7 @@ class AppStore extends ChangeNotifier {
   /// value. Notifying listeners makes the MaterialApp root rebuild and
   /// re-apply the scale immediately.
   void setUiScale(double value) {
-    final clamped =
-        value.clamp(UiPrefs.kUiScaleMin, UiPrefs.kUiScaleMax);
+    final clamped = value.clamp(UiPrefs.kUiScaleMin, UiPrefs.kUiScaleMax);
     if (uiPrefs.uiScale == clamped) return;
     uiPrefs.uiScale = clamped;
     _touchSettings(); // 2026-07-03: appearance rides the settings sync unit
@@ -4412,8 +4502,10 @@ class AppStore extends ChangeNotifier {
   }
 
   void toggleCreatorSessionPin(String id) {
-    final s = creatorSessions.firstWhere((s) => s.id == id,
-        orElse: () => CreatorSession(id: ''));
+    final s = creatorSessions.firstWhere(
+      (s) => s.id == id,
+      orElse: () => CreatorSession(id: ''),
+    );
     if (s.id.isEmpty) return;
     s.pinned = !s.pinned;
     s.updatedAt = DateTime.now().millisecondsSinceEpoch;
@@ -4424,11 +4516,8 @@ class AppStore extends ChangeNotifier {
   /// [maxAge]. Run at app start so the drawer doesn't fill with
   /// "Untitled" carcasses from accidental drawer-tap-new opens.
   /// Pinned sessions and sessions with a savedCharacterId stay.
-  void pruneEmptyCreatorSessions({
-    Duration maxAge = const Duration(days: 7),
-  }) {
-    final cutoff =
-        DateTime.now().subtract(maxAge).millisecondsSinceEpoch;
+  void pruneEmptyCreatorSessions({Duration maxAge = const Duration(days: 7)}) {
+    final cutoff = DateTime.now().subtract(maxAge).millisecondsSinceEpoch;
     final before = creatorSessions.length;
     creatorSessions.removeWhere((s) {
       if (s.pinned) return false;
@@ -4441,8 +4530,9 @@ class AppStore extends ChangeNotifier {
     });
     if (creatorSessions.length != before) {
       if (!creatorSessions.any((s) => s.id == activeCreatorSessionId)) {
-        activeCreatorSessionId =
-            creatorSessions.isNotEmpty ? creatorSessions.last.id : null;
+        activeCreatorSessionId = creatorSessions.isNotEmpty
+            ? creatorSessions.last.id
+            : null;
       }
       _bump();
     }
@@ -4465,8 +4555,9 @@ class AppStore extends ChangeNotifier {
   void removeCreatorSession(String id) {
     creatorSessions.removeWhere((s) => s.id == id);
     if (activeCreatorSessionId == id) {
-      activeCreatorSessionId =
-          creatorSessions.isNotEmpty ? creatorSessions.last.id : null;
+      activeCreatorSessionId = creatorSessions.isNotEmpty
+          ? creatorSessions.last.id
+          : null;
     }
     _bump();
   }
@@ -4474,8 +4565,10 @@ class AppStore extends ChangeNotifier {
   /// Pass null to clear the manual title and let the UI derive one from
   /// the canvas's `name` field.
   void renameCreatorSession(String id, String? title) {
-    final s = creatorSessions.firstWhere((s) => s.id == id,
-        orElse: () => CreatorSession(id: ''));
+    final s = creatorSessions.firstWhere(
+      (s) => s.id == id,
+      orElse: () => CreatorSession(id: ''),
+    );
     if (s.id.isEmpty) return;
     s.title = (title != null && title.trim().isNotEmpty) ? title.trim() : null;
     s.updatedAt = DateTime.now().millisecondsSinceEpoch;
@@ -4483,10 +4576,11 @@ class AppStore extends ChangeNotifier {
   }
 
   /// Replace the session's message list (called whenever a turn lands).
-  void updateCreatorSessionMessages(
-      String id, List<CreatorMessage> messages) {
-    final s = creatorSessions.firstWhere((s) => s.id == id,
-        orElse: () => CreatorSession(id: ''));
+  void updateCreatorSessionMessages(String id, List<CreatorMessage> messages) {
+    final s = creatorSessions.firstWhere(
+      (s) => s.id == id,
+      orElse: () => CreatorSession(id: ''),
+    );
     if (s.id.isEmpty) return;
     s.messages = messages;
     s.updatedAt = DateTime.now().millisecondsSinceEpoch;
@@ -4495,10 +4589,11 @@ class AppStore extends ChangeNotifier {
 
   /// Replace the canvas (called when the structured-update call returns
   /// a fresh merged canvas).
-  void updateCreatorSessionCanvas(
-      String id, Map<String, dynamic> canvas) {
-    final s = creatorSessions.firstWhere((s) => s.id == id,
-        orElse: () => CreatorSession(id: ''));
+  void updateCreatorSessionCanvas(String id, Map<String, dynamic> canvas) {
+    final s = creatorSessions.firstWhere(
+      (s) => s.id == id,
+      orElse: () => CreatorSession(id: ''),
+    );
     if (s.id.isEmpty) return;
     s.canvas = canvas;
     s.updatedAt = DateTime.now().millisecondsSinceEpoch;
@@ -4506,8 +4601,10 @@ class AppStore extends ChangeNotifier {
   }
 
   void markCreatorSessionSaved(String id, String characterId) {
-    final s = creatorSessions.firstWhere((s) => s.id == id,
-        orElse: () => CreatorSession(id: ''));
+    final s = creatorSessions.firstWhere(
+      (s) => s.id == id,
+      orElse: () => CreatorSession(id: ''),
+    );
     if (s.id.isEmpty) return;
     s.savedCharacterId = characterId;
     s.updatedAt = DateTime.now().millisecondsSinceEpoch;
@@ -4549,10 +4646,8 @@ Persona buildPersonaFromCharacter(Character c, {bool swap = true}) {
     // every {{user}} into {{char}} and then immediately turn them back.
     const sentinel = ' __EMBERCHAR__ ';
     return s
-        .replaceAll(
-            RegExp(r'\{\{char\}\}', caseSensitive: false), sentinel)
-        .replaceAll(
-            RegExp(r'\{\{user\}\}', caseSensitive: false), '{{char}}')
+        .replaceAll(RegExp(r'\{\{char\}\}', caseSensitive: false), sentinel)
+        .replaceAll(RegExp(r'\{\{user\}\}', caseSensitive: false), '{{char}}')
         .replaceAll(sentinel, '{{user}}');
   }
 
@@ -4571,11 +4666,11 @@ Persona buildPersonaFromCharacter(Character c, {bool swap = true}) {
   return Persona(
     id: newId('persona'),
     name: c.name,
-    tagline:
-        (c.tagline?.isNotEmpty ?? false) ? swapRoles(c.tagline!) : null,
+    tagline: (c.tagline?.isNotEmpty ?? false) ? swapRoles(c.tagline!) : null,
     description: parts.join('\n\n'),
-    dialogueExamples:
-        c.mesExample.trim().isEmpty ? '' : swapRoles(c.mesExample),
+    dialogueExamples: c.mesExample.trim().isEmpty
+        ? ''
+        : swapRoles(c.mesExample),
     avatar: c.avatar,
     // Non-destructive Recrop: carry the uncropped original (ref copy, no
     // byte dup) so the persona keeps the full image too (chat background /
@@ -4596,4 +4691,3 @@ Persona buildPersonaFromCharacter(Character c, {bool swap = true}) {
     gallery: List<String>.from(c.gallery),
   );
 }
-
