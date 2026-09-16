@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - spanish-localization
+      - pyre-memory-1m-10m
   workflow_dispatch:
 
 jobs:
