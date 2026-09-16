@@ -5,7 +5,7 @@ import 'package:pyre/services/memory_capacity.dart';
 
 void main() {
   group('ManagedMemoryRetentionPolicy', () {
-    test('retention grows with the selected historical-memory tier', () {
+    test('retention budget grows with the selected historical-memory tier', () {
       final minimum = ManagedMemoryRetentionPolicy.forTier(
         MemoryCapacityTier.minimum,
       );
@@ -16,41 +16,42 @@ void main() {
         MemoryCapacityTier.maximum,
       );
 
-      expect(minimum.maxRetainedCheckpoints, 976);
-      expect(standard.maxRetainedCheckpoints, 1953);
-      expect(maximum.maxRetainedCheckpoints, 9765);
-      expect(standard.maxRetainedCheckpoints,
-          greaterThan(minimum.maxRetainedCheckpoints));
-      expect(maximum.maxRetainedCheckpoints,
-          greaterThan(standard.maxRetainedCheckpoints));
+      expect(minimum.approximateCharacterCapacity, 4000000);
+      expect(standard.approximateCharacterCapacity, 8000000);
+      expect(maximum.approximateCharacterCapacity, 40000000);
     });
 
     test('uses the persisted managed-memory setting', () {
       final settings = ManagedMemorySettings(capacityTokens: 10000000);
       final retention = ManagedMemoryRetentionPolicy.forSettings(settings);
       expect(retention.historicalCapacityTokens, 10000000);
-      expect(retention.maxRetainedCheckpoints, 9765);
+      expect(retention.approximateCharacterCapacity, 40000000);
     });
 
-    test('reports only oldest overflow that must be pruned', () {
-      final retention = ManagedMemoryRetentionPolicy.forTier(
-        MemoryCapacityTier.minimum,
-        estimatedTokensPerCheckpoint: 100000,
-      );
-
-      expect(retention.maxRetainedCheckpoints, 10);
-      expect(retention.overflowCount(8), 0);
-      expect(retention.overflowCount(10), 0);
-      expect(retention.overflowCount(13), 3);
-    });
-
-    test('invalid checkpoint estimate fails closed', () {
+    test('prunes oldest summaries by actual size instead of fixed count', () {
       const retention = ManagedMemoryRetentionPolicy(
-        historicalCapacityTokens: 2000000,
-        estimatedTokensPerCheckpoint: 0,
+        historicalCapacityTokens: 10,
       );
-      expect(retention.maxRetainedCheckpoints, 0);
-      expect(retention.overflowCount(4), 4);
+
+      // 10 historical tokens => ~40 retained characters. The newest 20-char
+      // checkpoint plus its 15-char predecessor fit; the next 10-char older
+      // checkpoint would overflow, so only the two newest survive.
+      expect(retention.firstRetainedIndex([10, 10, 15, 20]), 2);
+      expect(retention.overflowCountForSummaryLengths([10, 10, 15, 20]), 2);
+    });
+
+    test('keeps every checkpoint when actual summaries fit the tier', () {
+      const retention = ManagedMemoryRetentionPolicy(
+        historicalCapacityTokens: 10,
+      );
+      expect(retention.firstRetainedIndex([5, 10, 10, 15]), 0);
+    });
+
+    test('always keeps newest checkpoint even when it exceeds capacity', () {
+      const retention = ManagedMemoryRetentionPolicy(
+        historicalCapacityTokens: 10,
+      );
+      expect(retention.firstRetainedIndex([5, 100]), 1);
     });
   });
 }
