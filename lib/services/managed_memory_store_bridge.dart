@@ -35,6 +35,16 @@ class ManagedMemoryStoreBridge {
     _controller.setTier(tier);
   }
 
+  /// AppStore-friendly atomic update: select a tier and return the complete
+  /// settings blob ready for persistence without dropping unrelated values.
+  Map<String, dynamic> setTierAndMergeIntoSettingsJson(
+    MemoryCapacityTier tier,
+    Map<String, dynamic> source,
+  ) {
+    setTier(tier);
+    return mergeIntoSettingsJson(source);
+  }
+
   /// Replaces the managed-memory state from a freshly loaded settings blob.
   /// AppStore can call this after restore/import without replacing the bridge
   /// instance observed by the rest of the app.
