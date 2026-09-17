@@ -19,61 +19,73 @@ jobs:
           ref: pyre-memory-1m-10m
           fetch-depth: 0
 
-      - name: Replace fixed checkpoint cap with managed retention
+      - name: Remove remaining legacy memory engine dependencies
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('lib/services/memory.dart')
           s = p.read_text()
-          import_anchor = "import 'llm_debug_log.dart';\n"
-          managed_import = "import 'managed_memory_migration.dart';\n"
-          if managed_import not in s:
-              if import_anchor not in s:
-                  raise SystemExit('memory.dart import anchor missing')
-              s = s.replace(import_anchor, import_anchor + managed_import, 1)
 
-          old_apply = "void applyCheckpoint(Chat chat, MemoryCheckpoint c) {\n  chat.memoryCheckpoints.add(c);\n  if (chat.memoryCheckpoints.length > _kMaxRetainedCheckpoints) {\n    chat.memoryCheckpoints.removeRange(\n        0, chat.memoryCheckpoints.length - _kMaxRetainedCheckpoints);\n  }\n}\n"
-          new_apply = "void applyCheckpoint(Chat chat, MemoryCheckpoint c) {\n  applyCheckpointWithManagedRetention(chat, c);\n}\n"
-          if old_apply in s:
-              s = s.replace(old_apply, new_apply, 1)
-          elif new_apply not in s:
-              raise SystemExit('legacy applyCheckpoint block missing')
+          old_threshold = """  final threshold = memorySettings != null && memorySettings.autoEvery > 0
+      ? memorySettings.autoEvery
+      : _summarizeThreshold;"""
+          if old_threshold in s:
+              s = s.replace(old_threshold, """  // Checkpoint cadence is an internal implementation detail. The public
+  // memory configuration is exclusively managed historical capacity.
+  final threshold = _summarizeThreshold;""", 1)
 
-          cap_start = s.find('/// Cap on how many checkpoints we RETAIN per chat.')
-          cap_end_marker = 'const int _kMaxRetainedCheckpoints = 60;\n'
-          if cap_start >= 0:
-              cap_end = s.find(cap_end_marker, cap_start)
-              if cap_end < 0:
-                  raise SystemExit('legacy checkpoint cap end missing')
-              cap_end += len(cap_end_marker)
-              while cap_end < len(s) and s[cap_end] == '\n':
-                  cap_end += 1
-              s = s[:cap_start] + s[cap_end:]
+          old_kill = """  } else if (memorySettings != null && memorySettings.autoEvery == 0) {
+    fire = false;
+  } else {"""
+          if old_kill in s:
+              s = s.replace(old_kill, """  } else {""", 1)
 
-          # The old applyCheckpoint documentation also names the fixed cap.
-          # Replace the whole comment prefix instead of depending on wrapping
-          # or punctuation from one historical revision of memory.dart.
-          apply_doc_start = s.find('/// Append a freshly-generated checkpoint to the chat\'s memory chain, then')
-          manual_doc_marker = '/// 2026-07-13 (community request): build a checkpoint the user wrote BY HAND —\n'
-          if apply_doc_start >= 0:
-              manual_doc_start = s.find(manual_doc_marker, apply_doc_start)
-              if manual_doc_start < 0:
-                  raise SystemExit('manual checkpoint documentation anchor missing')
-              managed_apply_comment = (
-                  '/// Append a freshly-generated checkpoint through the managed-memory\n'
-                  '/// retention seam. Historical retention is capacity-aware (1M / 2M / 10M)\n'
-                  '/// rather than a fixed checkpoint-count cap.\n'
-              )
-              s = s[:apply_doc_start] + managed_apply_comment + s[manual_doc_start:]
+          old_words = """  final words =
+      ((memorySettings?.memoryLimit ?? 1000).clamp(50, 5000) ~/ 1).toString();"""
+          if old_words in s:
+              s = s.replace(old_words, """  // Checkpoint recap size is independent of 1M / 2M / 10M historical capacity.
+  const words = '1000';""", 1)
 
-          if '_kMaxRetainedCheckpoints' in s:
-              raise SystemExit('legacy fixed checkpoint cap still referenced')
-          if managed_import not in s:
-              raise SystemExit('managed memory migration import missing')
-          if 'applyCheckpointWithManagedRetention(chat, c);' not in s:
-              raise SystemExit('managed applyCheckpoint delegation missing')
+          old_body = """  final body = (memorySettings != null &&
+          memorySettings.summaryPrompt.trim().isNotEmpty)
+      ? memorySettings.summaryPrompt
+      : MemorySettings().summaryPrompt; // == _defaultPrompt arc framing"""
+          if old_body in s:
+              s = s.replace(old_body, """  const body = 'You are maintaining long-term memory for an ongoing roleplay. '
+      'Summarize ONLY events that already happened in the supplied messages. '
+      'Preserve important facts, relationships, character decisions, promises, '
+      'conflicts, discoveries, locations, possessions, injuries, emotional '
+      'changes, and unresolved threads. Do not continue the scene, invent '
+      'dialogue, or add new events. Write concise flowing narrative prose in '
+      'past tense. Aim for at most {{words}} words.';""", 1)
+
+          # Remove stale comments that describe deleted user-facing controls.
+          s = s.replace('/// [MemorySettings.summaryPrompt] when provided (with `{{words}}`\n/// substitution); otherwise falls back to a sensible default tuned for\n/// the new checkpoint paradigm.\n', '/// Uses Pyre’s internal checkpoint recap prompt. The public memory setting is\n/// exclusively managed historical capacity (1M / 2M / 10M).\n')
+          s = s.replace('  /// The effective fire threshold (resolved from `autoEvery` or the\n  /// `_summarizeThreshold` default).\n', '  /// The internal checkpoint fire threshold.\n')
+          s = s.replace('  // Preserve the exact short-circuits of the original boolean: memory off\n  // OR autoEvery==0 kill-switch ⇒ false, regardless of the counts.\n', '  // Per-chat memory can disable checkpointing; cadence itself is internal.\n')
+          s = s.replace('  // Soft cap: convert memoryLimit (lines, loosely "words") into a word\n  // budget the template can interpolate via `{{words}}`.\n', '')
+
+          forbidden = [
+              'memorySettings.autoEvery',
+              'memorySettings.memoryLimit',
+              'memorySettings.summaryPrompt',
+              'MemorySettings().summaryPrompt',
+          ]
+          leftovers = [x for x in forbidden if x in s]
+          if leftovers:
+              raise SystemExit('legacy references remain: ' + ', '.join(leftovers))
+
           p.write_text(s)
           PY
+
+      - name: Verify source before commit
+        run: |
+          grep -q "applyCheckpointWithManagedRetention(chat, c);" lib/services/memory.dart
+          ! grep -q "memorySettings.autoEvery" lib/services/memory.dart
+          ! grep -q "memorySettings.memoryLimit" lib/services/memory.dart
+          ! grep -q "memorySettings.summaryPrompt" lib/services/memory.dart
+          ! grep -q "MemorySettings().summaryPrompt" lib/services/memory.dart
+          dart format lib/services/memory.dart
 
       - name: Commit migration
         run: |
@@ -81,8 +93,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add lib/services/memory.dart
           if git diff --cached --quiet; then
-            echo 'memory.dart already uses managed retention.'
+            echo 'memory.dart already has no legacy memory setting dependencies.'
           else
-            git commit -m 'Replace fixed checkpoint cap with managed retention'
+            git commit -m 'Remove legacy memory engine setting dependencies'
             git push origin HEAD:pyre-memory-1m-10m
           fi
