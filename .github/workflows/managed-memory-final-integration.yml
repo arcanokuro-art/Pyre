@@ -26,158 +26,89 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Replace legacy memory settings screen and wire AppStore
+      - name: Decouple checkpoint engine from removed legacy settings
         run: |
           python3 <<'PY'
           from pathlib import Path
 
-          app = Path('lib/state/app_store.dart')
-          s = app.read_text()
-          import_anchor = "import '../services/token_estimate.dart';\n"
-          assert import_anchor in s
-          if "managed_memory_app_store_adapter.dart" not in s:
-              s = s.replace(import_anchor, import_anchor + "import '../services/managed_memory_app_store_adapter.dart';\nimport '../services/memory_capacity.dart';\n")
+          p = Path('lib/services/memory.dart')
+          s = p.read_text()
 
-          marker = "  void updateMemorySettings(MemorySettings ms) {\n    memorySettings = ms;\n    _touchSettings();\n    _bump();\n  }"
-          assert marker in s
-          replacement = marker + "\n\n  MemoryCapacityTier get managedMemoryTier =>\n      ManagedMemoryAppStoreAdapter.fromSettingsJson(memorySettings.toJson()).tier;\n\n  int get managedMemoryCapacityTokens =>\n      ManagedMemoryAppStoreAdapter.fromSettingsJson(memorySettings.toJson()).capacityTokens;\n\n  void updateManagedMemoryTier(MemoryCapacityTier tier) {\n    final source = memorySettings.toJson();\n    final adapter = ManagedMemoryAppStoreAdapter.fromSettingsJson(source);\n    final merged = adapter.selectTier(tier, source);\n    memorySettings = MemorySettings.fromJson(merged);\n    _touchSettings();\n    _bump();\n  }"
-          s = s.replace(marker, replacement, 1)
+          old_threshold = '''  final threshold = memorySettings != null && memorySettings.autoEvery > 0
+      ? memorySettings.autoEvery
+      : _summarizeThreshold;'''
+          assert old_threshold in s
+          s = s.replace(old_threshold, '''  // Checkpoint cadence is now an internal implementation detail. The user-facing
+  // memory configuration is exclusively the managed 1M / 2M / 10M capacity.
+  final threshold = _summarizeThreshold;''', 1)
 
-          # Legacy checkpoint enablement no longer exists. Managed memory is the
-          # general memory system and is always available for chats.
-          s = s.replace('memorySettings.newChatsEnabled', 'true')
-          app.write_text(s)
+          old_kill = '''  } else if (memorySettings != null && memorySettings.autoEvery == 0) {
+    fire = false;
+  } else {'''
+          assert old_kill in s
+          s = s.replace(old_kill, '''  } else {''', 1)
 
-          models = Path('lib/models/models.dart')
-          m = models.read_text()
-          assert "class MemorySettings" in m
-          class_start = m.index('class MemorySettings')
-          class_end = m.index('\n}\n', class_start) + 3
-          old = m[class_start:class_end]
-          assert 'memoryLimit' in old and 'summaryPrompt' in old and 'autoEvery' in old
-          new = '''class MemorySettings {
-            int managedMemoryTokens;
+          old_words = '''  final words =
+      ((memorySettings?.memoryLimit ?? 1000).clamp(50, 5000) ~/ 1).toString();'''
+          assert old_words in s
+          s = s.replace(old_words, '''  // Summary size is internal and intentionally independent of historical
+  // managed-memory capacity. Never reinterpret 1M/2M/10M as one recap size.
+  const words = '1000';''', 1)
 
-            MemorySettings({this.managedMemoryTokens = 2000000});
+          old_body = '''  final body = (memorySettings != null &&
+          memorySettings.summaryPrompt.trim().isNotEmpty)
+      ? memorySettings.summaryPrompt
+      : MemorySettings().summaryPrompt; // == _defaultPrompt arc framing'''
+          assert old_body in s
+          default_prompt = '''You are maintaining long-term memory for an ongoing roleplay. Summarize ONLY events that already happened in the supplied messages. Preserve important facts, relationships, character decisions, promises, conflicts, discoveries, locations, possessions, injuries, emotional changes, and unresolved threads. Do not continue the scene, invent dialogue, or add new events. Write concise flowing narrative prose in past tense. Aim for at most {{words}} words.'''
+          s = s.replace(old_body, '''  const body = ''' + repr(default_prompt) + ''';''', 1)
 
-            factory MemorySettings.fromJson(Map<String, dynamic> j) {
-              final raw = j['managedMemoryTokens'];
-              final value = raw is num ? raw.toInt() : 2000000;
-              final supported = <int>[1000000, 2000000, 10000000];
-              var nearest = supported.first;
-              var distance = (value - nearest).abs();
-              for (final candidate in supported.skip(1)) {
-                final d = (value - candidate).abs();
-                if (d < distance) {
-                  nearest = candidate;
-                  distance = d;
-                }
-              }
-              return MemorySettings(managedMemoryTokens: nearest);
-            }
+          # Remove stale documentation references to deleted public settings.
+          s = s.replace('/// [MemorySettings.summaryPrompt] when provided (with `{{words}}`\n/// substitution); otherwise falls back to a sensible default tuned for\n/// the new checkpoint paradigm.\n', '/// Uses Pyre’s internal checkpoint recap prompt. The public memory setting is\n/// exclusively the managed historical capacity (1M / 2M / 10M).\n')
+          s = s.replace('  /// The effective fire threshold (resolved from `autoEvery` or the\n  /// `_summarizeThreshold` default).\n', '  /// The internal checkpoint fire threshold.\n')
+          s = s.replace('  // Preserve the exact short-circuits of the original boolean: memory off\n  // OR autoEvery==0 kill-switch ⇒ false, regardless of the counts.\n', '  // Per-chat memory can still disable checkpointing; cadence itself is internal.\n')
+          s = s.replace('  // Soft cap: convert memoryLimit (lines, loosely "words") into a word\n  // budget the template can interpolate via `{{words}}`.\n', '')
 
-            Map<String, dynamic> toJson() => {
-                  'managedMemoryTokens': managedMemoryTokens,
-                };
-          }
-          '''
-          m = m[:class_start] + new + m[class_end:]
-          models.write_text(m)
+          # The function parameter remains temporarily for call-site compatibility,
+          # but no removed legacy field may be read from it.
+          for legacy in ('memorySettings.autoEvery', 'memorySettings.memoryLimit', 'memorySettings.summaryPrompt', 'MemorySettings().summaryPrompt'):
+              assert legacy not in s, legacy
 
-          screen = Path('lib/screens/long_term_memory_screen.dart')
-          screen.write_text('''import 'package:flutter/material.dart';
-          import 'package:provider/provider.dart';
-
-          import '../services/memory_capacity.dart';
-          import '../state/app_store.dart';
-          import '../theme.dart';
-
-          class LongTermMemoryScreen extends StatelessWidget {
-            const LongTermMemoryScreen({super.key});
-
-            @override
-            Widget build(BuildContext context) {
-              final store = context.watch<AppStore>();
-              final selected = store.managedMemoryTier;
-              return Scaffold(
-                appBar: AppBar(title: const Text('Memoria')),
-                body: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    const Text(
-                      'Capacidad general de memoria',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Selecciona cuánta memoria histórica administrará Pyre. 2M es la configuración estándar.',
-                      style: TextStyle(color: EmberColors.textMid),
-                    ),
-                    const SizedBox(height: 20),
-                    SegmentedButton<MemoryCapacityTier>(
-                      segments: const [
-                        ButtonSegment(value: MemoryCapacityTier.minimum, label: Text('1M')),
-                        ButtonSegment(value: MemoryCapacityTier.standard, label: Text('2M · Estándar')),
-                        ButtonSegment(value: MemoryCapacityTier.maximum, label: Text('10M')),
-                      ],
-                      selected: {selected},
-                      showSelectedIcon: true,
-                      onSelectionChanged: (values) {
-                        if (values.isNotEmpty) {
-                          store.updateManagedMemoryTier(values.first);
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          selected == MemoryCapacityTier.minimum
-                              ? '1M · Memoria mínima'
-                              : selected == MemoryCapacityTier.maximum
-                                  ? '10M · Memoria máxima'
-                                  : '2M · Memoria estándar y predeterminada',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-          }
-          ''')
+          p.write_text(s)
           PY
 
-      - name: Verify legacy configuration is gone
+      - name: Verify managed memory replacement invariants
         run: |
-          ! grep -q "Auto-checkpoint frequency" lib/screens/long_term_memory_screen.dart
-          ! grep -q "Target words per checkpoint" lib/screens/long_term_memory_screen.dart
-          ! grep -q "Summary Prompt" lib/screens/long_term_memory_screen.dart
-          ! grep -q "newChatsEnabled" lib/state/app_store.dart
+          grep -q "managedMemoryTokens" lib/models/models.dart
           grep -q "1M" lib/screens/long_term_memory_screen.dart
           grep -q "2M · Estándar" lib/screens/long_term_memory_screen.dart
           grep -q "10M" lib/screens/long_term_memory_screen.dart
-          grep -q "managedMemoryTokens" lib/models/models.dart
+          ! grep -q "memorySettings.autoEvery" lib/services/memory.dart
+          ! grep -q "memorySettings.memoryLimit" lib/services/memory.dart
+          ! grep -q "memorySettings.summaryPrompt" lib/services/memory.dart
+          ! grep -q "MemorySettings().summaryPrompt" lib/services/memory.dart
 
       - name: Format
-        run: dart format lib/models/models.dart lib/state/app_store.dart lib/screens/long_term_memory_screen.dart
+        run: dart format lib/services/memory.dart
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze integration
-        run: flutter analyze lib/screens/long_term_memory_screen.dart lib/state/app_store.dart lib/models/models.dart lib/services/managed_memory_app_store_adapter.dart lib/services/managed_memory_policy.dart
+      - name: Analyze complete project
+        run: flutter analyze
 
       - name: Run managed memory tests
         run: flutter test test/managed_memory_settings_test.dart test/managed_memory_controller_test.dart test/managed_memory_app_store_adapter_test.dart test/managed_memory_release_readiness_test.dart
 
-      - name: Commit final integration
+      - name: Compile release APKs as final gate
+        run: flutter build apk --release --split-per-abi
+
+      - name: Commit engine decoupling
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add lib/models/models.dart lib/state/app_store.dart lib/screens/long_term_memory_screen.dart
+          git add lib/services/memory.dart
           if ! git diff --cached --quiet; then
-            git commit -m "Make managed memory the general Pyre memory configuration"
+            git commit -m "Decouple memory engine from legacy settings"
             git push origin HEAD:pyre-memory-1m-10m
           fi
