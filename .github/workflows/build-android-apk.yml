@@ -33,6 +33,17 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Verify final managed memory integration
+        if: github.ref == 'refs/heads/pyre-memory-1m-10m'
+        run: |
+          grep -q "managedMemoryTokens" lib/models/models.dart
+          grep -q "1M" lib/screens/long_term_memory_screen.dart
+          grep -q "2M · Estándar" lib/screens/long_term_memory_screen.dart
+          grep -q "10M" lib/screens/long_term_memory_screen.dart
+          ! grep -q "Auto-checkpoint frequency" lib/screens/long_term_memory_screen.dart
+          ! grep -q "Target words per checkpoint" lib/screens/long_term_memory_screen.dart
+          ! grep -q "Summary Prompt" lib/screens/long_term_memory_screen.dart
+
       - name: Build release APKs per ABI
         run: flutter build apk --release --split-per-abi
 
@@ -79,4 +90,4 @@ jobs:
             Pyre-Android-armeabi-v7a.apk \
             Pyre-Android-x86_64.apk \
             --title "Pyre Android - Managed Memory 1M 2M 10M" \
-            --notes "APK de Pyre con memoria administrada 1M / 2M / 10M. Para teléfonos Android ARM64 modernos, descarga Pyre-Android-arm64-v8a.apk."
+            --notes "APK de Pyre con la configuración general de memoria 1M / 2M / 10M. 2M es el valor estándar. La compilación verifica que la configuración antigua no esté presente en la pantalla de memoria. Para teléfonos Android ARM64 modernos, descarga Pyre-Android-arm64-v8a.apk."
