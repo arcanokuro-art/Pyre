@@ -1,6 +1,6 @@
 name: Managed memory migration
 
-on:
+'on':
   workflow_dispatch:
   push:
     branches: [pyre-memory-1m-10m]
