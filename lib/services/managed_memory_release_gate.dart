@@ -15,7 +15,6 @@ bool managedMemoryReleaseGatePasses() {
 
   for (final entry in expected.entries) {
     final source = <String, dynamic>{
-      'memoryLimit': 1000,
       'managedMemoryTokens': 2000000,
       'releaseGateMarker': true,
     };
@@ -32,7 +31,7 @@ bool managedMemoryReleaseGatePasses() {
     if (saved == null || saved['managedMemoryTokens'] != entry.value) {
       return false;
     }
-    if (saved['memoryLimit'] != 1000 || saved['releaseGateMarker'] != true) {
+    if (saved.containsKey('memoryLimit') || saved['releaseGateMarker'] != true) {
       return false;
     }
 
