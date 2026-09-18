@@ -80,12 +80,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="pyre-memory-latest"
-          git tag -f "$TAG" "$GITHUB_SHA"
-          git push origin "refs/tags/$TAG" --force
-          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
-          git tag -f "$TAG" "$GITHUB_SHA"
-          git push origin "refs/tags/$TAG" --force
-          gh release create "$TAG" \
+          gh release delete "$TAG" --yes 2>/dev/null || true
+          gh release create "$TAG" --target "$GITHUB_SHA" \
             Pyre-Android-arm64-v8a.apk \
             Pyre-Android-armeabi-v7a.apk \
             Pyre-Android-x86_64.apk \
