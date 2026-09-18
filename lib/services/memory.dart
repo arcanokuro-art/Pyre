@@ -333,9 +333,7 @@ SummarizeDecision summarizeDecision(Chat chat,
     {MemorySettings? memorySettings}) {
   final valid = findValidCheckpoints(chat);
   final lastAnchor = valid.isEmpty ? -1 : valid.last.anchorMessageIdx;
-  final threshold = memorySettings != null && memorySettings.autoEvery > 0
-      ? memorySettings.autoEvery
-      : _summarizeThreshold;
+  final threshold = _summarizeThreshold;
   // Count only DURABLE turns (assistant prose) past the anchor — not user / ooc
   // / scene / system messages. A run of impersonations or OOC chatter with no
   // new character reply must NOT trip the summariser (it would checkpoint over
@@ -349,8 +347,6 @@ SummarizeDecision summarizeDecision(Chat chat,
   // OR autoEvery==0 kill-switch ⇒ false, regardless of the counts.
   final bool fire;
   if (!chat.memoryEnabled) {
-    fire = false;
-  } else if (memorySettings != null && memorySettings.autoEvery == 0) {
     fire = false;
   } else {
     fire = newMessages >= threshold;
@@ -481,8 +477,7 @@ String resolveSystemPrompt({
       'events. ';
   // Soft cap: convert memoryLimit (lines, loosely "words") into a word
   // budget the template can interpolate via `{{words}}`.
-  final words =
-      ((memorySettings?.memoryLimit ?? 1000).clamp(50, 5000) ~/ 1).toString();
+  const words = '1000';
   // Wave CY.18.270: the rich narrative-arc framing now lives in ONE place —
   // MemorySettings._defaultPrompt — which already covers BOTH the
   // "Story so far" handoff case and the opening-arc case in prose, and is
@@ -496,10 +491,14 @@ String resolveSystemPrompt({
   // prior-context split is handled by the prompt body itself (it inspects the
   // "Story so far" block the user-turn builder includes), not by branching
   // here — so both code paths now yield the same coherent arc framing.
-  final body = (memorySettings != null &&
-          memorySettings.summaryPrompt.trim().isNotEmpty)
-      ? memorySettings.summaryPrompt
-      : MemorySettings().summaryPrompt; // == _defaultPrompt arc framing
+  const body = 'You are maintaining long-term memory for an ongoing roleplay. '
+      'Summarize ONLY events that already happened in the supplied messages. '
+      'Preserve important facts, relationships, character decisions, promises, '
+      'conflicts, discoveries, locations, possessions, injuries, emotional '
+      'changes, and unresolved threads. Do not continue the scene, invent '
+      'dialogue, or add new events. Write concise flowing narrative prose in '
+      'past tense. Aim for at most {{words}} words.';
+
   // Wave CY.18.209: ALWAYS prepend the anti-continuation framing — the
   // recap-not-continuation discipline is non-negotiable regardless of the
   // editable summary text.
