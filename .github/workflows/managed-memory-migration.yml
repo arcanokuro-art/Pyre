@@ -1,12 +1,12 @@
 name: Managed memory migration
 
 'on':
-  workflow_dispatch:
   push:
-    branches: [pyre-memory-1m-10m]
+    branches:
+      - pyre-memory-1m-10m
     paths:
-      - '.github/workflows/managed-memory-migration.yml'
-      - '.github/managed-memory-migration-trigger'
+      - .github/workflows/managed-memory-migration.yml
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -15,87 +15,68 @@ jobs:
   migrate-memory-service:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           ref: pyre-memory-1m-10m
           fetch-depth: 0
 
-      - name: Remove remaining legacy memory engine dependencies
+      - name: Patch legacy memory references
+        shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p = Path('lib/services/memory.dart')
+          p = Path("lib/services/memory.dart")
           s = p.read_text()
 
-          old_threshold = """  final threshold = memorySettings != null && memorySettings.autoEvery > 0
+          s = s.replace("""  final threshold = memorySettings != null && memorySettings.autoEvery > 0
       ? memorySettings.autoEvery
-      : _summarizeThreshold;"""
-          if old_threshold in s:
-              s = s.replace(old_threshold, """  // Checkpoint cadence is an internal implementation detail. The public
-  // memory configuration is exclusively managed historical capacity.
-  final threshold = _summarizeThreshold;""", 1)
+      : _summarizeThreshold;""", """  final threshold = _summarizeThreshold;""", 1)
 
-          old_kill = """  } else if (memorySettings != null && memorySettings.autoEvery == 0) {
+          s = s.replace("""  } else if (memorySettings != null && memorySettings.autoEvery == 0) {
     fire = false;
-  } else {"""
-          if old_kill in s:
-              s = s.replace(old_kill, """  } else {""", 1)
+  } else {""", """  } else {""", 1)
 
-          old_words = """  final words =
-      ((memorySettings?.memoryLimit ?? 1000).clamp(50, 5000) ~/ 1).toString();"""
-          if old_words in s:
-              s = s.replace(old_words, """  // Checkpoint recap size is independent of 1M / 2M / 10M historical capacity.
-  const words = '1000';""", 1)
+          s = s.replace("""  final words =
+      ((memorySettings?.memoryLimit ?? 1000).clamp(50, 5000) ~/ 1).toString();""", """  const words = '1000';""", 1)
 
-          old_body = """  final body = (memorySettings != null &&
-          memorySettings.summaryPrompt.trim().isNotEmpty)
-      ? memorySettings.summaryPrompt
-      : MemorySettings().summaryPrompt; // == _defaultPrompt arc framing"""
-          if old_body in s:
-              s = s.replace(old_body, """  const body = 'You are maintaining long-term memory for an ongoing roleplay. '
+          start = s.index("  final body = (memorySettings != null &&")
+          end = s.index("  // Wave CY.18.209:", start)
+          fixed = """  const body = 'You are maintaining long-term memory for an ongoing roleplay. '
       'Summarize ONLY events that already happened in the supplied messages. '
       'Preserve important facts, relationships, character decisions, promises, '
       'conflicts, discoveries, locations, possessions, injuries, emotional '
       'changes, and unresolved threads. Do not continue the scene, invent '
       'dialogue, or add new events. Write concise flowing narrative prose in '
-      'past tense. Aim for at most {{words}} words.';""", 1)
+      'past tense. Aim for at most {{words}} words.';
 
-          # Remove stale comments that describe deleted user-facing controls.
-          s = s.replace('/// [MemorySettings.summaryPrompt] when provided (with `{{words}}`\n/// substitution); otherwise falls back to a sensible default tuned for\n/// the new checkpoint paradigm.\n', '/// Uses Pyre’s internal checkpoint recap prompt. The public memory setting is\n/// exclusively managed historical capacity (1M / 2M / 10M).\n')
-          s = s.replace('  /// The effective fire threshold (resolved from `autoEvery` or the\n  /// `_summarizeThreshold` default).\n', '  /// The internal checkpoint fire threshold.\n')
-          s = s.replace('  // Preserve the exact short-circuits of the original boolean: memory off\n  // OR autoEvery==0 kill-switch ⇒ false, regardless of the counts.\n', '  // Per-chat memory can disable checkpointing; cadence itself is internal.\n')
-          s = s.replace('  // Soft cap: convert memoryLimit (lines, loosely "words") into a word\n  // budget the template can interpolate via `{{words}}`.\n', '')
+"""
+          s = s[:start] + fixed + s[end:]
 
           forbidden = [
-              'memorySettings.autoEvery',
-              'memorySettings.memoryLimit',
-              'memorySettings.summaryPrompt',
-              'MemorySettings().summaryPrompt',
+              "memorySettings.autoEvery",
+              "memorySettings.memoryLimit",
+              "memorySettings.summaryPrompt",
+              "MemorySettings().summaryPrompt",
           ]
-          leftovers = [x for x in forbidden if x in s]
-          if leftovers:
-              raise SystemExit('legacy references remain: ' + ', '.join(leftovers))
-
+          left = [x for x in forbidden if x in s]
+          if left:
+              raise SystemExit("Legacy references remain: " + ", ".join(left))
+          if "applyCheckpointWithManagedRetention(chat, c);" not in s:
+              raise SystemExit("Managed retention delegation missing")
           p.write_text(s)
           PY
 
-      - name: Verify source before commit
+      - name: Commit patched memory service
+        shell: bash
         run: |
-          grep -q "applyCheckpointWithManagedRetention(chat, c);" lib/services/memory.dart
-          ! grep -q "memorySettings.autoEvery" lib/services/memory.dart
-          ! grep -q "memorySettings.memoryLimit" lib/services/memory.dart
-          ! grep -q "memorySettings.summaryPrompt" lib/services/memory.dart
-          ! grep -q "MemorySettings().summaryPrompt" lib/services/memory.dart
-          dart format lib/services/memory.dart
-
-      - name: Commit migration
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add lib/services/memory.dart
+          git diff --cached --check
           if git diff --cached --quiet; then
-            echo 'memory.dart already has no legacy memory setting dependencies.'
+            echo "No source changes required."
           else
-            git commit -m 'Remove legacy memory engine setting dependencies'
+            git commit -m "Remove legacy memory engine dependencies"
             git push origin HEAD:pyre-memory-1m-10m
           fi
