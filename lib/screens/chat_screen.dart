@@ -1101,7 +1101,7 @@ class _ChatScreenState extends State<ChatScreen> {
             // Radio value: a provider id when this chat is pinned, else '' =
             // "use the global default" (the sentinel — provider ids are never
             // empty).
-            final selectedValue = overrideValid ? overrideId! : '';
+            final selectedValue = overrideValid ? overrideId : '';
 
             void switchTo(String? id) {
               // '' / null clears the override so the chat inherits the global.
