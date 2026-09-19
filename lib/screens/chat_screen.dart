@@ -13,6 +13,9 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/models.dart';
 import '../services/chat_api.dart';
+import '../services/image_describe.dart' show encodeImageDataUrl;
+import '../services/image_generation.dart';
+import '../services/image_pick.dart';
 import '../services/continuation_merge.dart';
 import '../services/chat_export.dart';
 import '../services/web_download.dart';
@@ -1322,10 +1325,10 @@ class _ChatScreenState extends State<ChatScreen> {
         'Character appearance: ${character.description.trim()}.',
       if (persona != null && persona.name.trim().isNotEmpty)
         'User persona: ${persona.name}.',
-      if (chat.sceneLocation?.trim().isNotEmpty == true)
-        'Location: ${chat.sceneLocation!.trim()}.',
-      if (chat.sceneSetting?.trim().isNotEmpty == true)
-        'Setting: ${chat.sceneSetting!.trim()}.',
+      if (chat.sceneLocation.trim().isNotEmpty)
+        'Location: ${chat.sceneLocation.trim()}.',
+      if (chat.sceneSetting.trim().isNotEmpty)
+        'Setting: ${chat.sceneSetting.trim()}.',
       'Preserve character identity, visible appearance, clothing, location, mood and current actions.',
       'Do not add captions, speech bubbles, UI, watermarks or written text.',
       if (recent.isNotEmpty) 'Recent scene context:\n$recent',
