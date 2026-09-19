@@ -748,7 +748,7 @@ class Message {
   List<String> variants; // text alternates
   int selectedVariant;
   int createdAt;
-  // Per-variant downstream snapshots. When the user branches (creates a new
+  /// Images attached to this chat message, stored as data URLs so they\n  /// survive local persistence and can be replayed to vision-capable models.\n  List<String> imageDataUrls;\n  // Per-variant downstream snapshots. When the user branches (creates a new
   // variant of a message that has messages AFTER it), we move those
   // downstream messages here under the SOURCE variant's index, so navigating
   // back to that variant restores its conversation tail. Each list is the
@@ -776,13 +776,11 @@ class Message {
     this.characterId,
     List<String>? variants,
     this.selectedVariant = 0,
-    int? createdAt,
-    Map<int, List<Message>>? downstreamByVariant,
+    int? createdAt,\n    List<String>? imageDataUrls,\n    Map<int, List<Message>>? downstreamByVariant,
     this.mtime = 0,
     this.deleted = false,
   }) : variants = variants ?? [''],
-       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
-       downstreamByVariant = downstreamByVariant ?? {};
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,\n       imageDataUrls = imageDataUrls ?? <String>[],\n       downstreamByVariant = downstreamByVariant ?? {};
 
   String get text => (selectedVariant >= 0 && selectedVariant < variants.length)
       ? variants[selectedVariant]
@@ -838,8 +836,7 @@ class Message {
       characterId: j['characterId'] as String?,
       variants: variants,
       selectedVariant: selectedVariant,
-      createdAt: _jTimestamp(j['createdAt']),
-      downstreamByVariant: ds,
+      createdAt: _jTimestamp(j['createdAt']),\n      imageDataUrls: _jStringList(j['imageDataUrls']),\n      downstreamByVariant: ds,
       mtime: _jInt(j['mtime']) ?? 0,
       deleted: (j['deleted'] as bool?) ?? false,
     )..greetingVariant = _jInt(j['greetingVariant']);
@@ -851,8 +848,7 @@ class Message {
     'characterId': characterId,
     'variants': variants,
     'selectedVariant': selectedVariant,
-    'createdAt': createdAt,
-    if (downstreamByVariant.isNotEmpty)
+    'createdAt': createdAt,\n    if (imageDataUrls.isNotEmpty) 'imageDataUrls': imageDataUrls,\n    if (downstreamByVariant.isNotEmpty)
       'downstreamByVariant': downstreamByVariant.map(
         (k, v) => MapEntry(k.toString(), v.map((m) => m.toJson()).toList()),
       ),
