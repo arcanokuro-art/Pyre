@@ -76,15 +76,15 @@ jobs:
           if-no-files-found: error
 
       - name: Publish APKs as GitHub Release
-        if: github.ref == 'refs/heads/pyre-memory-1m-10m'
+        if: github.ref == 'refs/heads/pyre-memory-1m-10m' || github.ref == 'refs/heads/pyre-chat-multimedia'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="pyre-memory-latest"
+          TAG="${{ github.ref_name == 'pyre-chat-multimedia' && 'pyre-multimedia-latest' || 'pyre-memory-latest' }}"
           gh release delete "$TAG" --yes 2>/dev/null || true
           gh release create "$TAG" --target "$GITHUB_SHA" \
             Pyre-Android-arm64-v8a.apk \
             Pyre-Android-armeabi-v7a.apk \
             Pyre-Android-x86_64.apk \
-            --title "Pyre Android - Managed Memory 1M 2M 10M" \
-            --notes "APK de Pyre con la configuración general de memoria 1M / 2M / 10M. 2M es el valor estándar. La compilación verifica que la configuración antigua no esté presente en la pantalla de memoria. Para teléfonos Android ARM64 modernos, descarga Pyre-Android-arm64-v8a.apk."
+            --title "${{ github.ref_name == 'pyre-chat-multimedia' && 'Pyre Android - Chat Multimedia' || 'Pyre Android - Managed Memory 1M 2M 10M' }}" \
+            --notes "${{ github.ref_name == 'pyre-chat-multimedia' && 'APK de Pyre con multimedia de chat: adjuntar imágenes, visión y generación de escenas. Incluye la memoria administrada 1M / 2M / 10M. Para teléfonos Android ARM64 modernos, descarga Pyre-Android-arm64-v8a.apk.' || 'APK de Pyre con la configuración general de memoria 1M / 2M / 10M. 2M es el valor estándar. Para teléfonos Android ARM64 modernos, descarga Pyre-Android-arm64-v8a.apk.' }}"
