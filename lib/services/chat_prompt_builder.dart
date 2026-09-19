@@ -1079,7 +1079,9 @@ ChatPromptResult buildChatPrompt(ChatPromptInputs inputs) {
         final t = ChatTurn(
             'user',
             applyRegexRules(txt, inputs.regexRules,
-                stream: RegexStream.userInput, stage: RegexStage.prompt));
+                stream: RegexStream.userInput, stage: RegexStage.prompt),
+            imageDataUrls:
+                m.imageDataUrls.isEmpty ? null : List<String>.of(m.imageDataUrls));
         historyTurns.add(t);
         break;
       case MessageKind.char:
