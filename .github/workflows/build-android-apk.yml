@@ -5,6 +5,7 @@ on:
     branches:
       - spanish-localization
       - pyre-memory-1m-10m
+      - pyre-chat-multimedia
   workflow_dispatch:
 
 permissions:
