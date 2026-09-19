@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import '../models/models.dart';
 import 'chat_api.dart';
 
+typedef ImageHttpClientFactory = http.Client Function();
+
 class GeneratedImage {
   final Uint8List bytes;
   final String mimeType;
@@ -19,6 +21,7 @@ Future<GeneratedImage> generateImage({
   required ApiProvider provider,
   required String prompt,
   String size = '1024x1024',
+  ImageHttpClientFactory? clientFactory,
 }) async {
   final cleanPrompt = prompt.trim();
   if (cleanPrompt.isEmpty) {
@@ -52,7 +55,7 @@ Future<GeneratedImage> generateImage({
       'response_format': 'b64_json',
     });
 
-  final client = http.Client();
+  final client = clientFactory?.call() ?? http.Client();
   try {
     final streamed = await client.send(request);
     final response = await http.Response.fromStream(streamed);
@@ -66,13 +69,40 @@ Future<GeneratedImage> generateImage({
     final data = decoded is Map ? decoded['data'] : null;
     final first = data is List && data.isNotEmpty ? data.first : null;
     final b64 = first is Map ? first['b64_json'] : null;
-    if (b64 is! String || b64.isEmpty) {
-      throw ChatApiError(
-        'Image provider returned no b64_json image. '
-        'The selected model may not support image generation.',
+    if (b64 is String && b64.isNotEmpty) {
+      return GeneratedImage(base64Decode(b64));
+    }
+
+    // Some OpenAI-compatible image providers ignore response_format and
+    // return a temporary HTTPS URL instead. Follow it here so the rest of
+    // Pyre always receives bytes and chat persistence stays provider-agnostic.
+    final remoteUrl = first is Map ? first['url'] : null;
+    if (remoteUrl is String && remoteUrl.trim().isNotEmpty) {
+      final imageUri = Uri.tryParse(remoteUrl.trim());
+      if (imageUri == null ||
+          (imageUri.scheme != 'https' && imageUri.scheme != 'http')) {
+        throw ChatApiError('Image provider returned an invalid image URL.');
+      }
+      final downloaded = await client.get(imageUri);
+      if (downloaded.statusCode < 200 || downloaded.statusCode >= 300) {
+        throw ChatApiError(
+          'Generated image download failed (HTTP ${downloaded.statusCode}).',
+        );
+      }
+      final contentType =
+          downloaded.headers['content-type']?.split(';').first.trim();
+      return GeneratedImage(
+        downloaded.bodyBytes,
+        mimeType: contentType?.startsWith('image/') == true
+            ? contentType!
+            : 'image/png',
       );
     }
-    return GeneratedImage(base64Decode(b64));
+
+    throw ChatApiError(
+      'Image provider returned neither b64_json nor an image URL. '
+      'The selected model may not support image generation.',
+    );
   } on ChatApiError {
     rethrow;
   } catch (e) {
