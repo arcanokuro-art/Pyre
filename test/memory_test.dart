@@ -796,6 +796,65 @@ void main() {
     });
   });
 
+  group('multimedia managed-memory boundary', () {
+    test('summariser never copies image data URLs into checkpoint prompts', () {
+      const payload = 'data:image/png;base64,VERY_LARGE_BINARY_PAYLOAD';
+      final chat = Chat(
+        id: 'c-media-memory',
+        characterIds: const ['char1'],
+        messages: [
+          Message(
+            id: 'u1',
+            kind: MessageKind.user,
+            variants: const ['Look at this scene'],
+            imageDataUrls: const [payload],
+          ),
+        ],
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final body = buildSummariserBodyForTest(
+        chat: chat,
+        startExclusive: -1,
+        endInclusive: 0,
+        priorContext: const [],
+      );
+      expect(body, contains('Look at this scene'));
+      expect(body, contains('[image attached]'));
+      expect(body, isNot(contains(payload)));
+      expect(body, isNot(contains('base64,')));
+    });
+
+    test('multiple images become a compact textual marker only', () {
+      final chat = Chat(
+        id: 'c-media-memory-many',
+        characterIds: const ['char1'],
+        messages: [
+          Message(
+            id: 'u1',
+            kind: MessageKind.user,
+            variants: const ['References'],
+            imageDataUrls: const [
+              'data:image/png;base64,AAA',
+              'data:image/jpeg;base64,BBB',
+            ],
+          ),
+        ],
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final body = buildSummariserBodyForTest(
+        chat: chat,
+        startExclusive: -1,
+        endInclusive: 0,
+        priorContext: const [],
+      );
+      expect(body, contains('[2 images attached]'));
+      expect(body, isNot(contains('AAA')));
+      expect(body, isNot(contains('BBB')));
+    });
+  });
+
   group('buildManualCheckpoint (2026-07-13 community request)', () {
     Message msg(String id, String text) => Message(
         id: id, kind: MessageKind.user, variants: [text]);
