@@ -748,7 +748,10 @@ class Message {
   List<String> variants; // text alternates
   int selectedVariant;
   int createdAt;
-  /// Images attached to this chat message, stored as data URLs so they\n  /// survive local persistence and can be replayed to vision-capable models.\n  List<String> imageDataUrls;\n  // Per-variant downstream snapshots. When the user branches (creates a new
+  /// Images attached to this chat message, stored as data URLs so they
+  /// survive local persistence and can be replayed to vision-capable models.
+  List<String> imageDataUrls;
+  // Per-variant downstream snapshots. When the user branches (creates a new
   // variant of a message that has messages AFTER it), we move those
   // downstream messages here under the SOURCE variant's index, so navigating
   // back to that variant restores its conversation tail. Each list is the
@@ -776,11 +779,15 @@ class Message {
     this.characterId,
     List<String>? variants,
     this.selectedVariant = 0,
-    int? createdAt,\n    List<String>? imageDataUrls,\n    Map<int, List<Message>>? downstreamByVariant,
+    int? createdAt,
+    List<String>? imageDataUrls,
+    Map<int, List<Message>>? downstreamByVariant,
     this.mtime = 0,
     this.deleted = false,
   }) : variants = variants ?? [''],
-       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,\n       imageDataUrls = imageDataUrls ?? <String>[],\n       downstreamByVariant = downstreamByVariant ?? {};
+       createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
+       imageDataUrls = imageDataUrls ?? <String>[],
+       downstreamByVariant = downstreamByVariant ?? {};
 
   String get text => (selectedVariant >= 0 && selectedVariant < variants.length)
       ? variants[selectedVariant]
@@ -836,7 +843,9 @@ class Message {
       characterId: j['characterId'] as String?,
       variants: variants,
       selectedVariant: selectedVariant,
-      createdAt: _jTimestamp(j['createdAt']),\n      imageDataUrls: _jStringList(j['imageDataUrls']),\n      downstreamByVariant: ds,
+      createdAt: _jTimestamp(j['createdAt']),
+      imageDataUrls: _jStringList(j['imageDataUrls']),
+      downstreamByVariant: ds,
       mtime: _jInt(j['mtime']) ?? 0,
       deleted: (j['deleted'] as bool?) ?? false,
     )..greetingVariant = _jInt(j['greetingVariant']);
@@ -848,7 +857,9 @@ class Message {
     'characterId': characterId,
     'variants': variants,
     'selectedVariant': selectedVariant,
-    'createdAt': createdAt,\n    if (imageDataUrls.isNotEmpty) 'imageDataUrls': imageDataUrls,\n    if (downstreamByVariant.isNotEmpty)
+    'createdAt': createdAt,
+    if (imageDataUrls.isNotEmpty) 'imageDataUrls': imageDataUrls,
+    if (downstreamByVariant.isNotEmpty)
       'downstreamByVariant': downstreamByVariant.map(
         (k, v) => MapEntry(k.toString(), v.map((m) => m.toJson()).toList()),
       ),
@@ -2447,17 +2458,27 @@ class LiveSheetSettings {
       'transformation, physical conditions (injury, pregnancy, curse, '
       'intoxication), possessions gained or lost, and major status/relationship '
       'shifts. IGNORE the mundane: momentary poses, passing emotions, ordinary '
-      'movement, dialogue. If NOTHING significant changed, output exactly:\n'
-      'NO_CHANGE\n\n'
+      'movement, dialogue. If NOTHING significant changed, output exactly:
+'
+      'NO_CHANGE
+
+'
       'Otherwise, output ONLY change lines, grouped per entity. Use this format '
-      '(nothing else, no commentary):\n'
-      'ENTITY: <exact entity name>\n'
-      '+ <Section>: <new fact>\n'
-      '- <Section>: <fact that is no longer true>\n\n'
+      '(nothing else, no commentary):
+'
+      'ENTITY: <exact entity name>
+'
+      '+ <Section>: <new fact>
+'
+      '- <Section>: <fact that is no longer true>
+
+'
       'To CHANGE a fact, emit a `-` line for the old text and a `+` line for the '
       'new text. Sections are exactly: Appearance, Clothing, Conditions, '
       'Possessions, Facts. NEVER change or remove a fact marked [LOCKED]; treat '
-      'it as permanent canon. Keep each fact a short phrase.\n\n'
+      'it as permanent canon. Keep each fact a short phrase.
+
+'
       'ADD A NEW ENTITY when a NAMED character who is NOT already in the tracked '
       'list above has clearly become significant in the recent messages (a '
       'recurring companion, antagonist, or anyone now driving the scene). Emit a '
@@ -2465,7 +2486,9 @@ class LiveSheetSettings {
       'story has established about them (appearance, what they wear, conditions, '
       'possessions, role). Do NOT add fleeting or unnamed bystanders, and never '
       'invent facts the story has not shown — same durable-changes-only, '
-      'no-speculation discipline applies to new entities.\n\n'
+      'no-speculation discipline applies to new entities.
+
+'
       // 2026-07-04 (Gui's LiveSheet review): anti-bloat discipline — long RPs
       // only ever ADDED facts, so sheets grew stale and noisy.
       'KEEP THE SHEET TIGHT: prefer replacing an outdated fact (`-` old, `+` '
@@ -2476,12 +2499,19 @@ class LiveSheetSettings {
       'Build a CURRENT-STATE mini-sheet for ONE entity in this roleplay, based on '
       'the entity\'s description (if given) and what has happened in the '
       'conversation. Output ONLY labelled lines, one fact per line, no '
-      'commentary:\n'
-      'Appearance: <race, gender, apparent age, general look>\n'
-      'Clothing: <what they are wearing right now>\n'
-      'Conditions: <any injuries, transformations, states; omit if none>\n'
-      'Possessions: <notable items they currently have; omit if none>\n'
-      'Facts: <other notable current facts; omit if none>\n\n'
+      'commentary:
+'
+      'Appearance: <race, gender, apparent age, general look>
+'
+      'Clothing: <what they are wearing right now>
+'
+      'Conditions: <any injuries, transformations, states; omit if none>
+'
+      'Possessions: <notable items they currently have; omit if none>
+'
+      'Facts: <other notable current facts; omit if none>
+
+'
       'Use multiple lines under a section for multiple facts. Reflect the CURRENT '
       'state as of the latest message (e.g. if they were undressed in the scene, '
       'say so). Keep each fact a short phrase. Invent nothing not supported by the '
