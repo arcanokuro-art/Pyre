@@ -2458,27 +2458,17 @@ class LiveSheetSettings {
       'transformation, physical conditions (injury, pregnancy, curse, '
       'intoxication), possessions gained or lost, and major status/relationship '
       'shifts. IGNORE the mundane: momentary poses, passing emotions, ordinary '
-      'movement, dialogue. If NOTHING significant changed, output exactly:
-'
-      'NO_CHANGE
-
-'
+      'movement, dialogue. If NOTHING significant changed, output exactly:\n'
+      'NO_CHANGE\n\n'
       'Otherwise, output ONLY change lines, grouped per entity. Use this format '
-      '(nothing else, no commentary):
-'
-      'ENTITY: <exact entity name>
-'
-      '+ <Section>: <new fact>
-'
-      '- <Section>: <fact that is no longer true>
-
-'
+      '(nothing else, no commentary):\n'
+      'ENTITY: <exact entity name>\n'
+      '+ <Section>: <new fact>\n'
+      '- <Section>: <fact that is no longer true>\n\n'
       'To CHANGE a fact, emit a `-` line for the old text and a `+` line for the '
       'new text. Sections are exactly: Appearance, Clothing, Conditions, '
       'Possessions, Facts. NEVER change or remove a fact marked [LOCKED]; treat '
-      'it as permanent canon. Keep each fact a short phrase.
-
-'
+      'it as permanent canon. Keep each fact a short phrase.\n\n'
       'ADD A NEW ENTITY when a NAMED character who is NOT already in the tracked '
       'list above has clearly become significant in the recent messages (a '
       'recurring companion, antagonist, or anyone now driving the scene). Emit a '
@@ -2486,9 +2476,7 @@ class LiveSheetSettings {
       'story has established about them (appearance, what they wear, conditions, '
       'possessions, role). Do NOT add fleeting or unnamed bystanders, and never '
       'invent facts the story has not shown — same durable-changes-only, '
-      'no-speculation discipline applies to new entities.
-
-'
+      'no-speculation discipline applies to new entities.\n\n'
       // 2026-07-04 (Gui's LiveSheet review): anti-bloat discipline — long RPs
       // only ever ADDED facts, so sheets grew stale and noisy.
       'KEEP THE SHEET TIGHT: prefer replacing an outdated fact (`-` old, `+` '
@@ -2499,19 +2487,12 @@ class LiveSheetSettings {
       'Build a CURRENT-STATE mini-sheet for ONE entity in this roleplay, based on '
       'the entity\'s description (if given) and what has happened in the '
       'conversation. Output ONLY labelled lines, one fact per line, no '
-      'commentary:
-'
-      'Appearance: <race, gender, apparent age, general look>
-'
-      'Clothing: <what they are wearing right now>
-'
-      'Conditions: <any injuries, transformations, states; omit if none>
-'
-      'Possessions: <notable items they currently have; omit if none>
-'
-      'Facts: <other notable current facts; omit if none>
-
-'
+      'commentary:\n'
+      'Appearance: <race, gender, apparent age, general look>\n'
+      'Clothing: <what they are wearing right now>\n'
+      'Conditions: <any injuries, transformations, states; omit if none>\n'
+      'Possessions: <notable items they currently have; omit if none>\n'
+      'Facts: <other notable current facts; omit if none>\n\n'
       'Use multiple lines under a section for multiple facts. Reflect the CURRENT '
       'state as of the latest message (e.g. if they were undressed in the scene, '
       'say so). Keep each fact a short phrase. Invent nothing not supported by the '
