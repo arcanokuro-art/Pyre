@@ -6170,6 +6170,18 @@ class _MessageBubbleState extends State<_MessageBubble> {
                                   ),
                                 ),
                               ),
+                            if (m.imageDataUrls.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Wrap(
+                                  spacing: 6,
+                                  runSpacing: 6,
+                                  children: [
+                                    for (final dataUrl in m.imageDataUrls)
+                                      _ChatAttachedImage(dataUrl: dataUrl),
+                                  ],
+                                ),
+                              ),
                             // Fix 1 (2026-07 perf pass): when this bubble is
                             // the active streaming target, `widget.
                             // streamingText` isolates its per-token repaints
@@ -7357,6 +7369,65 @@ class _InputBar extends StatelessWidget {
           ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ChatAttachedImage extends StatelessWidget {
+  final String dataUrl;
+  const _ChatAttachedImage({required this.dataUrl});
+
+  Uint8List? _bytes() {
+    final comma = dataUrl.indexOf(',');
+    if (comma < 0 || !dataUrl.substring(0, comma).contains(';base64')) {
+      return null;
+    }
+    try {
+      return base64Decode(dataUrl.substring(comma + 1));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bytes = _bytes();
+    if (bytes == null) {
+      return Container(
+        width: 132,
+        height: 96,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: EmberColors.bgElevated,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: EmberColors.stroke),
+        ),
+        child: Icon(Icons.broken_image_outlined, color: EmberColors.textDim),
+      );
+    }
+    return GestureDetector(
+      onTap: () => showDialog<void>(
+        context: context,
+        builder: (dialogContext) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(12),
+          child: InteractiveViewer(
+            minScale: 0.8,
+            maxScale: 5,
+            child: Image.memory(bytes, fit: BoxFit.contain),
+          ),
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.memory(
+          bytes,
+          width: 132,
+          height: 132,
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
         ),
       ),
     );
