@@ -5448,6 +5448,16 @@ class _ChatScreenState extends State<ChatScreen> {
             onStop: _stop,
             onImpersonate: _impersonateMe,
             onAddOOC: () => _promptAuxAndAdd(chat, MessageKind.ooc, 'OOC'),
+            onAttachImage: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Adjuntar imagen: integración multimedia en curso')),
+              );
+            },
+            onGenerateSceneImage: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Generar imagen de la escena: integración en curso')),
+              );
+            },
             // System note is opt-in (Chat Settings → System note). Pass the
             // callback only when enabled → the ⋮ item is hidden by default.
             onAddSys: store.chatSettings.systemNoteEnabled
@@ -7080,6 +7090,8 @@ class _InputBar extends StatelessWidget {
   final VoidCallback onStop;
   final VoidCallback onImpersonate;
   final VoidCallback onAddOOC;
+  final VoidCallback? onAttachImage;
+  final VoidCallback? onGenerateSceneImage;
   // liveoaktripper request: a one-tap "system note" insert (the `/sys`
   // command as a button). NULLABLE + gated: only passed (non-null) when
   // ChatSettings.systemNoteEnabled is on, so the item is HIDDEN by default
@@ -7101,6 +7113,8 @@ class _InputBar extends StatelessWidget {
     required this.onStop,
     required this.onImpersonate,
     required this.onAddOOC,
+    this.onAttachImage,
+    this.onGenerateSceneImage,
     this.onAddSys,
     this.onGuideReply,
     this.onGuideMessage,
@@ -7142,8 +7156,30 @@ class _InputBar extends StatelessWidget {
                 if (value == 'impersonate') onImpersonate();
                 if (value == 'ooc') onAddOOC();
                 if (value == 'sys') onAddSys?.call();
+                if (value == 'attachImage') onAttachImage?.call();
+                if (value == 'generateSceneImage') onGenerateSceneImage?.call();
               },
               itemBuilder: (_) => [
+                if (onAttachImage != null)
+                  PopupMenuItem<String>(
+                    value: 'attachImage',
+                    child: Row(children: [
+                      Icon(Icons.image_outlined,
+                          size: 16, color: EmberColors.textMid),
+                      SizedBox(width: 10),
+                      Text('Adjuntar imagen'),
+                    ]),
+                  ),
+                if (onGenerateSceneImage != null)
+                  PopupMenuItem<String>(
+                    value: 'generateSceneImage',
+                    child: Row(children: [
+                      Icon(Icons.auto_awesome_outlined,
+                          size: 16, color: EmberColors.textMid),
+                      SizedBox(width: 10),
+                      Text('Generar imagen de la escena'),
+                    ]),
+                  ),
                 // Guide (Part 2 — Action 1): arm a one-shot guide for the next
                 // Send. Only present when the Guide feature is enabled.
                 if (onGuideReply != null)
