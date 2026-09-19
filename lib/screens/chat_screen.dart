@@ -320,6 +320,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final _scrollCtl = ScrollController();
   final _inputCtl = TextEditingController();
   final _inputFocus = FocusNode();
+  final List<PickedImage> _pendingChatImages = <PickedImage>[];
   StreamSubscription<String>? _streamSub;
   String _streamBuffer = '';
   bool _generating = false;
@@ -1274,11 +1275,30 @@ class _ChatScreenState extends State<ChatScreen> {
   Persona? _chatPersona(AppStore store, Chat chat) =>
       chatPersonaFor(store, chat);
 
+  Future<void> _attachChatImages() async {
+    if (_generating) return;
+    final picked = await pickImages(multiple: true);
+    if (!mounted || picked.isEmpty) return;
+    setState(() {
+      _pendingChatImages
+        ..clear()
+        ..addAll(picked.take(4));
+    });
+  }
+
+  void _clearPendingChatImages() {
+    if (_pendingChatImages.isEmpty) return;
+    setState(_pendingChatImages.clear);
+  }
+
   Future<void> _send() async {
     final store = context.read<AppStore>();
     final chat = _chat(store);
     if (chat == null) return;
     final text = _inputCtl.text.trim();
+    final pendingImageDataUrls = <String>[
+      for (final image in _pendingChatImages) encodeImageDataUrl(image.bytes),
+    ];
     if (_generating) return;
     // Continuing after a `+` on an OOC/Scene note that was left blank: drop the
     // stale empty branch so it doesn't linger above the new turn (Gui).
@@ -1331,7 +1351,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // monologue is unfolding, or the user is watching a scenario play
     // out before stepping back in. We DON'T fall through this path with
     // text added: a non-empty input still pushes a user turn first.
-    if (text.isNotEmpty) {
+    if (text.isNotEmpty || pendingImageDataUrls.isNotEmpty) {
       // If the last message is an EMPTY user message (a freshly-branched
       // variant waiting for content), fill it in place instead of
       // appending a new one. That's the back end of the `+`-on-user-
@@ -1340,7 +1360,8 @@ class _ChatScreenState extends State<ChatScreen> {
           chat.messages.isNotEmpty ? chat.messages.last : null;
       if (last != null &&
           last.kind == MessageKind.user &&
-          last.text.trim().isEmpty) {
+          last.text.trim().isEmpty &&
+          pendingImageDataUrls.isEmpty) {
         store.updateMessageText(chat.id, last.id, text);
       } else {
         store.addMessage(
@@ -1349,9 +1370,13 @@ class _ChatScreenState extends State<ChatScreen> {
             id: newId('msg'),
             kind: MessageKind.user,
             variants: [text],
+            imageDataUrls: pendingImageDataUrls,
           ),
         );
       }
+    }
+    if (_pendingChatImages.isNotEmpty) {
+      setState(_pendingChatImages.clear);
     }
 
     // Start a fresh assistant turn for the just-appended user message.
@@ -5448,11 +5473,9 @@ class _ChatScreenState extends State<ChatScreen> {
             onStop: _stop,
             onImpersonate: _impersonateMe,
             onAddOOC: () => _promptAuxAndAdd(chat, MessageKind.ooc, 'OOC'),
-            onAttachImage: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Adjuntar imagen: integración multimedia en curso')),
-              );
-            },
+            onAttachImage: _attachChatImages,
+            pendingImages: _pendingChatImages,
+            onClearImages: _clearPendingChatImages,
             onGenerateSceneImage: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Generar imagen de la escena: integración en curso')),
@@ -7091,6 +7114,8 @@ class _InputBar extends StatelessWidget {
   final VoidCallback onImpersonate;
   final VoidCallback onAddOOC;
   final VoidCallback? onAttachImage;
+  final List<PickedImage> pendingImages;
+  final VoidCallback? onClearImages;
   final VoidCallback? onGenerateSceneImage;
   // liveoaktripper request: a one-tap "system note" insert (the `/sys`
   // command as a button). NULLABLE + gated: only passed (non-null) when
@@ -7114,6 +7139,8 @@ class _InputBar extends StatelessWidget {
     required this.onImpersonate,
     required this.onAddOOC,
     this.onAttachImage,
+    this.pendingImages = const <PickedImage>[],
+    this.onClearImages,
     this.onGenerateSceneImage,
     this.onAddSys,
     this.onGuideReply,
@@ -7141,7 +7168,36 @@ class _InputBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
       child: SafeArea(
         top: false,
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (pendingImages.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.image_outlined, size: 18, color: EmberColors.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        pendingImages.length == 1
+                            ? pendingImages.first.name
+                            : '${pendingImages.length} imágenes adjuntas',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: EmberColors.textMid, fontSize: 12),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: onClearImages,
+                      tooltip: 'Quitar imágenes',
+                      visualDensity: VisualDensity.compact,
+                      icon: const Icon(Icons.close, size: 18),
+                    ),
+                  ],
+                ),
+              ),
+            Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             PopupMenuButton<String>(
@@ -7298,6 +7354,8 @@ class _InputBar extends StatelessWidget {
                 ),
                 icon: const Icon(Icons.arrow_upward, color: Colors.white),
               ),
+          ],
+            ),
           ],
         ),
       ),
