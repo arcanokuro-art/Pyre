@@ -416,7 +416,15 @@ String _buildSummariserBody({
     // character turns carry reasoning; other roles pass through verbatim.
     final text =
         m.kind == MessageKind.char ? stripStreamArtifacts(m.text) : m.text;
-    body.writeln('$role: $text');
+    // Multimedia invariant: historical memory is textual. Never copy image
+    // data URLs/base64 into the 1M/2M/10M recap pipeline. An image-bearing
+    // turn contributes its typed text plus a compact semantic marker only.
+    // This keeps checkpoint prompts bounded while preserving that an image
+    // was part of the scene for later semantic enrichment.
+    final imageMarker = m.imageDataUrls.isEmpty
+        ? ''
+        : ' [${m.imageDataUrls.length == 1 ? 'image attached' : '${m.imageDataUrls.length} images attached'}]';
+    body.writeln('$role: $text$imageMarker');
   }
   return body.toString();
 }
