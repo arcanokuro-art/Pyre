@@ -1291,6 +1291,75 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(_pendingChatImages.clear);
   }
 
+  Future<void> _generateCurrentSceneImage() async {
+    if (_generating) return;
+    final store = context.read<AppStore>();
+    final chat = _chat(store);
+    if (chat == null) return;
+    final provider = store.chatPrimaryProvider(chat);
+    if (provider == null) {
+      _promptSetUpProvider();
+      return;
+    }
+
+    final character = _primaryCharacter(store, chat);
+    final persona = _chatPersona(store, chat);
+    final recent = chat.messages
+        .where((m) => m.text.trim().isNotEmpty)
+        .toList()
+        .reversed
+        .take(8)
+        .toList()
+        .reversed
+        .map((m) => '${m.kind.name}: ${m.text.trim()}')
+        .join('\n');
+
+    final prompt = [
+      'Create a single cinematic roleplay scene image based on the current conversation.',
+      if (character != null && character.name.trim().isNotEmpty)
+        'Character: ${character.name}.',
+      if (character != null && character.description.trim().isNotEmpty)
+        'Character appearance: ${character.description.trim()}.',
+      if (persona != null && persona.name.trim().isNotEmpty)
+        'User persona: ${persona.name}.',
+      if (chat.sceneLocation?.trim().isNotEmpty == true)
+        'Location: ${chat.sceneLocation!.trim()}.',
+      if (chat.sceneSetting?.trim().isNotEmpty == true)
+        'Setting: ${chat.sceneSetting!.trim()}.',
+      'Preserve character identity, visible appearance, clothing, location, mood and current actions.',
+      'Do not add captions, speech bubbles, UI, watermarks or written text.',
+      if (recent.isNotEmpty) 'Recent scene context:\n$recent',
+    ].join('\n');
+
+    setState(() => _generating = true);
+    try {
+      final generated = await generateImage(
+        provider: provider,
+        prompt: prompt,
+      );
+      if (!mounted) return;
+      final dataUrl =
+          'data:${generated.mimeType};base64,${base64Encode(generated.bytes)}';
+      store.addMessage(
+        chat.id,
+        Message(
+          id: newId('msg'),
+          kind: MessageKind.scene,
+          variants: const [''],
+          imageDataUrls: [dataUrl],
+        ),
+      );
+      _scrollToBottom();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se pudo generar la imagen: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _generating = false);
+    }
+  }
+
   Future<void> _send() async {
     final store = context.read<AppStore>();
     final chat = _chat(store);
@@ -5476,11 +5545,7 @@ class _ChatScreenState extends State<ChatScreen> {
             onAttachImage: _attachChatImages,
             pendingImages: _pendingChatImages,
             onClearImages: _clearPendingChatImages,
-            onGenerateSceneImage: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Generar imagen de la escena: integración en curso')),
-              );
-            },
+            onGenerateSceneImage: _generateCurrentSceneImage,
             // System note is opt-in (Chat Settings → System note). Pass the
             // callback only when enabled → the ⋮ item is hidden by default.
             onAddSys: store.chatSettings.systemNoteEnabled
