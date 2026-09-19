@@ -45,8 +45,36 @@ jobs:
           ! grep -q "Target words per checkpoint" lib/screens/long_term_memory_screen.dart
           ! grep -q "Summary Prompt" lib/screens/long_term_memory_screen.dart
 
+      - name: Configure CI release signing
+        env:
+          PYRE_CI_KEYSTORE_B64: ${{ secrets.PYRE_ANDROID_KEYSTORE_B64 }}
+          PYRE_CI_STORE_PASSWORD: ${{ secrets.PYRE_ANDROID_STORE_PASSWORD }}
+          PYRE_CI_KEY_ALIAS: ${{ secrets.PYRE_ANDROID_KEY_ALIAS }}
+          PYRE_CI_KEY_PASSWORD: ${{ secrets.PYRE_ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$PYRE_CI_KEYSTORE_B64" ] && [ -n "$PYRE_CI_STORE_PASSWORD" ] && [ -n "$PYRE_CI_KEY_ALIAS" ] && [ -n "$PYRE_CI_KEY_PASSWORD" ]; then
+            echo "$PYRE_CI_KEYSTORE_B64" | base64 --decode > android/app/pyre-release.jks
+            cat > android/key.properties <<EOF
+          storePassword=$PYRE_CI_STORE_PASSWORD
+          keyPassword=$PYRE_CI_KEY_PASSWORD
+          keyAlias=$PYRE_CI_KEY_ALIAS
+          storeFile=pyre-release.jks
+          EOF
+            echo "PYRE_SIGNING_MODE=release" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Android release signing secrets are not configured; APK will use the ephemeral CI debug key and cannot update an existing install signed by a different runner."
+            echo "PYRE_SIGNING_MODE=debug-fallback" >> "$GITHUB_ENV"
+          fi
+
       - name: Build release APKs per ABI
         run: flutter build apk --release --split-per-abi
+
+      - name: Verify APK signing mode
+        run: |
+          echo "Signing mode: $PYRE_SIGNING_MODE"
+          if [ "$PYRE_SIGNING_MODE" != "release" ]; then
+            echo "::warning::This build is installable as a fresh install, but Android may reject it as an update because CI debug signing keys are ephemeral."
+          fi
 
       - name: Prepare downloadable APK names
         run: |
