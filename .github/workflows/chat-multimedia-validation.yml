@@ -1,0 +1,43 @@
+name: Chat multimedia validation
+
+on:
+  push:
+    branches: [pyre-chat-multimedia]
+    paths:
+      - 'lib/models/models.dart'
+      - 'lib/screens/chat_screen.dart'
+      - 'lib/services/chat_api.dart'
+      - 'lib/services/chat_prompt_builder.dart'
+      - 'lib/services/image_describe.dart'
+      - 'lib/services/image_generation.dart'
+      - 'lib/services/image_pick.dart'
+      - 'lib/services/memory.dart'
+      - 'test/image_generation_test.dart'
+      - 'test/memory_test.dart'
+      - '.github/workflows/chat-multimedia-validation.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-chat-multimedia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Analyze multimedia integration
+        run: |
+          dart analyze \
+            lib/services/image_generation.dart \
+            lib/services/image_pick.dart \
+            lib/services/image_describe.dart \
+            lib/services/chat_prompt_builder.dart \
+            lib/services/memory.dart \
+            lib/screens/chat_screen.dart
+      - name: Test image generation transport
+        run: flutter test test/image_generation_test.dart
+      - name: Test memory multimedia boundary
+        run: flutter test test/memory_test.dart
