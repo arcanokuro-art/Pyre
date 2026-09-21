@@ -3,18 +3,6 @@ name: Chat multimedia validation
 on:
   push:
     branches: [pyre-chat-multimedia]
-    paths:
-      - 'lib/models/models.dart'
-      - 'lib/screens/chat_screen.dart'
-      - 'lib/services/chat_api.dart'
-      - 'lib/services/chat_prompt_builder.dart'
-      - 'lib/services/image_describe.dart'
-      - 'lib/services/image_generation.dart'
-      - 'lib/services/image_pick.dart'
-      - 'lib/services/memory.dart'
-      - 'test/image_generation_test.dart'
-      - 'test/memory_test.dart'
-      - '.github/workflows/chat-multimedia-validation.yml'
   workflow_dispatch:
 
 jobs:
@@ -28,6 +16,15 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
+      - name: Analyze complete project
+        run: flutter analyze
+        continue-on-error: true
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+        continue-on-error: true
+      - name: Run complete test suite
+        run: flutter test
+        continue-on-error: true
       - name: Analyze multimedia integration
         run: |
           dart analyze \
