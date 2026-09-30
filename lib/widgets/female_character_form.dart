@@ -156,6 +156,7 @@ class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
           selected.toLowerCase().startsWith('personaliz') ||
           selected == 'custom';
       return Padding(
+        key: PageStorageKey('female-field:$identity:$key'),
         padding: const EdgeInsets.symmetric(vertical: 6),
         child: Column(
           children: [
@@ -203,6 +204,7 @@ class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
       );
     }
     return Padding(
+      key: PageStorageKey('female-field:$identity:$key'),
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextFormField(
         key: ValueKey('$identity:$key'),
