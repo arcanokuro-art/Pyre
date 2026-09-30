@@ -21,27 +21,30 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected=09d810798788545d578784c279bf78a65e3e0bc3
-          actual="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36731415896 --jq '.head_sha')"
-          conclusion="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36731415896 --jq '.conclusion')"
+          expected=3e3728f4c20accf77a2870c314a27299c0355079
+          actual="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36756597717 --jq '.head_sha')"
+          conclusion="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36756597717 --jq '.conclusion')"
           test "$actual" = "$expected"
           test "$conclusion" = success
-          gh run download 36731415896 -n Pyre-female-creator-preview-apk -D apk
+          gh run download 36756597717 -n Pyre-female-creator-preview-apk -D apk
           mv apk/app-debug.apk apk/Pyre-Creador-Femenino-Preview.apk
           sha256sum apk/Pyre-Creador-Femenino-Preview.apk > apk/SHA256SUMS.txt
           cat > notes.md <<'NOTES'
+          Corrige los cuadros rojos al abrir Apariencia y otras secciones. Cada campo usa su propio almacenamiento de desplazamiento, separado del estado de las secciones desplegables. La prueba de regresión reproduce el fallo previo y ahora pasa al abrir/cerrar todas las secciones en un teléfono de 360 px.
+          
           Versión de prueba del creador femenino basada en el prototipo: 138 campos, relaciones, mensajes y recursos visuales. Avatar y Lorebooks conservan sus lugares.
           
           Descarga e instala Pyre-Creador-Femenino-Preview.apk. Esta versión se instala por separado de Pyre habitual.
           
-          Validación: análisis sin incidencias, 32 pruebas aprobadas y compilación Android correcta. Falta la prueba en dispositivo físico.
+          Validación: análisis sin incidencias, 33 pruebas aprobadas y compilación Android correcta. Falta la prueba en dispositivo físico.
           
           Pendientes: creador masculino, integración del asistente de IA y bloques internos de dinámica.
           NOTES
-          tag=pyre-female-creator-preview
+          tag=pyre-female-creator-preview-fix1
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release edit "$tag" --title "Pyre · Creador femenino (prueba)" --notes-file notes.md --prerelease --latest=false
+            gh release edit "$tag" --title "Pyre · Creador femenino — corrección 1" --notes-file notes.md --prerelease --latest=false
           else
-            gh release create "$tag" --target "$expected" --title "Pyre · Creador femenino (prueba)" --notes-file notes.md --prerelease --latest=false
+            gh release create "$tag" --target "$expected" --title "Pyre · Creador femenino — corrección 1" --notes-file notes.md --prerelease --latest=false
           fi
           gh release upload "$tag" apk/Pyre-Creador-Femenino-Preview.apk apk/SHA256SUMS.txt --clobber
+
