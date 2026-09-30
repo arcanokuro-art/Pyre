@@ -1,0 +1,47 @@
+name: Publish female creator preview
+on:
+  push:
+    branches: ['codex/female-character-creator']
+    paths: ['.github/workflows/publish-female-preview.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: publish-female-preview
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download verified APK and publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: arcanokuro-art/Pyre
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=09d810798788545d578784c279bf78a65e3e0bc3
+          actual="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36731415896 --jq '.head_sha')"
+          conclusion="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36731415896 --jq '.conclusion')"
+          test "$actual" = "$expected"
+          test "$conclusion" = success
+          gh run download 36731415896 -n Pyre-female-creator-preview-apk -D apk
+          mv apk/app-debug.apk apk/Pyre-Creador-Femenino-Preview.apk
+          sha256sum apk/Pyre-Creador-Femenino-Preview.apk > apk/SHA256SUMS.txt
+          cat > notes.md <<'NOTES'
+          Versión de prueba del creador femenino basada en el prototipo: 138 campos, relaciones, mensajes y recursos visuales. Avatar y Lorebooks conservan sus lugares.
+          
+          Descarga e instala Pyre-Creador-Femenino-Preview.apk. Esta versión se instala por separado de Pyre habitual.
+          
+          Validación: análisis sin incidencias, 32 pruebas aprobadas y compilación Android correcta. Falta la prueba en dispositivo físico.
+          
+          Pendientes: creador masculino, integración del asistente de IA y bloques internos de dinámica.
+          NOTES
+          tag=pyre-female-creator-preview
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --title "Pyre · Creador femenino (prueba)" --notes-file notes.md --prerelease --latest=false
+          else
+            gh release create "$tag" --target "$expected" --title "Pyre · Creador femenino (prueba)" --notes-file notes.md --prerelease --latest=false
+          fi
+          gh release upload "$tag" apk/Pyre-Creador-Femenino-Preview.apk apk/SHA256SUMS.txt --clobber
