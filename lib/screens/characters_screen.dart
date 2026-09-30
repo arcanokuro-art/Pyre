@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/models.dart';
+import '../services/female_character_profile.dart';
 import '../services/capped_fetch.dart';
 import '../services/card_import.dart';
 import '../services/focus_bus.dart';
@@ -463,16 +464,6 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
   await showMenuSheet<void>(
     context,
     itemsBuilder: (sheet) => [
-      ListTile(
-        leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
-        title: const Text('Build with AI assistant'),
-        onTap: () {
-          Navigator.pop(sheet);
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => const CharacterAssistantScreen(),
-          ));
-        },
-      ),
       // Wave BL: drafts only live INSIDE the "Create from scratch"
       // path. They're a feature of the manual editor — the AI
       // assistant has its own session system, and surfacing drafts
@@ -481,10 +472,29 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       // Start fresh); if none, go straight to new editor.
       ListTile(
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
-        title: const Text('Create from scratch'),
+        title: const Text('Personaje femenino'),
         onTap: () async {
           Navigator.pop(sheet);
           await _createBlankCharacter(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.male, color: EmberColors.textDim),
+        title: const Text('Personaje masculino'),
+        subtitle: const Text('Pendiente de configurar'),
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Primero estamos desarrollando el creador femenino.')));
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
+        title: const Text('Build with AI assistant'),
+        onTap: () {
+          Navigator.pop(sheet);
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => const CharacterAssistantScreen(),
+          ));
         },
       ),
       Divider(color: EmberColors.stroke, height: 1),
@@ -527,6 +537,7 @@ Future<void> _createBlankCharacter(BuildContext context) async {
   final draft = Character(
     id: newId('draft'),
     name: '',
+    extensions: {femaleProfileKey: newFemaleProfile()},
   );
   store.saveDraft(draft);
   if (!context.mounted) return;
@@ -690,6 +701,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                 final draft = Character(
                   id: newId('draft'),
                   name: '',
+                  extensions: {femaleProfileKey: newFemaleProfile()},
                 );
                 store.saveDraft(draft);
                 if (!context.mounted) return;

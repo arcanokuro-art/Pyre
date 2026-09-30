@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
+import '../services/female_character_profile.dart';
+import '../widgets/female_character_form.dart';
 import '../services/attachment_store.dart';
 import '../services/chat_only_lorebook_binding.dart';
 import '../services/image_pick.dart';
@@ -69,6 +71,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
   // from the Advanced section. Existing values on imported cards are
   // preserved through Save because `Character.fromJson(_source().toJson())`
   // copies them automatically; we just never overwrite from form state.
+  Map<String, dynamic>? _femaleProfile;
   String? _avatar;
   /// Non-destructive Recrop: the UNCROPPED original avatar ref (or null when
   /// the avatar was never cropped — then `_avatar` IS the full image). Seeded
@@ -108,6 +111,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
     super.initState();
     final store = context.read<AppStore>();
     final c = _source();
+    _femaleProfile = readFemaleProfile(c);
     name = TextEditingController(text: c.name);
     tagline = TextEditingController(text: c.tagline ?? '');
     description = TextEditingController(text: c.description);
@@ -280,6 +284,13 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
     if (widget.overrideChatId == null) {
       composed.lorebookIds = List<String>.from(_lorebookIds);
     }
+    if (_femaleProfile != null) {
+      final store = context.read<AppStore>();
+      applyFemaleProfile(composed, _femaleProfile!, names: {
+        for (final c in store.characters) c.id: c.name,
+        for (final p in store.personas) p.id: p.name,
+      });
+    }
     return composed;
   }
 
@@ -364,6 +375,13 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
   }
 
   void _save() {
+    if (_femaleProfile != null &&
+        ((_femaleProfile!['fields'] as Map)['identity.nombre']
+                ?.toString().trim() ?? '').isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Escribe el nombre del personaje.')));
+      return;
+    }
     final store = context.read<AppStore>();
     // Wave BG: draft mode → cancel any pending debounce, promote to
     // a real character via `promoteDraftToCharacter`. The draft's
@@ -431,7 +449,11 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
     final store = context.read<AppStore>();
     _draftDebounce?.cancel();
     final composed = _composeFromForm();
-    if (store.isDraftMeaningful(composed)) {
+    final meaningful = _femaleProfile == null
+        ? store.isDraftMeaningful(composed)
+        : _femaleProfile!['edited'] == true || _avatar != null ||
+            _gallery.isNotEmpty || _lorebookIds.isNotEmpty;
+    if (meaningful) {
       store.saveDraft(composed);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
@@ -578,6 +600,9 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
           // and finally the Advanced collapsible. This way a user who
           // builds with the AI and then opens the manual editor sees
           // the same field flow they just lived through.
+          if (_femaleProfile != null)
+            _femaleForm()
+          else ...[
           _sectionHeader('Identity'),
           _LabeledField(label: 'Name', controller: name),
 
@@ -612,6 +637,8 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
               controller: creatorNotes,
               maxLines: 4),
 
+          ],
+
           // Wave CC: bind one or more lorebooks to this character so
           // they auto-activate in every chat she appears in (in
           // addition to anything the chat itself attaches). Imported
@@ -636,6 +663,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
           // Wave CY.18.128: native gallery — extra images beyond the avatar,
           // added via file picker → AttachmentStore (pyre:// refs, never
           // base64). "Use as avatar" repoints _avatar to the picked ref.
+          if (_femaleProfile != null) _femaleForm(resourcesOnly: true),
           GalleryEditorSection(
             gallery: _gallery,
             onChanged: (next) => setState(() => _gallery = next),
@@ -653,7 +681,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
 
           // ---- Advanced (collapsed by default) ----
           const SizedBox(height: 12),
-          Theme(
+          if (_femaleProfile == null) Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
               tilePadding: EdgeInsets.zero,
@@ -891,6 +919,21 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _femaleForm({bool resourcesOnly = false}) {
+    final store = context.watch<AppStore>();
+    return FemaleCharacterForm(
+      key: ValueKey('${widget.draftId ?? widget.characterId}:$resourcesOnly'),
+      profile: _femaleProfile!,
+      characters: {
+        for (final c in store.characters)
+          if (c.id != widget.characterId) c.id: c.name,
+      },
+      personas: {for (final p in store.personas) p.id: p.name},
+      resourcesOnly: resourcesOnly,
+      onChanged: () { _scheduleDraftSave(); setState(() {}); },
     );
   }
 
