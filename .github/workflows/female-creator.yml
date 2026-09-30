@@ -13,6 +13,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: female-creator-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -58,8 +62,8 @@ jobs:
       - run: flutter pub get
       - name: Build APK preview
         env:
-          PYRE_DEV: '1'
-        run: flutter build apk --debug
+          PYRE_DEV: 'true'
+        run: flutter build apk --debug --dart-define=PYRE_DEV=true
       - uses: actions/upload-artifact@v4
         with:
           name: Pyre-female-creator-preview-apk
