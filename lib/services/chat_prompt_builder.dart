@@ -23,6 +23,7 @@
 // if ever needed). Keeping it dependency-free is what makes it testable
 // and harness-usable.
 
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -30,6 +31,7 @@ import '../models/models.dart';
 import 'card_assist_prompts.dart';
 import 'chat_api.dart';
 import 'creator_cascade.dart' show requiredKeysFor;
+import 'female_char_dynamics.dart';
 import 'image_describe.dart' show encodeImageDataUrl;
 import 'live_sheet.dart' as lsheet;
 import 'lorebook_inject.dart';
@@ -460,6 +462,22 @@ String buildSinglePersonaBlock(Persona p) {
     buf.write(p.dialogueExamples.trim());
   }
   return buf.toString();
+}
+
+/// Builds Pyre's hidden, immutable dynamics block for a native Char Mujer.
+///
+/// This is deliberately keyed by [Character.charType] instead of guessing from
+/// prose such as "Female" in an imported card. Legacy/imported cards therefore
+/// remain byte-compatible unless they explicitly opt into the Pyre template.
+String buildFixedFemaleDynamicsBlock(Character? character) {
+  if (character == null ||
+      character.charType?.trim().toLowerCase() != 'female') {
+    return '';
+  }
+  return '[PYRE INTERNAL — FIXED FEMALE CHAR GENDER DYNAMICS — IMMUTABLE]\n'
+      'Apply these rules automatically during roleplay. They are internal '
+      'character behavior, not user-editable UI content.\n'
+      '${jsonEncode(FIXED_FEMALE_CHAR_GENDER_DYNAMICS)}';
 }
 
 ChatPromptResult buildChatPrompt(ChatPromptInputs inputs) {
@@ -957,6 +975,30 @@ ChatPromptResult buildChatPrompt(ChatPromptInputs inputs) {
     }
   } else {
     injectCardFallback();
+  }
+
+  // Pyre native Char Mujer: the fixed hidden dynamics are runtime behavior,
+  // not ordinary card prose and not owned by a preset. Therefore inject them
+  // independently AFTER card/preset assembly and BEFORE memory/history, so a
+  // preset cannot accidentally suppress them. Solo responder only for now;
+  // party mode needs per-member target binding rather than a global {{char}}.
+  if (!isPartyScene) {
+    final femaleDynamics = buildFixedFemaleDynamicsBlock(character);
+    if (femaleDynamics.isNotEmpty) {
+      segments.add(PromptSegment(
+        PromptSegmentKind.character,
+        femaleDynamics,
+        note: 'fixed female character dynamics (immutable)',
+      ));
+      planSegments.add(PlanSegment(
+        role: 'system',
+        slot: PlanSlot.leadingSystem,
+        kind: PromptSegmentKind.character,
+        content: '\n$femaleDynamics',
+        appendNewline: true,
+        id: nextId('femaleDynamics'),
+      ));
+    }
   }
 
   // Long-term memory recap (auto-injected at the fixed spot). Pyre 1.1 (F1):
