@@ -32,17 +32,20 @@ jobs:
           flutter analyze --no-pub
           lib/services/female_character_profile.dart
           lib/services/female_character_schema.dart
+          lib/services/male_character_schema.dart
           lib/widgets/female_character_form.dart
           lib/screens/character_edit_screen.dart
           lib/screens/characters_screen.dart
           lib/services/attachment_refs.dart
           lib/services/sync_engine.dart
           test/female_character_profile_test.dart
+          test/male_character_profile_test.dart
           test/female_character_form_test.dart
       - name: Test persistence, phone layout, existing cards and attachments
         run: >-
           flutter test --no-pub
           test/female_character_profile_test.dart
+          test/male_character_profile_test.dart
           test/female_character_form_test.dart
           test/character_folder_visibility_test.dart
           test/incoming_record_refs_test.dart

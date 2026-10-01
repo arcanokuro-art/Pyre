@@ -2,10 +2,17 @@ import 'dart:convert';
 
 import '../models/models.dart';
 import 'female_character_schema.dart';
+import 'male_character_schema.dart';
 
 /// Versioned structured data lives in card extensions, so existing card
 /// imports, exports, snapshots and draft persistence retain every field.
 const femaleProfileKey = 'pyre_female_profile';
+const maleProfileKey = 'pyre_male_profile';
+
+bool isMaleProfile(Map profile) => profile['gender'] == 'male';
+
+List<Map<String, dynamic>> characterSections(Map profile) =>
+    isMaleProfile(profile) ? maleSections : femaleSections;
 
 Map<String, dynamic> newFemaleProfile() => {
   'version': 1,
@@ -15,8 +22,18 @@ Map<String, dynamic> newFemaleProfile() => {
   'resources': <String, dynamic>{},
 };
 
+Map<String, dynamic> newMaleProfile() => {
+  ...newFemaleProfile(),
+  'gender': 'male',
+  'fields': <String, dynamic>{
+    'identidad.genero': 'hombre',
+    'identidad.orientacion': 'heterosexual',
+  },
+};
+
+// Kept as a compatibility entry point for the existing editor.
 Map<String, dynamic>? readFemaleProfile(Character character) {
-  final raw = character.extensions[femaleProfileKey];
+  final raw = character.extensions[maleProfileKey] ?? character.extensions[femaleProfileKey];
   if (raw is! Map) return null;
   final result = (jsonDecode(jsonEncode(raw)) as Map).cast<String, dynamic>();
   result.putIfAbsent('fields', () => <String, dynamic>{});
@@ -80,13 +97,19 @@ void applyFemaleProfile(
     return _renderValue(isCustom ? fields['$key.custom'] : fields[key], names);
   }
 
-  card.extensions[femaleProfileKey] = jsonDecode(jsonEncode(profile));
+  final male = isMaleProfile(profile);
+  final sections = characterSections(profile);
+  if (male) {
+    fields['identidad.genero'] = 'hombre';
+    fields['identidad.orientacion'] = 'heterosexual';
+  }
+  card.extensions[male ? maleProfileKey : femaleProfileKey] = jsonDecode(jsonEncode(profile));
   card.name = [
     value('identity.nombre'),
     value('identity.apellido'),
   ].where((s) => s.isNotEmpty).join(' ');
   final description = StringBuffer();
-  for (final section in femaleSections) {
+  for (final section in sections) {
     if (['mensajes', 'bot'].contains(section['id'])) continue;
     final lines = <String>[];
     for (final raw in section['fields'] as List) {
@@ -116,7 +139,7 @@ void applyFemaleProfile(
   final legacy = profile['original_description'] as String? ?? '';
   card.description = [
     legacy,
-    'Género: Mujer',
+    male ? 'Género: Hombre' : 'Género: Mujer',
     description.toString().trim(),
   ].where((s) => s.isNotEmpty).join('\n\n');
   card.personality = '';
@@ -156,7 +179,7 @@ void applyFemaleProfile(
         _renderValue(entry['rule'], names),
   ];
   for (final raw
-      in (femaleSections.firstWhere((s) => s['id'] == 'bot')['fields']
+      in (sections.firstWhere((s) => s['id'] == 'bot')['fields']
           as List)) {
     final f = raw as Map;
     final text = value(f['key'] as String);

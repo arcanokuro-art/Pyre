@@ -481,10 +481,9 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       ListTile(
         leading: Icon(Icons.male, color: EmberColors.textDim),
         title: const Text('Personaje masculino'),
-        subtitle: const Text('Pendiente de configurar'),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Primero estamos desarrollando el creador femenino.')));
+        onTap: () async {
+          Navigator.pop(sheet);
+          await _createBlankCharacter(context, male: true);
         },
       ),
       ListTile(
@@ -528,16 +527,16 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
 /// `Start fresh` tile). The user can either pick up where they left
 /// off OR explicitly start a new card. Avoids accidentally orphaning
 /// existing drafts because the user forgot they had one.
-Future<void> _createBlankCharacter(BuildContext context) async {
+Future<void> _createBlankCharacter(BuildContext context, {bool male = false}) async {
   final store = context.read<AppStore>();
   if (store.characterDrafts.isNotEmpty) {
-    await _showResumeOrStartFreshSheet(context);
+    await _showResumeOrStartFreshSheet(context, male: male);
     return;
   }
   final draft = Character(
     id: newId('draft'),
     name: '',
-    extensions: {femaleProfileKey: newFemaleProfile()},
+    extensions: {if (male) maleProfileKey: newMaleProfile() else femaleProfileKey: newFemaleProfile()},
   );
   store.saveDraft(draft);
   if (!context.mounted) return;
@@ -550,7 +549,7 @@ Future<void> _createBlankCharacter(BuildContext context) async {
 /// scratch" and there are existing drafts. Lists each draft with
 /// long-press → delete, and a "Start fresh" tile at the bottom that
 /// spawns a new draft.
-Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
+Future<void> _showResumeOrStartFreshSheet(BuildContext context, {bool male = false}) async {
   final store = context.read<AppStore>();
   await showModalBottomSheet<void>(
     context: context,
@@ -701,7 +700,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                 final draft = Character(
                   id: newId('draft'),
                   name: '',
-                  extensions: {femaleProfileKey: newFemaleProfile()},
+                  extensions: {if (male) maleProfileKey: newMaleProfile() else femaleProfileKey: newFemaleProfile()},
                 );
                 store.saveDraft(draft);
                 if (!context.mounted) return;

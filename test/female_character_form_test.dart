@@ -84,4 +84,37 @@ void main() {
       expect(tester.takeException(), isNull, reason: 'Closing $id');
     }
   });
+  testWidgets('male detailed sections survive scrolling and parent rebuilds', (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final profile = newMaleProfile();
+    late StateSetter rebuild;
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: StatefulBuilder(
+      builder: (context, setState) {
+        rebuild = setState;
+        return ListView(children: [
+          FemaleCharacterForm(profile: profile,
+            characters: const {'other': 'Akemi'}, personas: const {'user': 'Kuro'},
+            onChanged: () => setState(() {})),
+        ]);
+      },
+    ))));
+    await tester.pumpAndSettle();
+    for (final id in ['apariencia', 'vestimenta-inicial', 'personalidad', 'contexto', 'sexualidad', 'reluser', 'relchars', 'mensajes', 'expresion', 'bot']) {
+      final section = find.byKey(PageStorageKey('male:$id'));
+      await tester.ensureVisible(section);
+      await tester.pumpAndSettle();
+      await tester.tap(find.descendant(of: section, matching: find.byType(ListTile)).first);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'Opening $id');
+      rebuild(() {});
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'Rebuilding $id');
+      await tester.tap(find.descendant(of: section, matching: find.byType(ListTile)).first);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'Closing $id');
+    }
+  });
 }

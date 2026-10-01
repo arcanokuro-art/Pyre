@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../services/female_character_profile.dart';
-import '../services/female_character_schema.dart';
 import '../services/image_pick.dart';
 import '../services/attachment_store.dart';
 import 'avatar.dart';
@@ -27,6 +26,8 @@ class FemaleCharacterForm extends StatefulWidget {
 }
 
 class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
+  bool get _male => isMaleProfile(widget.profile);
+  List<Map<String, dynamic>> get _sections => characterSections(widget.profile);
   bool _quick = false;
   bool _picking = false;
   Map<String, dynamic> get fields =>
@@ -39,7 +40,7 @@ class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
   @override
   void initState() {
     super.initState();
-    for (final section in femaleSections) {
+    for (final section in _sections) {
       for (final raw in section['fields'] as List) {
         final f = raw as Map;
         if (f['default'] != null) {
@@ -175,7 +176,7 @@ class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
                     child: Text(o['label']!, overflow: TextOverflow.ellipsis),
                   ),
               ],
-              onChanged: (v) {
+              onChanged: f['readonly'] == true ? null : (v) {
                 target[key] = v ?? '';
                 changed();
               },
@@ -447,13 +448,13 @@ class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'Personaje femenino',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Text(
+          _male ? 'Personaje masculino' : 'Personaje femenino',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: Text('Género: Mujer'),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(_male ? 'Género: Hombre' : 'Género: Mujer'),
         ),
         SegmentedButton<bool>(
           segments: const [
@@ -463,11 +464,11 @@ class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
           selected: {_quick},
           onSelectionChanged: (s) => setState(() => _quick = s.first),
         ),
-        for (final section in femaleSections)
+        for (final section in _sections)
           if (!_quick || section['advanced'] != true)
             Card(
               child: ExpansionTile(
-                key: PageStorageKey('female:${section['id']}'),
+                key: PageStorageKey('${_male ? 'male' : 'female'}:${section['id']}'),
                 initiallyExpanded: section['id'] == 'perfil',
                 title: Text(section['title'] as String),
                 childrenPadding: const EdgeInsets.all(12),
