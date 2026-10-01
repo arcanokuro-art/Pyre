@@ -276,6 +276,73 @@ void main() {
       expect(text, isNot(contains('Other characters in this scene')));
     });
 
+    test('Char Mujer dynamics are bound per member in party mode', () {
+      final female = Character(
+        id: 'dyn-female',
+        name: 'Lilian',
+        charType: 'female',
+        description: '{{char}} is the female party member.',
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final other = Character(
+        id: 'dyn-other',
+        name: 'Orin',
+        description: 'Another party member.',
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final persona = Persona(
+        id: 'dyn-user',
+        name: 'Alex',
+        description: 'User persona.',
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final chat = Chat(
+        id: 'dyn-party',
+        characterIds: [female.id, other.id],
+        characterSnapshots: {female.id: female, other.id: other},
+        personaId: persona.id,
+        messages: [
+          Message(
+            id: 'dyn-m1',
+            kind: MessageKind.user,
+            variants: const ['I approach Lilian.'],
+            createdAt: 0,
+          ),
+        ],
+        partyMode: true,
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final result = buildChatPrompt(ChatPromptInputs(
+        chat: chat,
+        character: other, // prove the global responder is NOT used for Lilian
+        persona: persona,
+        preset: null,
+        responderId: other.id,
+        beatsCap: 0,
+        lookupCharacter: _charLookup([female, other]),
+        lookupBook: (_) => null,
+        partyMode: true,
+      ));
+      final text = _serialize(result.turns);
+
+      expect(text, contains('FIXED FEMALE CHAR GENDER DYNAMICS'));
+      expect(text, contains('--- Lilian ---'));
+      expect(text, contains('Lilian'));
+      expect(text, contains('Alex'));
+      expect(text, isNot(contains('{{char}}')));
+      expect(text, isNot(contains('{{user}}')));
+      expect(text, isNot(contains('{{target_char}}')));
+      expect(
+        'FIXED FEMALE CHAR GENDER DYNAMICS'.allMatches(text).length,
+        1,
+        reason: 'one female member must contribute exactly one fixed block',
+      );
+    });
+
     test('partyMode false (default) is unaffected — single responder card + '
         'thin roster, exactly as before', () {
       final a = Character(
