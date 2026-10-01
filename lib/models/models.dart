@@ -305,6 +305,9 @@ class Character {
   String id;
   String name;
   String? tagline;
+  /// Pyre-native character template discriminator. `female` / `male` select
+  /// fixed hidden roleplay dynamics; null keeps imported/legacy cards neutral.
+  String? charType;
   String description;
   String personality;
   String scenario;
@@ -390,6 +393,7 @@ class Character {
     required this.id,
     required this.name,
     this.tagline,
+    this.charType,
     this.description = '',
     this.personality = '',
     this.scenario = '',
@@ -429,6 +433,9 @@ class Character {
         id: j['id'] as String,
         name: (j['name'] as String?) ?? 'Unnamed',
         tagline: j['tagline'] as String?,
+        // Accept both the native camelCase key and the HTML prototype's
+        // `char_type` spelling so prototype payloads migrate cleanly.
+        charType: (j['charType'] as String?) ?? (j['char_type'] as String?),
         description: (j['description'] as String?) ?? '',
         personality: (j['personality'] as String?) ?? '',
         scenario: (j['scenario'] as String?) ?? '',
@@ -472,6 +479,7 @@ class Character {
         'id': id,
         'name': name,
         'tagline': tagline,
+        if (charType != null && charType!.trim().isNotEmpty) 'charType': charType,
         'description': description,
         'personality': personality,
         'scenario': scenario,
