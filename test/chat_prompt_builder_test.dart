@@ -520,6 +520,61 @@ void main() {
     });
   });
 
+  group('fixed Char Hombre dynamics — roleplay integration', () {
+    test('male Pyre template injects only the immutable male dynamics', () {
+      final male = Character(
+        id: 'male-native',
+        name: 'Darian',
+        charType: 'male',
+        description: 'Native Pyre Char Hombre.',
+      );
+      final user = Persona(
+        id: 'male-user',
+        name: 'Alex',
+        description: 'Active user persona.',
+      );
+      final chat = Chat(
+        id: 'male-roleplay',
+        characterIds: [male.id],
+        characterSnapshots: {male.id: male},
+        personaId: user.id,
+        messages: [userMsg('m1', 'Hola.')],
+      );
+      final result = buildChatPrompt(ChatPromptInputs(
+        chat: chat,
+        character: male,
+        persona: user,
+        preset: null,
+        responderId: male.id,
+        beatsCap: 0,
+        lookupCharacter: (id) => id == male.id ? male : null,
+        lookupBook: (_) => null,
+      ));
+      final whole = result.turns.map((t) => t.content).join('\n');
+
+      expect(whole, contains('FIXED MALE CHAR GENDER DYNAMICS'));
+      expect(whole, contains('LONGITUD_PENE_DE_Darian'));
+      expect(whole, contains('Alex'));
+      expect(whole, isNot(contains('FIXED FEMALE CHAR GENDER DYNAMICS')));
+      expect(whole, isNot(contains('{{char}}')));
+      expect(whole, isNot(contains('{{user}}')));
+      expect(
+        result.segments.any(
+            (s) => s.note == 'fixed male character dynamics (immutable)'),
+        isTrue,
+      );
+    });
+
+    test('male and female template selectors stay mutually exclusive', () {
+      final male = Character(id: 'm', name: 'M', charType: 'male');
+      final female = Character(id: 'f', name: 'F', charType: 'female');
+      expect(buildFixedMaleDynamicsBlock(male), isNotEmpty);
+      expect(buildFixedFemaleDynamicsBlock(male), isEmpty);
+      expect(buildFixedFemaleDynamicsBlock(female), isNotEmpty);
+      expect(buildFixedMaleDynamicsBlock(female), isEmpty);
+    });
+  });
+
   // ── CREATOR assembly-only builders ───────────────────────────────────
   group('creatorArchitectPrompt — per-mode base selection', () {
     test('character mode uses kCardAssistantPrompt + freeform appendix', () {
