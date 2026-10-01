@@ -438,6 +438,88 @@ void main() {
     });
   });
 
+  group('fixed Char Mujer dynamics — roleplay integration', () {
+    test('female Pyre template injects the immutable dynamics into the system prompt', () {
+      final female = Character(
+        id: 'female-native',
+        name: 'Lilian',
+        charType: 'female',
+        description: 'Native Pyre Char Mujer.',
+      );
+      final user = Persona(
+        id: 'persona-user',
+        name: 'Alex',
+        description: 'Active user persona.',
+      );
+      final chat = Chat(
+        id: 'female-roleplay',
+        characterIds: [female.id],
+        characterSnapshots: {female.id: female},
+        personaId: user.id,
+        messages: [userMsg('m1', 'Hola.')],
+      );
+      final result = buildChatPrompt(ChatPromptInputs(
+        chat: chat,
+        character: female,
+        persona: user,
+        preset: null,
+        responderId: female.id,
+        beatsCap: 0,
+        lookupCharacter: (id) => id == female.id ? female : null,
+        lookupBook: (_) => null,
+      ));
+
+      final whole = result.turns.map((t) => t.content).join('\n');
+      expect(whole, contains('FIXED FEMALE CHAR GENDER DYNAMICS'));
+      expect(whole, contains('DINAMICA_SEGUN_GENERO_DE_USER'));
+      expect(whole, contains('Lilian'));
+      expect(whole, contains('Alex'));
+      expect(whole, isNot(contains('{{char}}')));
+      expect(whole, isNot(contains('{{user}}')));
+      expect(
+        result.segments.any((s) =>
+            s.note == 'fixed female character dynamics (immutable)'),
+        isTrue,
+      );
+    });
+
+    test('legacy/imported character without charType does not receive the block', () {
+      final legacy = Character(
+        id: 'legacy-female-prose',
+        name: 'Imported',
+        description: 'Born Gender & Gender Expression: Female.',
+      );
+      final chat = Chat(
+        id: 'legacy-roleplay',
+        characterIds: [legacy.id],
+        characterSnapshots: {legacy.id: legacy},
+        messages: [userMsg('m1', 'Hi.')],
+      );
+      final result = buildChatPrompt(ChatPromptInputs(
+        chat: chat,
+        character: legacy,
+        persona: null,
+        preset: null,
+        responderId: legacy.id,
+        beatsCap: 0,
+        lookupCharacter: (id) => id == legacy.id ? legacy : null,
+        lookupBook: (_) => null,
+      ));
+      final whole = result.turns.map((t) => t.content).join('\n');
+      expect(whole, isNot(contains('FIXED FEMALE CHAR GENDER DYNAMICS')));
+    });
+
+    test('Character accepts prototype char_type and round-trips as charType', () {
+      final c = Character.fromJson({
+        'id': 'prototype-female',
+        'name': 'Prototype',
+        'char_type': 'female',
+      });
+      expect(c.charType, 'female');
+      expect(c.toJson()['charType'], 'female');
+    });
+  });
+
   // ── CREATOR assembly-only builders ───────────────────────────────────
   group('creatorArchitectPrompt — per-mode base selection', () {
     test('character mode uses kCardAssistantPrompt + freeform appendix', () {
