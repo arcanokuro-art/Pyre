@@ -32,6 +32,7 @@ import 'card_assist_prompts.dart';
 import 'chat_api.dart';
 import 'creator_cascade.dart' show requiredKeysFor;
 import 'female_char_dynamics.dart';
+import 'male_char_dynamics.dart';
 import 'image_describe.dart' show encodeImageDataUrl;
 import 'live_sheet.dart' as lsheet;
 import 'lorebook_inject.dart';
@@ -364,7 +365,9 @@ String buildJointPartyBlock({
     // mode. Keeping them inside the member delimiter preserves {{char}} as
     // self-reference instead of letting the final global pass bind every
     // female member to the selected/primary responder.
-    final memberDynamics = buildFixedFemaleDynamicsBlock(member);
+    final memberDynamics = member.charType?.trim().toLowerCase() == 'male'
+        ? buildFixedMaleDynamicsBlock(member)
+        : buildFixedFemaleDynamicsBlock(member);
     if (memberDynamics.isNotEmpty) {
       buf.writeln('\nInternal fixed dynamics:');
       buf.writeln(fillForMember(memberDynamics, member.name));
@@ -515,6 +518,18 @@ String buildFixedFemaleDynamicsBlock(Character? character) {
       'Apply these rules automatically during roleplay. They are internal '
       'character behavior, not user-editable UI content.\n'
       '${jsonEncode(FIXED_FEMALE_CHAR_GENDER_DYNAMICS)}';
+}
+
+/// Builds Pyre's hidden, immutable dynamics block for a native Char Hombre.
+String buildFixedMaleDynamicsBlock(Character? character) {
+  if (character == null ||
+      character.charType?.trim().toLowerCase() != 'male') {
+    return '';
+  }
+  return '[PYRE INTERNAL — FIXED MALE CHAR GENDER DYNAMICS — IMMUTABLE]\n'
+      'Apply these rules automatically during roleplay. They are internal '
+      'character behavior, not user-editable UI content.\n'
+      '${jsonEncode(FIXED_MALE_CHAR_GENDER_DYNAMICS)}';
 }
 
 ChatPromptResult buildChatPrompt(ChatPromptInputs inputs) {
@@ -1020,20 +1035,24 @@ ChatPromptResult buildChatPrompt(ChatPromptInputs inputs) {
   // preset cannot accidentally suppress them. Solo responder only for now;
   // party mode needs per-member target binding rather than a global {{char}}.
   if (!isPartyScene) {
-    final femaleDynamics = buildFixedFemaleDynamicsBlock(character);
-    if (femaleDynamics.isNotEmpty) {
+    final fixedDynamics = character?.charType?.trim().toLowerCase() == 'male'
+        ? buildFixedMaleDynamicsBlock(character)
+        : buildFixedFemaleDynamicsBlock(character);
+    if (fixedDynamics.isNotEmpty) {
+      final dynamicsType =
+          character?.charType?.trim().toLowerCase() == 'male' ? 'male' : 'female';
       segments.add(PromptSegment(
         PromptSegmentKind.character,
-        femaleDynamics,
-        note: 'fixed female character dynamics (immutable)',
+        fixedDynamics,
+        note: 'fixed $dynamicsType character dynamics (immutable)',
       ));
       planSegments.add(PlanSegment(
         role: 'system',
         slot: PlanSlot.leadingSystem,
         kind: PromptSegmentKind.character,
-        content: '\n$femaleDynamics',
+        content: '\n$fixedDynamics',
         appendNewline: true,
-        id: nextId('femaleDynamics'),
+        id: nextId('${dynamicsType}Dynamics'),
       ));
     }
   }
