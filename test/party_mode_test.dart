@@ -343,6 +343,78 @@ void main() {
       );
     });
 
+    test('Char Hombre and Char Mujer dynamics stay bound to their own party members', () {
+      final male = Character(
+        id: 'dyn-male',
+        name: 'Darian',
+        charType: 'male',
+        description: '{{char}} is the male party member.',
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final female = Character(
+        id: 'dyn-female-2',
+        name: 'Lilian',
+        charType: 'female',
+        description: '{{char}} is the female party member.',
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final persona = Persona(
+        id: 'dyn-user-2',
+        name: 'Alex',
+        description: 'User persona.',
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final chat = Chat(
+        id: 'dyn-mixed-party',
+        characterIds: [male.id, female.id],
+        characterSnapshots: {male.id: male, female.id: female},
+        personaId: persona.id,
+        messages: [
+          Message(
+            id: 'dyn-mixed-m1',
+            kind: MessageKind.user,
+            variants: const ['I enter the room.'],
+            createdAt: 0,
+          ),
+        ],
+        partyMode: true,
+        createdAt: 0,
+        updatedAt: 0,
+      );
+      final result = buildChatPrompt(ChatPromptInputs(
+        chat: chat,
+        character: female,
+        persona: persona,
+        preset: null,
+        responderId: female.id,
+        beatsCap: 0,
+        lookupCharacter: _charLookup([male, female]),
+        lookupBook: (_) => null,
+        partyMode: true,
+      ));
+      final text = _serialize(result.turns);
+
+      expect(text, contains('FIXED MALE CHAR GENDER DYNAMICS'));
+      expect(text, contains('FIXED FEMALE CHAR GENDER DYNAMICS'));
+      expect(text, contains('LONGITUD_PENE_DE_Darian'));
+      expect(text, contains('--- Darian ---'));
+      expect(text, contains('--- Lilian ---'));
+      expect(
+        'FIXED MALE CHAR GENDER DYNAMICS'.allMatches(text).length,
+        1,
+      );
+      expect(
+        'FIXED FEMALE CHAR GENDER DYNAMICS'.allMatches(text).length,
+        1,
+      );
+      expect(text, isNot(contains('{{char}}')));
+      expect(text, isNot(contains('{{user}}')));
+      expect(text, isNot(contains('{{target_char}}')));
+    });
+
     test('partyMode false (default) is unaffected — single responder card + '
         'thin roster, exactly as before', () {
       final a = Character(
