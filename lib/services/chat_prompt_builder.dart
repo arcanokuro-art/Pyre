@@ -299,10 +299,38 @@ String buildJointPartyBlock({
   // name-fill pass would do to any leftovers). {{user}} resolves to the
   // persona exactly like everywhere else.
   final memberUserName = joinedUser ?? persona?.name ?? 'You';
-  String fillForMember(String s, String memberName) => s
-      .replaceAll(RegExp(r'\{\{char\}\}', caseSensitive: false), memberName)
-      .replaceAll(
-          RegExp(r'\{\{user\}\}', caseSensitive: false), memberUserName);
+  // Resolve the most recent explicit scene counterpart for {{target_char}}.
+  // A user turn means the active counterpart is the user/persona. A char turn
+  // with a speaker id means that member is the counterpart. Anything else is
+  // intentionally left unresolved rather than guessing.
+  String? activeTargetName;
+  for (final message in chat.messages.reversed) {
+    if (message.kind == MessageKind.user) {
+      activeTargetName = memberUserName;
+      break;
+    }
+    if (message.kind == MessageKind.char && message.characterId != null) {
+      final target = chat.characterSnapshots[message.characterId!] ??
+          lookupCharacter(message.characterId!);
+      if (target != null) {
+        activeTargetName = target.name;
+        break;
+      }
+    }
+  }
+
+  String fillForMember(String s, String memberName) {
+    var out = s
+        .replaceAll(RegExp(r'\{\{char\}\}', caseSensitive: false), memberName)
+        .replaceAll(
+            RegExp(r'\{\{user\}\}', caseSensitive: false), memberUserName);
+    if (activeTargetName != null) {
+      out = out.replaceAll(
+          RegExp(r'\{\{target_char\}\}', caseSensitive: false),
+          activeTargetName!);
+    }
+    return out;
+  }
   for (final id in chat.characterIds) {
     final member = chat.characterSnapshots[id] ?? lookupCharacter(id);
     if (member == null) continue;
@@ -331,6 +359,15 @@ String buildJointPartyBlock({
     }
     if (member.systemPrompt.isNotEmpty) {
       buf.writeln('\n${fillForMember(member.systemPrompt, member.name)}');
+    }
+    // Pyre-native Char Mujer dynamics belong to THIS member's card in party
+    // mode. Keeping them inside the member delimiter preserves {{char}} as
+    // self-reference instead of letting the final global pass bind every
+    // female member to the selected/primary responder.
+    final memberDynamics = buildFixedFemaleDynamicsBlock(member);
+    if (memberDynamics.isNotEmpty) {
+      buf.writeln('\nInternal fixed dynamics:');
+      buf.writeln(fillForMember(memberDynamics, member.name));
     }
     buf.writeln();
   }
