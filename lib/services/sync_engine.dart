@@ -607,11 +607,13 @@ class SyncEngine extends ChangeNotifier with WidgetsBindingObserver {
       // avatar-tap, and used as the chat backdrop) as a broken placeholder
       // because only the crop's bytes were ever fetched.
       void noteRefs(
-          String? avatar, String? avatarOriginal, List<String> gallery) {
+          String? avatar, String? avatarOriginal, List<String> gallery,
+          [Map<String, dynamic> extensions = const {}]) {
         touchedRefs.addAll(incomingRecordAttachmentRefs(
           avatar: avatar,
           avatarOriginal: avatarOriginal,
           gallery: gallery,
+          extensions: extensions,
         ));
       }
 
@@ -697,7 +699,8 @@ class SyncEngine extends ChangeNotifier with WidgetsBindingObserver {
             } else {
               store.characters.add(incoming);
             }
-            noteRefs(incoming.avatar, incoming.avatarOriginal, incoming.gallery);
+            noteRefs(incoming.avatar, incoming.avatarOriginal, incoming.gallery,
+                incoming.extensions);
             appliedAny = true;
             appliedCount++; // SYNC W5
           } catch (e) {

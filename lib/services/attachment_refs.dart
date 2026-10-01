@@ -50,6 +50,7 @@ Set<String> incomingRecordAttachmentRefs({
   String? avatar,
   String? avatarOriginal,
   List<String> gallery = const [],
+  Map<String, dynamic> extensions = const {},
 }) {
   final out = <String>{};
   void add(String? url) {
@@ -61,7 +62,26 @@ Set<String> incomingRecordAttachmentRefs({
   for (final g in gallery) {
     add(g);
   }
+  out.addAll(structuredAttachmentRefs(extensions));
   return out;
+}
+
+/// Native resources in structured character extensions must survive GC and
+/// travel with sync, even when they are not gallery images.
+Set<String> structuredAttachmentRefs(dynamic data) {
+  final refs = <String>{};
+  void visit(dynamic value) {
+    if (value is String && AttachmentStore.isPyreUrl(value)) {
+      refs.add(value);
+    } else if (value is Map) {
+      value.values.forEach(visit);
+    } else if (value is Iterable) {
+      value.forEach(visit);
+    }
+  }
+
+  visit(data);
+  return refs;
 }
 
 /// Union of every attachment hash referenced anywhere in the store. The GC
@@ -82,6 +102,7 @@ Set<String> collectReferencedAttachmentHashes(AppStore s) {
     // uses this same set) ships it to paired devices. No-op when null.
     add(c.avatarOriginal);
     c.gallery.forEach(add);
+    structuredAttachmentRefs(c.extensions).forEach(add);
   }
   for (final p in s.personas) {
     add(p.avatar);
@@ -98,6 +119,7 @@ Set<String> collectReferencedAttachmentHashes(AppStore s) {
     // too, so guard its preserved original from premature collection.
     add(d.avatarOriginal);
     d.gallery.forEach(add);
+    structuredAttachmentRefs(d.extensions).forEach(add);
   }
   add(s.chatSettings.customBackgroundDataUrl);
   // Non-destructive Recrop: the BotBooru profile avatar is now externalised
@@ -123,6 +145,7 @@ Set<String> collectReferencedAttachmentHashes(AppStore s) {
       add(snap.avatar);
       add(snap.avatarOriginal);
       snap.gallery.forEach(add);
+    structuredAttachmentRefs(snap.extensions).forEach(add);
     }
   }
   return out;
