@@ -21,9 +21,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          expected=3e3728f4c20accf77a2870c314a27299c0355079
-          actual="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36756597717 --jq '.head_sha')"
-          conclusion="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36756597717 --jq '.conclusion')"
+          expected=88ac9ba49e2bc4d2679bdf75cb553a3427e00d9e
+          actual="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36829232908 --jq '.head_sha')"
+          conclusion="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36829232908 --jq '.conclusion')"
           test "$actual" = "$expected"
           test "$conclusion" = success
           gh api "repos/arcanokuro-art/Pyre/compare/$expected...$GITHUB_SHA" --jq '.files[].filename' > changed-files.txt
@@ -31,27 +31,29 @@ jobs:
             echo "Refusing to tag code different from the verified APK" >&2
             exit 1
           fi
-          gh run download 36756597717 -n Pyre-female-creator-preview-apk -D apk
+          gh run download 36829232908 -n Pyre-female-creator-preview-apk -D apk
           mv apk/app-debug.apk apk/Pyre-Creador-Femenino-Preview.apk
           sha256sum apk/Pyre-Creador-Femenino-Preview.apk > apk/SHA256SUMS.txt
           cat > notes.md <<'NOTES'
-          Corrige los cuadros rojos al abrir Apariencia y otras secciones. Cada campo usa su propio almacenamiento de desplazamiento, separado del estado de las secciones desplegables. La prueba de regresión reproduce el fallo previo y ahora pasa al abrir/cerrar todas las secciones en un teléfono de 360 px.
+          Actualiza los modos rápida/detallada siguiendo los campos básicos y avanzados del HTML aportado el 1 de octubre. Conserva todos los valores guardados, Avatar, Lorebooks y la corrección de los cuadros rojos.
+          
+          Los campos y opciones del nuevo archivo coinciden con la ficha existente. No incluye el bloque interno de dinámica sexual explícita.
           
           Versión de prueba del creador femenino basada en el prototipo: 138 campos, relaciones, mensajes y recursos visuales. Avatar y Lorebooks conservan sus lugares.
           
           Descarga e instala Pyre-Creador-Femenino-Preview.apk. Esta versión se instala por separado de Pyre habitual.
           
-          Código del APK: https://github.com/arcanokuro-art/Pyre/commit/3e3728f4c20accf77a2870c314a27299c0355079. La etiqueta incluye además el flujo de publicación; el código de la app es idéntico al validado.
+          Código del APK: https://github.com/arcanokuro-art/Pyre/commit/88ac9ba49e2bc4d2679bdf75cb553a3427e00d9e. La etiqueta incluye además el flujo de publicación; el código de la app es idéntico al validado.
           
           Validación: análisis sin incidencias, 33 pruebas aprobadas y compilación Android correcta. Falta la prueba en dispositivo físico.
           
           Pendientes: creador masculino, integración del asistente de IA y bloques internos de dinámica.
           NOTES
-          tag=pyre-female-creator-preview-fix1
+          tag=pyre-female-creator-config-update1
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release edit "$tag" --title "Pyre · Creador femenino — corrección 1" --notes-file notes.md --prerelease --latest=false
+            gh release edit "$tag" --title "Pyre · Creador femenino — configuración actualizada" --notes-file notes.md --prerelease --latest=false
           else
-            gh release create "$tag" --target "$GITHUB_SHA" --title "Pyre · Creador femenino — corrección 1" --notes-file notes.md --prerelease --latest=false
+            gh release create "$tag" --target "$GITHUB_SHA" --title "Pyre · Creador femenino — configuración actualizada" --notes-file notes.md --prerelease --latest=false
           fi
           gh release upload "$tag" apk/Pyre-Creador-Femenino-Preview.apk apk/SHA256SUMS.txt --clobber
 
