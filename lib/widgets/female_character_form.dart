@@ -464,13 +464,7 @@ class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
           onSelectionChanged: (s) => setState(() => _quick = s.first),
         ),
         for (final section in femaleSections)
-          if (!_quick ||
-              [
-                'perfil',
-                'personalidad',
-                'contexto',
-                'mensajes',
-              ].contains(section['id']))
+          if (!_quick || section['advanced'] != true)
             Card(
               child: ExpansionTile(
                 key: PageStorageKey('female:${section['id']}'),
@@ -479,12 +473,13 @@ class _FemaleCharacterFormState extends State<FemaleCharacterForm> {
                 childrenPadding: const EdgeInsets.all(12),
                 children: [
                   for (final raw in section['fields'] as List)
-                    if (femaleFieldVisible(raw as Map, fields))
+                    if ((!_quick || (raw as Map)['advanced'] != true) &&
+                        femaleFieldVisible(raw as Map, fields))
                       _field(raw, fields, 'profile'),
                   for (final key
                       in femaleListsBySection[section['id']] ??
                           const <String>[])
-                    _list(key),
+                    if (!_quick || key == 'traits') _list(key),
                   if (section['id'] == 'bot') ...[
                     for (final rule in [
                       'No hablar por {{user}}',

@@ -11,25 +11,29 @@ final List<Map<String, dynamic>> femaleSections =
         "key": "identity.nombre",
         "label": "Nombre *",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "identity.apellido",
         "label": "Apellido",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "identity.apodo",
         "label": "Apodo",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "physical.edad",
         "label": "Edad",
         "type": "number",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "physical.orientacion",
@@ -66,13 +70,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "physical.nacionalidad",
         "label": "Nacionalidad",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "profile.ocupacion",
@@ -117,7 +123,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "profile.especie",
@@ -154,9 +161,11 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": "Humana"
+        "default": "Humana",
+        "advanced": true
       }
-    ]
+    ],
+    "advanced": false
   },
   {
     "id": "apariencia",
@@ -197,7 +206,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Oscura"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "physical.complexion",
@@ -238,19 +248,22 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "BBW"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "physical.altura",
         "label": "Altura (cm)",
         "type": "number",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "physical.peso",
         "label": "Peso (kg)",
         "type": "number",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "physical.silueta",
@@ -283,13 +296,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Triángulo invertido"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "physical.cintura",
         "label": "Cintura (cm)",
         "type": "number",
-        "multiline": false
+        "multiline": false,
+        "advanced": true
       },
       {
         "key": "physical.busto.copa",
@@ -354,7 +369,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "K"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.forma",
@@ -411,19 +427,22 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Ptosis severa"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.contorno",
         "label": "Busto · Contorno (cm)",
         "type": "number",
-        "multiline": false
+        "multiline": false,
+        "advanced": true
       },
       {
         "key": "physical.busto.underbust",
         "label": "Busto · Underbust (cm)",
         "type": "number",
-        "multiline": false
+        "multiline": false,
+        "advanced": true
       },
       {
         "key": "physical.busto.areolas.medida",
@@ -476,7 +495,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "10"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.areolas.color",
@@ -509,7 +529,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Marrón oscuro"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.areolas.textura",
@@ -538,13 +559,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.areolas.detalles",
         "label": "Areolas · Detalles",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": true
       },
       {
         "key": "physical.busto.pezones.diametro",
@@ -629,7 +652,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "2,5"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.pezones.proyeccion",
@@ -746,7 +770,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "2,5"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.pezones.tipo",
@@ -779,7 +804,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Unilaterales"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.pezones.estado",
@@ -804,7 +830,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Variable según contexto"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.busto.pezones.asimetria",
@@ -825,13 +852,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Sí"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.caderas.medida",
         "label": "Caderas · Medida de caderas (cm)",
         "type": "number",
-        "multiline": false
+        "multiline": false,
+        "advanced": true
       },
       {
         "key": "physical.caderas.forma",
@@ -868,7 +897,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Caderas estrechas / Rectas"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.caderas.textura",
@@ -901,7 +931,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Flácida / con poca firmeza"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.trasero.forma",
@@ -938,7 +969,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Plano"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.trasero.proyeccion",
@@ -963,7 +995,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Con proyección baja"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.trasero.tamano",
@@ -992,7 +1025,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Pequeño"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.trasero.firmeza",
@@ -1021,7 +1055,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Blando"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_mayores.forma",
@@ -1058,7 +1093,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Asimétricos"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_mayores.tamano",
@@ -1115,7 +1151,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "16 cm (Muy grande)"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_mayores.simetria",
@@ -1140,7 +1177,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Claramente asimétricos"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_mayores.color",
@@ -1181,7 +1219,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Casi negro"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_menores.forma",
@@ -1222,7 +1261,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Asimétricos"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_menores.tamano",
@@ -1279,7 +1319,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "5,5 cm (Muy grande)"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_menores.prominencia",
@@ -1308,7 +1349,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Muy sobresalientes"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_menores.simetria",
@@ -1333,7 +1375,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Claramente asimétricos"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.labios_menores.color",
@@ -1374,7 +1417,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Marrón oscuro / violáceo"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.clitoris.tamano",
@@ -1399,7 +1443,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Grande"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.clitoris.visibilidad",
@@ -1424,7 +1469,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Visible"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.clitoris.capuchon",
@@ -1449,13 +1495,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Mínima"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.clitoris.observaciones",
         "label": "Clítoris · Observaciones",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": true
       },
       {
         "key": "physical.anatomia.vello.presencia",
@@ -1476,7 +1524,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Sí"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.vello.estilo",
@@ -1505,25 +1554,29 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": true
       },
       {
         "key": "physical.anatomia.vello.color",
         "label": "Vello púbico · Color",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": true
       },
       {
         "key": "physical.anatomia.vello.observaciones",
         "label": "Vello púbico · Observaciones",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": true
       },
       {
         "key": "physical.cabello.color",
         "label": "Cabello · color",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "physical.cabello.longitud",
@@ -1556,7 +1609,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Muy largo"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": false
       },
       {
         "key": "physical.cabello.corte",
@@ -1564,7 +1618,8 @@ final List<Map<String, dynamic>> femaleSections =
         "type": "select",
         "multiline": false,
         "options": [],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "physical.cabello.flequillo",
@@ -1609,13 +1664,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Wispy"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "physical.ojos.color",
         "label": "Ojos · color",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "physical.ojos.forma",
@@ -1664,7 +1721,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Asiáticos"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "physical.rostro.forma",
@@ -1713,15 +1771,18 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Corazón"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": true
       },
       {
         "key": "physical.rostro.detalles",
         "label": "Detalles faciales",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": true
       }
-    ]
+    ],
+    "advanced": false
   },
   {
     "id": "vestimenta-inicial",
@@ -1731,19 +1792,22 @@ final List<Map<String, dynamic>> femaleSections =
         "key": "initial_outfit.parte_superior",
         "label": "Parte superior",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.parte_inferior",
         "label": "Parte inferior",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.calzado",
         "label": "Calzado",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_interior.brasier.tipo",
@@ -1824,7 +1888,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Sin brasiere"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_interior.brasier.estilo",
@@ -1869,7 +1934,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Acanalado"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_interior.brasier.cierre",
@@ -1898,13 +1964,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Sin broche"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_interior.brasier.color",
         "label": "Brasier · Color",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_interior.panties.tipo",
@@ -1985,7 +2053,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Sin panties"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_interior.panties.estilo",
@@ -2030,7 +2099,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Acanalado"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_interior.panties.sujecion",
@@ -2055,13 +2125,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Broches laterales"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_interior.panties.color",
         "label": "Panties · Color",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_playa.brasier_bikini.tipo",
@@ -2094,7 +2166,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Underwire"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_playa.brasier_bikini.estilo",
@@ -2139,7 +2212,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Crochet"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_playa.brasier_bikini.sujecion",
@@ -2176,13 +2250,15 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Sin cierre (tipo top)"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_playa.brasier_bikini.color",
         "label": "Brasier de bikini · Color",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_playa.panty_bikini.tipo",
@@ -2215,7 +2291,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Tie-side"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_playa.panty_bikini.estilo",
@@ -2260,7 +2337,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Crochet"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_playa.panty_bikini.sujecion",
@@ -2285,33 +2363,39 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Broches laterales"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "initial_outfit.ropa_playa.panty_bikini.color",
         "label": "Panty de bikini · Color",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.accesorios",
         "label": "Accesorios",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.prenda_exterior",
         "label": "Prenda exterior",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "initial_outfit.descripcion",
         "label": "Descripción adicional",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       }
-    ]
+    ],
+    "advanced": false
   },
   {
     "id": "personalidad",
@@ -2321,27 +2405,32 @@ final List<Map<String, dynamic>> femaleSections =
         "key": "personality.descripcion",
         "label": "Descripción de personalidad",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "personality.gustos",
         "label": "Gustos",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": true
       },
       {
         "key": "personality.disgustos",
         "label": "Disgustos",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": true
       },
       {
         "key": "personality.miedos",
         "label": "Miedos",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": true
       }
-    ]
+    ],
+    "advanced": false
   },
   {
     "id": "contexto",
@@ -2351,21 +2440,25 @@ final List<Map<String, dynamic>> femaleSections =
         "key": "history.biografia",
         "label": "Historia / antecedentes",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "context.situacion",
         "label": "Situación actual",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "context.motivaciones_objetivos",
         "label": "Motivaciones / objetivos",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       }
-    ]
+    ],
+    "advanced": false
   },
   {
     "id": "sexualidad",
@@ -2394,7 +2487,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personaje no registrado"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "sexuality.first_experience.with.user_id",
@@ -2408,7 +2502,8 @@ final List<Map<String, dynamic>> femaleSections =
           }
         ],
         "default": "",
-        "target": "user"
+        "target": "user",
+        "advanced": false
       },
       {
         "key": "sexuality.first_experience.with.char_id",
@@ -2422,20 +2517,23 @@ final List<Map<String, dynamic>> femaleSections =
           }
         ],
         "default": "",
-        "target": "char"
+        "target": "char",
+        "advanced": false
       },
       {
         "key": "sexuality.first_experience.with.unregistered_name",
         "label": "Nombre del personaje",
         "type": "text",
         "multiline": false,
-        "target": "unregistered"
+        "target": "unregistered",
+        "advanced": false
       },
       {
         "key": "sexuality.first_experience.backstory",
         "label": "Backstory de la primera vez",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "sexuality.experience.level",
@@ -2472,7 +2570,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Muy amplia"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "sexuality.libido.level",
@@ -2505,33 +2604,39 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Muy alto"
           }
         ],
-        "default": ""
+        "default": "",
+        "advanced": false
       },
       {
         "key": "sexuality.erogenous_zones",
         "label": "Zonas erógenas",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "sexuality.self_pleasure",
         "label": "Autoplacer",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "sexuality.preferences_interests",
         "label": "Preferencias e intereses sexuales",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "sexuality.limits",
         "label": "Límites sexuales",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       }
-    ]
+    ],
+    "advanced": false
   },
   {
     "id": "reluser",
@@ -2656,7 +2761,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": "none"
+        "default": "none",
+        "advanced": false
       },
       {
         "key": "relationship_scenario.config.user_role",
@@ -2698,7 +2804,8 @@ final List<Map<String, dynamic>> femaleSections =
           "infidelity",
           "secret_affair",
           "double_relationship"
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relationship_scenario.config.initial_partner",
@@ -2724,7 +2831,8 @@ final List<Map<String, dynamic>> femaleSections =
           "infidelity",
           "secret_affair",
           "double_relationship"
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relationship_scenario.config.partner_awareness",
@@ -2762,7 +2870,8 @@ final List<Map<String, dynamic>> femaleSections =
           "infidelity",
           "secret_affair",
           "double_relationship"
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relationship_scenario.config.evolution",
@@ -2792,7 +2901,8 @@ final List<Map<String, dynamic>> femaleSections =
           "infidelity",
           "secret_affair",
           "double_relationship"
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relationship_scenario.details",
@@ -2807,7 +2917,8 @@ final List<Map<String, dynamic>> femaleSections =
           "infidelity",
           "secret_affair",
           "double_relationship"
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relationship_scenario.custom_name",
@@ -2816,7 +2927,8 @@ final List<Map<String, dynamic>> femaleSections =
         "multiline": false,
         "scenario": [
           "custom"
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relation_user.tipo",
@@ -2873,37 +2985,43 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": false
       },
       {
         "key": "relation_user.actitud",
         "label": "Actitud",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "relation_user.pensamientos",
         "label": "Pensamientos",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "relation_user.sentimientos",
         "label": "Sentimientos",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "relation_user.deseos",
         "label": "Deseos",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "relation_user.intenciones",
         "label": "Intenciones",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "relationship_scenario.multi.interest_a",
@@ -2913,7 +3031,8 @@ final List<Map<String, dynamic>> femaleSections =
           "triangle",
           "romantic_rivalry",
           "multiple_suitors"
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relationship_scenario.multi.interest_b",
@@ -2923,7 +3042,8 @@ final List<Map<String, dynamic>> femaleSections =
           "triangle",
           "romantic_rivalry",
           "multiple_suitors"
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relationship_scenario.multi.rivalry",
@@ -2947,7 +3067,8 @@ final List<Map<String, dynamic>> femaleSections =
             "value": "Depende",
             "label": "Depende"
           }
-        ]
+        ],
+        "advanced": false
       },
       {
         "key": "relationship_scenario.multi.awareness",
@@ -2971,14 +3092,17 @@ final List<Map<String, dynamic>> femaleSections =
             "value": "Sí",
             "label": "Sí"
           }
-        ]
+        ],
+        "advanced": false
       }
-    ]
+    ],
+    "advanced": false
   },
   {
     "id": "relchars",
     "title": "🔗 8 · Relaciones con otros personajes",
-    "fields": []
+    "fields": [],
+    "advanced": true
   },
   {
     "id": "mensajes",
@@ -2988,9 +3112,11 @@ final List<Map<String, dynamic>> femaleSections =
         "key": "messages.initial",
         "label": "Mensaje inicial",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       }
-    ]
+    ],
+    "advanced": false
   },
   {
     "id": "expresion",
@@ -3043,25 +3169,29 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": "Español"
+        "default": "Español",
+        "advanced": false
       },
       {
         "key": "expression.language.accent",
         "label": "Acento",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "expression.language.use",
         "label": "Uso",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "expression.language.switch_rules",
         "label": "Reglas de cambio de idioma",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "expression.voice.tone",
@@ -3102,7 +3232,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado…"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": false
       },
       {
         "key": "expression.voice.speed",
@@ -3131,63 +3262,74 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Variable"
           }
         ],
-        "default": "Sin especificar"
+        "default": "Sin especificar",
+        "advanced": false
       },
       {
         "key": "expression.speech.style",
         "label": "Estilo",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "expression.speech.vocabulary",
         "label": "Vocabulario",
         "type": "text",
-        "multiline": false
+        "multiline": false,
+        "advanced": false
       },
       {
         "key": "expression.speech.fillers",
         "label": "Muletillas",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "expression.speech.expressions",
         "label": "Expresiones habituales",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "expression.speech.address_user",
         "label": "Forma de dirigirse a {{user}}",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "expression.behavior.gestures",
         "label": "Gestos habituales",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "expression.behavior.body_language",
         "label": "Lenguaje corporal",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "expression.behavior.posture",
         "label": "Postura habitual",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       },
       {
         "key": "expression.behavior.quirks",
         "label": "Manías / peculiaridades",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       }
-    ]
+    ],
+    "advanced": true
   },
   {
     "id": "bot",
@@ -3216,7 +3358,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizada"
           }
         ],
-        "default": "Media"
+        "default": "Media",
+        "advanced": false
       },
       {
         "key": "bot.detail",
@@ -3237,7 +3380,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Alto"
           }
         ],
-        "default": "Medio"
+        "default": "Medio",
+        "advanced": false
       },
       {
         "key": "bot.pacing",
@@ -3262,7 +3406,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Variable"
           }
         ],
-        "default": "Equilibrado"
+        "default": "Equilibrado",
+        "advanced": false
       },
       {
         "key": "bot.narrative_style",
@@ -3283,7 +3428,8 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado"
           }
         ],
-        "default": "Primera persona"
+        "default": "Primera persona",
+        "advanced": false
       },
       {
         "key": "bot.format",
@@ -3308,15 +3454,18 @@ final List<Map<String, dynamic>> femaleSections =
             "label": "Personalizado"
           }
         ],
-        "default": "Diálogo + acciones"
+        "default": "Diálogo + acciones",
+        "advanced": false
       },
       {
         "key": "bot.additional",
         "label": "Instrucciones adicionales",
         "type": "text",
-        "multiline": true
+        "multiline": true,
+        "advanced": false
       }
-    ]
+    ],
+    "advanced": true
   }
 ]''')
             as List)

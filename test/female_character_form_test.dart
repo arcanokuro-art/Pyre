@@ -43,6 +43,10 @@ void main() {
         findsOneWidget,
       );
       expect(profile['fields']['identity.nombre'], 'Lilian');
+      expect(find.byKey(const PageStorageKey('female:apariencia')), findsOneWidget);
+      expect(find.byKey(const PageStorageKey('female:sexualidad')), findsOneWidget);
+      expect(find.byKey(const PageStorageKey('female:relchars')), findsNothing);
+      expect(find.byKey(const ValueKey('profile:profile.especie')), findsNothing);
       expect(tester.takeException(), isNull);
     },
   );
