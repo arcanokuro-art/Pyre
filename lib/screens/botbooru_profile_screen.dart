@@ -26,6 +26,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/models.dart';
 import '../services/attachment_store.dart';
 import '../services/image_pick.dart';
@@ -151,6 +152,7 @@ class _BotbooruProfileScreenState extends State<BotbooruProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
+    final es = AppStrings.of(context).es;
     final avatar = store.botbooruAvatar;
     // Non-destructive Recrop: the lightbox opens the uncropped original when a
     // recrop preserved one, so the WHOLE profile picture is viewable.
@@ -220,14 +222,14 @@ class _BotbooruProfileScreenState extends State<BotbooruProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(es ? 'Perfil' : 'Profile'),
         actions: [
           TextButton.icon(
             icon: Icon(
               _editMode ? Icons.check : Icons.edit_outlined,
               size: 16,
             ),
-            label: Text(_editMode ? 'Done' : 'Edit'),
+            label: Text(_editMode ? (es ? 'Listo' : 'Done') : (es ? 'Editar' : 'Edit')),
             style: TextButton.styleFrom(
               foregroundColor: EmberColors.primary,
             ),
@@ -356,10 +358,11 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     final hasAvatar = avatar != null && avatar!.isNotEmpty;
     final display = username.trim().isNotEmpty
         ? username.trim()
-        : (editMode ? 'No username set' : 'Anonymous creator');
+        : (editMode ? (es ? 'Sin nombre de usuario' : 'No username set') : (es ? 'Creador anónimo' : 'Anonymous creator'));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -384,23 +387,23 @@ class _ProfileHeader extends StatelessWidget {
               if (!hasAvatar)
                 _MiniAction(
                   icon: Icons.add_a_photo_outlined,
-                  label: 'Add profile picture',
+                  label: es ? 'Añadir foto de perfil' : 'Add profile picture',
                   onTap: onTapAvatarPicker,
                 ),
               if (hasAvatar) ...[
                 _MiniAction(
                   icon: Icons.swap_horiz,
-                  label: 'Change',
+                  label: es ? 'Cambiar' : 'Change',
                   onTap: onTapAvatarPicker,
                 ),
                 _MiniAction(
                   icon: Icons.crop,
-                  label: 'Recrop',
+                  label: es ? 'Recortar de nuevo' : 'Recrop',
                   onTap: onRecrop,
                 ),
                 _MiniAction(
                   icon: Icons.delete_outline,
-                  label: 'Remove',
+                  label: es ? 'Eliminar' : 'Remove',
                   onTap: onRemove,
                   danger: true,
                 ),
@@ -575,6 +578,7 @@ class _IdentityEditCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -586,7 +590,7 @@ class _IdentityEditCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'IDENTITY',
+            es ? 'IDENTIDAD' : 'IDENTITY',
             style: TextStyle(
               color: EmberColors.primary,
               fontWeight: FontWeight.w700,
@@ -596,7 +600,7 @@ class _IdentityEditCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Username',
+            es ? 'Nombre de usuario' : 'Username',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
@@ -615,15 +619,13 @@ class _IdentityEditCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Optional. Shown as the creator on cards you build in the '
-            'Character Creator — this is not a BotBooru account, nothing to '
-            'sign into. Case-sensitive on botbooru.com.',
+            es ? 'Opcional. Se muestra como creador en las tarjetas que haces con el Creador de personajes. No es una cuenta de BotBooru y no hay que iniciar sesión. En botbooru.com distingue mayúsculas y minúsculas.' : 'Optional. Shown as the creator on cards you build in the Character Creator — this is not a BotBooru account, nothing to sign into. Case-sensitive on botbooru.com.',
             style: TextStyle(
                 color: EmberColors.textDim, fontSize: 11, height: 1.4),
           ),
           const SizedBox(height: 14),
           Text(
-            'Title',
+            es ? 'Título' : 'Title',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
@@ -636,7 +638,7 @@ class _IdentityEditCard extends StatelessWidget {
             onChanged: onTitleChanged,
             maxLength: 60,
             decoration: _dec(
-                    'e.g. "Slow-burn enthusiast", "Just here for the chaos"')
+                    es ? 'p. ej. "Fan del slow burn", "Aquí por el caos"' : 'e.g. "Slow-burn enthusiast", "Just here for the chaos"')
                 .copyWith(counterText: ''),
             style: TextStyle(
               color: EmberColors.textHigh,
@@ -645,13 +647,13 @@ class _IdentityEditCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Short subtitle that sits under your name. Empty hides it.',
+            es ? 'Subtítulo corto que aparece debajo de tu nombre. Si está vacío, se oculta.' : 'Short subtitle that sits under your name. Empty hides it.',
             style: TextStyle(
                 color: EmberColors.textDim, fontSize: 11, height: 1.4),
           ),
           const SizedBox(height: 14),
           Text(
-            'Pronouns (optional)',
+            es ? 'Pronombres (opcional)' : 'Pronouns (optional)',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
@@ -663,7 +665,7 @@ class _IdentityEditCard extends StatelessWidget {
             controller: pronounsCtl,
             onChanged: onPronounsChanged,
             maxLength: 30,
-            decoration: _dec('e.g. she/her, they/them, he/him').copyWith(
+            decoration: _dec(es ? 'p. ej. ella, elle, él' : 'e.g. she/her, they/them, he/him').copyWith(
               counterText: '',
             ),
             style: TextStyle(
@@ -715,6 +717,7 @@ class _AboutMeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     if (editMode) {
       return Container(
         padding: const EdgeInsets.all(14),
@@ -727,7 +730,7 @@ class _AboutMeSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'ABOUT ME',
+              es ? 'ACERCA DE MÍ' : 'ABOUT ME',
               style: TextStyle(
                 color: EmberColors.primary,
                 fontWeight: FontWeight.w700,
@@ -737,8 +740,7 @@ class _AboutMeSection extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'A short bio for your profile. Whatever you want — '
-              'tropes you love, favorite genres, what you\'re into.',
+              es ? 'Una breve biografía para tu perfil. Lo que quieras: tropos que te gustan, géneros favoritos y tus intereses.' : 'A short bio for your profile. Whatever you want — tropes you love, favorite genres, what you\'re into.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -752,10 +754,7 @@ class _AboutMeSection extends StatelessWidget {
               minLines: 4,
               maxLines: 10,
               decoration: InputDecoration(
-                hintText:
-                    'e.g. "Slice-of-life teacher cards with soft '
-                    'NSFW. I like flawed-but-warm characters and '
-                    'slow-burn pacing."',
+                hintText: es ? 'p. ej. "Tarjetas slice-of-life con personajes imperfectos pero cálidos y un ritmo slow burn."' : 'e.g. "Slice-of-life teacher cards with soft NSFW. I like flawed-but-warm characters and slow-burn pacing."',
                 filled: true,
                 fillColor: EmberColors.bgDeep,
                 isDense: true,
@@ -800,7 +799,7 @@ class _AboutMeSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'ABOUT',
+            es ? 'ACERCA DE MÍ' : 'ABOUT',
             style: TextStyle(
               color: EmberColors.primary,
               fontWeight: FontWeight.w700,
@@ -840,6 +839,7 @@ class _StatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -849,14 +849,14 @@ class _StatsCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(child: _Stat(value: cardsCreated, label: 'cards built')),
+          Expanded(child: _Stat(value: cardsCreated, label: es ? 'tarjetas creadas' : 'cards built')),
           _Divider(),
           Expanded(
-              child: _Stat(value: libraryTotal, label: 'in library')),
+              child: _Stat(value: libraryTotal, label: es ? 'en biblioteca' : 'in library')),
           _Divider(),
-          Expanded(child: _Stat(value: chatsStarted, label: 'chats')),
+          Expanded(child: _Stat(value: chatsStarted, label: es ? 'chats' : 'chats')),
           _Divider(),
-          Expanded(child: _Stat(value: days, label: 'days')),
+          Expanded(child: _Stat(value: days, label: es ? 'días' : 'days')),
         ],
       ),
     );
@@ -939,6 +939,7 @@ class _UsageStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       decoration: BoxDecoration(
@@ -952,7 +953,7 @@ class _UsageStatsCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 2, bottom: 6),
             child: Text(
-              'Usage',
+              es ? 'Uso' : 'Usage',
               style: TextStyle(
                 color: EmberColors.textDim,
                 fontSize: 10,
@@ -965,17 +966,17 @@ class _UsageStatsCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _Stat(
-                    value: userMessages, label: 'messages sent'),
+                    value: userMessages, label: es ? 'mensajes enviados' : 'messages sent'),
               ),
               _Divider(),
               Expanded(
                 child: _Stat(
-                    value: assistantReplies, label: 'replies'),
+                    value: assistantReplies, label: es ? 'respuestas' : 'replies'),
               ),
               _Divider(),
               Expanded(
                 child: _Stat(
-                    value: cardsImported, label: 'imported'),
+                    value: cardsImported, label: es ? 'importadas' : 'imported'),
               ),
               _Divider(),
               // Tokens use a custom label widget so we can render
@@ -1041,6 +1042,7 @@ class _FeaturedCharacterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -1055,7 +1057,7 @@ class _FeaturedCharacterCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'FEATURED CHARACTER',
+                  es ? 'PERSONAJE DESTACADO' : 'FEATURED CHARACTER',
                   style: TextStyle(
                     color: EmberColors.primary,
                     fontWeight: FontWeight.w700,
@@ -1067,7 +1069,7 @@ class _FeaturedCharacterCard extends StatelessWidget {
               if (editMode)
                 TextButton.icon(
                   icon: const Icon(Icons.swap_horiz, size: 14),
-                  label: Text(character == null ? 'Pick' : 'Change'),
+                  label: Text(character == null ? (es ? 'Elegir' : 'Pick') : (es ? 'Cambiar' : 'Change')),
                   style: TextButton.styleFrom(
                     foregroundColor: EmberColors.primary,
                     padding: const EdgeInsets.symmetric(
@@ -1092,12 +1094,8 @@ class _FeaturedCharacterCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     editMode
-                        ? 'Pin one of your characters as your '
-                            'featured spotlight. It\'s a pure curation '
-                            'choice — no functional impact, just a way '
-                            'to show off what you\'re proud of.'
-                        : 'No character pinned yet. Tap Edit to '
-                            'pick one to spotlight here.',
+                        ? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación, sin ningún efecto funcional.' : 'Pin one of your characters as your featured spotlight. It\'s a pure curation choice — no functional impact, just a way to show off what you\'re proud of.')
+                        : (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No character pinned yet. Tap Edit to pick one to spotlight here.'),
                     style: TextStyle(
                       color: EmberColors.textDim,
                       fontSize: 12,
@@ -1210,6 +1208,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final es = AppStrings.of(context).es;
     final maxHeight = MediaQuery.of(context).size.height * 0.7;
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),
@@ -1224,7 +1223,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Pick a featured character',
+                      es ? 'Elige un personaje destacado' : 'Pick a featured character',
                       style: TextStyle(
                         color: EmberColors.textHigh,
                         fontWeight: FontWeight.w600,
@@ -1243,8 +1242,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
                 child: Text(
-                  'No characters in your library yet. Build or import '
-                  'a card first, then come back to pin it here.',
+                  es ? 'Todavía no hay personajes en tu biblioteca. Crea o importa una tarjeta y vuelve aquí para fijarla.' : 'No characters in your library yet. Build or import a card first, then come back to pin it here.',
                   style: TextStyle(
                     color: EmberColors.textDim,
                     fontSize: 13,
@@ -1263,10 +1261,10 @@ class _FeaturedPickerSheet extends StatelessWidget {
                       return ListTile(
                         leading: Icon(Icons.star_outline,
                             color: EmberColors.textMid),
-                        title: const Text('Remove featured'),
-                        subtitle: const Text(
-                          'Hide the featured card from your profile.',
-                          style: TextStyle(fontSize: 11),
+                        title: Text(es ? 'Quitar destacado' : 'Remove featured'),
+                        subtitle: Text(
+                          es ? 'Oculta la tarjeta destacada de tu perfil.' : 'Hide the featured card from your profile.',
+                          style: const TextStyle(fontSize: 11),
                         ),
                         // Pass empty string sentinel — caller treats
                         // it as "explicit clear" (null sentinel means

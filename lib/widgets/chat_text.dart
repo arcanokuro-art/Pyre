@@ -12,6 +12,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../theme.dart';
 import 'lightbox.dart';
 
@@ -416,7 +417,7 @@ class _InlineImage extends StatelessWidget {
     child: ClipRRect(borderRadius: BorderRadius.circular(10), child: child),
   );
 
-  Widget _brokenInner() => Container(
+  Widget _brokenInner(BuildContext context) => Container(
     width: 220,
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     color: EmberColors.bgElevated,
@@ -427,7 +428,7 @@ class _InlineImage extends StatelessWidget {
         const SizedBox(width: 8),
         Flexible(
           child: Text(
-            alt.trim().isNotEmpty ? alt.trim() : 'image unavailable',
+            alt.trim().isNotEmpty ? alt.trim() : (AppStrings.of(context).es ? 'imagen no disponible' : 'image unavailable'),
             style: TextStyle(color: EmberColors.textDim, fontSize: 13),
           ),
         ),
@@ -454,16 +455,16 @@ class _InlineImage extends StatelessWidget {
         inner = Image.memory(
           bytes,
           fit: BoxFit.contain,
-          errorBuilder: (_, _, _) => _brokenInner(),
+          errorBuilder: (_, _, _) => _brokenInner(context),
         );
       } catch (_) {
-        inner = _brokenInner();
+        inner = _brokenInner(context);
       }
     } else {
       inner = Image.network(
         url,
         fit: BoxFit.contain,
-        errorBuilder: (_, _, _) => _brokenInner(),
+        errorBuilder: (_, _, _) => _brokenInner(context),
         loadingBuilder: (context, child, progress) {
           if (progress == null) return child;
           return Container(

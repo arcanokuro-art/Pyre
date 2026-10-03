@@ -1,55 +1,48 @@
 // Mega-audit 2026-06-05 (H-4): the WARNING dialog shown before a pull is
 // applied when the user picked SyncConflictMode.ask and a genuine conflict
 // (the same item changed on BOTH devices since the last sync) was detected.
-//
-// It lists the conflicting items (type + name + which side is newer) and lets
-// the user choose, GLOBALLY, to keep This device or take the Other device.
-// Dismissing (tapping outside / back) returns null → the engine aborts the
-// apply this tick rather than silently last-writer-wins.
 
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../services/sync_conflict.dart';
 import '../theme.dart';
 
-/// Human label for a conflict's collection kind.
-String _kindLabel(String kind) {
+String _kindLabel(String kind, bool es) {
   switch (kind) {
     case 'character':
-      return 'Character';
+      return es ? 'Personaje' : 'Character';
     case 'persona':
       return 'Persona';
     case 'chat':
-      return 'Chat';
+      return es ? 'Chat' : 'Chat';
     case 'preset':
-      return 'Preset';
+      return es ? 'Preajuste' : 'Preset';
     case 'lorebook':
-      return 'Lorebook';
+      return es ? 'Libro de lore' : 'Lorebook';
     case 'regexRule':
-      return 'Regex rule';
+      return es ? 'Regla regex' : 'Regex rule';
     case 'folder':
-      return 'Folder';
+      return es ? 'Carpeta' : 'Folder';
     case 'creatorPreset':
-      return 'Creator preset';
+      return es ? 'Preajuste del creador' : 'Creator preset';
     default:
       return kind;
   }
 }
 
-/// Show the conflict warning. Returns:
-///   * `true`  → take the OTHER device (apply incoming),
-///   * `false` → keep THIS device (skip incoming),
-///   * `null`  → dismissed → caller aborts the apply.
 Future<bool?> showSyncConflictDialog(
   BuildContext context,
   List<SyncConflict> conflicts,
 ) {
+  final es = AppStrings.of(context).es;
+  String t(String spanish, String english) => es ? spanish : english;
   return showDialog<bool>(
     context: context,
     barrierDismissible: true,
     builder: (ctx) {
       return AlertDialog(
-        title: const Text('Sync conflict'),
+        title: Text(t('Conflicto de sincronización', 'Sync conflict')),
         content: ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 360, maxWidth: 420),
           child: Column(
@@ -58,11 +51,14 @@ Future<bool?> showSyncConflictDialog(
             children: [
               Text(
                 conflicts.length == 1
-                    ? '1 item was changed on both this device and the other '
-                        'device since the last sync. Choose which copy to keep.'
-                    : '${conflicts.length} items were changed on both this '
-                        'device and the other device since the last sync. '
-                        'Choose which copy to keep (applies to all).',
+                    ? t(
+                        '1 elemento cambió tanto en este dispositivo como en el otro desde la última sincronización. Elige qué copia conservar.',
+                        '1 item was changed on both this device and the other device since the last sync. Choose which copy to keep.',
+                      )
+                    : t(
+                        '${conflicts.length} elementos cambiaron tanto en este dispositivo como en el otro desde la última sincronización. Elige qué copia conservar (se aplicará a todos).',
+                        '${conflicts.length} items were changed on both this device and the other device since the last sync. Choose which copy to keep (applies to all).',
+                      ),
                 style: const TextStyle(fontSize: 13),
               ),
               const SizedBox(height: 12),
@@ -75,19 +71,26 @@ Future<bool?> showSyncConflictDialog(
                     final name = c.remote.name.isNotEmpty
                         ? c.remote.name
                         : (c.local.name.isNotEmpty ? c.local.name : c.id);
-                    final newer = c.newerSideLabel; // "This device"/"Other device"
+                    final rawNewer = c.newerSideLabel;
+                    final newer = es
+                        ? (rawNewer == 'This device'
+                            ? 'Este dispositivo'
+                            : rawNewer == 'Other device'
+                                ? 'Otro dispositivo'
+                                : rawNewer)
+                        : rawNewer;
                     final deletedNote = c.remote.deleted
-                        ? ' · deleted on other device'
-                        : (c.local.deleted ? ' · deleted on this device' : '');
+                        ? t(' · eliminado en el otro dispositivo', ' · deleted on other device')
+                        : (c.local.deleted
+                            ? t(' · eliminado en este dispositivo', ' · deleted on this device')
+                            : '');
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 3),
                       child: Text(
-                        '• ${_kindLabel(c.kind)}: $name  '
-                        '(newer: $newer$deletedNote)',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: EmberColors.textMid,
-                        ),
+                        es
+                            ? '• ${_kindLabel(c.kind, true)}: $name  (más reciente: $newer$deletedNote)'
+                            : '• ${_kindLabel(c.kind, false)}: $name  (newer: $newer$deletedNote)',
+                        style: TextStyle(fontSize: 12, color: EmberColors.textMid),
                       ),
                     );
                   },
@@ -99,15 +102,15 @@ Future<bool?> showSyncConflictDialog(
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(null),
-            child: const Text('Cancel'),
+            child: Text(t('Cancelar', 'Cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Keep this device'),
+            child: Text(t('Conservar este dispositivo', 'Keep this device')),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Take other device'),
+            child: Text(t('Usar el otro dispositivo', 'Take other device')),
           ),
         ],
       );

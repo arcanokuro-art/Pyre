@@ -40,8 +40,8 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    expect(find.text('No diagnostics yet'), findsOneWidget);
-    expect(find.textContaining('Storage → Developer'), findsOneWidget);
+    expect(find.text('Aún no hay diagnósticos'), findsOneWidget);
+    expect(find.textContaining('Almacenamiento → Desarrollador'), findsOneWidget);
   });
 
   testWidgets('a captured call renders in the list and opens its detail',
@@ -62,9 +62,9 @@ void main() {
     await tester.tap(find.textContaining('Venice · qwen-x'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Request messages'), findsOneWidget);
-    expect(find.text('Sampling'), findsOneWidget);
-    expect(find.text('Response'), findsOneWidget);
+    expect(find.text('Mensajes de la solicitud'), findsOneWidget);
+    expect(find.text('Muestreo'), findsOneWidget);
+    expect(find.text('Respuesta'), findsOneWidget);
     // The pretty-printed request + response content is present.
     expect(find.textContaining('ping'), findsWidgets);
     expect(find.textContaining('pong from the model'), findsWidgets);

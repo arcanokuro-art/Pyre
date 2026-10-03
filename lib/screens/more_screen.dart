@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../l10n/app_strings.dart';
 import '../state/app_store.dart';
 import '../theme.dart';
 import '../services/lan_client.dart';
@@ -28,180 +29,95 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
-    final activeProviderName = store.activeProvider?.name ?? 'Not set';
-    final botbooruHandle =
-        store.botbooruUsername.isEmpty ? 'Not set' : store.botbooruUsername;
+    final l = AppStrings.of(context);
+    final notSet = l.es ? 'Sin configurar' : 'Not set';
+    final activeProviderName = store.activeProvider?.name ?? notSet;
+    final botbooruHandle = store.botbooruUsername.isEmpty ? notSet : store.botbooruUsername;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('More')),
+      appBar: AppBar(title: Text(l.more)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
         children: [
           _MoreCard(rows: [
             _MoreRow(
-              label: 'API Connections',
+              label: l.es ? 'Conexiones API' : 'API Connections',
               trailing: activeProviderName,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (_) => const ApiConnectionsScreen()),
-              ),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ApiConnectionsScreen())),
             ),
-            // Wave BC: BotBooru handle for the Character Creator's
-            // {{creator}} substitution. Goes here next to API
-            // Connections so identity-on-the-network configs cluster.
-            // Wave CY.18.31: relabelled to "Profile" — the BotBooru
-            // framing was niche, the screen itself explains usage.
             _MoreRow(
-              label: 'Profile',
+              label: l.es ? 'Perfil' : 'Profile',
               trailing: botbooruHandle,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (_) => const BotbooruProfileScreen()),
-              ),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BotbooruProfileScreen())),
             ),
-            // Wave CY.18.91: "Theme" placeholder removed. It showed
-            // "Ember (dark)" with no onTap — a tease that suggested
-            // configurability that doesn't exist yet. Theme variants
-            // can come back when there's actually more than one to
-            // pick from.
           ]),
           const SizedBox(height: 12),
-          // 2026-07-03: "Display" and "Theme" were two rows for one concept
-          // (how the app looks). Merged into a single "Appearance" screen
-          // holding theme palette, accent, app text size, and layout — which
-          // now also sync together as one unit.
           _MoreCard(rows: [
             _MoreRow(
-              label: 'Appearance',
+              label: l.appearance,
               trailing: _themeName(store.uiPrefs.activeThemeId),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (_) => const ThemeSettingsScreen()),
-              ),
-            ),
-          ]),
-          const SizedBox(height: 12),
-          // Wave CY.18.193: Presets + Long-term Memory moved INTO Chat
-          // Settings (a hub). 2026-07-03 (Gui): Lorebooks left More for
-          // good — they now live in the library tab as a third segment
-          // next to Characters + Personas (content, not a setting).
-          // Card2 = Character Creator + Chat Settings.
-          _MoreCard(rows: [
-            // Wave CY.18.32: consolidated "Character Creator prompt"
-            // + "Character Creator help" into a single entry that
-            // opens the unified CharacterCreatorScreen.
-            //
-            // Wave CY.18.108: the separate "Creator Prompts" row was
-            // folded INTO this screen — the forkable architect-prompt
-            // preset now lives inside Character Creator (replacing the
-            // old read-only base-prompt viewers). One creator-config
-            // entry now, not two.
-            _MoreRow(
-              label: 'Creator settings',
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (_) => const CharacterCreatorScreen()),
-              ),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ThemeSettingsScreen())),
             ),
             _MoreRow(
-              label: 'Chat Settings',
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (_) => const ChatSettingsScreen()),
-              ),
+              label: l.es ? 'Idioma' : 'Language',
+              trailing: store.uiPrefs.languageCode == 'en' ? 'English' : 'Español',
+              onTap: () => _showLanguagePicker(context, store),
             ),
           ]),
           const SizedBox(height: 12),
           _MoreCard(rows: [
             _MoreRow(
-              label: 'Storage',
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const StorageScreen()),
-              ),
+              label: l.es ? 'Ajustes del creador' : 'Creator settings',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CharacterCreatorScreen())),
             ),
             _MoreRow(
-              label: 'Backup and Restore',
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (_) => const BackupRestoreScreen()),
-              ),
-            ),
-            // WS-J: "Import from SillyTavern" moved INTO the Backup & Restore
-            // screen (backup + import belong together). Reachable there now.
-            // Privacy + About merged into a single full screen. The
-            // screen handles the brand summary, the privacy statement,
-            // and the legal links — covers everything a user looking
-            // for "what does this app do with my data" would expect to
-            // find in one place.
-            _MoreRow(
-              label: 'About Pyre',
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const AboutPyreScreen()),
-              ),
+              label: l.es ? 'Ajustes del chat' : 'Chat Settings',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatSettingsScreen())),
             ),
           ]),
-          // Wave CY.18.69: LAN client entry for mobile + web. Mirror
-          // of the desktop's "Network (LAN sync)" row — on the client
-          // side it's a connect/disconnect flow rather than a
-          // server-toggle. Hidden on desktop because the desktop IS
-          // the server (it doesn't pair to itself).
-          if (kIsWeb ||
-              Platform.isAndroid ||
-              Platform.isIOS) ...[
+          const SizedBox(height: 12),
+          _MoreCard(rows: [
+            _MoreRow(
+              label: l.storage,
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const StorageScreen())),
+            ),
+            _MoreRow(
+              label: l.es ? 'Copia de seguridad y restauración' : 'Backup and Restore',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BackupRestoreScreen())),
+            ),
+            _MoreRow(
+              label: l.es ? 'Acerca de Pyre' : 'About Pyre',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutPyreScreen())),
+            ),
+          ]),
+          if (kIsWeb || Platform.isAndroid || Platform.isIOS) ...[
             const SizedBox(height: 12),
             _MoreCard(rows: [
               _MoreRow(
-                label: 'Connect to LAN',
-                trailing:
-                    LanClient.instance.isPaired ? 'Paired' : 'Not paired',
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => const LanConnectScreen()),
-                ),
+                label: l.es ? 'Conectar a LAN' : 'Connect to LAN',
+                trailing: LanClient.instance.isPaired
+                    ? (l.es ? 'Vinculado' : 'Paired')
+                    : (l.es ? 'Sin vincular' : 'Not paired'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LanConnectScreen())),
               ),
             ]),
           ],
-          // Wave CY.18.46: desktop-only section. Phone / tablet / web
-          // builds skip this entirely so the More screen stays
-          // identical on mobile.
-          //
-          // Wave CY.18.90: trimmed back to the LAN sync + Desktop
-          // Shortcuts entries. The wide-layout toggle moved into
-          // DesktopShortcutsScreen along with the remappable
-          // shortcuts list; "Keyboard shortcuts" was renamed to
-          // "Desktop Shortcuts" and now opens the configuration
-          // screen instead of the palette.
-          if (!kIsWeb &&
-              (Platform.isWindows ||
-                  Platform.isLinux ||
-                  Platform.isMacOS)) ...[
+          if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) ...[
             const SizedBox(height: 12),
             _MoreCard(rows: [
               _MoreRow(
-                label: 'Desktop Shortcuts',
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => const DesktopShortcutsScreen()),
-                ),
+                label: l.es ? 'Atajos de escritorio' : 'Desktop Shortcuts',
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DesktopShortcutsScreen())),
               ),
-              // Wave CY.18.68: LAN sync server settings — desktop only
-              // since the server can't run inside a browser tab or on
-              // mobile (which is a client, not a server, in this app).
               _MoreRow(
-                label: 'Network (LAN sync)',
-                trailing:
-                    store.uiPrefs.lanServerEnabled ? 'On' : 'Off',
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => const NetworkSettingsScreen()),
-                ),
+                label: l.es ? 'Red (sincronización LAN)' : 'Network (LAN sync)',
+                trailing: store.uiPrefs.lanServerEnabled
+                    ? (l.es ? 'Activado' : 'On')
+                    : (l.es ? 'Desactivado' : 'Off'),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NetworkSettingsScreen())),
               ),
             ]),
           ],
-          // Wave CY.18.266: version label + a persistent "Update available"
-          // indicator that appears here (lots of room below the version) when
-          // a newer release is published, so the user isn't reliant on the
-          // transient launch snackbar.
           const _VersionFooter(),
         ],
       ),
@@ -209,36 +125,49 @@ class MoreScreen extends StatelessWidget {
   }
 }
 
-/// The "Pyre 1.0" footer, plus a tappable "Update available" pill that shows
-/// only when [availableUpdateNotifier] holds a newer release. Tapping it opens
-/// the GitHub release page (where the new APK is downloaded). On first build it
-/// kicks a one-shot [checkForUpdate] if the launch probe hasn't populated one
-/// yet, so the indicator can appear even if the user reaches More before the
-/// 4-second launch probe (or it failed transiently). Silent on failure.
+Future<void> _showLanguagePicker(BuildContext context, AppStore store) async {
+  final l = AppStrings.of(context);
+  final selected = await showModalBottomSheet<String>(
+    context: context,
+    builder: (sheetContext) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(title: Text(l.es ? 'Idioma' : 'Language', style: const TextStyle(fontWeight: FontWeight.w700))),
+          ListTile(
+            leading: Icon(store.uiPrefs.languageCode == 'es' ? Icons.radio_button_checked : Icons.radio_button_off),
+            title: const Text('Español'),
+            onTap: () => Navigator.of(sheetContext).pop('es'),
+          ),
+          ListTile(
+            leading: Icon(store.uiPrefs.languageCode == 'en' ? Icons.radio_button_checked : Icons.radio_button_off),
+            title: const Text('English'),
+            onTap: () => Navigator.of(sheetContext).pop('en'),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    ),
+  );
+  if (selected != null) store.setLanguageCode(selected);
+}
+
 class _VersionFooter extends StatefulWidget {
   const _VersionFooter();
-
   @override
   State<_VersionFooter> createState() => _VersionFooterState();
 }
 
 class _VersionFooterState extends State<_VersionFooter> {
-  // Read at runtime from PackageInfo (same source the update-check uses) so the
-  // footer always matches pubspec.yaml and can never drift like a hard-coded
-  // string. Empty until the async load completes.
   String _version = '';
 
   @override
   void initState() {
     super.initState();
-    if (availableUpdateNotifier.value == null) {
-      // Fire-and-forget; checkForUpdate publishes to the notifier on success.
-      checkForUpdate();
-    }
+    if (availableUpdateNotifier.value == null) checkForUpdate();
     PackageInfo.fromPlatform().then((info) {
-      if (!mounted) return;
-      setState(() => _version = info.version);
-    }).catchError((_) {/* leave empty → bare "Pyre"; non-fatal */});
+      if (mounted) setState(() => _version = info.version);
+    }).catchError((_) {});
   }
 
   Future<void> _open(String url) async {
@@ -246,112 +175,54 @@ class _VersionFooterState extends State<_VersionFooter> {
     if (uri == null) return;
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {/* best-effort */}
+    } catch (_) {}
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppStrings.of(context);
     return ValueListenableBuilder<UpdateInfo?>(
       valueListenable: availableUpdateNotifier,
-      builder: (context, update, _) {
-        return Column(
-          children: [
-            const SizedBox(height: 16),
-            Center(
-              child: Text(
-                // The real version lives in pubspec.yaml; read dynamically via
-                // PackageInfo (same source the update-check uses) so this label
-                // and About Pyre's footer always match it and never drift.
-                _version.isEmpty ? 'Pyre' : 'Pyre $_version',
-                style: TextStyle(
-                    color: EmberColors.textDim, fontSize: 11),
+      builder: (context, update, _) => Column(children: [
+        const SizedBox(height: 16),
+        Center(child: Text(_version.isEmpty ? 'Pyre' : 'Pyre $_version', style: TextStyle(color: EmberColors.textDim, fontSize: 11))),
+        if (update != null && update.latestVersion != context.watch<AppStore>().dismissedUpdateVersion) ...[
+          const SizedBox(height: 12),
+          Center(child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: update.url.isEmpty ? null : () => _open(update.url),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 420),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: EmberColors.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: EmberColors.primary.withValues(alpha: 0.5)),
               ),
-            ),
-            if (update != null &&
-                update.latestVersion !=
-                    context.watch<AppStore>().dismissedUpdateVersion) ...[
-              const SizedBox(height: 12),
-              Center(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: update.url.isEmpty ? null : () => _open(update.url),
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 420),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: EmberColors.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: EmberColors.primary.withValues(alpha: 0.5)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.system_update_alt,
-                            size: 20, color: EmberColors.primary),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Update available — Pyre ${update.latestVersion}',
-                                style: TextStyle(
-                                    color: EmberColors.primary,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13),
-                              ),
-                              if (update.notes.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    update.notes,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: EmberColors.textMid,
-                                        fontSize: 11),
-                                  ),
-                                )
-                              else
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    'Tap to download the latest release.',
-                                    style: TextStyle(
-                                        color: EmberColors.textMid,
-                                        fontSize: 11),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Icon(Icons.download_rounded,
-                            size: 20, color: EmberColors.primary),
-                        // Dismiss ✕ — remembers this version so the pill stays
-                        // hidden until a newer release ships (tapping it does
-                        // NOT open the release page).
-                        IconButton(
-                          icon: const Icon(Icons.close, size: 18),
-                          color: EmberColors.textDim,
-                          visualDensity: VisualDensity.compact,
-                          tooltip: 'Dismiss',
-                          onPressed: () => context
-                              .read<AppStore>()
-                              .dismissUpdate(update.latestVersion),
-                        ),
-                      ],
-                    ),
-                  ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Icon(Icons.system_update_alt, size: 20, color: EmberColors.primary),
+                const SizedBox(width: 10),
+                Flexible(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(l.es ? 'Actualización disponible — Pyre ${update.latestVersion}' : 'Update available — Pyre ${update.latestVersion}', style: TextStyle(color: EmberColors.primary, fontWeight: FontWeight.w600, fontSize: 13)),
+                  if (update.notes.isNotEmpty)
+                    Padding(padding: const EdgeInsets.only(top: 2), child: Text(update.notes, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: EmberColors.textMid, fontSize: 11)))
+                  else
+                    Padding(padding: const EdgeInsets.only(top: 2), child: Text(l.es ? 'Toca para descargar la versión más reciente.' : 'Tap to download the latest release.', style: TextStyle(color: EmberColors.textMid, fontSize: 11))),
+                ])),
+                const SizedBox(width: 10),
+                Icon(Icons.download_rounded, size: 20, color: EmberColors.primary),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18),
+                  color: EmberColors.textDim,
+                  visualDensity: VisualDensity.compact,
+                  tooltip: l.es ? 'Descartar' : 'Dismiss',
+                  onPressed: () => context.read<AppStore>().dismissUpdate(update.latestVersion),
                 ),
-              ),
-            ],
-          ],
-        );
-      },
+              ]),
+            ),
+          )),
+        ],
+      ]),
     );
   }
 }
@@ -359,25 +230,14 @@ class _VersionFooterState extends State<_VersionFooter> {
 class _MoreCard extends StatelessWidget {
   final List<_MoreRow> rows;
   const _MoreCard({required this.rows});
-
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
     for (var i = 0; i < rows.length; i++) {
       children.add(rows[i]);
-      if (i < rows.length - 1) {
-        children.add(Divider(
-          color: EmberColors.stroke,
-          height: 1,
-          indent: 16,
-          endIndent: 16,
-        ));
-      }
+      if (i < rows.length - 1) children.add(Divider(color: EmberColors.stroke, height: 1, indent: 16, endIndent: 16));
     }
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Column(children: children),
-    );
+    return Card(margin: EdgeInsets.zero, child: Column(children: children));
   }
 }
 
@@ -385,49 +245,22 @@ class _MoreRow extends StatelessWidget {
   final String label;
   final String? trailing;
   final VoidCallback? onTap;
-  const _MoreRow({
-    required this.label,
-    this.trailing,
-    this.onTap,
-  });
-
+  const _MoreRow({required this.label, this.trailing, this.onTap});
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(
-                    fontSize: 15, fontWeight: FontWeight.w600),
-              ),
-            ),
-            if (trailing != null) ...[
-              Text(
-                trailing!,
-                style:
-                    TextStyle(color: EmberColors.textMid, fontSize: 13),
-              ),
-              const SizedBox(width: 6),
-            ],
-            Icon(Icons.chevron_right,
-                color: EmberColors.textDim, size: 22),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+      child: Row(children: [
+        Expanded(child: Text(label, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600))),
+        if (trailing != null) ...[
+          Text(trailing!, style: TextStyle(color: EmberColors.textMid, fontSize: 13)),
+          const SizedBox(width: 6),
+        ],
+        Icon(Icons.chevron_right, color: EmberColors.textDim, size: 22),
+      ]),
+    ),
+  );
 }
 
-// The previous _showAbout() dialog + _AboutLink widget + URL
-// placeholders moved into about_pyre_screen.dart. The full-screen
-// About now hosts the brand summary, the privacy statement, and the
-// hosted legal links in one place.
-
-/// Returns the display name of the palette with the given [id], for use as
-/// the trailing label on the "Theme" More row.
 String _themeName(String id) => paletteById(id).name;

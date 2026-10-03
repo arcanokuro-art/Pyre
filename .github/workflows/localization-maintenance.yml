@@ -1,0 +1,73 @@
+name: Localization maintenance
+
+on:
+  push:
+    branches: [spanish-localization]
+    paths:
+      - '.github/workflows/localization-maintenance.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-org-chip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: spanish-localization
+      - name: Wire overflow-safe organization chip
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('lib/screens/characters_screen.dart')
+          s = p.read_text()
+          anchor = "import '../widgets/menu_sheet.dart';\n"
+          extra = "import '../widgets/responsive_org_chip.dart';\n"
+          if extra not in s:
+              if anchor not in s:
+                  raise SystemExit('import anchor missing')
+              s = s.replace(anchor, anchor + extra, 1)
+          start = s.find('class _OrgChip extends StatelessWidget {')
+          if start < 0:
+              raise SystemExit('_OrgChip missing')
+          marker = '\n/// Row of active-tag chips'
+          end = s.find(marker, start)
+          if end < 0:
+              raise SystemExit('_OrgChip end marker missing')
+          replacement = '''class _OrgChip extends StatelessWidget {
+            final IconData icon;
+            final String label;
+            final IconData? trailingIcon;
+            final Widget? trailing;
+            const _OrgChip({
+              required this.icon,
+              required this.label,
+              this.trailingIcon,
+              this.trailing,
+            });
+
+            @override
+            Widget build(BuildContext context) {
+              return ResponsiveOrgChip(
+                icon: icon,
+                label: label,
+                trailingIcon: trailingIcon,
+                trailing: trailing,
+              );
+            }
+          }
+          '''
+          p.write_text(s[:start] + replacement + s[end:])
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lib/screens/characters_screen.dart
+          if git diff --cached --quiet; then
+            echo 'No organization chip changes needed.'
+          else
+            git commit -m 'Wire overflow-safe organization chip'
+            git push origin HEAD:spanish-localization
+          fi

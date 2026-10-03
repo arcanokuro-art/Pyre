@@ -7,38 +7,25 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// Show an "Exported — …" confirmation SnackBar that is GUARANTEED to dismiss.
-///
-/// THE BUG IT FIXES. The "Share" action opens the OS share sheet, which puts
-/// the app into an inactive lifecycle state. That freezes the SnackBar's vsync
-/// ticker, so the entrance animation can fail to reach `completed` — and
-/// Flutter only arms the built-in auto-dismiss timer AFTER that entrance
-/// completes. The result is a confirmation bar that hangs on screen forever.
-/// The `hideCurrentSnackBar()` callers run before showing this only clears a
-/// PRIOR bar; it can never rescue the one being shown now.
-///
-/// THE FIX. Alongside the normal built-in timer, arm our OWN frame-independent
-/// dismissal. A plain [Timer] fires even while the app is inactive / frames
-/// are paused, and `controller.close()` targets exactly THIS SnackBar (a no-op
-/// if it has already gone). So the bar always clears — whether or not the user
-/// ever opened the share sheet.
-///
-/// [onShare] is the (fire-and-forget) handler for the optional Share button;
-/// it should do its own error handling. Pass `null` for a plain notice with no
-/// action button (still guaranteed to dismiss). [visible] is the normal
-/// built-in display time; the guaranteed close fires one second after it.
+import '../l10n/app_strings.dart';
+
+/// Show an export confirmation SnackBar that is guaranteed to dismiss.
 void showExportSnack(
   ScaffoldMessengerState messenger,
   String banner,
   Future<void> Function()? onShare, {
   Duration visible = const Duration(seconds: 4),
+  bool spanish = false,
 }) {
   final controller = messenger.showSnackBar(
     SnackBar(
       content: Text(banner),
       action: onShare == null
           ? null
-          : SnackBarAction(label: 'Share', onPressed: () => onShare()),
+          : SnackBarAction(
+              label: spanish ? 'Compartir' : 'Share',
+              onPressed: () => onShare(),
+            ),
       duration: visible,
     ),
   );
@@ -52,31 +39,6 @@ void showExportSnack(
 }
 
 /// Deliver a freshly-exported file to the user the right way for the platform.
-///
-/// THE BUG IT FIXES (Android/iOS). Exports are written under
-/// `getApplicationDocumentsDirectory()`, which on mobile is the app's PRIVATE
-/// storage — invisible in any file manager. So an "Exported to PyreExports/"
-/// notice points at a file the user can never find: it effectively went
-/// nowhere. Just opening the OS share sheet isn't enough either — on many
-/// devices it has no plain "save to this device" target (it's all Drive /
-/// Messages / Quick Share), so "I just want the file in Downloads" is
-/// impossible.
-///
-/// THE FIX. On mobile we open the system **Save** dialog (Storage Access
-/// Framework via [FilePicker.saveFile]) for the primary file, so the user picks
-/// a real, browsable location (Downloads, etc.) and the PNG/JSON actually lands
-/// there. Afterwards we surface a self-dismissing confirmation with a **Share**
-/// action, so the upload-to-botbooru / send-to-Discord path (which can include
-/// the gallery [files]) is still one tap away. On DESKTOP the documents folder
-/// is already user-accessible, so we keep the passive "Exported — …"
-/// confirmation + Share button (see [showExportSnack]).
-///
-/// [files] is the full set to SHARE (card + any gallery images / the chat
-/// file). [saveBytes] / [saveFileName] are the PRIMARY artifact to SAVE on
-/// mobile (the card PNG, or the chat file); when null on mobile we fall back to
-/// the share sheet. [saveExtensions] narrows the Save dialog's type (e.g.
-/// `['png']`). [savedBanner] is the desktop confirmation text;
-/// [shareSubject]/[shareText] label the shared payload. Never throws.
 Future<void> deliverExport(
   ScaffoldMessengerState messenger,
   List<XFile> files, {
@@ -86,12 +48,18 @@ Future<void> deliverExport(
   Uint8List? saveBytes,
   String? saveFileName,
   List<String>? saveExtensions,
+  BuildContext? context,
 }) async {
+  final es = context != null && AppStrings.of(context).es;
+  String t(String spanish, String english) => es ? spanish : english;
+
   Future<void> share() async {
     try {
       await Share.shareXFiles(files, subject: shareSubject, text: shareText);
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Share failed: $e')));
+      messenger.showSnackBar(
+        SnackBar(content: Text(t('No se pudo compartir: $e', 'Share failed: $e'))),
+      );
     }
   }
 
@@ -101,30 +69,30 @@ Future<void> deliverExport(
       String? savedPath;
       try {
         savedPath = await FilePicker.platform.saveFile(
-          dialogTitle: 'Save $saveFileName',
+          dialogTitle: t('Guardar $saveFileName', 'Save $saveFileName'),
           fileName: saveFileName,
-          bytes: saveBytes, // required on Android/iOS — writes via SAF
+          bytes: saveBytes,
           type: saveExtensions == null ? FileType.any : FileType.custom,
           allowedExtensions: saveExtensions,
         );
       } catch (e) {
-        messenger.showSnackBar(SnackBar(content: Text('Save failed: $e')));
+        messenger.showSnackBar(
+          SnackBar(content: Text(t('No se pudo guardar: $e', 'Save failed: $e'))),
+        );
       }
-      // Saved → confirm + offer Share; cancelled → still offer Share so the
-      // flow is never a dead end. Both bars are guaranteed to dismiss.
       showExportSnack(
         messenger,
-        savedPath != null ? 'Saved to your device' : 'Not saved — share it?',
+        savedPath != null
+            ? t('Guardado en tu dispositivo', 'Saved to your device')
+            : t('No se guardó. ¿Quieres compartir el archivo?', 'Not saved — share it?'),
         share,
+        spanish: es,
       );
       return;
     }
-    // No bytes to save (shouldn't happen for our callers) — share instead.
     await share();
     return;
   }
-  // Desktop: the file is in the user's Documents/PyreExports — tell them where
-  // it landed, offer a Share button, and guarantee the bar dismisses itself.
   messenger.hideCurrentSnackBar();
-  showExportSnack(messenger, savedBanner, share);
+  showExportSnack(messenger, savedBanner, share, spanish: es);
 }

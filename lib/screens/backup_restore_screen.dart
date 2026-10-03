@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/models.dart';
 import '../services/attachment_store.dart';
 import '../services/regex_rules.dart';
@@ -95,7 +96,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   Widget build(BuildContext context) {
     final store = context.read<AppStore>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Backup & Restore')),
+      appBar: AppBar(title: Text(AppStrings.of(context).es ? 'Copia de seguridad y restauración' : 'Backup & Restore')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -105,50 +106,46 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Export',
+                  Text(
+                    AppStrings.of(context).es ? 'Exportar' : 'Export',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 15),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Save your data to a single JSON file. Pick what to '
-                    'include below. Avatars and gallery images are packed '
-                    'in, so the file fully restores on a new device (this '
-                    'makes it larger). Compatible with the HTML prototype '
-                    'backup format.',
+                    AppStrings.of(context).es ? 'Guarda tus datos en un único archivo JSON. Elige abajo qué incluir. Los avatares y las imágenes de la galería se incluyen para que el archivo pueda restaurarse por completo en un dispositivo nuevo (esto aumenta su tamaño). Compatible con el formato de copia de seguridad del prototipo HTML.' : 'Save your data to a single JSON file. Pick what to include below. Avatars and gallery images are packed in, so the file fully restores on a new device (this makes it larger). Compatible with the HTML prototype backup format.',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'What to include',
+                  Text(
+                    AppStrings.of(context).es ? 'Qué incluir' : 'What to include',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 13),
                   ),
-                  _catCheck(_catCharacters, 'Characters',
-                      '${store.characters.length} cards · incl. avatars + gallery'),
+                  _catCheck(_catCharacters, AppStrings.of(context).es ? 'Personajes' : 'Characters',
+                      AppStrings.of(context).es ? '${store.characters.length} tarjetas · incl. avatares + galería' : '${store.characters.length} cards · incl. avatars + gallery'),
                   _catCheck(_catPersonas, 'Personas',
-                      '${store.personas.length} · incl. avatars'),
+                      AppStrings.of(context).es ? '${store.personas.length} · incl. avatares' : '${store.personas.length} · incl. avatars'),
                   _catCheck(_catChats, 'Chats',
-                      '${store.chats.length} conversations + memory'),
-                  _catCheck(_catLorebooks, 'Lorebooks',
+                      AppStrings.of(context).es ? '${store.chats.length} conversaciones + memoria' : '${store.chats.length} conversations + memory'),
+                  _catCheck(_catLorebooks, AppStrings.of(context).es ? 'Libros de lore' : 'Lorebooks',
                       '${store.lorebooks.length}'),
-                  _catCheck(_catPresets, 'Presets',
-                      'chat + creator prompt presets'),
-                  _catCheck(_catProviders, 'Connections',
-                      '${store.providers.length} providers · ⚠ saved WITH your API keys in plain text'),
-                  _catCheck(_catSettings, 'App settings',
-                      'model / chat / memory / UI · regex rules · folders · profile'),
-                  _catCheck(_catCreatorSessions, 'Creator drafts',
-                      '${store.creatorSessions.length} in progress'),
+                  _catCheck(_catPresets, AppStrings.of(context).es ? 'Preajustes' : 'Presets',
+                      AppStrings.of(context).es ? 'preajustes de chat + prompts del creador' : 'chat + creator prompt presets'),
+                  _catCheck(_catProviders, AppStrings.of(context).es ? 'Conexiones' : 'Connections',
+                      AppStrings.of(context).es ? '${store.providers.length} proveedores · ⚠ se guarda CON tus claves API en texto sin formato' : '${store.providers.length} providers · ⚠ saved WITH your API keys in plain text'),
+                  _catCheck(_catSettings, AppStrings.of(context).es ? 'Ajustes de la app' : 'App settings',
+                      AppStrings.of(context).es ? 'modelo / chat / memoria / interfaz · reglas regex · carpetas · perfil' : 'model / chat / memory / UI · regex rules · folders · profile'),
+                  _catCheck(_catCreatorSessions, AppStrings.of(context).es ? 'Borradores del creador' : 'Creator drafts',
+                      AppStrings.of(context).es ? '${store.creatorSessions.length} en progreso' : '${store.creatorSessions.length} in progress'),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.ios_share, size: 16),
-                          label: const Text('Share…'),
+                          label: Text(AppStrings.of(context).es ? 'Compartir…' : 'Share…'),
                           onPressed: () => _shareBackup(context, store),
                         ),
                       ),
@@ -156,7 +153,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.copy, size: 16),
-                          label: const Text('Copy'),
+                          label: Text(AppStrings.of(context).es ? 'Copiar' : 'Copy'),
                           onPressed: () => _copyJson(context, store),
                         ),
                       ),
@@ -164,7 +161,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.save_alt, size: 16),
-                          label: const Text('Save'),
+                          label: Text(AppStrings.of(context).es ? 'Guardar' : 'Save'),
                           onPressed: () => _saveToFile(context, store),
                         ),
                       ),
@@ -181,23 +178,21 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Import',
+                  Text(
+                    AppStrings.of(context).es ? 'Importar' : 'Import',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 15),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Load a backup JSON. Only the categories present in the '
-                    'file are replaced — anything not in the backup is left '
-                    'untouched. (A full backup replaces everything.)',
+                    AppStrings.of(context).es ? 'Carga una copia de seguridad JSON. Solo se reemplazan las categorías presentes en el archivo; lo que no esté incluido permanece sin cambios. (Una copia completa reemplaza todo.)' : 'Load a backup JSON. Only the categories present in the file are replaced — anything not in the backup is left untouched. (A full backup replaces everything.)',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.file_open_outlined, size: 16),
-                    label: const Text('Choose file…'),
+                    label: Text(AppStrings.of(context).es ? 'Elegir archivo…' : 'Choose file…'),
                     onPressed: () => _pickAndImport(context, store),
                   ),
                 ],
@@ -214,24 +209,21 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Import from SillyTavern',
+                  Text(
+                    AppStrings.of(context).es ? 'Importar desde SillyTavern' : 'Import from SillyTavern',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 15),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Bulk-import World Info, regex, presets, and cards exported '
-                    'from SillyTavern, or pick a full SillyTavern backup '
-                    '(.zip from ST\'s "Download Backup"). Pyre detects each '
-                    'file\'s type automatically.',
+                    AppStrings.of(context).es ? 'Importa en lote World Info, regex, preajustes y tarjetas exportadas desde SillyTavern, o elige una copia de seguridad completa de SillyTavern (.zip de «Download Backup» de ST). Pyre detecta automáticamente el tipo de cada archivo.' : 'Bulk-import World Info, regex, presets, and cards exported from SillyTavern, or pick a full SillyTavern backup (.zip from ST\'s "Download Backup"). Pyre detects each file\'s type automatically.',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.download_outlined, size: 16),
-                    label: const Text('Choose files…'),
+                    label: Text(AppStrings.of(context).es ? 'Elegir archivos…' : 'Choose files…'),
                     onPressed: () => runStBulkImport(context, store),
                   ),
                 ],
@@ -249,25 +241,21 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Import a chat',
+                  Text(
+                    AppStrings.of(context).es ? 'Importar un chat' : 'Import a chat',
                     style: TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 15),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Load a chat you exported from Pyre (the "Export chat" '
-                    'option in a conversation) — either the full-fidelity '
-                    'Pyre JSON or the SillyTavern-compatible JSONL. Pyre '
-                    'detects the format automatically and adds it as a new '
-                    'conversation.',
+                    AppStrings.of(context).es ? 'Carga un chat que exportaste desde Pyre (la opción «Exportar chat» de una conversación), ya sea el JSON completo de Pyre o el JSONL compatible con SillyTavern. Pyre detecta automáticamente el formato y lo añade como una conversación nueva.' : 'Load a chat you exported from Pyre (the "Export chat" option in a conversation) — either the full-fidelity Pyre JSON or the SillyTavern-compatible JSONL. Pyre detects the format automatically and adds it as a new conversation.',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.chat_outlined, size: 16),
-                    label: const Text('Choose chat file…'),
+                    label: Text(AppStrings.of(context).es ? 'Elegir archivo de chat…' : 'Choose chat file…'),
                     onPressed: () => runPyreChatImport(context, store),
                   ),
                 ],
@@ -284,8 +272,8 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
               child: ExpansionTile(
                 tilePadding: const EdgeInsets.symmetric(horizontal: 16),
                 childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                title: const Text(
-                  'Advanced',
+                title: Text(
+                  AppStrings.of(context).es ? 'Avanzado' : 'Advanced',
                   style:
                       TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                 ),
@@ -295,11 +283,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Full wipe: returns Pyre to a brand-new install — '
-                      'characters, personas, chats, lorebooks, presets, '
-                      'settings AND API keys. A full backup is saved first.\n\n'
-                      'To delete only your library and keep your settings, '
-                      'use Storage → Clear library.',
+                      AppStrings.of(context).es ? 'Borrado completo: devuelve Pyre al estado de una instalación nueva; elimina personajes, personas, chats, libros de lore, preajustes, ajustes Y claves API. Primero se guarda una copia de seguridad completa.\n\nPara eliminar solo tu biblioteca y conservar los ajustes, usa Almacenamiento → Borrar biblioteca.' : 'Full wipe: returns Pyre to a brand-new install — characters, personas, chats, lorebooks, presets, settings AND API keys. A full backup is saved first.\n\nTo delete only your library and keep your settings, use Storage → Clear library.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 13),
                     ),
@@ -309,7 +293,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.restart_alt, size: 16),
-                      label: const Text('Reset to factory settings'),
+                      label: Text(AppStrings.of(context).es ? 'Restablecer a valores de fábrica' : 'Reset to factory settings'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: EmberColors.danger,
                         side:
@@ -336,15 +320,11 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final ok = await confirmDelete(
       context,
-      title: 'Reset Pyre to factory settings?',
-      message:
-          'This permanently deletes ALL data — every character, persona, '
-          'chat, lorebook, preset, setting and API key — and returns the '
-          'app to a brand-new install. '
-          'A full backup is saved first so you can restore.\n\n'
-          'To delete only your library and keep your settings, cancel and '
-          'use Storage → Clear library. Continue?',
-      confirmLabel: 'Continue',
+      title: AppStrings.of(context).es ? '¿Restablecer Pyre a valores de fábrica?' : 'Reset Pyre to factory settings?',
+      message: AppStrings.of(context).es
+          ? 'Esto elimina permanentemente TODOS los datos —personajes, personas, chats, libros de lore, preajustes, ajustes y claves API— y devuelve la app al estado de una instalación nueva. Primero se guarda una copia de seguridad completa para que puedas restaurarla.\n\nPara eliminar solo tu biblioteca y conservar los ajustes, cancela y usa Almacenamiento → Borrar biblioteca. ¿Continuar?'
+          : 'This permanently deletes ALL data — every character, persona, chat, lorebook, preset, setting and API key — and returns the app to a brand-new install. A full backup is saved first so you can restore.\n\nTo delete only your library and keep your settings, cancel and use Storage → Clear library. Continue?',
+      confirmLabel: AppStrings.of(context).es ? 'Continuar' : 'Continue',
     );
     if (!ok || !context.mounted) return;
 
@@ -391,8 +371,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     } catch (e) {
       if (!context.mounted) return;
       messenger.showSnackBar(SnackBar(
-          content: Text('Backup failed — reset aborted to keep your '
-              'data safe: $e')));
+          content: Text(AppStrings.of(context).es ? 'Falló la copia de seguridad; se canceló el restablecimiento para mantener tus datos seguros: $e' : 'Backup failed — reset aborted to keep your data safe: $e')));
       return;
     }
     if (!context.mounted) return;
@@ -401,33 +380,30 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       context: context,
       builder: (c) => AlertDialog(
         title: Text(
-            missingImages > 0 ? 'Backup saved — with a warning' : 'Backup saved'),
+            AppStrings.of(context).es ? (missingImages > 0 ? 'Copia guardada, con una advertencia' : 'Copia guardada') : (missingImages > 0 ? 'Backup saved — with a warning' : 'Backup saved')),
         content: Text(
-          (missingImages > 0
-                  ? '⚠ $missingImages image file(s) could NOT be included in the '
-                      'backup — their files are missing (they may only exist on '
-                      'another synced device). If you reset now, those images '
-                      'will be lost on this device.\n\n'
-                  : '') +
-              (backupPath != null
-                  ? 'A full backup (everything except API keys) was saved to:'
-                      '\n\n$backupPath\n\n'
-                      "You'll re-enter API keys after restoring. If you want a "
-                      'totally clean slate afterwards, you can delete that file '
-                      'yourself. Reset now?'
-                  : 'Web: a full backup (no API keys) was downloaded to your '
-                      'device. Keep that file safe. Reset now?'),
+          AppStrings.of(context).es
+              ? (missingImages > 0
+                  ? '⚠ No se pudieron incluir $missingImages archivo(s) de imagen en la copia porque faltan sus archivos. Puede que solo existan en otro dispositivo sincronizado. Si restableces ahora, esas imágenes se perderán en este dispositivo.\n\n'
+                  : '') + (backupPath != null
+                  ? 'Se guardó una copia de seguridad completa (todo excepto las claves API) en:\n\n$backupPath\n\nTendrás que volver a introducir las claves API después de restaurar. Si después quieres empezar completamente desde cero, puedes eliminar ese archivo. ¿Restablecer ahora?'
+                  : 'Web: se descargó en tu dispositivo una copia de seguridad completa (sin claves API). Guarda ese archivo en un lugar seguro. ¿Restablecer ahora?')
+              : (missingImages > 0
+                  ? '⚠ $missingImages image file(s) could NOT be included in the backup — their files are missing (they may only exist on another synced device). If you reset now, those images will be lost on this device.\n\n'
+                  : '') + (backupPath != null
+                  ? 'A full backup (everything except API keys) was saved to:\n\n$backupPath\n\nYou will re-enter API keys after restoring. If you want a totally clean slate afterwards, you can delete that file yourself. Reset now?'
+                  : 'Web: a full backup (no API keys) was downloaded to your device. Keep that file safe. Reset now?'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
                 backgroundColor: EmberColors.danger),
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Reset now'),
+            child: Text(AppStrings.of(context).es ? 'Restablecer ahora' : 'Reset now'),
           ),
         ],
       ),
@@ -439,15 +415,14 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     } catch (e) {
       if (!context.mounted) return;
       messenger.showSnackBar(
-          SnackBar(content: Text('Reset failed: $e')));
+          SnackBar(content: Text(AppStrings.of(context).es ? 'Falló el restablecimiento: $e' : 'Reset failed: $e')));
       return;
     }
     if (!context.mounted) return;
     // Back to the root so the fresh-install state (onboarding + seeded
     // examples) shows instead of this now-stale screen.
     Navigator.of(context).popUntil((r) => r.isFirst);
-    messenger.showSnackBar(const SnackBar(
-        content: Text('Pyre has been reset to factory settings.')));
+    messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Pyre se ha restablecido a los valores de fábrica.' : 'Pyre has been reset to factory settings.')));
   }
 
   /// Second gate: require the user to literally type "reset". The button
@@ -460,14 +435,12 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         builder: (c, setSt) {
           final canReset = ctl.text.trim().toLowerCase() == 'reset';
           return AlertDialog(
-            title: const Text('Type to confirm'),
+            title: Text(AppStrings.of(context).es ? 'Escribe para confirmar' : 'Type to confirm'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                    'This cannot be undone except from the backup. Type '
-                    '"reset" below to confirm.'),
+                Text(AppStrings.of(context).es ? 'Esto no se puede deshacer salvo restaurando la copia de seguridad. Escribe «reset» abajo para confirmar.' : 'This cannot be undone except from the backup. Type "reset" below to confirm.'),
                 const SizedBox(height: 12),
                 TextField(
                   controller: ctl,
@@ -480,13 +453,13 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(c, false),
-                child: const Text('Cancel'),
+                child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),
               ),
               FilledButton(
                 style: FilledButton.styleFrom(
                     backgroundColor: EmberColors.danger),
                 onPressed: canReset ? () => Navigator.pop(c, true) : null,
-                child: const Text('Reset'),
+                child: Text(AppStrings.of(context).es ? 'Restablecer' : 'Reset'),
               ),
             ],
           );
@@ -543,18 +516,16 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     if (!_include.contains(_catProviders)) return true;
     return confirmDelete(
       context,
-      title: 'Export with API keys?',
-      message:
-          'The backup will contain your bearer tokens in plain text. Anyone who gets this file can spend on your provider accounts. Continue?',
-      confirmLabel: 'Export anyway',
+      title: AppStrings.of(context).es ? '¿Exportar con claves API?' : 'Export with API keys?',
+      message: AppStrings.of(context).es ? 'La copia de seguridad contendrá tus tokens de acceso en texto sin formato. Cualquier persona que obtenga este archivo podría generar cargos en tus cuentas de proveedores. ¿Continuar?' : 'The backup will contain your bearer tokens in plain text. Anyone who gets this file can spend on your provider accounts. Continue?',
+      confirmLabel: AppStrings.of(context).es ? 'Exportar de todos modos' : 'Export anyway',
     );
   }
 
   /// Wave CY.18.169: block an export with nothing selected.
   bool _ensureSelection(BuildContext context) {
     if (_include.isNotEmpty) return true;
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Pick at least one category to back up.')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Selecciona al menos una categoría para incluir en la copia.' : 'Pick at least one category to back up.')));
     return false;
   }
 
@@ -571,8 +542,8 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       SnackBar(
         content: Text(
           _include.contains(_catProviders)
-              ? 'Copied — backup includes API keys.'
-              : 'Copied — backup is key-free.',
+              ? (AppStrings.of(context).es ? 'Copiado; la copia incluye claves API.' : 'Copied — backup includes API keys.')
+              : (AppStrings.of(context).es ? 'Copiado; la copia no incluye claves API.' : 'Copied — backup is key-free.'),
         ),
       ),
     );
@@ -606,7 +577,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         downloadBytesToBrowser(
             utf8.encode(json), filename, 'application/json');
         messenger.showSnackBar(
-          SnackBar(content: Text('Downloading $filename')),
+          SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
         );
         return;
       }
@@ -630,15 +601,15 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       }
 
       final subject = _include.contains(_catProviders)
-          ? 'Pyre backup (contains API keys — handle with care)'
-          : 'Pyre backup';
+          ? (AppStrings.of(context).es ? 'Copia de Pyre (contiene claves API; manéjala con cuidado)' : 'Pyre backup (contains API keys — handle with care)')
+          : (AppStrings.of(context).es ? 'Copia de seguridad de Pyre' : 'Pyre backup');
       try {
         await Share.shareXFiles(
           [XFile(file.path, mimeType: 'application/json')],
           subject: subject,
           text: _include.contains(_catProviders)
-              ? 'Pyre backup with API keys. Don\'t share this file with anyone you wouldn\'t hand your credit card to.'
-              : 'Pyre backup (no API keys included — safe to share).',
+              ? (AppStrings.of(context).es ? 'Copia de Pyre con claves API. No compartas este archivo con nadie a quien no confiarías información financiera sensible.' : 'Pyre backup with API keys. Don\'t share this file with anyone you wouldn\'t hand your credit card to.')
+              : (AppStrings.of(context).es ? 'Copia de Pyre (sin claves API; se puede compartir).' : 'Pyre backup (no API keys included — safe to share).'),
         );
       } finally {
         // Best-effort cleanup — the chosen transport copies the bytes
@@ -649,7 +620,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         } catch (_) {/* best-effort */}
       }
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Share failed: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Error al compartir: $e' : 'Share failed: $e')));
     }
   }
 
@@ -676,7 +647,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         downloadBytesToBrowser(wbytes, filename, 'application/json');
         final warn = _oversizeWarning(wbytes.length);
         messenger.showSnackBar(SnackBar(
-          content: Text(warn == null ? 'Downloading $filename' : warn),
+          content: Text(warn == null ? (AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename') : warn),
           duration: Duration(seconds: warn == null ? 4 : 8),
         ));
         return;
@@ -692,12 +663,12 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       final warn = _oversizeWarning(utf8.encode(json).length);
       messenger.showSnackBar(
         SnackBar(
-          content: Text(warn == null ? 'Saved to ${file.path}' : warn),
+          content: Text(warn == null ? (AppStrings.of(context).es ? 'Guardado en ${file.path}' : 'Saved to ${file.path}') : warn),
           duration: Duration(seconds: warn == null ? 4 : 8),
         ),
       );
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Save failed: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Error al guardar: $e' : 'Save failed: $e')));
     }
   }
 
@@ -713,7 +684,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       final bytes = result.files.single.bytes;
       if (bytes == null) {
         messenger.showSnackBar(
-            const SnackBar(content: Text('Could not read file bytes.')));
+            SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron leer los datos del archivo.' : 'Could not read file bytes.')));
         return;
       }
       // Hard size cap — a malicious backup could otherwise OOM or freeze
@@ -722,7 +693,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         messenger.showSnackBar(
           SnackBar(
             content: Text(
-              'Backup is too large (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Max 50 MB.',
+              AppStrings.of(context).es ? 'La copia es demasiado grande (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Máximo 50 MB.' : 'Backup is too large (${(bytes.length / 1024 / 1024).toStringAsFixed(1)} MB). Max 50 MB.',
             ),
           ),
         );
@@ -745,8 +716,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       if (blob == null) {
         messenger.showSnackBar(
           SnackBar(content: Text(
-              'Backup is not a parseable JSON object — the file may be '
-              'corrupted. ${text.length} bytes read.')),
+              AppStrings.of(context).es ? 'La copia no es un objeto JSON válido; el archivo puede estar dañado. Se leyeron ${text.length} bytes.' : 'Backup is not a parseable JSON object — the file may be corrupted. ${text.length} bytes read.')),
         );
         return;
       }
@@ -760,11 +730,10 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         if (!context.mounted) return;
         importKeys = await confirmDelete(
           context,
-          title: 'Import API keys?',
-          message:
-              'This backup contains API keys. Add/overwrite your saved keys with them? Choose "Keep mine" to import everything else and leave your current keys untouched.',
-          confirmLabel: 'Use backup keys',
-          cancelLabel: 'Keep mine',
+          title: AppStrings.of(context).es ? '¿Importar claves API?' : 'Import API keys?',
+          message: AppStrings.of(context).es ? 'Esta copia contiene claves API. ¿Quieres añadirlas o sobrescribir tus claves guardadas? Elige «Conservar las mías» para importar todo lo demás sin modificar tus claves actuales.' : 'This backup contains API keys. Add/overwrite your saved keys with them? Choose "Keep mine" to import everything else and leave your current keys untouched.',
+          confirmLabel: AppStrings.of(context).es ? 'Usar claves de la copia' : 'Use backup keys',
+          cancelLabel: AppStrings.of(context).es ? 'Conservar las mías' : 'Keep mine',
         );
       }
       // Audit 2026-06-04 (Persist H2): import is a destructive WHOLE-category
@@ -772,40 +741,44 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       // partial backup silently drops records the user added since. Confirm
       // first, listing exactly which categories will be overwritten with
       // current → incoming counts so the user can see what they stand to lose.
-      final replaceSummary = _replaceSummaryLines(store, blob);
+      final replaceSummary = _replaceSummaryLines(store, blob, AppStrings.of(context).es);
       if (replaceSummary.isNotEmpty) {
         if (!context.mounted) return;
         final ok = await confirmDelete(
           context,
-          title: 'Replace your data?',
-          message:
-              'This will REPLACE your current data for:\n\n'
-              '${replaceSummary.join('\n')}\n\n'
-              'Records you added since this backup will be lost. Continue?',
-          confirmLabel: 'Replace',
+          title: AppStrings.of(context).es ? '¿Reemplazar tus datos?' : 'Replace your data?',
+          message: AppStrings.of(context).es
+              ? 'Esto REEMPLAZARÁ tus datos actuales de:\n\n${replaceSummary.join('\n')}\n\nLos registros que hayas añadido desde esta copia se perderán. ¿Continuar?'
+              : 'This will REPLACE your current data for:\n\n${replaceSummary.join('\n')}\n\nRecords you added since this backup will be lost. Continue?',
+          confirmLabel: AppStrings.of(context).es ? 'Reemplazar' : 'Replace',
         );
         if (!ok) {
           if (!context.mounted) return;
           messenger.showSnackBar(
-              const SnackBar(content: Text('Import cancelled.')));
+              SnackBar(content: Text(AppStrings.of(context).es ? 'Importación cancelada.' : 'Import cancelled.')));
           return;
         }
       }
       await _applyImport(store, blob, importKeys: importKeys);
       messenger.showSnackBar(
         SnackBar(
-          content: Text(salvaged
-              ? 'Backup imported with salvage — some recent edits in '
-                  'the backup tail may be missing.'
-              : (hasKeys && !importKeys)
-                  ? 'Backup imported — your saved API keys were kept.'
-                  : 'Backup imported.'),
+          content: Text(AppStrings.of(context).es
+              ? (salvaged
+                  ? 'Copia importada mediante recuperación; pueden faltar algunos cambios recientes del final de la copia.'
+                  : (hasKeys && !importKeys)
+                      ? 'Copia importada; se conservaron tus claves API guardadas.'
+                      : 'Copia importada.')
+              : (salvaged
+                  ? 'Backup imported with salvage — some recent edits in the backup tail may be missing.'
+                  : (hasKeys && !importKeys)
+                      ? 'Backup imported — your saved API keys were kept.'
+                      : 'Backup imported.')),
           duration: Duration(seconds: salvaged ? 5 : 2),
         ),
       );
     } catch (e) {
       messenger
-          .showSnackBar(SnackBar(content: Text('Import failed: $e')));
+          .showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Falló la importación: $e' : 'Import failed: $e')));
     }
   }
 
@@ -859,7 +832,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   /// a no-count "App settings" line when the backup carries any settings
   /// block. Returns an empty list when the backup replaces nothing (e.g. an
   /// empty/garbage blob) so the caller can skip the dialog.
-  List<String> _replaceSummaryLines(AppStore s, Map<String, dynamic> raw) {
+  List<String> _replaceSummaryLines(AppStore s, Map<String, dynamic> raw, bool es) {
     int? incoming(String key) {
       if (!raw.containsKey(key)) return null;
       final v = raw[key];
@@ -873,17 +846,17 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       lines.add('$label ($current → $inc)');
     }
 
-    add('Characters', 'characters', s.characters.length);
+    add(es ? 'Personajes' : 'Characters', 'characters', s.characters.length);
     add('Personas', 'personas', s.personas.length);
     add('Chats', 'chats', s.chats.length);
-    add('Lorebooks', 'lorebooks', s.lorebooks.length);
-    add('Presets', 'presets', s.presets.length);
-    add('Connections', 'providers', s.providers.length);
-    add('Creator drafts', 'creatorSessions', s.creatorSessions.length);
+    add(es ? 'Libros de lore' : 'Lorebooks', 'lorebooks', s.lorebooks.length);
+    add(es ? 'Preajustes' : 'Presets', 'presets', s.presets.length);
+    add(es ? 'Conexiones' : 'Connections', 'providers', s.providers.length);
+    add(es ? 'Borradores del creador' : 'Creator drafts', 'creatorSessions', s.creatorSessions.length);
     // F3: regex rules + folders are wholesale-REPLACED on import — surface
     // their counts like the other list categories.
-    add('Regex rules', 'regexRules', s.regexRules.length);
-    add('Folders', 'folders', s.folders.length);
+    add(es ? 'Reglas regex' : 'Regex rules', 'regexRules', s.regexRules.length);
+    add(es ? 'Carpetas' : 'Folders', 'folders', s.folders.length);
     // Settings are singletons (no count). Mention them if any block is present.
     if (raw.containsKey('modelSettings') ||
         raw.containsKey('chatSettings') ||
@@ -892,7 +865,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         raw.containsKey('liveSheetSettings') ||
         raw.containsKey('scriptSettings') ||
         raw.containsKey('guideSettings')) {
-      lines.add('App settings');
+      lines.add(es ? 'Ajustes de la app' : 'App settings');
     }
     return lines;
   }
@@ -999,7 +972,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
             .toList();
       }
     } catch (e) {
-      throw FormatException('Backup parse failed (likely corrupted): $e');
+      throw FormatException(AppStrings.of(context).es ? 'No se pudo interpretar la copia de seguridad (probablemente está dañada): $e' : 'Backup parse failed (likely corrupted): $e');
     }
 
     // Audit 2026-06-04 (High): only overwrite the active-* pointers when the

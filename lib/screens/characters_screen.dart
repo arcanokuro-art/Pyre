@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/app_strings.dart';
 import '../models/models.dart';
 import '../services/capped_fetch.dart';
 import '../services/card_import.dart';
@@ -33,6 +34,7 @@ import '../widgets/confirm_dialog.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/export_snack.dart';
 import '../widgets/menu_sheet.dart';
+import '../widgets/responsive_org_chip.dart';
 import 'character_assistant_screen.dart';
 import 'character_details_sheet.dart';
 import 'character_edit_screen.dart';
@@ -111,6 +113,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
     // defeating the gate — so the screen reads the store instead and lets the
     // gate govern its rebuilds.
     final store = context.read<AppStore>();
+    final es = AppStrings.of(context).es;
     // 2026-07-03 (Gui): Lorebooks moved out of More into this library —
     // they're content like characters and personas, not a setting.
     final segment = switch (store.uiPrefs.charactersSegment) {
@@ -127,15 +130,15 @@ class _CharactersScreenState extends State<CharactersScreen> {
       appBar: AppBar(
         title: Text(switch (segment) {
           1 => 'Personas',
-          2 => 'Lorebooks',
-          _ => 'Characters',
+          2 => es ? 'Libros de lore' : 'Lorebooks',
+          _ => es ? 'Personajes' : 'Characters',
         }),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: ElevatedButton.icon(
               icon: const Icon(Icons.add, size: 16),
-              label: const Text('Create'),
+              label: Text(es ? 'Crear' : 'Create'),
               onPressed: () => _onAdd(context, segment),
             ),
           ),
@@ -147,9 +150,9 @@ class _CharactersScreenState extends State<CharactersScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: SegmentedButton<int>(
               segments: [
-                ButtonSegment(value: 0, label: Text('Characters ($charCount)')),
+                ButtonSegment(value: 0, label: Text('${es ? 'Personajes' : 'Characters'} ($charCount)')),
                 ButtonSegment(value: 1, label: Text('Personas ($personaCount)')),
-                ButtonSegment(value: 2, label: Text('Lorebooks ($loreCount)')),
+                ButtonSegment(value: 2, label: Text('${es ? 'Libros de lore' : 'Lorebooks'} ($loreCount)')),
               ],
               selected: {segment},
               showSelectedIcon: false,
@@ -182,9 +185,9 @@ class _CharactersScreenState extends State<CharactersScreen> {
               focusNode: _searchFocus,
               decoration: InputDecoration(
                 hintText: switch (segment) {
-                  1 => 'Search Persona',
-                  2 => 'Search Lorebook',
-                  _ => 'Search Character',
+                  1 => es ? 'Buscar persona' : 'Search Persona',
+                  2 => es ? 'Buscar libro de lore' : 'Search Lorebook',
+                  _ => es ? 'Buscar personaje' : 'Search Character',
                 },
                 prefixIcon: const Icon(Icons.search, size: 18),
                 isDense: true,
@@ -226,10 +229,11 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
     itemsBuilder: (sheet) => [
       ListTile(
         leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
-        title: const Text('Build with AI assistant'),
+        title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),
         subtitle: Text(
-          'Describe the world or topic and the AI drafts keyword-'
-          'triggered entries you can review before saving.',
+          AppStrings.of(context).es
+              ? 'Describe el mundo o tema y la IA preparará entradas activadas por palabras clave que podrás revisar antes de guardar.'
+              : 'Describe the world or topic and the AI drafts keyword-triggered entries you can review before saving.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () {
@@ -242,9 +246,9 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
       ),
       ListTile(
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
-        title: const Text('Create manually'),
+        title: Text(AppStrings.of(context).es ? 'Crear manualmente' : 'Create manually'),
         subtitle: Text(
-          'Name the book, then add keyword-triggered entries yourself.',
+          AppStrings.of(context).es ? 'Ponle un nombre al libro y después añade tú mismo entradas activadas por palabras clave.' : 'Name the book, then add keyword-triggered entries yourself.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () {
@@ -255,9 +259,9 @@ Future<void> _showLorebookAddSheet(BuildContext context) async {
       Divider(color: EmberColors.stroke, height: 1),
       ListTile(
         leading: const Icon(Icons.file_upload_outlined),
-        title: const Text('Import from JSON'),
+        title: Text(AppStrings.of(context).es ? 'Importar desde JSON' : 'Import from JSON'),
         subtitle: Text(
-          'Pick a SillyTavern World Info / lorebook JSON from your device.',
+          AppStrings.of(context).es ? 'Elige en tu dispositivo un JSON de World Info / libro de lore de SillyTavern.' : 'Pick a SillyTavern World Info / lorebook JSON from your device.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () async {
@@ -279,10 +283,11 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
       ListTile(
         leading:
             Icon(Icons.auto_awesome, color: EmberColors.primary),
-        title: const Text('Build with AI assistant'),
+        title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),
         subtitle: Text(
-          'Chat with an AI that helps you flesh out your persona — who '
-          'you are in chats — then writes it for you.',
+          AppStrings.of(context).es
+              ? 'Chatea con una IA que te ayuda a desarrollar tu persona — quién eres en los chats — y después la redacta por ti.'
+              : 'Chat with an AI that helps you flesh out your persona — who you are in chats — then writes it for you.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () {
@@ -295,9 +300,9 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
       ),
       ListTile(
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
-        title: const Text('Create manually'),
+        title: Text(AppStrings.of(context).es ? 'Crear manualmente' : 'Create manually'),
         subtitle: Text(
-          'Fill in the persona fields yourself in the in-app editor.',
+          AppStrings.of(context).es ? 'Completa tú mismo los campos de la persona en el editor de la aplicación.' : 'Fill in the persona fields yourself in the in-app editor.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () {
@@ -311,9 +316,9 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
       // or a native Pyre persona JSON.
       ListTile(
         leading: const Icon(Icons.file_upload_outlined),
-        title: const Text('Import from file'),
+        title: Text(AppStrings.of(context).es ? 'Importar desde archivo' : 'Import from file'),
         subtitle: Text(
-          'Pick a character card PNG/JSON or a Pyre persona JSON from your device.',
+          AppStrings.of(context).es ? 'Elige en tu dispositivo una tarjeta de personaje PNG/JSON o un JSON de persona de Pyre.' : 'Pick a character card PNG/JSON or a Pyre persona JSON from your device.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
         onTap: () async {
@@ -354,7 +359,7 @@ Future<void> _pickAndImportPersona(BuildContext context) async {
     final bytes = f.bytes;
     if (bytes == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not read file bytes.')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron leer los datos del archivo.' : 'Could not read file bytes.')),
       );
       return;
     }
@@ -421,7 +426,7 @@ Future<void> _pickAndImportPersona(BuildContext context) async {
     );
     final choice = await confirmCardImport(context, previewCard);
     if (!choice.import) {
-      messenger.showSnackBar(const SnackBar(content: Text('Import cancelled.')));
+      messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Importación cancelada.' : 'Import cancelled.')));
       return;
     }
     // B-2 / H-6: externalise a card-imported persona's inline avatar so it
@@ -429,11 +434,11 @@ Future<void> _pickAndImportPersona(BuildContext context) async {
     await externalizePersonaImages(persona);
     store.addPersona(persona);
     messenger.showSnackBar(
-      SnackBar(content: Text('Imported persona "${persona.name}"')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Persona "${persona.name}" importada' : 'Imported persona "${persona.name}"')),
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Import failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al importar: $e' : 'Import failed: $e')),
     );
   }
 }
@@ -465,7 +470,7 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
     itemsBuilder: (sheet) => [
       ListTile(
         leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
-        title: const Text('Build with AI assistant'),
+        title: Text(AppStrings.of(context).es ? 'Crear con asistente de IA' : 'Build with AI assistant'),
         onTap: () {
           Navigator.pop(sheet);
           Navigator.of(context).push(MaterialPageRoute(
@@ -481,7 +486,7 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       // Start fresh); if none, go straight to new editor.
       ListTile(
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
-        title: const Text('Create from scratch'),
+        title: Text(AppStrings.of(context).es ? 'Crear desde cero' : 'Create from scratch'),
         onTap: () async {
           Navigator.pop(sheet);
           await _createBlankCharacter(context);
@@ -490,7 +495,7 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       Divider(color: EmberColors.stroke, height: 1),
       ListTile(
         leading: const Icon(Icons.link),
-        title: const Text('From URL'),
+        title: Text(AppStrings.of(context).es ? 'Desde URL' : 'From URL'),
         onTap: () {
           Navigator.pop(sheet);
           _showImportCharacterDialog(context);
@@ -498,7 +503,7 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       ),
       ListTile(
         leading: const Icon(Icons.file_upload_outlined),
-        title: const Text('From file'),
+        title: Text(AppStrings.of(context).es ? 'Desde archivo' : 'From file'),
         onTap: () async {
           Navigator.pop(sheet);
           await _pickAndImportCard(context);
@@ -582,7 +587,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Resume a draft or start fresh',
+                  AppStrings.of(context).es ? 'Continuar un borrador o empezar de cero' : 'Resume a draft or start fresh',
                   style: TextStyle(
                     color: EmberColors.textHigh,
                     fontSize: 17,
@@ -596,8 +601,9 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'You have in-progress cards. Tap one to resume; '
-                  'long-press to delete.',
+                  AppStrings.of(context).es
+                      ? 'Tienes tarjetas en progreso. Toca una para continuar; mantén pulsado para eliminarla.'
+                      : 'You have in-progress cards. Tap one to resume; long-press to delete.',
                   style: TextStyle(
                     color: EmberColors.textMid,
                     fontSize: 12,
@@ -616,7 +622,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                 itemBuilder: (_, i) {
                   final d = drafts[i];
                   final title = d.name.trim().isEmpty
-                      ? '(unnamed draft)'
+                      ? (AppStrings.of(context).es ? '(borrador sin nombre)' : '(unnamed draft)')
                       : d.name;
                   return ListTile(
                     leading: Icon(Icons.drafts_outlined,
@@ -645,14 +651,15 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                         context: context,
                         builder: (ctx) => AlertDialog(
                           backgroundColor: EmberColors.bgPanel,
-                          title: const Text('Delete draft?'),
+                          title: Text(AppStrings.of(context).es ? '¿Eliminar borrador?' : 'Delete draft?'),
                           content: Text(
-                              'Permanently discard "$title"? '
-                              'This cannot be undone.'),
+                              AppStrings.of(context).es
+                                  ? '¿Descartar permanentemente "$title"? Esta acción no se puede deshacer.'
+                                  : 'Permanently discard "$title"? This cannot be undone.'),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
-                              child: const Text('Cancel'),
+                              child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -662,7 +669,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                                 Navigator.pop(ctx);
                                 store.removeDraft(d.id);
                               },
-                              child: const Text('Delete'),
+                              child: Text(AppStrings.of(context).es ? 'Eliminar' : 'Delete'),
                             ),
                           ],
                         ),
@@ -676,12 +683,12 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
             ListTile(
               leading: Icon(Icons.add,
                   color: EmberColors.primary),
-              title: Text('Start fresh',
+              title: Text(AppStrings.of(context).es ? 'Empezar de cero' : 'Start fresh',
                   style: TextStyle(
                       color: EmberColors.textHigh,
                       fontWeight: FontWeight.w600)),
               subtitle: Text(
-                'Create a brand-new card alongside your existing drafts.',
+                AppStrings.of(context).es ? 'Crea una tarjeta nueva junto a tus borradores existentes.' : 'Create a brand-new card alongside your existing drafts.',
                 style: TextStyle(
                     color: EmberColors.textMid, fontSize: 12),
               ),
@@ -739,9 +746,9 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
     final avatarBytes = await resolveAvatarBytes(c.avatar);
     if (avatarBytes == null) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
-                'This character has no avatar. Set one in the editor first, then re-export.')),
+                AppStrings.of(context).es ? 'Este personaje no tiene avatar. Configura uno primero en el editor y vuelve a exportar.' : 'This character has no avatar. Set one in the editor first, then re-export.')),
       );
       return;
     }
@@ -749,9 +756,9 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
     final pngAvatarBytes = _ensurePngBytes(avatarBytes);
     if (pngAvatarBytes == null) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
-                "Couldn't read the avatar image to embed in the card. Try setting a different avatar.")),
+                AppStrings.of(context).es ? 'No se pudo leer la imagen del avatar para incluirla en la tarjeta. Prueba con otro avatar.' : "Couldn't read the avatar image to embed in the card. Try setting a different avatar.")),
       );
       return;
     }
@@ -780,7 +787,7 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
       // copying an unsaveable data URL to the clipboard.
       downloadBytesToBrowser(pngBytes, filename, 'image/png');
       messenger.showSnackBar(
-        SnackBar(content: Text('Downloading $filename')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
       );
       return;
     }
@@ -834,10 +841,11 @@ Future<void> _exportCharacterAsPng(BuildContext context, Character c) async {
       saveBytes: pngBytes,
       saveFileName: file.uri.pathSegments.last,
       saveExtensions: const ['png'],
+      context: context,
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Export failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e')),
     );
   }
 }
@@ -881,7 +889,7 @@ Future<void> _exportCharacterAsJson(BuildContext context, Character c) async {
       // copying an unsaveable data URL to the clipboard.
       downloadBytesToBrowser(bytes, filename, 'application/json');
       messenger.showSnackBar(
-        SnackBar(content: Text('Downloading $filename')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
       );
       return;
     }
@@ -905,7 +913,7 @@ Future<void> _exportCharacterAsJson(BuildContext context, Character c) async {
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Export failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e')),
     );
   }
 }
@@ -930,9 +938,9 @@ Future<void> _exportPersonaAsPng(BuildContext context, Persona p) async {
     final avatarBytes = await resolveAvatarBytes(p.avatar);
     if (avatarBytes == null) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
-                'This persona has no avatar. Set one in the editor first, then re-export.')),
+                AppStrings.of(context).es ? 'Esta persona no tiene avatar. Configura uno primero en el editor y vuelve a exportar.' : 'This persona has no avatar. Set one in the editor first, then re-export.')),
       );
       return;
     }
@@ -940,9 +948,9 @@ Future<void> _exportPersonaAsPng(BuildContext context, Persona p) async {
     final pngAvatarBytes = _ensurePngBytes(avatarBytes);
     if (pngAvatarBytes == null) {
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
             content: Text(
-                "Couldn't read the avatar image to embed in the card. Try setting a different avatar.")),
+                AppStrings.of(context).es ? 'No se pudo leer la imagen del avatar para incluirla en la tarjeta. Prueba con otro avatar.' : "Couldn't read the avatar image to embed in the card. Try setting a different avatar.")),
       );
       return;
     }
@@ -985,7 +993,7 @@ Future<void> _exportPersonaAsPng(BuildContext context, Persona p) async {
       // Web has no filesystem — trigger a real browser download.
       downloadBytesToBrowser(pngBytes, filename, 'image/png');
       messenger.showSnackBar(
-        SnackBar(content: Text('Downloading $filename')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
       );
       return;
     }
@@ -1032,7 +1040,7 @@ Future<void> _exportPersonaAsPng(BuildContext context, Persona p) async {
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Export failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e')),
     );
   }
 }
@@ -1090,7 +1098,7 @@ Future<void> _exportPersonaAsJson(BuildContext context, Persona p) async {
       // Web has no filesystem — trigger a real browser download.
       downloadBytesToBrowser(bytes, filename, 'application/json');
       messenger.showSnackBar(
-        SnackBar(content: Text('Downloading $filename')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'Descargando $filename' : 'Downloading $filename')),
       );
       return;
     }
@@ -1114,7 +1122,7 @@ Future<void> _exportPersonaAsJson(BuildContext context, Persona p) async {
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Export failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al exportar: $e' : 'Export failed: $e')),
     );
   }
 }
@@ -1133,7 +1141,7 @@ Future<void> _pickAndImportCard(BuildContext context) async {
     final bytes = f.bytes;
     if (bytes == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not read file bytes.')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron leer los datos del archivo.' : 'Could not read file bytes.')),
       );
       return;
     }
@@ -1159,7 +1167,7 @@ Future<void> _pickAndImportCard(BuildContext context) async {
       galleryCount: galleryUrls.length,
     );
     if (!choice.import) {
-      messenger.showSnackBar(const SnackBar(content: Text('Import cancelled.')));
+      messenger.showSnackBar(SnackBar(content: Text(AppStrings.of(context).es ? 'Importación cancelada.' : 'Import cancelled.')));
       return;
     }
     if (choice.withGallery) {
@@ -1180,11 +1188,11 @@ Future<void> _pickAndImportCard(BuildContext context) async {
     await externalizeCharacterImages(character);
     store.addCharacter(character);
     messenger.showSnackBar(
-      SnackBar(content: Text('Imported ${character.name}')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Se importó ${character.name}' : 'Imported ${character.name}')),
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Import failed: $e')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Error al importar: $e' : 'Import failed: $e')),
     );
   }
 }
@@ -1449,10 +1457,12 @@ class _CharacterList extends StatelessWidget {
     // Wave BK: drafts live in the Create sheet now, NOT in the
     // Characters list. The Characters list is for SAVED cards only.
     if (store.characters.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: Icons.person_outline,
-        title: 'No characters yet',
-        subtitle: 'Tap Create to import a Tavern Card from a URL or file.',
+        title: AppStrings.of(context).es ? 'Aún no hay personajes' : 'No characters yet',
+        subtitle: AppStrings.of(context).es
+            ? 'Toca Crear para importar una Tavern Card desde una URL o archivo.'
+            : 'Tap Create to import a Tavern Card from a URL or file.',
       );
     }
 
@@ -1497,10 +1507,10 @@ class _CharacterList extends StatelessWidget {
           child: items.isEmpty
               ? EmptyState(
                   icon: Icons.search_off,
-                  title: 'No matches',
+                  title: AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches',
                   subtitle: hasFilters
-                      ? 'Clear filters or change sort to see more.'
-                      : 'Nothing matches your search.',
+                      ? (AppStrings.of(context).es ? 'Borra los filtros o cambia el orden para ver más.' : 'Clear filters or change sort to see more.')
+                      : (AppStrings.of(context).es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.'),
                 )
               : ListView.builder(
                   padding:
@@ -1636,9 +1646,12 @@ class _AllFiledHintItem extends _CharItem {
   const _AllFiledHintItem();
 
   @override
-  Widget build(AppStore store) => const AllFiledHint(
-        message: 'All your characters are in folders.\n'
-            'Open a folder above to chat.',
+  Widget build(AppStore store) => Builder(
+        builder: (context) => AllFiledHint(
+          message: AppStrings.of(context).es
+              ? 'Todos tus personajes están en carpetas.\nAbre una carpeta de arriba para chatear.'
+              : 'All your characters are in folders.\nOpen a folder above to chat.',
+        ),
       );
 }
 
@@ -1658,7 +1671,7 @@ class FolderSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(0, 4, 0, 2),
         child: Text(
-          'FOLDERS',
+          AppStrings.of(context).es ? 'CARPETAS' : 'FOLDERS',
           style: TextStyle(
             color: EmberColors.textMid,
             fontSize: 11,
@@ -1771,7 +1784,9 @@ class ActiveFolderChip extends StatelessWidget {
         icon: Icons.folder_outlined,
         // Empty name = the folder vanished mid-view; same fallback label as
         // the Characters chip.
-        label: folderName.isEmpty ? 'Folder ✕' : '📁 $folderName',
+        label: folderName.isEmpty
+            ? (AppStrings.of(context).es ? 'Carpeta ✕' : 'Folder ✕')
+            : '📁 $folderName',
         trailing: GestureDetector(
           onTap: onClear,
           child: const Icon(Icons.close, size: 14),
@@ -1787,17 +1802,17 @@ class _OrgControlRow extends StatelessWidget {
   final AppStore store;
   const _OrgControlRow({required this.store});
 
-  String _sortLabel(String key) {
+  String _sortLabel(BuildContext context, String key) {
     switch (key) {
       case 'created':
-        return 'Recently added';
+        return AppStrings.of(context).es ? 'Añadidos recientemente' : 'Recently added';
       case 'alpha':
         return 'A → Z';
       case 'chatted':
-        return 'Most chatted';
+        return AppStrings.of(context).es ? 'Más usados en chats' : 'Most chatted';
       case 'recent':
       default:
-        return 'Recently used';
+        return AppStrings.of(context).es ? 'Usados recientemente' : 'Recently used';
     }
   }
 
@@ -1820,18 +1835,18 @@ class _OrgControlRow extends StatelessWidget {
         children: [
           // Sort
           PopupMenuButton<String>(
-            tooltip: 'Sort',
+            tooltip: AppStrings.of(context).es ? 'Ordenar' : 'Sort',
             initialValue: store.charSortKey,
             onSelected: (k) => store.setCharSortKey(k),
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'recent', child: Text('Recently used')),
-              PopupMenuItem(value: 'created', child: Text('Recently added')),
-              PopupMenuItem(value: 'alpha', child: Text('A → Z')),
-              PopupMenuItem(value: 'chatted', child: Text('Most chatted')),
+            itemBuilder: (_) => [
+              PopupMenuItem(value: 'recent', child: Text(AppStrings.of(context).es ? 'Usados recientemente' : 'Recently used')),
+              PopupMenuItem(value: 'created', child: Text(AppStrings.of(context).es ? 'Añadidos recientemente' : 'Recently added')),
+              const PopupMenuItem(value: 'alpha', child: Text('A → Z')),
+              PopupMenuItem(value: 'chatted', child: Text(AppStrings.of(context).es ? 'Más usados en chats' : 'Most chatted')),
             ],
             child: _OrgChip(
               icon: Icons.sort,
-              label: _sortLabel(store.charSortKey),
+              label: _sortLabel(context, store.charSortKey),
               trailingIcon: Icons.arrow_drop_down,
             ),
           ),
@@ -1842,10 +1857,10 @@ class _OrgControlRow extends StatelessWidget {
               icon: Icons.folder_outlined,
               label: folderName == null
                   ? (store.folders.isEmpty
-                      ? 'Folders'
-                      : 'Folders (${store.folders.length})')
+                      ? (AppStrings.of(context).es ? 'Carpetas' : 'Folders')
+                      : (AppStrings.of(context).es ? 'Carpetas (${store.folders.length})' : 'Folders (${store.folders.length})'))
                   : folderName.isEmpty
-                      ? 'Folder ✕'
+                      ? (AppStrings.of(context).es ? 'Carpeta ✕' : 'Folder ✕')
                       : '📁 $folderName',
               trailing: store.charFolderId != null
                   ? GestureDetector(
@@ -1861,8 +1876,8 @@ class _OrgControlRow extends StatelessWidget {
             child: _OrgChip(
               icon: Icons.tag,
               label: store.charSelectedTags.isEmpty
-                  ? 'Tags'
-                  : 'Tags (${store.charSelectedTags.length})',
+                  ? (AppStrings.of(context).es ? 'Etiquetas' : 'Tags')
+                  : (AppStrings.of(context).es ? 'Etiquetas (${store.charSelectedTags.length})' : 'Tags (${store.charSelectedTags.length})'),
             ),
           ),
         ],
@@ -1885,33 +1900,11 @@ class _OrgChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: EmberColors.bgElevated,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: EmberColors.stroke),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: EmberColors.textMid),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style:
-                TextStyle(color: EmberColors.textHigh, fontSize: 12),
-          ),
-          if (trailingIcon != null) ...[
-            const SizedBox(width: 2),
-            Icon(trailingIcon, size: 14, color: EmberColors.textMid),
-          ],
-          if (trailing != null) ...[
-            const SizedBox(width: 6),
-            trailing!,
-          ],
-        ],
-      ),
+    return ResponsiveOrgChip(
+      icon: icon,
+      label: label,
+      trailingIcon: trailingIcon,
+      trailing: trailing,
     );
   }
 }
@@ -1946,7 +1939,7 @@ class _ActiveTagChipsRow extends StatelessWidget {
               visualDensity: VisualDensity.compact,
             ),
           ActionChip(
-            label: const Text('Clear all', style: TextStyle(fontSize: 11)),
+            label: Text(AppStrings.of(context).es ? 'Borrar todo' : 'Clear all', style: const TextStyle(fontSize: 11)),
             avatar: const Icon(Icons.close, size: 14),
             onPressed: () => store.clearCharSelectedTags(),
             padding: EdgeInsets.zero,
@@ -1992,7 +1985,7 @@ class _FavoritesHeader extends StatelessWidget {
             Icon(Icons.star, size: 14, color: EmberColors.primary),
             const SizedBox(width: 6),
             Text(
-              'FAVORITES ($count)',
+              AppStrings.of(context).es ? 'FAVORITOS ($count)' : 'FAVORITES ($count)',
               style: TextStyle(
                 color: EmberColors.primary,
                 fontWeight: FontWeight.w700,
@@ -2049,15 +2042,15 @@ class _CharacterCard extends StatelessWidget {
                 size: 20,
               ),
               tooltip: character.favorite
-                  ? 'Remove from favorites'
-                  : 'Add to favorites',
+                  ? (AppStrings.of(context).es ? 'Quitar de favoritos' : 'Remove from favorites')
+                  : (AppStrings.of(context).es ? 'Añadir a favoritos' : 'Add to favorites'),
               onPressed: () => store.toggleCharacterFavorite(character.id),
               visualDensity: VisualDensity.compact,
             ),
             IconButton(
               icon: Icon(Icons.more_vert,
                   color: EmberColors.textMid),
-              tooltip: 'Character actions',
+              tooltip: AppStrings.of(context).es ? 'Acciones del personaje' : 'Character actions',
               onPressed: () =>
                   _showCharacterMenu(context, store, character),
               visualDensity: VisualDensity.compact,
@@ -2092,7 +2085,7 @@ class _CharacterSubtitle extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: _buildBody()),
+        Expanded(child: _buildBody(context)),
         if (tokenLabel != null) ...[
           const SizedBox(width: 6),
           Padding(
@@ -2111,7 +2104,7 @@ class _CharacterSubtitle extends StatelessWidget {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     if ((character.tagline ?? '').trim().isNotEmpty) {
       return Text(
         character.tagline!,
@@ -2138,7 +2131,7 @@ class _CharacterSubtitle extends StatelessWidget {
     }
     final firstLine = character.description.split('\n').first.trim();
     return Text(
-      firstLine.isEmpty ? '(no description)' : firstLine,
+      firstLine.isEmpty ? (AppStrings.of(context).es ? '(sin descripción)' : '(no description)') : firstLine,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(color: EmberColors.textMid),
@@ -2165,15 +2158,15 @@ class _PersonaList extends StatelessWidget {
     return hay.contains(query);
   }
 
-  String _sortLabel(String key) {
+  String _sortLabel(BuildContext context, String key) {
     switch (key) {
       case 'created':
-        return 'Recently added';
+        return AppStrings.of(context).es ? 'Añadidas recientemente' : 'Recently added';
       case 'alpha':
         return 'A → Z';
       case 'recent':
       default:
-        return 'Recently used';
+        return AppStrings.of(context).es ? 'Usadas recientemente' : 'Recently used';
     }
   }
 
@@ -2233,10 +2226,10 @@ class _PersonaList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (store.personas.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: Icons.face_outlined,
-        title: 'No personas yet',
-        subtitle: 'Create a persona to define how you appear in chats.',
+        title: AppStrings.of(context).es ? 'Aún no hay personas' : 'No personas yet',
+        subtitle: AppStrings.of(context).es ? 'Crea una persona para definir cómo apareces en los chats.' : 'Create a persona to define how you appear in chats.',
       );
     }
     final filtered = _applyFiltersAndSort();
@@ -2276,18 +2269,17 @@ class _PersonaList extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               PopupMenuButton<String>(
-                tooltip: 'Sort',
+                tooltip: AppStrings.of(context).es ? 'Ordenar' : 'Sort',
                 initialValue: store.personaSortKey,
                 onSelected: (k) => store.setPersonaSortKey(k),
-                itemBuilder: (_) => const [
-                  PopupMenuItem(value: 'recent', child: Text('Recently used')),
-                  PopupMenuItem(
-                      value: 'created', child: Text('Recently added')),
-                  PopupMenuItem(value: 'alpha', child: Text('A → Z')),
+                itemBuilder: (_) => [
+                  PopupMenuItem(value: 'recent', child: Text(AppStrings.of(context).es ? 'Usadas recientemente' : 'Recently used')),
+                  PopupMenuItem(value: 'created', child: Text(AppStrings.of(context).es ? 'Añadidas recientemente' : 'Recently added')),
+                  const PopupMenuItem(value: 'alpha', child: Text('A → Z')),
                 ],
                 child: _OrgChip(
                   icon: Icons.sort,
-                  label: _sortLabel(store.personaSortKey),
+                  label: _sortLabel(context, store.personaSortKey),
                   trailingIcon: Icons.arrow_drop_down,
                 ),
               ),
@@ -2307,10 +2299,10 @@ class _PersonaList extends StatelessWidget {
           // the eager `ListView(children:[...])` still built every row +
           // avatar on each rebuild; the builder keeps it consistent.)
           child: items.isEmpty
-              ? const EmptyState(
+              ? EmptyState(
                   icon: Icons.search_off,
-                  title: 'No matches',
-                  subtitle: 'Nothing matches your search.',
+                  title: AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches',
+                  subtitle: AppStrings.of(context).es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.',
                 )
               : ListView.builder(
                   padding:
@@ -2435,9 +2427,12 @@ class _PersonaAllFiledHintItem extends _PersonaItem {
   const _PersonaAllFiledHintItem();
 
   @override
-  Widget build(AppStore store) => const AllFiledHint(
-        message: 'All your personas are in folders.\n'
-            'Open a folder above to pick one.',
+  Widget build(AppStore store) => Builder(
+        builder: (context) => AllFiledHint(
+          message: AppStrings.of(context).es
+              ? 'Todas tus personas están en carpetas.\nAbre una carpeta de arriba para elegir una.'
+              : 'All your personas are in folders.\nOpen a folder above to pick one.',
+        ),
       );
 }
 
@@ -2479,7 +2474,7 @@ class _PersonaCard extends StatelessWidget {
                       color: EmberColors.primary.withValues(alpha: 0.5)),
                 ),
                 child: Text(
-                  'DEFAULT',
+                  AppStrings.of(context).es ? 'PREDETERMINADA' : 'DEFAULT',
                   style: TextStyle(
                     color: EmberColors.primary,
                     fontSize: 10,
@@ -2532,15 +2527,15 @@ class _PersonaCard extends StatelessWidget {
                 size: 20,
               ),
               tooltip: p.favorite
-                  ? 'Remove from favorites'
-                  : 'Add to favorites',
+                  ? (AppStrings.of(context).es ? 'Quitar de favoritos' : 'Remove from favorites')
+                  : (AppStrings.of(context).es ? 'Añadir a favoritos' : 'Add to favorites'),
               onPressed: () => store.togglePersonaFavorite(p.id),
               visualDensity: VisualDensity.compact,
             ),
             IconButton(
               icon: Icon(Icons.more_vert,
                   color: EmberColors.textMid),
-              tooltip: 'Persona actions',
+              tooltip: AppStrings.of(context).es ? 'Acciones de la persona' : 'Persona actions',
               onPressed: () => _showPersonaMenu(context, store, p),
               visualDensity: VisualDensity.compact,
             ),
@@ -2604,11 +2599,11 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
   showMenuSheet<void>(
     context,
     itemsBuilder: (sheet) => [
-          _menuSectionLabel('Chat'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Chat' : 'Chat'),
           ListTile(
             leading: Icon(Icons.add_comment_outlined,
                 color: EmberColors.primary),
-            title: const Text('Start new chat'),
+            title: Text(AppStrings.of(context).es ? 'Iniciar chat nuevo' : 'Start new chat'),
             onTap: () {
               Navigator.pop(sheet);
               startNewChatWithPersonaPrompt(context, c);
@@ -2621,7 +2616,7 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
             ListTile(
               leading:
                   Icon(Icons.groups_outlined, color: EmberColors.primary),
-              title: const Text('Start group chat'),
+              title: Text(AppStrings.of(context).es ? 'Iniciar chat grupal' : 'Start group chat'),
               onTap: () {
                 Navigator.pop(sheet);
                 startNewGroupChat(context, c);
@@ -2631,9 +2626,9 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
             ListTile(
               leading: Icon(Icons.play_arrow_rounded,
                   color: EmberColors.primary),
-              title: const Text('Continue chat'),
+              title: Text(AppStrings.of(context).es ? 'Continuar chat' : 'Continue chat'),
               subtitle: Text(
-                'Resume "${c.name}" — ${existingChat.messages.length} msgs.',
+                AppStrings.of(context).es ? 'Reanudar "${c.name}" — ${existingChat.messages.length} mensajes.' : 'Resume "${c.name}" — ${existingChat.messages.length} msgs.',
                 style: TextStyle(
                     color: EmberColors.textMid, fontSize: 12),
               ),
@@ -2644,10 +2639,10 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
                 ));
               },
             ),
-          _menuSectionLabel('Card'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Tarjeta' : 'Card'),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('View details'),
+            title: Text(AppStrings.of(context).es ? 'Ver detalles' : 'View details'),
             onTap: () {
               Navigator.pop(sheet);
               showCharacterDetailsSheet(context, characterId: c.id);
@@ -2658,31 +2653,31 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
           // dialog; a fresh "<name> (copy)" appears right after the original.
           ListTile(
             leading: const Icon(Icons.copy_outlined),
-            title: const Text('Duplicate'),
+            title: Text(AppStrings.of(context).es ? 'Duplicar' : 'Duplicate'),
             onTap: () {
               Navigator.pop(sheet);
               final clone = store.duplicateCharacter(c.id);
               if (clone == null) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Duplicated as "${clone.name}".')),
+                SnackBar(content: Text(AppStrings.of(context).es ? 'Duplicado como "${clone.name}".' : 'Duplicated as "${clone.name}".')),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.face_outlined),
-            title: const Text('Add as persona'),
+            title: Text(AppStrings.of(context).es ? 'Añadir como persona' : 'Add as persona'),
             onTap: () {
               Navigator.pop(sheet);
               final p = store.convertCharacterToPersona(c);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Persona "${p.name}" created.')),
+                SnackBar(content: Text(AppStrings.of(context).es ? 'Persona "${p.name}" creada.' : 'Persona "${p.name}" created.')),
               );
             },
           ),
-          _menuSectionLabel('Export'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Exportar' : 'Export'),
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Export as PNG card'),
+            title: Text(AppStrings.of(context).es ? 'Exportar como tarjeta PNG' : 'Export as PNG card'),
             onTap: () async {
               Navigator.pop(sheet);
               await _exportCharacterAsPng(context, c);
@@ -2692,22 +2687,22 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
           // no avatar required, so an avatarless card can still be shared.
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Export as JSON card'),
+            title: Text(AppStrings.of(context).es ? 'Exportar como tarjeta JSON' : 'Export as JSON card'),
             onTap: () async {
               Navigator.pop(sheet);
               await _exportCharacterAsJson(context, c);
             },
           ),
-          _menuSectionLabel('Library'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Biblioteca' : 'Library'),
           // Wave CY.18.38: "Add to folder" via a sub-sheet listing the
           // user's folders + a "create new" option.
           ListTile(
             leading: const Icon(Icons.folder_open_outlined),
-            title: const Text('Add to folder…'),
+            title: Text(AppStrings.of(context).es ? 'Añadir a carpeta…' : 'Add to folder…'),
             subtitle: folderNames.isEmpty
                 ? null
                 : Text(
-                    'In: ${folderNames.join(", ")}',
+                    AppStrings.of(context).es ? 'En: ${folderNames.join(", ")}' : 'In: ${folderNames.join(", ")}',
                     style: TextStyle(
                         color: EmberColors.textMid, fontSize: 12),
                     maxLines: 1,
@@ -2734,15 +2729,16 @@ void _showCharacterMenu(BuildContext context, AppStore store, Character c) {
           ListTile(
             leading: Icon(Icons.delete_outline,
                 color: EmberColors.danger),
-            title: Text('Delete character',
+            title: Text(AppStrings.of(context).es ? 'Eliminar personaje' : 'Delete character',
                 style: TextStyle(color: EmberColors.danger)),
             onTap: () async {
               Navigator.pop(sheet);
               final ok = await confirmDelete(
                 context,
-                title: 'Delete "${c.name}"?',
-                message:
-                    'The character and every chat with them will be lost forever.',
+                title: AppStrings.of(context).es ? '¿Eliminar "${c.name}"?' : 'Delete "${c.name}"?',
+                message: AppStrings.of(context).es
+                    ? 'El personaje y todos sus chats se perderán para siempre.'
+                    : 'The character and every chat with them will be lost forever.',
               );
               if (!ok) return;
               store.removeCharacter(c.id);
@@ -2774,7 +2770,7 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
           // surfacing the two edit flows directly in the menu.
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('View details'),
+            title: Text(AppStrings.of(context).es ? 'Ver detalles' : 'View details'),
             onTap: () {
               Navigator.pop(sheet);
               showPersonaDetailsSheet(context, personaId: p.id);
@@ -2784,7 +2780,7 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
             ListTile(
               leading: Icon(Icons.check_circle_outline,
                   color: EmberColors.primary),
-              title: const Text('Set as default'),
+              title: Text(AppStrings.of(context).es ? 'Establecer como predeterminada' : 'Set as default'),
               onTap: () {
                 Navigator.pop(sheet);
                 store.setActivePersona(p.id);
@@ -2793,23 +2789,23 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
           // In-app Duplicate — same convention as the character menu.
           ListTile(
             leading: const Icon(Icons.copy_outlined),
-            title: const Text('Duplicate'),
+            title: Text(AppStrings.of(context).es ? 'Duplicar' : 'Duplicate'),
             onTap: () {
               Navigator.pop(sheet);
               final clone = store.duplicatePersona(p.id);
               if (clone == null) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Duplicated as "${clone.name}".')),
+                SnackBar(content: Text(AppStrings.of(context).es ? 'Duplicada como "${clone.name}".' : 'Duplicated as "${clone.name}".')),
               );
             },
           ),
-          _menuSectionLabel('Export'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Exportar' : 'Export'),
           // Wave CY.18.250: export a persona as a chara_card_v2 PNG (mirrors
           // the character "Export as PNG card"). Builds a card from the
           // persona's shareable fields + its gallery.
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Export as PNG'),
+            title: Text(AppStrings.of(context).es ? 'Exportar como PNG' : 'Export as PNG'),
             onTap: () async {
               Navigator.pop(sheet);
               await _exportPersonaAsPng(context, p);
@@ -2819,22 +2815,22 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
           // no avatar required.
           ListTile(
             leading: const Icon(Icons.download_outlined),
-            title: const Text('Export as JSON card'),
+            title: Text(AppStrings.of(context).es ? 'Exportar como tarjeta JSON' : 'Export as JSON card'),
             onTap: () async {
               Navigator.pop(sheet);
               await _exportPersonaAsJson(context, p);
             },
           ),
-          _menuSectionLabel('Library'),
+          _menuSectionLabel(AppStrings.of(context).es ? 'Biblioteca' : 'Library'),
           // 2026-07-13 (community request): personas file into folders too —
           // the same sub-sheet as the character kebab, over folder.personaIds.
           ListTile(
             leading: const Icon(Icons.folder_open_outlined),
-            title: const Text('Add to folder…'),
+            title: Text(AppStrings.of(context).es ? 'Añadir a carpeta…' : 'Add to folder…'),
             subtitle: folderNames.isEmpty
                 ? null
                 : Text(
-                    'In: ${folderNames.join(", ")}',
+                    AppStrings.of(context).es ? 'En: ${folderNames.join(", ")}' : 'In: ${folderNames.join(", ")}',
                     style: TextStyle(
                         color: EmberColors.textMid, fontSize: 12),
                     maxLines: 1,
@@ -2857,7 +2853,7 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
           Divider(color: EmberColors.stroke),
           ListTile(
             leading: Icon(Icons.delete_outline, color: EmberColors.danger),
-            title: Text('Delete persona',
+            title: Text(AppStrings.of(context).es ? 'Eliminar persona' : 'Delete persona',
                 style: TextStyle(color: EmberColors.danger)),
             onTap: () async {
               Navigator.pop(sheet);
@@ -2868,8 +2864,8 @@ void _showPersonaMenu(BuildContext context, AppStore store, Persona p) {
               final ok = await confirmDelete(
                 context,
                 title: isDefault
-                    ? 'Delete default persona "${p.name}"?'
-                    : 'Delete "${p.name}"?',
+                    ? (AppStrings.of(context).es ? '¿Eliminar la persona predeterminada "${p.name}"?' : 'Delete default persona "${p.name}"?')
+                    : (AppStrings.of(context).es ? '¿Eliminar "${p.name}"?' : 'Delete "${p.name}"?'),
                 message: isDefault
                     ? 'This is your default persona. After deleting, new chats '
                         'will have no default persona until you set another one. '
@@ -2897,15 +2893,15 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Import character'),
+        title: Text(AppStrings.of(ctx).es ? 'Importar personaje' : 'Import character'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Paste a chub.ai / botbooru.com character page, or a direct '
-              'link to a Tavern Card v2 file (.png or .json) — e.g. a '
-              'catbox or pixeldrain link.',
+              AppStrings.of(ctx).es
+                  ? 'Pega una página de personaje de chub.ai / botbooru.com o un enlace directo a un archivo Tavern Card v2 (.png o .json), por ejemplo de catbox o pixeldrain.'
+                  : 'Paste a chub.ai / botbooru.com character page, or a direct link to a Tavern Card v2 file (.png or .json) — e.g. a catbox or pixeldrain link.',
               style: TextStyle(color: EmberColors.textMid),
             ),
             const SizedBox(height: 12),
@@ -2925,7 +2921,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
         actions: [
           TextButton(
             onPressed: busy ? null : () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.of(ctx).es ? 'Cancelar' : 'Cancel'),
           ),
           ElevatedButton(
             onPressed: busy
@@ -2943,7 +2939,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                       final input = urlCtl.text.trim();
                       final parsed = Uri.parse(input);
                       if (parsed.scheme != 'https') {
-                        throw 'Only https:// URLs are accepted.';
+                        throw (AppStrings.of(ctx).es ? 'Solo se aceptan URL https://.' : 'Only https:// URLs are accepted.');
                       }
                       // Wave CT: try the community-page resolver first so a
                       // chub.ai / botbooru.com page URL works, not just a
@@ -2961,7 +2957,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                         bytes = resolved!.bytes!;
                       } else {
                         if (target.scheme != 'https') {
-                          throw 'Only https:// URLs are accepted.';
+                          throw (AppStrings.of(ctx).es ? 'Solo se aceptan URL https://.' : 'Only https:// URLs are accepted.');
                         }
                         // SSRF gate for the "paste ANY direct link" case.
                         // A botbooru/chub page resolves to a known CDN host
@@ -2980,8 +2976,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                             : (kCardFileHostAllowlist.contains(host) ||
                                 isPublicHost(host));
                         if (!allowed) {
-                          throw "Couldn't import — that link points to a "
-                              'private or local address.';
+                          throw (AppStrings.of(ctx).es ? 'No se pudo importar: ese enlace apunta a una dirección privada o local.' : "Couldn't import — that link points to a private or local address.");
                         }
                         // Wave CY.18.255 (audit FIX 4): DNS-rebinding guard.
                         // `isPublicHost` above is a literal-IP + name check
@@ -3024,7 +3019,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                       try {
                         card = parseCharaCard(bytes);
                       } catch (e) {
-                        throw 'Not a valid character card: $e';
+                        throw (AppStrings.of(ctx).es ? 'No es una tarjeta de personaje válida: $e' : 'Not a valid character card: $e');
                       }
                       final character = characterFromCharaCard(card);
                       // Wave CY.18.141: BotBooru gallery auto-import REMOVED
@@ -3072,7 +3067,7 @@ Future<void> _showImportCharacterDialog(BuildContext context) async {
                     width: 16,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Import'),
+                : Text(AppStrings.of(ctx).es ? 'Importar' : 'Import'),
           ),
         ],
       ),
@@ -3146,7 +3141,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                     children: [
                       Expanded(
                         child: Text(
-                          'Folders',
+                          AppStrings.of(sheetCtx).es ? 'Carpetas' : 'Folders',
                           style: TextStyle(
                             color: EmberColors.textHigh,
                             fontWeight: FontWeight.w600,
@@ -3165,7 +3160,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
                     child: Text(
-                      'No folders yet. Create one to group characters.',
+                      AppStrings.of(sheetCtx).es ? 'Aún no hay carpetas. Crea una para agrupar personajes.' : 'No folders yet. Create one to group characters.',
                       style: TextStyle(
                         color: EmberColors.textMid,
                         fontSize: 13,
@@ -3181,9 +3176,9 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                         ListTile(
                           leading: Icon(Icons.folder_open,
                               color: EmberColors.textMid),
-                          title: const Text('All characters'),
+                          title: Text(AppStrings.of(sheetCtx).es ? 'Todos los personajes' : 'All characters'),
                           subtitle: Text(
-                            '${store.characters.length} card${store.characters.length == 1 ? "" : "s"}',
+                            AppStrings.of(sheetCtx).es ? '${store.characters.length} tarjeta${store.characters.length == 1 ? "" : "s"}' : '${store.characters.length} card${store.characters.length == 1 ? "" : "s"}',
                             style: const TextStyle(fontSize: 11),
                           ),
                           trailing: store.charFolderId == null
@@ -3202,7 +3197,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                 color: EmberColors.primary),
                             title: Text(f.name),
                             subtitle: Text(
-                              '${f.characterIds.length} card${f.characterIds.length == 1 ? "" : "s"}',
+                              AppStrings.of(sheetCtx).es ? '${f.characterIds.length} tarjeta${f.characterIds.length == 1 ? "" : "s"}' : '${f.characterIds.length} card${f.characterIds.length == 1 ? "" : "s"}',
                               style: const TextStyle(fontSize: 11),
                             ),
                             trailing: Row(
@@ -3216,7 +3211,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                         size: 18),
                                   ),
                                 PopupMenuButton<String>(
-                                  tooltip: 'Folder actions',
+                                  tooltip: AppStrings.of(sheetCtx).es ? 'Acciones de carpeta' : 'Folder actions',
                                   onSelected: (action) async {
                                     if (action == 'rename') {
                                       final newName =
@@ -3230,11 +3225,10 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                     } else if (action == 'delete') {
                                       final ok = await confirmDelete(
                                         context,
-                                        title: 'Delete folder "${f.name}"?',
-                                        message:
-                                            'Characters in this folder stay '
-                                            'in your library. Only the '
-                                            'folder grouping is removed.',
+                                        title: AppStrings.of(sheetCtx).es ? '¿Eliminar la carpeta "${f.name}"?' : 'Delete folder "${f.name}"?',
+                                        message: AppStrings.of(sheetCtx).es
+                                            ? 'Los personajes de esta carpeta permanecerán en tu biblioteca. Solo se eliminará la agrupación de la carpeta.'
+                                            : 'Characters in this folder stay in your library. Only the folder grouping is removed.',
                                       );
                                       if (ok) {
                                         store.deleteFolder(f.id);
@@ -3242,13 +3236,13 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                                       }
                                     }
                                   },
-                                  itemBuilder: (_) => const [
+                                  itemBuilder: (_) => [
                                     PopupMenuItem(
                                         value: 'rename',
-                                        child: Text('Rename')),
+                                        child: Text(AppStrings.of(sheetCtx).es ? 'Renombrar' : 'Rename')),
                                     PopupMenuItem(
                                         value: 'delete',
-                                        child: Text('Delete')),
+                                        child: Text(AppStrings.of(sheetCtx).es ? 'Eliminar' : 'Delete')),
                                   ],
                                 ),
                               ],
@@ -3265,7 +3259,7 @@ Future<void> _showFoldersSheet(BuildContext context, AppStore store) async {
                 ListTile(
                   leading: Icon(Icons.add,
                       color: EmberColors.primary),
-                  title: const Text('New folder'),
+                  title: Text(AppStrings.of(sheetCtx).es ? 'Nueva carpeta' : 'New folder'),
                   onTap: () async {
                     final name = await _promptFolderName(context);
                     if (name != null && name.trim().isNotEmpty) {
@@ -3294,21 +3288,21 @@ Future<String?> _promptFolderName(BuildContext context,
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: EmberColors.bgPanel,
-      title: Text(initial.isEmpty ? 'New folder' : 'Rename folder'),
+      title: Text(AppStrings.of(ctx).es ? (initial.isEmpty ? 'Nueva carpeta' : 'Renombrar carpeta') : (initial.isEmpty ? 'New folder' : 'Rename folder')),
       content: TextField(
         controller: controller,
         autofocus: true,
-        decoration: const InputDecoration(hintText: 'e.g. "Bathhouse OCs"'),
+        decoration: InputDecoration(hintText: AppStrings.of(ctx).es ? 'p. ej. "OCs del balneario"' : 'e.g. "Bathhouse OCs"'),
         onSubmitted: (v) => Navigator.of(ctx).pop(v.trim()),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Cancel'),
+          child: Text(AppStrings.of(ctx).es ? 'Cancelar' : 'Cancel'),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(ctx).pop(controller.text.trim()),
-          child: const Text('Save'),
+          child: Text(AppStrings.of(ctx).es ? 'Guardar' : 'Save'),
         ),
       ],
     ),
@@ -3335,7 +3329,7 @@ Future<void> _showTagPickerSheet(
   }
   if (usage.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('No tags found on any character yet.')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Aún no se encontraron etiquetas en ningún personaje.' : 'No tags found on any character yet.')),
     );
     return;
   }
@@ -3369,7 +3363,7 @@ Future<void> _showTagPickerSheet(
                     children: [
                       Expanded(
                         child: Text(
-                          'Filter by tags',
+                          AppStrings.of(sheetCtx).es ? 'Filtrar por etiquetas' : 'Filter by tags',
                           style: TextStyle(
                             color: EmberColors.textHigh,
                             fontWeight: FontWeight.w600,
@@ -3437,7 +3431,7 @@ Future<void> _showTagPickerSheet(
                       TextButton(
                         onPressed: () =>
                             setSheetState(() => draft.clear()),
-                        child: const Text('Clear all'),
+                        child: Text(AppStrings.of(sheetCtx).es ? 'Borrar todo' : 'Clear all'),
                       ),
                       const Spacer(),
                       ElevatedButton(
@@ -3450,7 +3444,7 @@ Future<void> _showTagPickerSheet(
                           }
                           Navigator.of(sheetCtx).pop();
                         },
-                        child: Text('Apply (${draft.length})'),
+                        child: Text(AppStrings.of(sheetCtx).es ? 'Aplicar (${draft.length})' : 'Apply (${draft.length})'),
                       ),
                     ],
                   ),
@@ -3509,7 +3503,7 @@ Future<void> showAddToFolderSheet(
                     children: [
                       Expanded(
                         child: Text(
-                          'Add "$itemName" to folder',
+                          AppStrings.of(sheetCtx).es ? 'Añadir "$itemName" a carpeta' : 'Add "$itemName" to folder',
                           style: TextStyle(
                             color: EmberColors.textHigh,
                             fontWeight: FontWeight.w600,
@@ -3530,7 +3524,7 @@ Future<void> showAddToFolderSheet(
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
                     child: Text(
-                      'No folders yet. Create one below to group ${countNoun}s.',
+                      AppStrings.of(sheetCtx).es ? 'Aún no hay carpetas. Crea una abajo para agrupar elementos.' : 'No folders yet. Create one below to group ${countNoun}s.',
                       style: TextStyle(
                         color: EmberColors.textMid,
                         fontSize: 13,
@@ -3556,7 +3550,9 @@ Future<void> showAddToFolderSheet(
                             },
                             title: Text(f.name),
                             subtitle: Text(
-                              '${countOf(f)} $countNoun${countOf(f) == 1 ? "" : "s"}',
+                              AppStrings.of(sheetCtx).es
+                                  ? '${countOf(f)} elemento${countOf(f) == 1 ? "" : "s"}'
+                                  : '${countOf(f)} $countNoun${countOf(f) == 1 ? "" : "s"}',
                               style: const TextStyle(fontSize: 11),
                             ),
                             controlAffinity:
@@ -3569,7 +3565,7 @@ Future<void> showAddToFolderSheet(
                 ListTile(
                   leading: Icon(Icons.add,
                       color: EmberColors.primary),
-                  title: const Text('Create new folder + add'),
+                  title: Text(AppStrings.of(sheetCtx).es ? 'Crear carpeta nueva + añadir' : 'Create new folder + add'),
                   onTap: () async {
                     final name = await _promptFolderName(context);
                     if (name == null || name.trim().isEmpty) return;

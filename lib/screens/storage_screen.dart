@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/app_strings.dart';
 import '../services/error_log.dart';
 import '../services/llm_debug_log.dart';
 import 'llm_debug_log_viewer_screen.dart';
@@ -42,6 +43,8 @@ class _StorageScreenState extends State<StorageScreen> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
+    final es = AppStrings.of(context).es;
+    String t(String spanish, String english) => es ? spanish : english;
     final used = _bytes == null ? '…' : _fmtBytes(_bytes!);
     final loadResult = JsonStorage.lastLoad;
     final loadErrors = store.loadErrors;
@@ -52,7 +55,7 @@ class _StorageScreenState extends State<StorageScreen> {
     final secureKeyErrors = List<String>.from(SecureKeys.lastErrors);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Storage')),
+      appBar: AppBar(title: Text(t('Almacenamiento', 'Storage'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -86,10 +89,10 @@ class _StorageScreenState extends State<StorageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Local data',
+                  Text(t('Datos locales', 'Local data'),
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  Text('$used used (main + rotated backups)',
+                  Text(t('$used usados (principal + copias rotativas)', '$used used (main + rotated backups)'),
                       style:
                           TextStyle(color: EmberColors.textMid)),
                 ],
@@ -99,7 +102,7 @@ class _StorageScreenState extends State<StorageScreen> {
           const SizedBox(height: 8),
           _StatTile(
             icon: Icons.person_outline,
-            label: 'Characters',
+            label: t('Personajes', 'Characters'),
             value: store.characters.length.toString(),
           ),
           _StatTile(
@@ -114,17 +117,17 @@ class _StorageScreenState extends State<StorageScreen> {
           ),
           _StatTile(
             icon: Icons.menu_book_outlined,
-            label: 'Lorebooks',
+            label: t('Libros de lore', 'Lorebooks'),
             value: store.lorebooks.length.toString(),
           ),
           _StatTile(
             icon: Icons.layers_outlined,
-            label: 'Presets (visible)',
+            label: t('Preajustes (visibles)', 'Presets (visible)'),
             value: store.visiblePresets.length.toString(),
           ),
           _StatTile(
             icon: Icons.api,
-            label: 'Providers',
+            label: t('Proveedores', 'Providers'),
             value: store.providers.length.toString(),
           ),
           const SizedBox(height: 16),
@@ -138,7 +141,7 @@ class _StorageScreenState extends State<StorageScreen> {
             icon: Icon(Icons.save_outlined,
                 color: EmberColors.primary),
             label: Text(
-              'Save snapshot now',
+              t('Guardar instantánea ahora', 'Save snapshot now'),
               style: TextStyle(color: EmberColors.primary),
             ),
             style: OutlinedButton.styleFrom(
@@ -159,13 +162,11 @@ class _StorageScreenState extends State<StorageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Diagnostics',
+                  Text(t('Diagnósticos', 'Diagnostics'),
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                   Text(
-                    'Crashes and uncaught exceptions are logged to a '
-                    'file on this device only. Nothing leaves your '
-                    'phone unless you tap one of the buttons below.',
+                    t('Los fallos y las excepciones no controladas se registran únicamente en un archivo de este dispositivo. Nada sale de tu dispositivo a menos que pulses uno de los botones de abajo.', 'Crashes and uncaught exceptions are logged to a file on this device only. Nothing leaves your phone unless you tap one of the buttons below.'),
                     style: TextStyle(
                       color: EmberColors.textMid,
                       fontSize: 12,
@@ -181,7 +182,7 @@ class _StorageScreenState extends State<StorageScreen> {
                         icon: Icon(Icons.copy_outlined,
                             color: EmberColors.primary, size: 18),
                         label: Text(
-                          'Copy error log',
+                          t('Copiar registro de errores', 'Copy error log'),
                           style:
                               TextStyle(color: EmberColors.primary),
                         ),
@@ -195,7 +196,7 @@ class _StorageScreenState extends State<StorageScreen> {
                         icon: Icon(Icons.ios_share,
                             color: EmberColors.primary, size: 18),
                         label: Text(
-                          'Share error log',
+                          t('Compartir registro de errores', 'Share error log'),
                           style:
                               TextStyle(color: EmberColors.primary),
                         ),
@@ -209,7 +210,7 @@ class _StorageScreenState extends State<StorageScreen> {
                         icon: Icon(Icons.delete_sweep_outlined,
                             color: EmberColors.textMid, size: 18),
                         label: Text(
-                          'Clear log',
+                          t('Borrar registro', 'Clear log'),
                           style: TextStyle(color: EmberColors.textMid),
                         ),
                         style: OutlinedButton.styleFrom(
@@ -248,18 +249,13 @@ class _StorageScreenState extends State<StorageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Clear library',
+                  Text(
+                    t('Borrar biblioteca', 'Clear library'),
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Removes every character, chat, persona, preset, lorebook '
-                    'and API connection stored on this device. '
-                    'Your settings (temperature, chat behaviour, etc.) are kept. '
-                    'There is no undo.\n\n'
-                    'For a full factory reset that also wipes settings, '
-                    'use Backup & Restore → Advanced → Reset to factory settings.',
+                    t('Elimina todos los personajes, chats, personas, preajustes, libros de lore y conexiones API almacenados en este dispositivo. Tus ajustes se conservan. No se puede deshacer.\n\nPara un restablecimiento completo que también borre los ajustes, usa Copia de seguridad y restauración → Avanzado → Restablecer a valores de fábrica.', 'Removes every character, chat, persona, preset, lorebook and API connection stored on this device. Your settings are kept. There is no undo.\n\nFor a full factory reset that also wipes settings, use Backup & Restore → Advanced → Reset to factory settings.'),
                     style: TextStyle(
                       color: EmberColors.textMid,
                       fontSize: 12,
@@ -271,7 +267,7 @@ class _StorageScreenState extends State<StorageScreen> {
                     icon: Icon(Icons.delete_outline,
                         color: EmberColors.danger),
                     label: Text(
-                      'Clear library',
+                      t('Borrar biblioteca', 'Clear library'),
                       style: TextStyle(color: EmberColors.danger),
                     ),
                     style: OutlinedButton.styleFrom(
@@ -302,10 +298,9 @@ class _StorageScreenState extends State<StorageScreen> {
     await _refresh();
     if (!mounted) return;
     messenger.showSnackBar(
-      const SnackBar(
-        content: Text(
-            'Snapshot saved. Previous state rotated into bak.0.'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(AppStrings.of(context).es ? 'Instantánea guardada. El estado anterior se movió a bak.0.' : 'Snapshot saved. Previous state rotated into bak.0.'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -322,8 +317,8 @@ class _StorageScreenState extends State<StorageScreen> {
       SnackBar(
         content: Text(
           bytes == 0
-              ? 'Error log is empty — no crashes recorded.'
-              : 'Copied $bytes B of error log to clipboard.',
+              ? (AppStrings.of(context).es ? 'El registro de errores está vacío; no se registraron fallos.' : 'Error log is empty — no crashes recorded.')
+              : (AppStrings.of(context).es ? 'Se copiaron $bytes B del registro de errores al portapapeles.' : 'Copied $bytes B of error log to clipboard.'),
         ),
         duration: const Duration(seconds: 3),
       ),
@@ -344,21 +339,18 @@ class _StorageScreenState extends State<StorageScreen> {
       if (body.isEmpty) {
         if (!mounted) return;
         messenger.showSnackBar(
-          const SnackBar(
-            content:
-                Text('Error log is empty — no crashes recorded.'),
-          ),
+          SnackBar(content: Text(AppStrings.of(context).es ? 'El registro de errores está vacío; no se registraron fallos.' : 'Error log is empty — no crashes recorded.')),
         );
         return;
       }
       await Share.shareXFiles(
         [XFile(path)],
-        subject: 'Pyre error log',
+        subject: AppStrings.of(context).es ? 'Registro de errores de Pyre' : 'Pyre error log',
       );
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not share log: $e')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudo compartir el registro: $e' : 'Could not share log: $e')),
       );
     }
   }
@@ -372,7 +364,7 @@ class _StorageScreenState extends State<StorageScreen> {
     await ErrorLog.clear();
     if (!mounted) return;
     messenger.showSnackBar(
-      const SnackBar(content: Text('Error log cleared.')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Registro de errores borrado.' : 'Error log cleared.')),
     );
   }
 
@@ -386,7 +378,10 @@ class _StorageScreenState extends State<StorageScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Clear library?'),
+        title: Text(AppStrings.of(context).es ? '¿Borrar biblioteca?' : 'Clear library?'),
+        content: Text(AppStrings.of(context).es ? 'Esto elimina permanentemente los datos de tu biblioteca. Tus ajustes se conservan. No se puede deshacer.' : 'This permanently deletes your library data. Your settings are kept. There is no undo.'),
+        /* original English detail removed from visible UI */
+        /*
         content: const Text(
           'This permanently deletes all characters, chats, personas, presets, '
           'lorebooks and API connections. Your settings are kept. '
@@ -394,17 +389,18 @@ class _StorageScreenState extends State<StorageScreen> {
           'To also wipe settings, use Backup & Restore → Advanced → '
           'Reset to factory settings.',
         ),
+        */
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.of(context).es ? 'Cancelar' : 'Cancel'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: EmberColors.danger,
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Clear'),
+            child: Text(AppStrings.of(context).es ? 'Borrar' : 'Clear'),
           ),
         ],
       ),
@@ -428,7 +424,7 @@ class _StorageScreenState extends State<StorageScreen> {
     if (!mounted) return;
     _refresh();
     messenger.showSnackBar(
-      const SnackBar(content: Text('Library cleared.')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Biblioteca borrada.' : 'Library cleared.')),
     );
   }
 }
@@ -460,22 +456,18 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
       if (files.isEmpty) {
         if (!mounted) return;
         messenger.showSnackBar(
-          const SnackBar(
-            content: Text(
-                'No LLM diagnostics logged yet — turn the switch on, then '
-                'reproduce the issue.'),
-          ),
+          SnackBar(content: Text(AppStrings.of(context).es ? 'Aún no hay diagnósticos LLM registrados; activa el interruptor y luego reproduce el problema.' : 'No LLM diagnostics logged yet — turn the switch on, then reproduce the issue.')),
         );
         return;
       }
       await Share.shareXFiles(
         [for (final f in files) XFile(f.path)],
-        subject: 'Pyre LLM diagnostics log',
+        subject: AppStrings.of(context).es ? 'Registro de diagnósticos LLM de Pyre' : 'Pyre LLM diagnostics log',
       );
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not export diagnostics: $e')),
+        SnackBar(content: Text(AppStrings.of(context).es ? 'No se pudieron exportar los diagnósticos: $e' : 'Could not export diagnostics: $e')),
       );
     }
   }
@@ -487,8 +479,8 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
     messenger.showSnackBar(
       SnackBar(
         content: Text(bytes == 0
-            ? 'No LLM diagnostics logged yet.'
-            : 'Copied $bytes B of LLM diagnostics to clipboard.'),
+            ? (AppStrings.of(context).es ? 'Aún no hay diagnósticos LLM registrados.' : 'No LLM diagnostics logged yet.')
+            : (AppStrings.of(context).es ? 'Se copiaron $bytes B de diagnósticos LLM al portapapeles.' : 'Copied $bytes B of LLM diagnostics to clipboard.')),
         duration: const Duration(seconds: 3),
       ),
     );
@@ -499,7 +491,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
     await LlmDebugLog.instance.clear();
     if (!mounted) return;
     messenger.showSnackBar(
-      const SnackBar(content: Text('LLM diagnostics log cleared.')),
+      SnackBar(content: Text(AppStrings.of(context).es ? 'Registro de diagnósticos LLM borrado.' : 'LLM diagnostics log cleared.')),
     );
   }
 
@@ -511,12 +503,11 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Developer',
+            Text(AppStrings.of(context).es ? 'Desarrollador' : 'Developer',
                 style: TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
             Text(
-              'Stored locally on this device; contains your chat text; '
-              'never your API key. For debugging.',
+              AppStrings.of(context).es ? 'Se almacena localmente en este dispositivo; contiene el texto de tus chats, pero nunca tu clave API. Para depuración.' : 'Stored locally on this device; contains your chat text; never your API key. For debugging.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -528,10 +519,9 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
               contentPadding: EdgeInsets.zero,
               dense: true,
               activeThumbColor: EmberColors.primary,
-              title: const Text('Log raw LLM calls (debug)'),
-              subtitle: const Text(
-                'Records every request + response, tagged per feature, '
-                'to a JSONL file you can export.',
+              title: Text((AppStrings.of(context).es ? 'Registrar llamadas LLM sin procesar (depuración)' : 'Log raw LLM calls (debug)')),
+              subtitle: Text(
+                AppStrings.of(context).es ? 'Registra cada solicitud y respuesta, etiquetadas por función, en un archivo JSONL que puedes exportar.' : 'Records every request + response, tagged per feature, to a JSONL file you can export.',
                 style: TextStyle(fontSize: 12),
               ),
               value: _enabled,
@@ -544,7 +534,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
               children: [
                 FilledButton.icon(
                   icon: const Icon(Icons.visibility_outlined, size: 18),
-                  label: const Text('View log'),
+                  label: Text((AppStrings.of(context).es ? 'Ver registro' : 'View log')),
                   style: FilledButton.styleFrom(
                     backgroundColor: EmberColors.primary,
                     foregroundColor: Colors.white,
@@ -559,7 +549,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
                   icon: Icon(Icons.ios_share,
                       color: EmberColors.primary, size: 18),
                   label: Text(
-                    'Export logs',
+                    (AppStrings.of(context).es ? 'Exportar registros' : 'Export logs'),
                     style: TextStyle(color: EmberColors.primary),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -571,7 +561,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
                   icon: Icon(Icons.copy_outlined,
                       color: EmberColors.primary, size: 18),
                   label: Text(
-                    'Copy logs',
+                    (AppStrings.of(context).es ? 'Copiar registros' : 'Copy logs'),
                     style: TextStyle(color: EmberColors.primary),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -583,7 +573,7 @@ class _LlmDebugLogCardState extends State<_LlmDebugLogCard> {
                   icon: Icon(Icons.delete_sweep_outlined,
                       color: EmberColors.textMid, size: 18),
                   label: Text(
-                    'Clear logs',
+                    (AppStrings.of(context).es ? 'Borrar registros' : 'Clear logs'),
                     style: TextStyle(color: EmberColors.textMid),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -623,7 +613,7 @@ class _LoadStatusBanner extends StatelessWidget {
     if (isClean || result.status == LoadStatus.freshInstall) {
       return const SizedBox.shrink();
     }
-    final (color, icon, title) = _styleFor(result.status);
+    final (color, icon, title) = _styleFor(result.status, AppStrings.of(context).es);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -664,7 +654,7 @@ class _LoadStatusBanner extends StatelessWidget {
           if (errors.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(
-              'Per-collection issues:',
+              AppStrings.of(context).es ? 'Problemas por colección:' : 'Per-collection issues:',
               style: TextStyle(
                 color: EmberColors.textHigh,
                 fontSize: 12,
@@ -690,7 +680,7 @@ class _LoadStatusBanner extends StatelessWidget {
     );
   }
 
-  (Color, IconData, String) _styleFor(LoadStatus s) {
+  (Color, IconData, String) _styleFor(LoadStatus s, bool es) {
     switch (s) {
       case LoadStatus.ok:
         // Reached here means there were per-model errors but the main
@@ -698,31 +688,31 @@ class _LoadStatusBanner extends StatelessWidget {
         return (
           const Color(0xFFE9A35A),
           Icons.warning_amber_outlined,
-          'Loaded with warnings',
+          es ? 'Cargado con advertencias' : 'Loaded with warnings',
         );
       case LoadStatus.recoveredFromBackup:
         return (
           const Color(0xFFE9A35A),
           Icons.history,
-          'Recovered from backup',
+          es ? 'Recuperado desde la copia de seguridad' : 'Recovered from backup',
         );
       case LoadStatus.salvagedPartial:
         return (
           const Color(0xFFE57373),
           Icons.health_and_safety_outlined,
-          'Partial salvage — some recent data may be lost',
+          es ? 'Recuperación parcial; algunos datos recientes pueden haberse perdido' : 'Partial salvage — some recent data may be lost',
         );
       case LoadStatus.failed:
         return (
           EmberColors.danger,
           Icons.error_outline,
-          'Load failed — raw file still on disk',
+          es ? 'Falló la carga; el archivo original sigue en el dispositivo' : 'Load failed — raw file still on disk',
         );
       case LoadStatus.freshInstall:
         return (
           EmberColors.textMid,
           Icons.fiber_new,
-          'Fresh install',
+          es ? 'Instalación nueva' : 'Fresh install',
         );
     }
   }
@@ -762,7 +752,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'API key storage errors',
+                  AppStrings.of(context).es ? 'Errores de almacenamiento de claves API' : 'API key storage errors',
                   style: TextStyle(
                     color: color,
                     fontWeight: FontWeight.w700,
@@ -779,7 +769,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  'Dismiss',
+                  AppStrings.of(context).es ? 'Descartar' : 'Dismiss',
                   style: TextStyle(
                     color: EmberColors.textMid,
                     fontSize: 12,
@@ -790,9 +780,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'One or more API keys failed to read/write from OS-secure '
-            'storage. If a provider is missing its key, re-paste it '
-            'in API Connections.',
+            AppStrings.of(context).es ? 'No se pudieron leer o escribir una o más claves API en el almacenamiento seguro del sistema. Si a un proveedor le falta su clave, vuelve a pegarla en Conexiones API.' : 'One or more API keys failed to read/write from OS-secure storage. If a provider is missing its key, re-paste it in API Connections.',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
@@ -801,7 +789,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Recent failures:',
+            AppStrings.of(context).es ? 'Fallos recientes:' : 'Recent failures:',
             style: TextStyle(
               color: EmberColors.textHigh,
               fontSize: 12,
@@ -825,7 +813,7 @@ class _SecureKeyErrorBanner extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 6, top: 4),
               child: Text(
-                '…and ${errors.length - 8} more',
+                AppStrings.of(context).es ? '…y ${errors.length - 8} más' : '…and ${errors.length - 8} more',
                 style: TextStyle(
                   color: EmberColors.textMid,
                   fontSize: 11.5,

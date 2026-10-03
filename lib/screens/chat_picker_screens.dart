@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
+import '../l10n/app_strings.dart';
 import '../state/app_store.dart';
 import '../theme.dart';
 import '../widgets/avatar.dart';
@@ -224,16 +225,16 @@ Future<void> startNewChatFlow(BuildContext context) async {
             leading: Icon(Icons.person_outline, color: EmberColors.primary),
             title: const Text('Chat'),
             subtitle: Text(
-              'Pick one character to talk to.',
+              AppStrings.of(context).es ? 'Elige un personaje con quien hablar.' : 'Pick one character to talk to.',
               style: TextStyle(color: EmberColors.textMid, fontSize: 12),
             ),
             onTap: () => Navigator.pop(sheet, 'solo'),
           ),
           ListTile(
             leading: Icon(Icons.groups_outlined, color: EmberColors.primary),
-            title: const Text('Group chat'),
+            title: Text(AppStrings.of(context).es ? 'Chat grupal' : 'Group chat'),
             subtitle: Text(
-              'Pick the whole cast up front — everyone joins the scene.',
+              AppStrings.of(context).es ? 'Elige todo el elenco desde el principio; todos se unirán a la escena.' : 'Pick the whole cast up front — everyone joins the scene.',
               style: TextStyle(color: EmberColors.textMid, fontSize: 12),
             ),
             onTap: () => Navigator.pop(sheet, 'group'),
@@ -249,9 +250,9 @@ Future<void> startNewChatFlow(BuildContext context) async {
   }
   final picked = await navigator.push<String>(
     MaterialPageRoute(
-      builder: (_) => const CharacterPickerScreen(
-        title: 'New chat',
-        subtitle: 'Pick who to chat with.',
+      builder: (_) => CharacterPickerScreen(
+        title: AppStrings.of(context).es ? 'Chat nuevo' : 'New chat',
+        subtitle: AppStrings.of(context).es ? 'Elige con quién chatear.' : 'Pick who to chat with.',
       ),
     ),
   );
@@ -301,8 +302,8 @@ Future<void> startNewGroupChat(
   if (store.chatSettings.askPersonaOnNewChat) {
     personaPicks = await navigator.push<List<String>>(
       MaterialPageRoute(
-        builder: (_) => const PersonaPartyPickerScreen(
-          title: 'Personas for the new group chat',
+        builder: (_) => PersonaPartyPickerScreen(
+          title: AppStrings.of(context).es ? 'Personas para el nuevo chat grupal' : 'Personas for the new group chat',
         ),
       ),
     );
@@ -408,7 +409,7 @@ class _OrganizedCharacterPickerBodyState
     // inflates on-screen rows — same virtualization as the library tab.
     final rows = <Widget Function()>[];
     if (onHome && liveFolders.isNotEmpty) {
-      rows.add(() => _sectionLabel('FOLDERS'));
+      rows.add(() => _sectionLabel(AppStrings.of(context).es ? 'CARPETAS' : 'FOLDERS'));
       for (final f in liveFolders) {
         final count = selectableIn(f);
         rows.add(() => ListTile(
@@ -416,7 +417,7 @@ class _OrganizedCharacterPickerBodyState
                   Icon(Icons.folder_outlined, color: EmberColors.textMid),
               title: Text(f.name),
               subtitle: Text(
-                '$count character${count == 1 ? '' : 's'}',
+                AppStrings.of(context).es ? '$count personaje${count == 1 ? '' : 's'}' : '$count character${count == 1 ? '' : 's'}',
                 style: TextStyle(color: EmberColors.textMid, fontSize: 12),
               ),
               trailing: const Icon(Icons.chevron_right, size: 18),
@@ -426,7 +427,7 @@ class _OrganizedCharacterPickerBodyState
       rows.add(() => const SizedBox(height: 8));
     }
     if (organized.favs.isNotEmpty) {
-      rows.add(() => _sectionLabel('FAVORITES'));
+      rows.add(() => _sectionLabel(AppStrings.of(context).es ? 'FAVORITOS' : 'FAVORITES'));
       for (final c in organized.favs) {
         rows.add(() => widget.buildRow(c));
       }
@@ -442,8 +443,9 @@ class _OrganizedCharacterPickerBodyState
       rows.add(() => Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Text(
-              'Everyone else lives inside a folder — open one above, or '
-              'search to look across all of them.',
+              AppStrings.of(context).es
+                  ? 'Todos los demás están dentro de una carpeta; abre una arriba o busca para verlos en todas las carpetas.'
+                  : 'Everyone else lives inside a folder — open one above, or search to look across all of them.',
               style: TextStyle(
                   color: EmberColors.textMid, fontSize: 12, height: 1.4),
             ),
@@ -458,15 +460,15 @@ class _OrganizedCharacterPickerBodyState
         child: EmptyState(
           icon: liveCount == 0 ? Icons.person_outline : Icons.search_off,
           title: liveCount == 0
-              ? 'No characters yet'
+              ? (AppStrings.of(context).es ? 'Aún no hay personajes' : 'No characters yet')
               : q.isNotEmpty
-                  ? 'No matches'
-                  : 'Every character is already in this chat',
+                  ? (AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches')
+                  : (AppStrings.of(context).es ? 'Todos los personajes ya están en este chat' : 'Every character is already in this chat'),
           subtitle: liveCount == 0
-              ? 'Import or create one from the Library tab.'
+              ? (AppStrings.of(context).es ? 'Importa o crea uno desde la pestaña Biblioteca.' : 'Import or create one from the Library tab.')
               : q.isNotEmpty
-                  ? 'Try a different search term.'
-                  : 'They\'re all members already.',
+                  ? (AppStrings.of(context).es ? 'Prueba con otro término de búsqueda.' : 'Try a different search term.')
+                  : (AppStrings.of(context).es ? 'Todos ya son miembros.' : 'They\'re all members already.'),
         ),
       );
     } else {
@@ -492,9 +494,9 @@ class _OrganizedCharacterPickerBodyState
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: TextField(
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.search, size: 18),
-              hintText: 'Search characters…',
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search, size: 18),
+              hintText: AppStrings.of(context).es ? 'Buscar personajes…' : 'Search characters…',
               isDense: true,
             ),
             onChanged: (v) => setState(() => _query = v),
@@ -508,7 +510,7 @@ class _OrganizedCharacterPickerBodyState
                 TextButton.icon(
                   onPressed: () => setState(() => _folderId = null),
                   icon: const Icon(Icons.arrow_back, size: 16),
-                  label: const Text('All characters'),
+                  label: Text(AppStrings.of(context).es ? 'Todos los personajes' : 'All characters'),
                 ),
                 const SizedBox(width: 4),
                 Icon(Icons.folder_outlined,
@@ -568,7 +570,7 @@ class _GroupCharacterPickerScreenState
     final primaryId =
         widget.primary?.id ?? (_selected.isEmpty ? null : _selected.first);
     return Scaffold(
-      appBar: AppBar(title: const Text('New group chat')),
+      appBar: AppBar(title: Text(AppStrings.of(context).es ? 'Nuevo chat grupal' : 'New group chat')),
       body: Column(
         children: [
           Expanded(
@@ -594,7 +596,7 @@ class _GroupCharacterPickerScreenState
                   ),
                   title: Text(c.name),
                   subtitle: isPrimary
-                      ? Text('Opens the chat',
+                      ? Text(AppStrings.of(context).es ? 'Inicia el chat' : 'Opens the chat',
                           style: TextStyle(
                               color: EmberColors.primary, fontSize: 12))
                       : (c.tagline != null && c.tagline!.isNotEmpty
@@ -638,10 +640,10 @@ class _GroupCharacterPickerScreenState
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16),
                     activeThumbColor: EmberColors.primary,
-                    title: const Text('Party mode',
-                        style: TextStyle(fontSize: 14)),
+                    title: Text(AppStrings.of(context).es ? 'Modo grupo' : 'Party mode',
+                        style: const TextStyle(fontSize: 14)),
                     subtitle: Text(
-                      'Everyone replies together in one scene.',
+                      AppStrings.of(context).es ? 'Todos responden juntos en una sola escena.' : 'Everyone replies together in one scene.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
@@ -655,10 +657,10 @@ class _GroupCharacterPickerScreenState
                       Expanded(
                         child: Text(
                           n == 0
-                              ? 'Pick at least one member'
+                              ? (AppStrings.of(context).es ? 'Elige al menos un miembro' : 'Pick at least one member')
                               : n == 1
-                                  ? 'Just 1 member — a regular 1:1 chat'
-                                  : '$n members',
+                                  ? (AppStrings.of(context).es ? 'Solo 1 miembro — un chat 1:1 normal' : 'Just 1 member — a regular 1:1 chat')
+                                  : (AppStrings.of(context).es ? '$n miembros' : '$n members'),
                           style: TextStyle(
                             color: n > 1
                                 ? EmberColors.primary
@@ -680,7 +682,7 @@ class _GroupCharacterPickerScreenState
                                   memberIds: List<String>.from(_selected),
                                   partyMode: _partyMode && n > 1,
                                 )),
-                        child: const Text('Create chat'),
+                        child: Text(AppStrings.of(context).es ? 'Crear chat' : 'Create chat'),
                       ),
                     ],
                   ),
@@ -756,9 +758,9 @@ class _PersonaPickerScreenState extends State<PersonaPickerScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search, size: 18),
-                hintText: 'Search personas…',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search, size: 18),
+                hintText: AppStrings.of(context).es ? 'Buscar personas…' : 'Search personas…',
                 isDense: true,
               ),
               onChanged: (v) => setState(() => _query = v),
@@ -776,9 +778,9 @@ class _PersonaPickerScreenState extends State<PersonaPickerScreen> {
                 final noPersonaTile = ListTile(
                   leading: Icon(Icons.person_off_outlined,
                       color: EmberColors.textDim),
-                  title: const Text('No persona'),
+                  title: Text(AppStrings.of(context).es ? 'Sin persona' : 'No persona'),
                   subtitle: Text(
-                    'Send messages without a {{user}} identity.',
+                    AppStrings.of(context).es ? 'Envía mensajes sin una identidad de {{user}}.' : 'Send messages without a {{user}} identity.',
                     style: TextStyle(
                         color: EmberColors.textMid, fontSize: 12),
                   ),
@@ -794,22 +796,23 @@ class _PersonaPickerScreenState extends State<PersonaPickerScreen> {
                 // Optional empty-state shown right under the header.
                 Widget? emptyState;
                 if (store.personas.isEmpty) {
-                  emptyState = const Padding(
-                    padding: EdgeInsets.all(32),
+                  emptyState = Padding(
+                    padding: const EdgeInsets.all(32),
                     child: EmptyState(
                       icon: Icons.face_outlined,
-                      title: 'No personas yet',
-                      subtitle:
-                          'Create one from the Personas tab to play as a specific identity.',
+                      title: AppStrings.of(context).es ? 'Aún no hay personas' : 'No personas yet',
+                      subtitle: AppStrings.of(context).es
+                          ? 'Crea una desde la pestaña Personas para usar una identidad específica.'
+                          : 'Create one from the Personas tab to play as a specific identity.',
                     ),
                   );
                 } else if (filtered.isEmpty) {
-                  emptyState = const Padding(
-                    padding: EdgeInsets.all(32),
+                  emptyState = Padding(
+                    padding: const EdgeInsets.all(32),
                     child: EmptyState(
                       icon: Icons.search_off,
-                      title: 'No matches',
-                      subtitle: 'Nothing matches your search.',
+                      title: AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches',
+                      subtitle: AppStrings.of(context).es ? 'Nada coincide con tu búsqueda.' : 'Nothing matches your search.',
                     ),
                   );
                 }
@@ -936,10 +939,10 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
     );
     final n = _selected.length;
     final status = n == 0
-        ? 'No persona'
+        ? (AppStrings.of(context).es ? 'Sin persona' : 'No persona')
         : n == 1
             ? 'Solo — 1 persona'
-            : 'Persona party — $n personas (your messages = the whole group)';
+            : (AppStrings.of(context).es ? 'Grupo de personas — $n personas (tus mensajes = todo el grupo)' : 'Persona party — $n personas (your messages = the whole group)');
 
     Widget row(Persona p) => CheckboxListTile(
           value: _selected.contains(p.id),
@@ -973,7 +976,7 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
       rows.add(() => Padding(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
             child: Text(
-              'FAVORITES',
+              AppStrings.of(context).es ? 'FAVORITOS' : 'FAVORITES',
               style: TextStyle(
                 color: EmberColors.textDim,
                 fontSize: 11,
@@ -998,8 +1001,8 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(
-              'Pick one to play solo, or several for a persona party. '
-              'Uncheck everything for no persona. Only affects this chat.',
+              AppStrings.of(context).es ? 'Elige una para jugar en solitario o varias para un grupo de personas. ' : 'Pick one to play solo, or several for a persona party. '
+              + (AppStrings.of(context).es ? 'Desmarca todas para no usar ninguna persona. Solo afecta a este chat.' : 'Uncheck everything for no persona. Only affects this chat.'),
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -1010,9 +1013,9 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search, size: 18),
-                hintText: 'Search personas…',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search, size: 18),
+                hintText: AppStrings.of(context).es ? 'Buscar personas…' : 'Search personas…',
                 isDense: true,
               ),
               onChanged: (v) => setState(() => _query = v),
@@ -1027,8 +1030,8 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
                           ? Icons.face_outlined
                           : Icons.search_off,
                       title: store.personas.where((p) => !p.deleted).isEmpty
-                          ? 'No personas yet'
-                          : 'No matches',
+                          ? (AppStrings.of(context).es ? 'Aún no hay personas' : 'No personas yet')
+                          : (AppStrings.of(context).es ? 'Sin coincidencias' : 'No matches'),
                       subtitle: store.personas
                               .where((p) => !p.deleted)
                               .isEmpty
@@ -1067,7 +1070,7 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
                     ),
                     onPressed: () =>
                         Navigator.pop(context, List<String>.from(_selected)),
-                    child: const Text('Done'),
+                    child: Text(AppStrings.of(context).es ? 'Listo' : 'Done'),
                   ),
                 ],
               ),
@@ -1126,15 +1129,15 @@ class _LorebookAttachPickerScreenState
       return l.name.toLowerCase().contains(q);
     }).toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('Attach lorebooks to this chat')),
+      appBar: AppBar(title: Text(AppStrings.of(context).es ? 'Adjuntar libros de lore a este chat' : 'Attach lorebooks to this chat')),
       body: Column(
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(
-              'Books toggled here are injected ONLY in this chat. '
-              'Books bound to a character or persona aren\'t listed '
-              'here — manage those from the previous screen.',
+              AppStrings.of(context).es
+                  ? 'Los libros activados aquí se inyectan SOLO en este chat. Los libros vinculados a un personaje o persona no aparecen aquí; adminístralos desde la pantalla anterior.'
+                  : 'Books toggled here are injected ONLY in this chat. Books bound to a character or persona aren\'t listed here — manage those from the previous screen.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -1145,9 +1148,9 @@ class _LorebookAttachPickerScreenState
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search, size: 18),
-                hintText: 'Search lorebooks…',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search, size: 18),
+                hintText: AppStrings.of(context).es ? 'Buscar libros de lore…' : 'Search lorebooks…',
                 isDense: true,
               ),
               onChanged: (v) => setState(() => _query = v),
@@ -1155,14 +1158,14 @@ class _LorebookAttachPickerScreenState
           ),
           Expanded(
             child: available.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(32),
+                ? Padding(
+                    padding: const EdgeInsets.all(32),
                     child: EmptyState(
                       icon: Icons.menu_book_outlined,
-                      title: 'No lorebooks available',
-                      subtitle:
-                          'Create or import lorebooks from the Lorebooks '
-                          'section of the Library tab.',
+                      title: AppStrings.of(context).es ? 'No hay libros de lore disponibles' : 'No lorebooks available',
+                      subtitle: AppStrings.of(context).es
+                          ? 'Crea o importa libros de lore desde la sección Lorebooks de la pestaña Biblioteca.'
+                          : 'Create or import lorebooks from the Lorebooks section of the Library tab.',
                     ),
                   )
                 : ListView.separated(
@@ -1177,7 +1180,7 @@ class _LorebookAttachPickerScreenState
                         activeColor: EmberColors.primary,
                         title: Text(l.name),
                         subtitle: Text(
-                          '${l.entries.length} entries',
+                          AppStrings.of(context).es ? '${l.entries.length} entradas' : '${l.entries.length} entries',
                           style: TextStyle(
                               color: EmberColors.textMid, fontSize: 12),
                         ),

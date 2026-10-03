@@ -53,14 +53,14 @@ class WideLayoutCard extends StatelessWidget {
         value: store.uiPrefs.desktopWideLayout,
         onChanged: store.setDesktopWideLayout,
         title: const Text(
-          'Wide desktop layout',
+          'Diseño de escritorio amplio',
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          'Off: same mobile layout, centered in a narrow column '
-          '(phone-in-a-window).\n'
-          'On: side rail + wider content. Recommended for larger '
-          'windows.',
+          'Desactivado: el mismo diseño móvil, centrado en una columna estrecha '
+          '(como un teléfono dentro de una ventana).\n'
+          'Activado: barra lateral y contenido más ancho. Recomendado para '
+          'ventanas grandes.',
           style: TextStyle(
             color: EmberColors.textMid,
             fontSize: 12,
@@ -111,7 +111,7 @@ class _AppTextSizeCardState extends State<AppTextSizeCard> {
               children: [
                 const Expanded(
                   child: Text(
-                    'App text size',
+                    'Tamaño del texto de la aplicación',
                     style: TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w600),
                   ),
@@ -135,7 +135,7 @@ class _AppTextSizeCardState extends State<AppTextSizeCard> {
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text('Reset'),
+                    child: const Text('Restablecer'),
                   )
                 else
                   const SizedBox(width: 8),
@@ -144,8 +144,8 @@ class _AppTextSizeCardState extends State<AppTextSizeCard> {
             Padding(
               padding: EdgeInsets.only(top: 2, bottom: 2),
               child: Text(
-                'Make all text in the app larger or smaller. '
-                'This adds to your device font-size setting.',
+                'Haz que todo el texto de la aplicación sea más grande o más pequeño. '
+                'Este ajuste se suma al tamaño de fuente de tu dispositivo.',
                 style: TextStyle(
                   color: EmberColors.textMid,
                   fontSize: 12,
