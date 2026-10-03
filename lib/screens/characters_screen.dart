@@ -40,6 +40,7 @@ import 'chat_picker_screens.dart';
 import 'chat_screen.dart';
 import 'lorebooks_screen.dart' show LorebookList, editLorebook, importLorebookFile;
 import 'persona_editor.dart';
+import 'persona_manual_chooser.dart';
 
 class CharactersScreen extends StatefulWidget {
   const CharactersScreen({super.key});
@@ -302,7 +303,7 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
         ),
         onTap: () {
           Navigator.pop(sheet);
-          showPersonaEditor(context);
+          showManualPersonaGenderChooser(context);
         },
       ),
       Divider(color: EmberColors.stroke, height: 1),
