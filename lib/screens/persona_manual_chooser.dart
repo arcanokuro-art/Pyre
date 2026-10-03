@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
-import 'persona_editor.dart';
+import 'male_persona_editor.dart';
 
 /// Chooser shown by Personas -> Create -> Create manually.
 /// Male is implemented first; female deliberately has a stable entry point
@@ -29,7 +29,7 @@ Future<void> showManualPersonaGenderChooser(BuildContext context) async {
               subtitle: const Text('Create {{user}} Male'),
               onTap: () {
                 Navigator.pop(sheet);
-                showPersonaEditor(context, profileGender: 'male');
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MalePersonaEditorScreen()));
               },
             ),
             ListTile(
