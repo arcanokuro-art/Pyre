@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../services/attachment_store.dart';
 import '../services/image_pick.dart';
 import '../state/app_store.dart';
+import '../services/structured_persona_prompt.dart';
 import '../theme.dart';
 import '../widgets/gallery_editor_section.dart';
 import '../widgets/lorebook_binding_section.dart';
@@ -63,7 +63,7 @@ class _MalePersonaEditorState extends State<MalePersonaEditorScreen>{
     'ocupaciones_actividades':occupations.map((r)=>{'ocupacion_profesion':r['job']!.text.trim(),'organizacion_institucion':r['org']!.text.trim(),'cargo_posicion':r['role']!.text.trim(),'especialidades_habilidades':r['skills']!.text.split(',').map((e)=>e.trim()).where((e)=>e.isNotEmpty).toList(),'detalles':r['details']!.text.trim()}).toList(),
     'sexualidad_intimidad':{'orientacion_sexual':'heterosexual','preferencias_fetiches':preferences.map((r)=>{'tipo':r['type']!.text.trim(),'nombre':r['name']!.text.trim(),'descripcion':r['description']!.text.trim()}).toList(),'detalles_adicionales':v('intimidad_detalles')},
     'historia_biografia':{'origen':v('origen'),'historia_personal':v('historia'),'acontecimientos_importantes':events.map((r)=>{'nombre':r['name']!.text.trim(),'descripcion':r['description']!.text.trim()}).toList(),'detalles_adicionales':v('hist_detalles')}};
-  void save(){final p=profile();final name=v('apodo').isNotEmpty?v('apodo'):[v('nombre'),v('apellido')].where((e)=>e.isNotEmpty).join(' ');if(name.isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Nombre requerido')));return;}final persona=widget.existing??Persona(id:newId('persona'),name:name);persona..name=name..description=const JsonEncoder.withIndent('  ').convert(p)..structuredProfile=p..avatar=avatar..avatarOriginal=avatarOriginal..lorebookIds=List.from(lorebooks)..gallery=List.from(gallery);final st=context.read<AppStore>();widget.existing==null?st.addPersona(persona):st.updatePersona(persona);if(isDefault)st.setActivePersona(persona.id);Navigator.pop(context);}
+  void save(){final p=profile();final name=v('apodo').isNotEmpty?v('apodo'):[v('nombre'),v('apellido')].where((e)=>e.isNotEmpty).join(' ');if(name.isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Nombre requerido')));return;}final persona=widget.existing??Persona(id:newId('persona'),name:name);persona..name=name..description=buildStructuredPersonaPrompt(p)..structuredProfile=p..avatar=avatar..avatarOriginal=avatarOriginal..lorebookIds=List.from(lorebooks)..gallery=List.from(gallery);final st=context.read<AppStore>();widget.existing==null?st.addPersona(persona):st.updatePersona(persona);if(isDefault)st.setActivePersona(persona.id);Navigator.pop(context);}
   @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('{{user}} Hombre'),actions:[TextButton(onPressed:save,child:const Text('Save'))]),body:ListView(padding:const EdgeInsets.all(16),children:[
     Card(child:ListTile(leading:CircleAvatar(child:Text(v('nombre').isEmpty?'?':v('nombre')[0])),title:const Text('Avatar'),subtitle:Text(avatar==null?'Sin avatar':'Avatar seleccionado'),trailing:Wrap(children:[TextButton(onPressed:changeAvatar,child:const Text('Change')),TextButton(onPressed:avatar==null?null:recrop,child:const Text('Recrop'))]))),
     s('1 · Perfil',[f('nombre','Nombre'),f('apellido','Apellido'),f('apodo','Apodo'),f('edad','Edad'),const ListTile(title:Text('Género'),subtitle:Text('Hombre 🔒')),f('etnia','Etnia'),f('nacionalidad','Nacionalidad')]),
