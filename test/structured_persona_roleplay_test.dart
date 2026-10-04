@@ -33,4 +33,24 @@ void main() {
     );
     expect(buildSinglePersonaBlock(persona), 'Legacy free-form persona.');
   });
+  test('persona party also projects structured profiles', () {
+    final structured = Persona(
+      id: 'p2',
+      name: 'Haruto',
+      description: 'STALE',
+      structuredProfile: {
+        'identidad': {'nombre': 'Haruto', 'genero': 'hombre'},
+      },
+    );
+    final legacy = Persona(
+      id: 'p3',
+      name: 'Legacy',
+      description: 'Legacy party description.',
+    );
+    final block = buildJointPersonaBlock([structured, legacy]);
+    expect(block, contains('Name: Haruto'));
+    expect(block, contains('Gender: hombre'));
+    expect(block, contains('Legacy party description.'));
+    expect(block, isNot(contains('\nSTALE\n')));
+  });
 }
