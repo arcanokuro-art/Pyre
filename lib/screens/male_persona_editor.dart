@@ -93,8 +93,8 @@ class _MalePersonaEditorState extends State<MalePersonaEditorScreen>{
     s('5 · Ocupación / Actividad',[rows(occupations,['job','org','role','skills','details'],()=>setState(()=>occupations.add(row(['job','org','role','skills','details']))))]),
     s('6 · Sexualidad e intimidad',[const ListTile(title:Text('Orientación sexual'),subtitle:Text('Heterosexual 🔒')),rows(preferences,['type','name','description'],()=>setState(()=>preferences.add(row(['type','name','description'])..['type']!.text='Preferencia')),f('intimidad_detalles','Detalles adicionales',lines:4)]),
     s('7 · Historia / Biografía',[f('origen','Origen',lines:3),f('historia','Historia personal',lines:5),rows(events,['name','description'],()=>setState(()=>events.add(row(['name','description']))),f('hist_detalles','Detalles adicionales',lines:4)]),
-    LorebookBindingSection(selectedIds:lorebooks,onChanged:(n)=>setState(()=>{lorebooks..clear()..addAll(n)}),sublabel:'Active with this persona.'),
-    GalleryEditorSection(gallery:gallery,onChanged:(n)=>setState(()=>{gallery..clear()..addAll(n)}),onUseAsAvatar:(i)=>setState((){avatar=gallery[i];avatarOriginal=null;})),
+    LorebookBindingSection(selectedIds:lorebooks,onChanged:(n)=>setState((){lorebooks..clear()..addAll(n);}),sublabel:'Active with this persona.'),
+    GalleryEditorSection(gallery:gallery,onChanged:(n)=>setState((){gallery..clear()..addAll(n);}),onUseAsAvatar:(i)=>setState((){avatar=gallery[i];avatarOriginal=null;})),
     CheckboxListTile(title:const Text('Set as default persona'),value:isDefault,activeColor:EmberColors.primary,onChanged:(n)=>setState(()=>isDefault=n??false)),
     ElevatedButton(onPressed:save,child:const Text('Save persona')),const SizedBox(height:32)]));
 }
