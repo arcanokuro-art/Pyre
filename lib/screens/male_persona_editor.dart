@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../services/attachment_store.dart';
@@ -48,9 +49,10 @@ class _MalePersonaEditorState extends State<MalePersonaEditorScreen>{
     final ps=_at(p,['sexualidad_intimidad','preferencias_fetiches']);if(ps is List){for(final raw in ps.whereType<Map>()){final r=row(['type','name','description']);r['type']!.text=(raw['tipo']??'Preferencia').toString();r['name']!.text=(raw['nombre']??'').toString();r['description']!.text=(raw['descripcion']??'').toString();preferences.add(r);}}
     final es=_at(p,['historia_biografia','acontecimientos_importantes']);if(es is List){for(final raw in es.whereType<Map>()){final r=row(['name','description']);r['name']!.text=(raw['nombre']??'').toString();r['description']!.text=(raw['descripcion']??'').toString();events.add(r);}}
   }
-  Future<void> changeAvatar()async{final p=await pickOneImage();if(p==null||!mounted)return;final r=await externalizeImageBytes(p.bytes);if(!mounted)return;setState((){avatar=r;avatarOriginal=null;});}
+  Future<void> changeAvatar()async{final p=await pickOneImage();if(p==null||!mounted)return;final cropped=await cropAvatar(context,p.bytes);if(cropped==null||!mounted)return;final r=await externalizeImageBytes(cropped);if(!mounted)return;final original=await externalizeImageBytes(p.bytes);if(!mounted)return;setState((){avatar=r;avatarOriginal=original;});}
   Future<void> recrop()async{final src=avatarOriginal??avatar;if(src==null||src.isEmpty)return;final bytes=await resolveAvatarBytes(src);if(bytes==null||!mounted)return;final cropped=await cropAvatar(context,bytes);if(cropped==null)return;final r=await externalizeImageBytes(cropped);if(!mounted)return;setState((){avatarOriginal??=avatar;avatar=r;});}
   Widget f(String k,String label,{int lines=1,String? suffix})=>Padding(padding:const EdgeInsets.only(bottom:10),child:TextField(controller:c(k),maxLines:lines,decoration:InputDecoration(labelText:label,suffixText:suffix)));
+  Widget nf(String k,String label,{String? suffix})=>Padding(padding:const EdgeInsets.only(bottom:10),child:TextField(controller:c(k),keyboardType:TextInputType.number,inputFormatters:[FilteringTextInputFormatter.digitsOnly],decoration:InputDecoration(labelText:label,suffixText:suffix)));
   Widget dd(String k,String label,List<String> options){final current=v(k);return Padding(padding:const EdgeInsets.only(bottom:10),child:DropdownButtonFormField<String>(value:options.contains(current)?current:null,isExpanded:true,decoration:InputDecoration(labelText:label),items:options.map((e)=>DropdownMenuItem(value:e,child:Text(e,overflow:TextOverflow.ellipsis))).toList(),onChanged:(next)=>setState(()=>c(k).text=next??'')));}
   Widget numberDd(String k,String label,int min,int max,String Function(int) category){final current=int.tryParse(v(k));return Padding(padding:const EdgeInsets.only(bottom:10),child:DropdownButtonFormField<int>(value:current!=null&&current>=min&&current<=max?current:null,isExpanded:true,decoration:InputDecoration(labelText:label),items:[for(var n=min;n<=max;n++)DropdownMenuItem(value:n,child:Text('$n cm — ${category(n)}'))],onChanged:(next)=>setState(()=>c(k).text=next?.toString()??'')));}
   Widget s(String title,List<Widget> children)=>Card(child:ExpansionTile(initiallyExpanded:title.startsWith('1'),title:Text(title,style:const TextStyle(fontWeight:FontWeight.bold)),children:[Padding(padding:const EdgeInsets.all(14),child:Column(children:children))]));
@@ -66,11 +68,11 @@ class _MalePersonaEditorState extends State<MalePersonaEditorScreen>{
   void save(){final p=profile();final name=v('apodo').isNotEmpty?v('apodo'):[v('nombre'),v('apellido')].where((e)=>e.isNotEmpty).join(' ');if(name.isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Nombre requerido')));return;}final persona=widget.existing??Persona(id:newId('persona'),name:name);persona..name=name..description=buildStructuredPersonaPrompt(p)..structuredProfile=p..avatar=avatar..avatarOriginal=avatarOriginal..lorebookIds=List.from(lorebooks)..gallery=List.from(gallery);final st=context.read<AppStore>();widget.existing==null?st.addPersona(persona):st.updatePersona(persona);if(isDefault)st.setActivePersona(persona.id);Navigator.pop(context);}
   @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('{{user}} Hombre'),actions:[TextButton(onPressed:save,child:const Text('Save'))]),body:ListView(padding:const EdgeInsets.all(16),children:[
     Card(child:ListTile(leading:CircleAvatar(child:Text(v('nombre').isEmpty?'?':v('nombre')[0])),title:const Text('Avatar'),subtitle:Text(avatar==null?'Sin avatar':'Avatar seleccionado'),trailing:Wrap(children:[TextButton(onPressed:changeAvatar,child:const Text('Change')),TextButton(onPressed:avatar==null?null:recrop,child:const Text('Recrop'))]))),
-    s('1 · Perfil',[f('nombre','Nombre'),f('apellido','Apellido'),f('apodo','Apodo'),f('edad','Edad'),const ListTile(title:Text('Género'),subtitle:Text('Hombre 🔒')),f('etnia','Etnia'),f('nacionalidad','Nacionalidad')]),
+    s('1 · Perfil',[f('nombre','Nombre'),f('apellido','Apellido'),f('apodo','Apodo'),nf('edad','Edad'),const ListTile(title:Text('Género'),subtitle:Text('Hombre 🔒')),f('etnia','Etnia'),f('nacionalidad','Nacionalidad')]),
     s('2 · Apariencia',[
       dd('piel','Tono de piel',['Muy clara','Clara','Media','Oliva','Morena','Oscura']),
       dd('complexion','Complexión',['Delgado','Esbelto','Atlético','Tonificado','Musculoso','Robusto','Corpulento']),
-      f('altura','Altura',suffix:'cm'),f('peso','Peso',suffix:'kg'),
+      nf('altura','Altura',suffix:'cm'),nf('peso','Peso',suffix:'kg'),
       dd('silueta','Silueta',['Triángulo invertido','Trapezoidal','Rectangular','Triangular','Ovalado']),
       numberDd('longitud','Longitud',5,30,(n)=>n<=11?'Chico':n<=14?'Promedio':n<=19?'Grande':'Muy grande'),
       numberDd('circunferencia','Grosor / circunferencia',7,18,(n)=>n<=9?'Delgado':n<=12?'Promedio':n<=15?'Grueso':'Muy grueso'),
