@@ -12,6 +12,7 @@ import 'character_assistant_screen.dart';
 import 'character_edit_screen.dart';
 import 'chat_picker_screens.dart';
 import 'persona_editor.dart';
+import 'male_persona_editor.dart';
 
 /// A single read-only labelled field shown in a details sheet.
 class _DetailField {
@@ -544,7 +545,16 @@ class PersonaDetailsSheet extends StatelessWidget {
               onTap: () {
                 Navigator.pop(sheet);
                 Navigator.of(context).pop();
-                showPersonaEditor(context, existing: p);
+                final gender = p.structuredProfile['identidad'] is Map
+                    ? (p.structuredProfile['identidad'] as Map)['genero']
+                    : null;
+                if (gender == 'hombre') {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => MalePersonaEditorScreen(existing: p),
+                  ));
+                } else {
+                  showPersonaEditor(context, existing: p);
+                }
               },
             ),
             const SizedBox(height: 8),
