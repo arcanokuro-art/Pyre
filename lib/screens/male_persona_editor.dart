@@ -12,8 +12,8 @@ import '../widgets/lorebook_binding_section.dart';
 import 'avatar_crop_screen.dart';
 
 /// Native editor for the approved seven-section {{user}} Hombre schema.
-/// Reuses the legacy editor only for avatar handling while this screen owns
-/// the structured profile fields and persistence.
+/// Owns the structured profile, avatar/recrop flow, bound lorebooks, gallery,
+/// default-persona state, and persistence without routing through the legacy editor.
 class MalePersonaEditorScreen extends StatefulWidget {
   final Persona? existing;
   const MalePersonaEditorScreen({super.key, this.existing});
