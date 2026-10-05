@@ -16,7 +16,8 @@ import 'avatar_crop_screen.dart';
 
 class PersonaEditorSheet extends StatefulWidget {
   final Persona? existing;
-  const PersonaEditorSheet({super.key, this.existing});
+  final String? profileGender;
+  const PersonaEditorSheet({super.key, this.existing, this.profileGender});
 
   @override
   State<PersonaEditorSheet> createState() => _PersonaEditorSheetState();
@@ -320,7 +321,8 @@ class _PersonaEditorSheetState extends State<PersonaEditorSheet> {
   }
 }
 
-Future<void> showPersonaEditor(BuildContext context, {Persona? existing}) {
+Future<void> showPersonaEditor(BuildContext context,
+    {Persona? existing, String? profileGender}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -328,6 +330,6 @@ Future<void> showPersonaEditor(BuildContext context, {Persona? existing}) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    builder: (_) => PersonaEditorSheet(existing: existing),
+    builder: (_) => PersonaEditorSheet(existing: existing, profileGender: profileGender),
   );
 }

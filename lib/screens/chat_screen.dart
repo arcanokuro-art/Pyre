@@ -250,11 +250,11 @@ String buildFillInOpenerPrompt({
     // opener addresses the whole group from the very first message.
     sys.writeln('\n${buildJointPersonaBlock(personaParty).trim()}');
   } else if (persona != null) {
-    sys.writeln('\nUser persona — ${persona.name}: ${persona.description}');
-    if (persona.dialogueExamples.trim().isNotEmpty) {
-      sys.writeln(
-          '\n${persona.name}\'s dialogue examples:\n${persona.dialogueExamples.trim()}');
-    }
+    // Keep opener generation on the same canonical persona projection as
+    // ongoing roleplay. Structured {{user}} profiles therefore never fall
+    // back to stale legacy description text here.
+    sys.writeln('\nUser persona — ${persona.name}:');
+    sys.writeln(buildSinglePersonaBlock(persona));
   }
   // 4. Bound lorebook hits — the same world facts the ongoing chat injects via
   // {{wiBefore}} / the inline "--- Lore ---" block, so the opener can't

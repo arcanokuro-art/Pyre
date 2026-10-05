@@ -523,6 +523,10 @@ class Persona {
   String name;
   String? tagline;
   String description;
+  /// Structured manual {{user}} profile. New manual persona creators persist
+  /// their seven-section schema here; legacy/imported personas may leave it
+  /// empty and continue using [description].
+  Map<String, dynamic> structuredProfile;
   /// Wave CX.1: optional dialogue examples — first-person dialogue /
   /// action samples in the user's voice that the model uses to lock the
   /// persona's speech rhythm. Populated automatically from a source
@@ -560,6 +564,7 @@ class Persona {
     required this.name,
     this.tagline,
     this.description = '',
+    Map<String, dynamic>? structuredProfile,
     this.dialogueExamples = '',
     this.avatar,
     this.avatarOriginal,
@@ -570,7 +575,8 @@ class Persona {
     this.favorite = false,
     this.mtime = 0,
     this.deleted = false,
-  })  : lorebookIds = lorebookIds ?? [],
+  })  : structuredProfile = structuredProfile ?? <String, dynamic>{},
+        lorebookIds = lorebookIds ?? [],
         gallery = gallery ?? [],
         createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
         updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
@@ -595,6 +601,9 @@ class Persona {
         }(),
         tagline: j['tagline'] as String?,
         description: (j['description'] as String?) ?? '',
+        structuredProfile: j['structuredProfile'] is Map
+            ? Map<String, dynamic>.from(j['structuredProfile'] as Map)
+            : <String, dynamic>{},
         dialogueExamples: (j['dialogueExamples'] as String?) ?? '',
         avatar: j['avatar'] as String?,
         // Non-destructive Recrop: absent/null → null (pre-feature personas).
@@ -614,6 +623,7 @@ class Persona {
         'name': name,
         'tagline': tagline,
         'description': description,
+        if (structuredProfile.isNotEmpty) 'structuredProfile': structuredProfile,
         if (dialogueExamples.isNotEmpty)
           'dialogueExamples': dialogueExamples,
         'avatar': avatar,

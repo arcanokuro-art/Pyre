@@ -41,6 +41,7 @@ import 'preset_assembly.dart';
 import 'prompt_plan.dart';
 import 'regex_rules.dart';
 import 'story_roadmap.dart' as roadmap;
+import 'structured_persona_prompt.dart';
 
 // ===========================================================================
 // CHAT prompt assembly
@@ -452,8 +453,11 @@ String buildJointPersonaBlock(List<Persona> personas) {
   buf.writeln();
   for (final p in active) {
     buf.writeln('--- ${p.name} ---');
-    if (p.description.trim().isNotEmpty) {
-      buf.writeln('\n${p.description.trim()}');
+    final personaText = p.structuredProfile.isNotEmpty
+        ? buildStructuredPersonaPrompt(p.structuredProfile)
+        : p.description.trim();
+    if (personaText.isNotEmpty) {
+      buf.writeln('\n$personaText');
     }
     if (p.dialogueExamples.trim().isNotEmpty) {
       buf.writeln("\n${p.name}'s dialogue style (examples — match this "
@@ -493,7 +497,10 @@ String buildJointPersonaBlock(List<Persona> personas) {
 /// way.
 String buildSinglePersonaBlock(Persona p) {
   final buf = StringBuffer();
-  buf.write(p.description);
+  final personaText = p.structuredProfile.isNotEmpty
+      ? buildStructuredPersonaPrompt(p.structuredProfile)
+      : p.description;
+  buf.write(personaText);
   if (p.dialogueExamples.trim().isNotEmpty) {
     buf.writeln();
     buf.writeln();
