@@ -208,7 +208,7 @@ class LorebookUsedBySection extends StatelessWidget {
           ],
           if (perChatRefs > 0) ...[
             const SizedBox(height: 8),
-            Text(es ? 'Además, $perChatRefs ${perChatRefs == 1 ? 'adjunto específico de chat' : 'adjuntos específicos de chat'}.' : 'Plus $perChatRefs per-chat attachment${perChatRefs == 1 ? "" : "s"}.', style: TextStyle(color: EmberColors.textDim, fontSize: 11, fontStyle: FontStyle.italic)),
+            Text(es ? 'Además, $perChatRefs ${perChatRefs == 1 ? 'adjunto específico de chat' : 'adjuntos específicos de chat'}.' : 'Además ${perChatRefs} por cadena adjunto${perChatRefs == 1 ? "" : "s"}.', style: TextStyle(color: EmberColors.textDim, fontSize: 11, fontStyle: FontStyle.italic)),
           ],
         ],
       ],

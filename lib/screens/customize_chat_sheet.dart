@@ -312,8 +312,8 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(changed
-              ? 'Background updated to match the scene.'
-              : 'Couldn\'t place this scene — keeping the current background.'),
+              ? 'Antecedentes actualizados para que coincida con la escena.'
+              : 'No se pudo aplicar el fondo de la escena. Se conserva el fondo actual.'),
           duration: const Duration(seconds: 3),
         ));
       }
@@ -479,7 +479,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
               ElevatedButton.icon(
                 icon: const Icon(Icons.upload, size: 16),
                 label: Text(chat.customBackgroundDataUrl == null
-                    ? 'Choose image'
+                    ? 'Elegir imagen'
                     : 'Replace image'),
                 onPressed: () => _pickCustom(store, chat),
               ),
@@ -545,8 +545,8 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
                         child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.travel_explore, size: 16),
                 label: Text(_classifying
-                    ? 'Reading the scene…'
-                    : 'Detect location from chat'),
+                    ? 'Leyendo la escena…'
+                    : 'Detectar el lugar a partir del chat'),
                 onPressed:
                     _classifying ? null : () => _setSceneNow(store, chat),
               ),

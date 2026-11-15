@@ -173,7 +173,7 @@ class _CallTile extends StatelessWidget {
               if (c.durationMs > 0) Text(_formatDuration(c.durationMs), style: TextStyle(color: EmberColors.textMid, fontSize: 11)),
             ]),
             const SizedBox(height: 6),
-            Text(snippet.isEmpty ? (es ? '(respuesta vacía)' : '(empty response)') : snippet, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: EmberColors.textMid, fontSize: 12, height: 1.35, fontStyle: snippet.isEmpty ? FontStyle.italic : null)),
+            Text(snippet.isEmpty ? (es ? '(respuesta vacía)' : '(respuesta vacía)') : snippet, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: EmberColors.textMid, fontSize: 12, height: 1.35, fontStyle: snippet.isEmpty ? FontStyle.italic : null)),
             const SizedBox(height: 6),
             Row(children: [
               Text(_formatTs(entry.ts), style: TextStyle(color: EmberColors.textMid.withValues(alpha: 0.7), fontSize: 10)),
@@ -273,7 +273,7 @@ class _Section extends StatelessWidget {
         Text(title, style: TextStyle(color: EmberColors.textHigh, fontSize: 13, fontWeight: FontWeight.w600)),
         const Spacer(),
         IconButton(
-          tooltip: es ? 'Copiar' : 'Copy',
+          tooltip: es ? 'Copiar' : 'Copiar',
           visualDensity: VisualDensity.compact,
           icon: Icon(Icons.copy_outlined, size: 16, color: EmberColors.textMid),
           onPressed: () {

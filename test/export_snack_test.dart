@@ -30,7 +30,7 @@ void main() {
     await tester.pump(); // entrance
 
     expect(find.text('Exported — x.card.png'), findsOneWidget);
-    expect(find.text('Share'), findsOneWidget);
+    expect(find.text('Compartir'), findsOneWidget);
 
     // Drain both the built-in and guaranteed-close timers so the test ends
     // with no pending timers.
@@ -45,7 +45,7 @@ void main() {
     await tester.pump();
 
     expect(find.text('Exported 3 cards'), findsOneWidget);
-    expect(find.text('Share'), findsNothing);
+    expect(find.text('Compartir'), findsNothing);
 
     await tester.pump(const Duration(seconds: 6));
     await tester.pumpAndSettle();

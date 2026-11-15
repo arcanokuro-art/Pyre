@@ -554,7 +554,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
                     color: EmberColors.textMid),
                 title: const Text('No hay instantánea activa'),
                 subtitle: Text(
-                  'Toggle the ficha de escena off and on again to create one.',
+                  'Desactiva y vuelve a activar la ficha de escena para crearla.',
                   style: TextStyle(color: EmberColors.textMid, fontSize: 12),
                 ),
               ),
@@ -684,7 +684,7 @@ class _EntityCard extends StatelessWidget {
                   ),
                 // Remove entity
                 IconButton(
-                  tooltip: 'Remove entity',
+                  tooltip: 'Quitar elemento',
                   icon: Icon(Icons.remove_circle_outline,
                       size: 18, color: EmberColors.danger),
                   onPressed: onRemoveEntity,
@@ -887,7 +887,7 @@ class _FactRow extends StatelessWidget {
         ),
         // Lock toggle
         IconButton(
-          tooltip: fact.locked ? 'Unlock fact' : 'Lock fact',
+          tooltip: fact.locked ? 'Desbloquear dato' : 'Lock fact',
           icon: Icon(
             fact.locked ? Icons.lock : Icons.lock_open_outlined,
             size: 16,

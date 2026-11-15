@@ -67,7 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                es ? 'Una interfaz potente y privada para roleplay. Tú eliges la IA; Pyre es la interfaz.' : 'A powerful, private roleplay frontend. You bring the AI — Pyre is the interface.',
+                es ? 'Una interfaz potente y privada para roleplay. Tú eliges la IA; Pyre es la interfaz.' : 'Crea personajes e historias con el modelo de IA que elijas.',
                 style: TextStyle(
                   color: EmberColors.textMid,
                   fontSize: 14,
@@ -124,14 +124,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             height: 18,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : Text(es ? 'Comenzar' : 'Get started',
+                        : Text(es ? 'Comenzar' : 'Empezar',
                             style: const TextStyle(fontSize: 15)),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
               Text(
-                es ? 'Al continuar, aceptas los Términos de uso y la Política de privacidad.' : 'By continuing, you accept the Terms of Use and Privacy Policy.',
+                es ? 'Al continuar, aceptas los Términos de uso y la Política de privacidad.' : 'Al continuar, aceptas los Términos de uso y la Política de privacidad.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: EmberColors.textMid,

@@ -539,7 +539,7 @@ Future<bool> _confirmJumpToNode(
                 child: SingleChildScrollView(
                   child: Text(
                     shortPreview.isEmpty
-                        ? '(empty message)'
+                        ? '(mensaje vacío)'
                         : shortPreview,
                     style: TextStyle(
                       color: EmberColors.textHigh,

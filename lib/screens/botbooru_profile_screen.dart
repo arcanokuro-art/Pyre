@@ -222,14 +222,14 @@ class _BotbooruProfileScreenState extends State<BotbooruProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(es ? 'Perfil' : 'Profile'),
+        title: Text(es ? 'Perfil' : 'Perfil'),
         actions: [
           TextButton.icon(
             icon: Icon(
               _editMode ? Icons.check : Icons.edit_outlined,
               size: 16,
             ),
-            label: Text(_editMode ? (es ? 'Listo' : 'Done') : (es ? 'Editar' : 'Edit')),
+            label: Text(_editMode ? (es ? 'Listo' : 'Listo') : (es ? 'Editar' : 'Editar')),
             style: TextButton.styleFrom(
               foregroundColor: EmberColors.primary,
             ),
@@ -387,23 +387,23 @@ class _ProfileHeader extends StatelessWidget {
               if (!hasAvatar)
                 _MiniAction(
                   icon: Icons.add_a_photo_outlined,
-                  label: es ? 'Añadir foto de perfil' : 'Add profile picture',
+                  label: es ? 'Añadir foto de perfil' : 'Añadir foto de perfil',
                   onTap: onTapAvatarPicker,
                 ),
               if (hasAvatar) ...[
                 _MiniAction(
                   icon: Icons.swap_horiz,
-                  label: es ? 'Cambiar' : 'Change',
+                  label: es ? 'Cambiar' : 'Cambiar',
                   onTap: onTapAvatarPicker,
                 ),
                 _MiniAction(
                   icon: Icons.crop,
-                  label: es ? 'Recortar de nuevo' : 'Recrop',
+                  label: es ? 'Recortar de nuevo' : 'Recortar',
                   onTap: onRecrop,
                 ),
                 _MiniAction(
                   icon: Icons.delete_outline,
-                  label: es ? 'Eliminar' : 'Remove',
+                  label: es ? 'Eliminar' : 'Quitar',
                   onTap: onRemove,
                   danger: true,
                 ),
@@ -619,7 +619,7 @@ class _IdentityEditCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            es ? 'Opcional. Se muestra como creador en las tarjetas que haces con el Creador de personajes. No es una cuenta de BotBooru y no hay que iniciar sesión. En botbooru.com distingue mayúsculas y minúsculas.' : 'Optional. Shown as the creator on cards you build in the Character Creator — this is not a BotBooru account, nothing to sign into. Case-sensitive on botbooru.com.',
+            es ? 'Opcional. Se muestra como creador en las tarjetas que haces con el Creador de personajes. No es una cuenta de BotBooru y no hay que iniciar sesión. En botbooru.com distingue mayúsculas y minúsculas.' : 'Opcional. Es el nombre de autor que aparece en las fichas que creas. BotBooru distingue mayúsculas y minúsculas.',
             style: TextStyle(
                 color: EmberColors.textDim, fontSize: 11, height: 1.4),
           ),
@@ -647,13 +647,13 @@ class _IdentityEditCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            es ? 'Subtítulo corto que aparece debajo de tu nombre. Si está vacío, se oculta.' : 'Short subtitle that sits under your name. Empty hides it.',
+            es ? 'Subtítulo corto que aparece debajo de tu nombre. Si está vacío, se oculta.' : 'Texto breve debajo de tu nombre. Déjalo vacío para ocultarlo.',
             style: TextStyle(
                 color: EmberColors.textDim, fontSize: 11, height: 1.4),
           ),
           const SizedBox(height: 14),
           Text(
-            es ? 'Pronombres (opcional)' : 'Pronouns (optional)',
+            es ? 'Pronombres (opcional)' : 'Pronombres (opcional)',
             style: TextStyle(
               color: EmberColors.textMid,
               fontSize: 12,
@@ -740,7 +740,7 @@ class _AboutMeSection extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              es ? 'Una breve biografía para tu perfil. Lo que quieras: tropos que te gustan, géneros favoritos y tus intereses.' : 'A short bio for your profile. Whatever you want — tropes you love, favorite genres, what you\'re into.',
+              es ? 'Una breve biografía para tu perfil. Lo que quieras: tropos que te gustan, géneros favoritos y tus intereses.' : 'Una biografía corta para tu perfil. Lo que quieras: tropes que amas, géneros favoritos, en lo que te gusta.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -754,7 +754,7 @@ class _AboutMeSection extends StatelessWidget {
               minLines: 4,
               maxLines: 10,
               decoration: InputDecoration(
-                hintText: es ? 'p. ej. "Tarjetas slice-of-life con personajes imperfectos pero cálidos y un ritmo slow burn."' : 'e.g. "Slice-of-life teacher cards with soft NSFW. I like flawed-but-warm characters and slow-burn pacing."',
+                hintText: es ? 'p. ej. "Tarjetas slice-of-life con personajes imperfectos pero cálidos y un ritmo slow burn."' : 'Por ejemplo, "Cartas maestras de la familia con NSFW suave. Me gustan los personajes defectuosos pero cálidos y la tarta lenta".',
                 filled: true,
                 fillColor: EmberColors.bgDeep,
                 isDense: true,
@@ -849,10 +849,10 @@ class _StatsCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(child: _Stat(value: cardsCreated, label: es ? 'tarjetas creadas' : 'cards built')),
+          Expanded(child: _Stat(value: cardsCreated, label: es ? 'tarjetas creadas' : 'fichas creadas')),
           _Divider(),
           Expanded(
-              child: _Stat(value: libraryTotal, label: es ? 'en biblioteca' : 'in library')),
+              child: _Stat(value: libraryTotal, label: es ? 'en biblioteca' : 'en la biblioteca')),
           _Divider(),
           Expanded(child: _Stat(value: chatsStarted, label: es ? 'chats' : 'chats')),
           _Divider(),
@@ -953,7 +953,7 @@ class _UsageStatsCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 2, bottom: 6),
             child: Text(
-              es ? 'Uso' : 'Usage',
+              es ? 'Uso' : 'Uso',
               style: TextStyle(
                 color: EmberColors.textDim,
                 fontSize: 10,
@@ -966,7 +966,7 @@ class _UsageStatsCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _Stat(
-                    value: userMessages, label: es ? 'mensajes enviados' : 'messages sent'),
+                    value: userMessages, label: es ? 'mensajes enviados' : 'mensajes enviados'),
               ),
               _Divider(),
               Expanded(
@@ -1069,7 +1069,7 @@ class _FeaturedCharacterCard extends StatelessWidget {
               if (editMode)
                 TextButton.icon(
                   icon: const Icon(Icons.swap_horiz, size: 14),
-                  label: Text(character == null ? (es ? 'Elegir' : 'Pick') : (es ? 'Cambiar' : 'Change')),
+                  label: Text(character == null ? (es ? 'Elegir' : 'Pick') : (es ? 'Cambiar' : 'Cambiar')),
                   style: TextButton.styleFrom(
                     foregroundColor: EmberColors.primary,
                     padding: const EdgeInsets.symmetric(
@@ -1094,8 +1094,8 @@ class _FeaturedCharacterCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     editMode
-                        ? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación, sin ningún efecto funcional.' : 'Pin one of your characters as your featured spotlight. It\'s a pure curation choice — no functional impact, just a way to show off what you\'re proud of.')
-                        : (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No character pinned yet. Tap Edit to pick one to spotlight here.'),
+                        ? (es ? 'Fija uno de tus personajes como destacado. Es solo una elección de presentación, sin ningún efecto funcional.' : 'El personaje destacado aparece en tu perfil.')
+                        : (es ? 'Todavía no hay ningún personaje fijado. Pulsa Editar para elegir uno y destacarlo aquí.' : 'No hay carácter grabado todavía. Pulsa Editar para elegir uno para descubrir aquí.'),
                     style: TextStyle(
                       color: EmberColors.textDim,
                       fontSize: 12,
@@ -1223,7 +1223,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      es ? 'Elige un personaje destacado' : 'Pick a featured character',
+                      es ? 'Elige un personaje destacado' : 'Elegir personaje destacado',
                       style: TextStyle(
                         color: EmberColors.textHigh,
                         fontWeight: FontWeight.w600,
@@ -1242,7 +1242,7 @@ class _FeaturedPickerSheet extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
                 child: Text(
-                  es ? 'Todavía no hay personajes en tu biblioteca. Crea o importa una tarjeta y vuelve aquí para fijarla.' : 'No characters in your library yet. Build or import a card first, then come back to pin it here.',
+                  es ? 'Todavía no hay personajes en tu biblioteca. Crea o importa una tarjeta y vuelve aquí para fijarla.' : 'No hay caracteres en su biblioteca todavía. Construya o importe una tarjeta primero, luego vuelva a pintarla aquí.',
                   style: TextStyle(
                     color: EmberColors.textDim,
                     fontSize: 13,
@@ -1261,9 +1261,9 @@ class _FeaturedPickerSheet extends StatelessWidget {
                       return ListTile(
                         leading: Icon(Icons.star_outline,
                             color: EmberColors.textMid),
-                        title: Text(es ? 'Quitar destacado' : 'Remove featured'),
+                        title: Text(es ? 'Quitar destacado' : 'Quitar de destacados'),
                         subtitle: Text(
-                          es ? 'Oculta la tarjeta destacada de tu perfil.' : 'Hide the featured card from your profile.',
+                          es ? 'Oculta la tarjeta destacada de tu perfil.' : 'Ocultar la tarjeta ofrecida desde tu perfil.',
                           style: const TextStyle(fontSize: 11),
                         ),
                         // Pass empty string sentinel — caller treats

@@ -916,7 +916,7 @@ class _SyncCheckDialog extends StatelessWidget {
             size: 22,
           ),
           const SizedBox(width: 8),
-          Text(allMatch ? 'Everything matches' : 'Some items differ'),
+          Text(allMatch ? 'Todo coincide' : 'Hay elementos diferentes'),
         ],
       ),
       content: SizedBox(

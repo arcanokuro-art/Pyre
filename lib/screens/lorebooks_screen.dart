@@ -79,7 +79,7 @@ class LorebookList extends StatelessWidget {
                 'bound to characters (kept out of this list to reduce '
                 'clutter — they still inject in chat). Create or import '
                 'a new one to add it here.'
-            : 'Lorebooks let you attach world info or facts that get injected into the chat when keywords are mentioned — useful for keeping the AI consistent about places, factions, lore, etc.',
+            : 'Los libros de mundo aportan datos al chat cuando se mencionan palabras clave. Ayudan a que la IA mantenga la coherencia de lugares, grupos e historias.',
         ctaLabel: 'Create',
         ctaIcon: Icons.add,
         onCta: () => editLorebook(context, null),
@@ -535,7 +535,7 @@ Future<void> _embedIntoCard(
         embedded
             ? 'Embedded "${l.name}" into ${char.name}. '
                 'It will travel when you export that card.'
-            : 'Linked "${l.name}" to ${char.name} as a shared lorebook.',
+            : 'Vinculado "${l.name}" a ${char.name} como un libro común.',
       ),
     ),
   );
@@ -619,7 +619,7 @@ Future<void> editLorebook(BuildContext context, Lorebook? existing) async {
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setLocal) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: Text(existing == null ? 'New lorebook' : 'Rename lorebook'),
+        title: Text(existing == null ? 'Nuevo libro de mundo' : 'Rename lorebook'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -670,7 +670,7 @@ Future<void> editLorebook(BuildContext context, Lorebook? existing) async {
               }
               Navigator.pop(ctx);
             },
-            child: Text(existing == null ? 'Create' : 'Save'),
+            child: Text(existing == null ? 'Create' : 'Guardar'),
           ),
         ],
       ),

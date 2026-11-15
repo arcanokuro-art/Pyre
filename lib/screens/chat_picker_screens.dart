@@ -1035,8 +1035,8 @@ class _PersonaPartyPickerScreenState extends State<PersonaPartyPickerScreen> {
                       subtitle: store.personas
                               .where((p) => !p.deleted)
                               .isEmpty
-                          ? 'Create one from the Personas tab to play as a specific identity.'
-                          : 'Nothing matches your search.',
+                          ? 'Crea uno de la pestaña Personas para jugar como una identidad específica.'
+                          : 'No hay resultados para tu búsqueda.',
                     ),
                   )
                 : ListView.builder(

@@ -677,8 +677,8 @@ class _MemoryScreenState extends State<MemoryScreen> {
                       // above; keep the empty state to the "how it works"
                       // teaching message so the two never duplicate.
                       title: orphanedCount > 0
-                          ? 'No checkpoints on this branch'
-                          : 'No checkpoints yet',
+                          ? 'Esta rama aún no tiene puntos de control'
+                          : 'Todavía no hay puntos de control',
                       subtitle: 'The auto-summariser writes a new checkpoint '
                           'every 20 or so messages. You can also tap '
                           '"Summarise now" below to force one.',
@@ -739,7 +739,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                       label: Text(
                         _anyMemoryWorkInFlight
                             ? 'Summarising…'
-                            : 'Summarise now',
+                            : 'Resumir ahora',
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: EmberColors.primary,
@@ -983,7 +983,7 @@ class _CheckpointDetailScreenState extends State<_CheckpointDetailScreen> {
                                   strokeWidth: 2, color: Colors.white),
                             )
                           : const Icon(Icons.refresh, size: 16),
-                      label: Text(_retrying ? 'Retrying…' : 'Retry'),
+                      label: Text(_retrying ? 'Reintentando…' : 'Reintentar'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: EmberColors.primary,
                         foregroundColor: Colors.white,

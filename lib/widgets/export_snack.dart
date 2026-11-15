@@ -23,7 +23,7 @@ void showExportSnack(
       action: onShare == null
           ? null
           : SnackBarAction(
-              label: spanish ? 'Compartir' : 'Share',
+              label: spanish ? 'Compartir' : 'Compartir',
               onPressed: () => onShare(),
             ),
       duration: visible,

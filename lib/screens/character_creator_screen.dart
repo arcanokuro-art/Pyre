@@ -717,8 +717,8 @@ class _HowItWorksCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final es = AppStrings.of(context).es;
     return HowItWorksCard(
-      title: es ? 'Cómo funciona el Creador de personajes' : 'How the Character Creator works',
-      subtitle: es ? 'Qué es, fases, modos, consejos y solución de problemas.' : 'What it is, phases, modes, tips, troubleshooting.',
+      title: es ? 'Cómo funciona el Creador de personajes' : 'Cómo funciona el creador de personajes',
+      subtitle: es ? 'Qué es, fases, modos, consejos y solución de problemas.' : 'Funciones, modos y soluciones a problemas comunes.',
       sections: [
         // 0. Entry-point overview — what the Creator is.
         HowItWorksSection(es ? 'Qué es el Creador de personajes' : 'What the Character Creator is', [

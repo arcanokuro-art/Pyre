@@ -69,11 +69,11 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
         kIsWeb && LanClient.instance.isPaired && _hub?.supported == true;
     return Scaffold(
       appBar: AppBar(
-        title: Text(es ? 'Conexiones API' : 'API Connections'),
+        title: Text(es ? 'Conexiones API' : 'Conexiones API'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: es ? 'Añadir proveedor' : 'Add provider',
+            tooltip: es ? 'Añadir proveedor' : 'Añadir proveedor',
             onPressed: () => _editProvider(context, null),
           ),
         ],
@@ -87,8 +87,8 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
           // where a key comes from. Use the house empty-state with a real CTA.
           ? EmptyState(
               icon: Icons.cloud_outlined,
-              title: es ? 'Conecta un proveedor de IA' : 'Connect an AI provider',
-              subtitle: es ? 'Pyre necesita un servicio de IA para escribir respuestas; no incluye un modelo propio. Añade uno (OpenRouter tiene modelos gratuitos para empezar) y pega la clave API obtenida en el sitio de ese servicio.' : 'Pyre needs an AI service to write replies — it brings no model of its own. Add one (OpenRouter has free models to start), then paste the API key from that service\'s site.',
+              title: es ? 'Conecta un proveedor de IA' : 'Conecta un proveedor de IA',
+              subtitle: es ? 'Pyre necesita un servicio de IA para escribir respuestas; no incluye un modelo propio. Añade uno (OpenRouter tiene modelos gratuitos para empezar) y pega la clave API obtenida en el sitio de ese servicio.' : 'Configura un proveedor de IA para escribir respuestas. Si el proveedor requiere una clave API, pégala al configurar la conexión.',
               ctaLabel: es ? 'Añadir un proveedor' : 'Add a provider',
               onCta: () => _editProvider(context, null),
             )
@@ -100,7 +100,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: HowItWorksCard(
-                    title: es ? 'Cómo funcionan las conexiones' : 'How connections work',
+                    title: es ? 'Cómo funcionan las conexiones' : 'Cómo funcionan las conexiones',
                     subtitle: es ? 'BYOK: tu clave, tu modelo, en tu dispositivo.' : 'BYOK — your key, your model, on your device.',
                     sections: [
                       HowItWorksSection(es ? 'Qué es un proveedor' : 'What a provider is', [
@@ -129,7 +129,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(20, 12, 20, 4),
                     child: Text(
-                      es ? 'Si un proveedor falla o rechaza la solicitud, Pyre ofrece cambiar al siguiente. Arrastra para establecer el orden; el proveedor CHAT siempre se prueba primero.' : 'If a provider fails or refuses, Pyre offers to switch to the next one. Drag to set the order — the CHAT provider is always tried first.',
+                      es ? 'Si un proveedor falla o rechaza la solicitud, Pyre ofrece cambiar al siguiente. Arrastra para establecer el orden; el proveedor CHAT siempre se prueba primero.' : 'Si un proveedor falla o rechaza la solicitud, Pyre ofrece usar el siguiente. Arrastra para ordenar la lista. El proveedor del chat se intenta primero.',
                       style: TextStyle(
                           color: EmberColors.textDim, fontSize: 12,
                           height: 1.4),
@@ -246,7 +246,7 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                         ? EmberColors.primary
                                         : EmberColors.textDim,
                                   ),
-                                  tooltip: es ? 'Mostrar en cambio rápido del chat' : 'Show in chat quick-swap',
+                                  tooltip: es ? 'Mostrar en cambio rápido del chat' : 'Mostrar en el selector rápido del chat',
                                   onPressed: () =>
                                       store.toggleChatSwapProvider(p.id),
                                 );
@@ -270,20 +270,20 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                       builder: (dctx) => AlertDialog(
                                         backgroundColor: EmberColors.bgPanel,
                                         title:
-                                            Text(es ? '¿Eliminar proveedor?' : 'Delete provider?'),
+                                            Text(es ? '¿Eliminar proveedor?' : '¿Supir proveedor?'),
                                         content: Text(
-                                          es ? '¿Quitar "${p.name}" y su clave API guardada de este dispositivo? Esta acción no se puede deshacer.' : 'Remove "${p.name}" and its saved API key from this device? This can\'t be undone.',
+                                          es ? '¿Quitar "${p.name}" y su clave API guardada de este dispositivo? Esta acción no se puede deshacer.' : 'Eliminar "${p.name}" y su clave de API guardada de este dispositivo? Esto no se puede deshacer.',
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(dctx, false),
-                                            child: Text(es ? 'Cancelar' : 'Cancel'),
+                                            child: Text(es ? 'Cancelar' : 'Cancelar'),
                                           ),
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(dctx, true),
-                                            child: Text(es ? 'Eliminar' : 'Delete',
+                                            child: Text(es ? 'Eliminar' : 'Eliminar',
                                                 style: TextStyle(
                                                     color: Colors.redAccent)),
                                           ),
@@ -297,13 +297,13 @@ class _ApiConnectionsScreenState extends State<ApiConnectionsScreen> {
                                 },
                                 itemBuilder: (_) => [
                                   PopupMenuItem(
-                                      value: 'edit', child: Text(es ? 'Editar' : 'Edit')),
+                                      value: 'edit', child: Text(es ? 'Editar' : 'Editar')),
                                   PopupMenuItem(
                                       value: 'duplicate',
                                       child: Text(es ? 'Duplicar' : 'Duplicate')),
                                   PopupMenuItem(
                                       value: 'delete',
-                                      child: Text(es ? 'Eliminar' : 'Delete',
+                                      child: Text(es ? 'Eliminar' : 'Eliminar',
                                           style: TextStyle(
                                               color: Colors.redAccent))),
                                 ],
@@ -894,7 +894,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: Text(isNew ? 'Add provider' : 'Edit provider'),
+        title: Text(isNew ? 'Añadir proveedor' : 'Editar proveedor'),
         content: SizedBox(
           width: 380,
           child: SingleChildScrollView(
@@ -1305,7 +1305,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 6),
                       child: Text(
-                        'Pront post-processing',
+                        'Procesamiento de las instrucciones',
                         style: TextStyle(
                           fontSize: 12,
                           color: EmberColors.textMid,
@@ -1501,7 +1501,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
               }
               Navigator.pop(ctx);
             },
-            child: Text(isNew ? 'Add' : 'Save'),
+            child: Text(isNew ? 'Añadir' : 'Guardar'),
           ),
         ],
       ),

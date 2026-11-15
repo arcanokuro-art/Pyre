@@ -30,11 +30,11 @@ class CreatorPresetsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(es ? 'Prompts del arquitecto' : 'Architect Prompts'),
+        title: Text(es ? 'Prompts del arquitecto' : 'Instrucciones del creador'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: es ? 'Crear desde cero' : 'New from scratch',
+            tooltip: es ? 'Crear desde cero' : 'Crear desde cero',
             onPressed: () => _editCreatorPreset(context, null),
           ),
         ],
@@ -82,7 +82,7 @@ class CreatorPresetsScreen extends StatelessWidget {
                 p.locked
                     ? (es
                         ? 'Prompts de arquitecto integrados · el Creador incluido'
-                        : 'Built-in architect prompts · the shipped Creator')
+                        : 'Instrucciones predeterminadas del creador')
                     : _previewLine(p, es),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -91,7 +91,7 @@ class CreatorPresetsScreen extends StatelessWidget {
               trailing: IconButton(
                 icon: Icon(Icons.more_vert,
                     color: EmberColors.textMid),
-                tooltip: es ? 'Acciones del preset' : 'Preset actions',
+                tooltip: es ? 'Acciones del preset' : 'Acciones prestablecidas',
                 onPressed: () => _openCreatorPresetKebab(context, p),
               ),
               onTap: () => store.setActiveCreatorPreset(p.id),
@@ -146,18 +146,18 @@ Future<void> _openCreatorPresetKebab(
           ListTile(
             leading: Icon(Icons.check_circle_outline,
                 color: EmberColors.primary),
-            title: Text(es ? 'Seleccionar (activar ahora)' : 'Select (activate now)'),
+            title: Text(es ? 'Seleccionar (activar ahora)' : 'Seleccionar y activar'),
             onTap: () {
               Navigator.pop(sheet);
               store.setActiveCreatorPreset(p.id);
               messenger.showSnackBar(
-                SnackBar(content: Text(es ? '«${p.name}» está activo.' : '"${p.name}" is now active.')),
+                SnackBar(content: Text(es ? '«${p.name}» está activo.' : '"${p.name}" está ahora activo.')),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.visibility_outlined),
-            title: Text(es ? 'Ver detalles' : 'View details'),
+            title: Text(es ? 'Ver detalles' : 'Ver detalles'),
             onTap: () {
               Navigator.pop(sheet);
               _showCreatorPresetDetails(context, p);
@@ -185,7 +185,7 @@ Future<void> _openCreatorPresetKebab(
           if (!p.locked)
             ListTile(
               leading: const Icon(Icons.edit_outlined),
-              title: Text(es ? 'Editar' : 'Edit'),
+              title: Text(es ? 'Editar' : 'Editar'),
               onTap: () {
                 Navigator.pop(sheet);
                 _editCreatorPreset(context, p);
@@ -195,7 +195,7 @@ Future<void> _openCreatorPresetKebab(
             ListTile(
               leading: Icon(Icons.delete_outline,
                   color: EmberColors.danger),
-              title: Text(es ? 'Eliminar' : 'Delete',
+              title: Text(es ? 'Eliminar' : 'Eliminar',
                   style: TextStyle(color: EmberColors.danger)),
               onTap: () async {
                 Navigator.pop(sheet);
@@ -204,7 +204,7 @@ Future<void> _openCreatorPresetKebab(
                   title: es ? '¿Eliminar «${p.name}»?' : 'Delete "${p.name}"?',
                   message: es
                       ? 'El preset se eliminará. El Creador volverá a usar los prompts predeterminados.'
-                      : 'The preset will be removed. The Creator will fall back to the default prompts.',
+                      : 'Se eliminará el preajuste. El creador volverá a usar las instrucciones predeterminadas.',
                 );
                 if (!ok) return;
                 store.removeCreatorPreset(p.id);
@@ -278,7 +278,7 @@ class _CreatorPresetDetailsScreen extends StatelessWidget {
     final es = AppStrings.of(context).es;
     return Scaffold(
       appBar: AppBar(
-        title: Text(es ? 'Detalles del preset del Creador' : 'Creator preset details'),
+        title: Text(es ? 'Detalles del preset del Creador' : 'Detalles del preajuste del creador'),
         actions: [
           if (live.locked)
             Padding(
@@ -342,7 +342,7 @@ class _CreatorPresetDetailsScreen extends StatelessWidget {
             Text(
               es
                   ? 'Los prompts de arquitecto incluidos con el Creador son de solo lectura para conservarlos como alternativa fiable. Usa «Copiar (editable)» en el menú para crear una versión que puedas modificar libremente.'
-                  : 'The shipped Creator architect prompts — read-only so they stay as a known-good fallback. Use "Copy (editable)" from the kebab to fork them into a preset you can modify freely.',
+                  : 'Instrucciones de fábrica del creador. Abre el menú y elige «Copiar» para crear un preajuste editable.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -398,7 +398,7 @@ Future<void> _editCreatorPreset(
     builder: (ctx) => AlertDialog(
       backgroundColor: EmberColors.bgPanel,
       title: Text(existing == null
-          ? (es ? 'Nuevo preset del Creador' : 'New creator preset')
+          ? (es ? 'Nuevo preset del Creador' : 'Nuevo preajuste del creador')
           : (es ? 'Editar preset del Creador' : 'Edit creator preset')),
       content: SizedBox(
         width: 460,
@@ -410,7 +410,7 @@ Future<void> _editCreatorPreset(
               sectionHeader(es ? 'Nombre' : 'Name'),
               TextField(
                 controller: nameCtl,
-                decoration: InputDecoration(labelText: es ? 'Nombre' : 'Name'),
+                decoration: InputDecoration(labelText: es ? 'Nombre' : 'Nombre'),
               ),
               sectionHeader(es ? 'Prompt de personaje' : 'Character prompt'),
               promptField(charCtl),
@@ -425,7 +425,7 @@ Future<void> _editCreatorPreset(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: Text(es ? 'Cancelar' : 'Cancel'),
+          child: Text(es ? 'Cancelar' : 'Cancelar'),
         ),
         ElevatedButton(
           onPressed: () {
@@ -452,7 +452,7 @@ Future<void> _editCreatorPreset(
           },
           child: Text(existing == null
               ? (es ? 'Crear' : 'Create')
-              : (es ? 'Guardar' : 'Save')),
+              : (es ? 'Guardar' : 'Guardar')),
         ),
       ],
     ),

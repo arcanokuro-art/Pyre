@@ -884,7 +884,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 // prompt text. Others get a one-line preview.
                                 subtitle: Text(
                                   p.locked
-                                      ? 'Built-in preset · tuned for creative roleplay'
+                                      ? 'Preajuste de fábrica para historias creativas'
                                       : _presetPreviewLine(p),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -3035,8 +3035,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     title: const Text('Ficha de escena'),
                     subtitle: Text(
                       chat.liveSheetEnabled
-                          ? 'On — tracking entity state.'
-                          : 'Off — state tracking disabled for this chat.',
+                          ? 'El seguimiento de la escena está activo.'
+                          : 'El seguimiento de la escena está desactivado para este chat.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
@@ -3113,7 +3113,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     subtitle: Text(
                       _chatPersona(store, chat)?.name == null
                           ? 'No persona attached'
-                          : 'Currently: ${_chatPersona(store, chat)!.name}',
+                          : 'Actualmente: ${_chatPersona(store, chat)!.name}',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
@@ -3324,7 +3324,7 @@ class _ChatScreenState extends State<ChatScreen> {
         downloadBytesToBrowser(
             Uint8List.fromList(utf8.encode(content)), filename, mime);
         messenger.showSnackBar(
-            SnackBar(content: Text('Exported — $filename')));
+            SnackBar(content: Text('Exportado · ${filename}')));
         return;
       }
 
@@ -3472,7 +3472,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 leading: Icon(Icons.delete_outline,
                     color: EmberColors.danger),
                 title: Text(
-                  cascade ? 'Delete this and after' : 'Delete just this',
+                  cascade ? 'Eliminar este mensaje y los siguientes' : 'Delete just this',
                   style: TextStyle(color: EmberColors.danger),
                 ),
                 subtitle: cascade
@@ -3497,8 +3497,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     final ok = await confirmDelete(
                       context,
                       title: multiVariant
-                          ? 'Delete this version and its replies?'
-                          : 'Delete this and all messages after?',
+                          ? '¿Eliminar esta versión y sus respuestas?'
+                          : '¿Eliminar este mensaje y todos los siguientes?',
                       message: multiVariant
                           ? 'This message has alternate versions — only the '
                               'current one and the replies under it are '
@@ -6178,9 +6178,9 @@ class _MessageBubbleState extends State<_MessageBubble> {
           child: showsStaticPlaceholder
               ? Text(
                   isUser
-                      ? 'Type your alternative reply…'
+                      ? 'Escribe tu respuesta alternativa…'
                       : (isUserSide
-                          ? 'Type your note…'
+                          ? 'Escribe tu nota…'
                           : 'Generating…'),
                   style: TextStyle(
                     color: EmberColors.textDim,
@@ -6248,7 +6248,7 @@ class _MessageBubbleState extends State<_MessageBubble> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: Text(
-                                  isOoc ? 'OOC' : 'Scene',
+                                  isOoc ? 'OOC' : 'Escena',
                                   style: TextStyle(
                                     color: EmberColors.primary,
                                     fontSize: 10,
@@ -6666,8 +6666,8 @@ class _MessageBubbleState extends State<_MessageBubble> {
                               const SizedBox(width: 2),
                               Text(
                                 hidden
-                                    ? 'Show reasoning'
-                                    : 'Hide reasoning',
+                                    ? 'Mostrar razonamiento'
+                                    : 'Ocultar razonamiento',
                                 style: TextStyle(
                                     color: EmberColors.textMid,
                                     fontSize: 10,

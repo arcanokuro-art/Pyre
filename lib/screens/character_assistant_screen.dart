@@ -1936,8 +1936,8 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
         SnackBar(
           content: Text(
             creatorLastBuildFailed(_sessionCanvas(store))
-                ? 'Re-running the full build (the last one failed)…'
-                : 'Building the sheet…',
+                ? 'Volviendo a generar la ficha…'
+                : 'Generando la ficha…',
           ),
         ),
       );
@@ -3934,7 +3934,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                     color: EmberColors.danger,
                   ),
                   title: Text(
-                    cascade ? 'Delete this and after' : 'Delete just this',
+                    cascade ? 'Eliminar este mensaje y los siguientes' : 'Delete just this',
                     style: TextStyle(color: EmberColors.danger),
                   ),
                   subtitle: cascade
@@ -5108,8 +5108,8 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                 final n = store.creatorSessions.length;
                 return IconButton(
                   tooltip: n > 1
-                      ? 'Saved drafts & past sessions ($n)'
-                      : 'Saved drafts & sessions',
+                      ? 'Borradores y sesiones guardadas (${n})'
+                      : 'Borradores y sesiones guardadas',
                   icon: const Icon(Icons.menu),
                   onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                 );
@@ -5523,8 +5523,8 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                         Expanded(
                           child: Text(
                             boundLorebooks.isEmpty
-                                ? 'No embedded lorebook linked yet'
-                                : 'Embedded lorebook: ${boundLorebooks.map((b) => b.name).join(', ')}',
+                                ? 'Todavía no hay un libro de mundo integrado'
+                                : 'libro de mundo embedido: ${boundLorebooks.map((b) => b.name).join(', ')}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -5618,7 +5618,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                         icon: const Icon(Icons.check, size: 16),
                         label: Text(
                           isLorebookMode
-                              ? 'Save lorebook'
+                              ? 'Guardar libro de mundo'
                               : store.activeCreatorSession?.mode == 'persona'
                               ? 'Save persona'
                               : 'Save card',
@@ -5778,8 +5778,8 @@ class _SessionsDrawerState extends State<_SessionsDrawer> {
                         padding: const EdgeInsets.all(24),
                         child: Text(
                           _query.isEmpty
-                              ? 'No sessions yet. Start chatting and one will appear here.'
-                              : 'No sessions match "$_query".',
+                              ? 'Aún no hay sesiones. Inicia una conversación para verla aquí.'
+                              : 'No hay sesiones que coincidan con "${_query}".',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: EmberColors.textDim),
                         ),
@@ -6780,8 +6780,8 @@ class _InputBar extends StatelessWidget {
                       textInputAction: TextInputAction.newline,
                       decoration: InputDecoration(
                         hintText: modeLocked
-                            ? 'Pick what to build above to begin…'
-                            : 'Reply to the assistant…',
+                            ? 'Elige qué quieres crear para empezar…'
+                            : 'Escribe al asistente…',
                         isDense: true,
                       ),
                     ),
@@ -6942,7 +6942,7 @@ class _MessageBodyState extends State<_MessageBody> {
                   ),
                   const SizedBox(width: 2),
                   Text(
-                    hideReasoning ? 'Show reasoning' : 'Hide reasoning',
+                    hideReasoning ? 'Mostrar razonamiento' : 'Ocultar razonamiento',
                     style: TextStyle(
                       color: EmberColors.textMid,
                       fontSize: 11,
@@ -7147,8 +7147,8 @@ class _AttachmentBubbleRowState extends State<_AttachmentBubbleRow> {
                   const SizedBox(width: 2),
                   Text(
                     _expanded
-                        ? 'Hide attachment details'
-                        : 'Show attachment details',
+                        ? 'Ocultar detalles del archivo adjunto'
+                        : 'Mostrar detalles de los adjuntos',
                     style: TextStyle(color: EmberColors.textMid, fontSize: 11),
                   ),
                 ],
@@ -7498,7 +7498,7 @@ class _SheetStatusPill extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            name.isEmpty ? 'Untitled' : name,
+                            name.isEmpty ? 'Sin título' : name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -7853,7 +7853,7 @@ class _SaveCardSheetState extends State<_SaveCardSheet> {
                           name.isEmpty
                               ? (widget.personaMode
                                     ? 'Untitled persona'
-                                    : 'Untitled character')
+                                    : 'Personaje sin nombre')
                               : name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -7916,7 +7916,7 @@ class _SaveCardSheetState extends State<_SaveCardSheet> {
                 selectedIds: _lorebookIds,
                 label: widget.personaMode
                     ? 'Persona lorebooks'
-                    : 'Linked lorebooks',
+                    : 'Libros de mundo vinculados',
                 sublabel:
                     'Bind a world so it travels with this ${widget.personaMode ? 'persona' : 'card'} '
                     '(optional — you can change this later in the editor).',
@@ -7986,7 +7986,7 @@ class _SaveCardSheetState extends State<_SaveCardSheet> {
                             icon: const Icon(Icons.ios_share, size: 16),
                             label: Text(
                               !_hasAvatarForExport
-                                  ? 'Save & export PNG (pick image first)'
+                                  ? 'Guardar y exportar PNG (primero elige una imagen)'
                                   : 'Save & export PNG',
                             ),
                             onPressed: (_saving || !_hasAvatarForExport)
@@ -8018,8 +8018,8 @@ class _SaveCardSheetState extends State<_SaveCardSheet> {
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
                             !_hasAvatarForExport
-                                ? 'PNG export needs an avatar image so the chara_card_v2 metadata can be embedded.'
-                                : 'PNG is saved to PyreExports and opened in your share sheet.',
+                                ? 'Para exportar como PNG, añade un avatar a la ficha.'
+                                : 'Se guarda el PNG en PyreExports y se abre el menú para compartirlo.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: EmberColors.textDim,

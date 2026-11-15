@@ -182,7 +182,7 @@ class _PresetCard extends StatelessWidget {
         ),
         subtitle: Text(
           p.locked
-              ? 'Built-in preset · tuned for creative roleplay'
+              ? 'Preajuste de fábrica para historias creativas'
               : _previewLine(p),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -736,7 +736,7 @@ class _PresetDetailsScreen extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          b.name.trim().isEmpty ? '(unnamed block)' : b.name,
+                          b.name.trim().isEmpty ? '(bloque sin nombre)' : b.name,
                           style: TextStyle(
                             color: b.enabled
                                 ? EmberColors.textHigh
@@ -1598,7 +1598,7 @@ Future<void> _showBlockEditor(
                 const SizedBox(height: 6),
                 Text(
                   role == 'system'
-                      ? 'Joins the system prompt as plain instructions.'
+                      ? 'Añade las instrucciones al mensaje del sistema.'
                       : 'Sent as a real "$role" chat turn (SillyTavern-style).',
                   style: TextStyle(
                       color: EmberColors.textDim, fontSize: 11),

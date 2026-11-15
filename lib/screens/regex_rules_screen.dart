@@ -132,7 +132,7 @@ class RegexRulesScreen extends StatelessWidget {
                             color: EmberColors.textMid),
                       ),
                       title: Text(
-                        r.name.isEmpty ? '(unnamed rule)' : r.name,
+                        r.name.isEmpty ? '(regla sin nombre)' : r.name,
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       subtitle: Text(
@@ -478,7 +478,7 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existing == null ? 'New rule' : 'Edit rule'),
+        title: Text(widget.existing == null ? 'Nueva regla' : 'Edit rule'),
         actions: [
           TextButton(
             onPressed: _save,

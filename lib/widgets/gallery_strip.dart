@@ -58,7 +58,7 @@ class _Thumb extends StatelessWidget {
     if (useAsAvatar == null) return;
     final es = AppStrings.of(context).es;
     showModalBottomSheet<void>(context: context, backgroundColor: EmberColors.bgPanel, shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))), builder: (sheet) => SafeArea(top: false, child: Column(mainAxisSize: MainAxisSize.min, children: [
-      ListTile(leading: Icon(Icons.fullscreen, color: EmberColors.textMid), title: Text(es ? 'Ver en pantalla completa' : 'View fullscreen'), onTap: () { Navigator.pop(sheet); onTap(); }),
+      ListTile(leading: Icon(Icons.fullscreen, color: EmberColors.textMid), title: Text(es ? 'Ver en pantalla completa' : 'Ver en pantalla completa'), onTap: () { Navigator.pop(sheet); onTap(); }),
       ListTile(leading: Icon(Icons.account_circle_outlined, color: EmberColors.textMid), title: Text(es ? 'Usar como avatar' : 'Use as avatar'), onTap: () { Navigator.pop(sheet); useAsAvatar(); }),
     ])));
   }
@@ -91,7 +91,7 @@ class _GallerySwipeViewerState extends State<_GallerySwipeViewer> {
     final es = AppStrings.of(context).es;
     final bytes = await resolveAvatarBytes(widget.refs[_index]);
     if (!mounted) return;
-    if (bytes == null) { messenger.showSnackBar(SnackBar(content: Text(es ? 'No se pudo cargar esta imagen para guardarla.' : "Couldn't load this image to save."))); return; }
+    if (bytes == null) { messenger.showSnackBar(SnackBar(content: Text(es ? 'No se pudo cargar esta imagen para guardarla.' : "No se pudo cargar la imagen para guardarla."))); return; }
     final safeOwner = widget.ownerName.replaceAll(RegExp(r'[^A-Za-z0-9 _\-.]'), '').trim().replaceAll(' ', '_');
     final owner = safeOwner.isEmpty ? 'image' : safeOwner;
     final isAvatarPage = _index < widget.galleryStartIndex;
@@ -106,7 +106,7 @@ class _GallerySwipeViewerState extends State<_GallerySwipeViewer> {
     return Scaffold(backgroundColor: Colors.black.withValues(alpha: 0.96), body: SafeArea(child: Stack(children: [
       PageView.builder(controller: _controller, itemCount: count, onPageChanged: (i) => setState(() => _index = i), itemBuilder: (_, i) { final img = Lightbox.resolveImage(widget.refs[i]); final content = img == null ? const Center(child: Icon(Icons.broken_image_outlined, color: Colors.white54, size: 72)) : InteractiveViewer(minScale: 1, maxScale: 5, child: Center(child: Lightbox.imageWidget(img))); return GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => Navigator.of(context).pop(), child: content); }),
       if (count > 1) Positioned(bottom: 16, left: 0, right: 0, child: Center(child: Text('${_index + 1} / $count', style: const TextStyle(color: Colors.white70, fontSize: 13)))),
-      Positioned(top: 8, right: 8, child: Row(mainAxisSize: MainAxisSize.min, children: [IconButton(tooltip: es ? 'Guardar imagen' : 'Save image', icon: const Icon(Icons.download, color: Colors.white), onPressed: _saveCurrent), IconButton(tooltip: es ? 'Cerrar' : 'Close', icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.of(context).pop())])),
+      Positioned(top: 8, right: 8, child: Row(mainAxisSize: MainAxisSize.min, children: [IconButton(tooltip: es ? 'Guardar imagen' : 'Save image', icon: const Icon(Icons.download, color: Colors.white), onPressed: _saveCurrent), IconButton(tooltip: es ? 'Cerrar' : 'Cerrar', icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.of(context).pop())])),
     ])));
   }
 }

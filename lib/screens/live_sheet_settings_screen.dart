@@ -155,7 +155,7 @@ class _LiveSheetSettingsScreenState extends State<LiveSheetSettingsScreen> {
           SliderCard(
             label: 'Actualizar automáticamente cada',
             subtitle: _autoEvery <= 0
-                ? 'Auto-update disabled — use "Update state now" manually.'
+                ? 'La actualización automática está desactivada. Pulsa «Actualizar estado» para hacerlo manualmente.'
                 : 'Pyre updates the sheet every $_autoEvery character turns. '
                     '0 disables auto-update.',
             value: _autoEvery.toDouble(),

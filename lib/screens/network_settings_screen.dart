@@ -268,7 +268,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
                     enabled
                         ? (running
                             ? 'Listening on http://$_lanIp:$actualPort'
-                            : 'Configured but not running')
+                            : 'Configurado y detenido')
                         : 'Off — phones / web tabs can\'t reach this Pyre',
                     style: TextStyle(
                       color: EmberColors.textMid,

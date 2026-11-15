@@ -116,7 +116,7 @@ class Lightbox extends StatelessWidget {
               right: 8,
               child: IconButton(
                 icon: const Icon(Icons.close, color: Colors.white),
-                tooltip: es ? 'Cerrar' : 'Close',
+                tooltip: es ? 'Cerrar' : 'Cerrar',
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ),

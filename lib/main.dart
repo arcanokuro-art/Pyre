@@ -1095,7 +1095,7 @@ class _RootShellState extends State<RootShell> {
             duration: const Duration(seconds: 8),
             content: Text(es
                 ? 'No se pudieron guardar tus cambios; comprueba que el dispositivo tenga espacio disponible. Tu trabajo sigue aquí por ahora, pero podría perderse al reiniciar hasta que se complete un guardado correctamente.'
-                : "Couldn't save your changes — check that the device isn't out of storage. Your work is still here for now, but it may not survive a restart until a save succeeds."),
+                : "No se pudieron guardar tus cambios. Comprueba cuánto espacio queda y vuelve a guardar antes de cerrar Pyre."),
           ),
         );
       });

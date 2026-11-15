@@ -125,7 +125,7 @@ class _ScriptSettingsScreenState extends State<ScriptSettingsScreen> {
           SliderCard(
             label: 'Inyecte en la mayoría de direcciones N',
             subtitle: _beatsCap <= 0
-                ? 'All active directions are sent to the model each turn.'
+                ? 'El modelo recibe todas las indicaciones activas en cada turno.'
                 : 'Only the first $_beatsCap active direction${_beatsCap == 1 ? "" : "s"} '
                     'are sent each turn — useful when you have many queued '
                     'to keep context footprint low. '
