@@ -107,7 +107,7 @@ void main() {
       final source = AppStore(storage: _NoopBackend());
       source.updateModelSettings(
           ModelSettings(temperature: 0.42, topP: 0.7, maxTokens: 333));
-      source.updateMemorySettings(MemorySettings.fromJson({'autoEvery': 9}));
+      source.updateMemorySettings(MemorySettings(managedMemoryTokens: 10000000));
       source.updateScriptSettings(ScriptSettings(beatsCap: 5));
       source.activeProviderId = 'A';
       source.setCreatorProvider('C');
@@ -122,7 +122,7 @@ void main() {
       expect(dest.modelSettings.temperature, 0.42);
       expect(dest.modelSettings.topP, 0.7);
       expect(dest.modelSettings.maxTokens, 333);
-      expect(dest.memorySettings.autoEvery, 9);
+      expect(dest.memorySettings.managedMemoryTokens, 10000000);
       expect(dest.scriptSettings.beatsCap, 5);
       expect(dest.activeProviderId, 'A');
       expect(dest.creatorProviderId, 'C');

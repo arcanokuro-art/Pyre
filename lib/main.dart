@@ -615,7 +615,7 @@ class _PyreAppState extends State<PyreApp>
         builder: (context, store, _) {
           return MaterialApp(
             title: 'Pyre',
-            locale: Locale(store.uiPrefs.languageCode),
+            locale: AppStrings.defaultLocale,
             supportedLocales: AppStrings.supportedLocales,
             localizationsDelegates: const [
               AppStringsDelegate(),

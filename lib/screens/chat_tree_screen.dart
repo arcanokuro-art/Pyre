@@ -36,12 +36,12 @@ class ChatTreeScreen extends StatelessWidget {
     }
     if (chat == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Chat tree')),
+        appBar: AppBar(title: const Text('Árbol del chat')),
         body: Center(
           child: Padding(
             padding: EdgeInsets.all(32),
             child: Text(
-              'This chat was deleted.',
+              'Este chat fue borrado.',
               style: TextStyle(color: EmberColors.textMid),
             ),
           ),
@@ -52,14 +52,14 @@ class ChatTreeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat tree'),
+        title: const Text('Árbol del chat'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(28),
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
-              'Tap any node to jump to that variant in the chat. Highlighted line = active branch.',
+              'Toque cualquier nodo para saltar a esa variante en el chat. Línea destacada = rama activa.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 11,
@@ -74,7 +74,7 @@ class ChatTreeScreen extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.all(32),
                 child: Text(
-                  'No messages yet — nothing to map.',
+                  'Aún no hay mensajes, nada que mapear.',
                   style: TextStyle(color: EmberColors.textMid),
                 ),
               ),
@@ -518,7 +518,7 @@ Future<bool> _confirmJumpToNode(
                   ),
                   const Spacer(),
                   Text(
-                    'Depth $depth',
+                    'Profundidad ${depth}',
                     style: TextStyle(
                       color: EmberColors.textDim,
                       fontSize: 11,
@@ -567,7 +567,7 @@ Future<bool> _confirmJumpToNode(
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(sheet).pop(false),
-                      child: const Text('Cancel'),
+                      child: const Text('Cancelar'),
                     ),
                   ),
                   const SizedBox(width: 10),

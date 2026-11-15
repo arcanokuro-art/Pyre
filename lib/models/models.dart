@@ -308,6 +308,9 @@ class Character {
   String id;
   String name;
   String? tagline;
+  /// Pyre-native character template discriminator. `female` / `male` select
+  /// fixed hidden roleplay dynamics; null keeps imported/legacy cards neutral.
+  String? charType;
   String description;
   String personality;
   String scenario;
@@ -401,6 +404,7 @@ class Character {
     required this.id,
     required this.name,
     this.tagline,
+    this.charType,
     this.description = '',
     this.personality = '',
     this.scenario = '',
@@ -440,6 +444,13 @@ class Character {
     id: j['id'] as String,
     name: (j['name'] as String?) ?? 'Unnamed',
     tagline: j['tagline'] as String?,
+    charType: (j['charType'] as String?) ??
+        (j['char_type'] as String?) ??
+        switch (j['extensions']) {
+          {'pyre_male_profile': Map _} => 'male',
+          {'pyre_female_profile': Map _} => 'female',
+          _ => null,
+        },
     description: (j['description'] as String?) ?? '',
     personality: (j['personality'] as String?) ?? '',
     scenario: (j['scenario'] as String?) ?? '',
@@ -483,6 +494,7 @@ class Character {
     'id': id,
     'name': name,
     'tagline': tagline,
+    if (charType?.trim().isNotEmpty == true) 'charType': charType,
     'description': description,
     'personality': personality,
     'scenario': scenario,
@@ -526,7 +538,10 @@ class Persona {
   String name;
   String? tagline;
   String description;
-
+  /// Structured manual {{user}} profile. New manual persona creators persist
+  /// their seven-section schema here; legacy/imported personas may leave it
+  /// empty and continue using [description].
+  Map<String, dynamic> structuredProfile;
   /// Wave CX.1: optional dialogue examples — first-person dialogue /
   /// action samples in the user's voice that the model uses to lock the
   /// persona's speech rhythm. Populated automatically from a source
@@ -569,6 +584,7 @@ class Persona {
     required this.name,
     this.tagline,
     this.description = '',
+    Map<String, dynamic>? structuredProfile,
     this.dialogueExamples = '',
     this.avatar,
     this.avatarOriginal,
@@ -579,7 +595,8 @@ class Persona {
     this.favorite = false,
     this.mtime = 0,
     this.deleted = false,
-  }) : lorebookIds = lorebookIds ?? [],
+  }) : structuredProfile = structuredProfile ?? <String, dynamic>{},
+       lorebookIds = lorebookIds ?? [],
        gallery = gallery ?? [],
        createdAt = createdAt ?? DateTime.now().millisecondsSinceEpoch,
        updatedAt = updatedAt ?? DateTime.now().millisecondsSinceEpoch;
@@ -604,6 +621,7 @@ class Persona {
     }(),
     tagline: j['tagline'] as String?,
     description: (j['description'] as String?) ?? '',
+    structuredProfile: (j['structuredProfile'] as Map?)?.cast<String, dynamic>(),
     dialogueExamples: (j['dialogueExamples'] as String?) ?? '',
     avatar: j['avatar'] as String?,
     // Non-destructive Recrop: absent/null → null (pre-feature personas).
@@ -623,6 +641,7 @@ class Persona {
     'name': name,
     'tagline': tagline,
     'description': description,
+    if (structuredProfile.isNotEmpty) 'structuredProfile': structuredProfile,
     if (dialogueExamples.isNotEmpty) 'dialogueExamples': dialogueExamples,
     'avatar': avatar,
     // Non-destructive Recrop: emit only when a recrop preserved an original.
@@ -2967,7 +2986,6 @@ SyncConflictMode parseSyncConflictMode(dynamic v) {
 
 class UiPrefs {
   /// UI language. Spanish is the default; English remains selectable.
-  String languageCode;
   String activeTab;
   String charactersSegment; // 'characters' | 'personas'
   /// Wave CY.18.46: desktop layout mode toggle. Default `false` =
@@ -3081,7 +3099,6 @@ class UiPrefs {
   double get clampedUiScale => uiScale.clamp(kUiScaleMin, kUiScaleMax);
 
   UiPrefs({
-    this.languageCode = 'es',
     this.activeTab = 'characters',
     this.charactersSegment = 'characters',
     // Wave CY.18.86: default ON. Desktop users open Pyre in a window
@@ -3108,7 +3125,6 @@ class UiPrefs {
        chatSwapProviderIds = chatSwapProviderIds ?? const [];
 
   factory UiPrefs.fromJson(Map<String, dynamic> j) => UiPrefs(
-    languageCode: j['languageCode'] == 'en' ? 'en' : 'es',
     activeTab: (j['activeTab'] as String?) ?? 'characters',
     charactersSegment: (j['charactersSegment'] as String?) ?? 'characters',
     // Wave CY.18.86: matches constructor default. Old JSON without
@@ -3186,7 +3202,6 @@ class UiPrefs {
   }
 
   Map<String, dynamic> toJson() => {
-    if (languageCode != 'es') 'languageCode': languageCode,
     'activeTab': activeTab,
     'charactersSegment': charactersSegment,
     // Wave CY.18.86: default flipped to true. Only persist when

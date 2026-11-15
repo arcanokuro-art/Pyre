@@ -16,6 +16,7 @@ import '../services/chat_api.dart';
 import '../services/image_describe.dart' show encodeImageDataUrl;
 import '../services/image_generation.dart';
 import '../services/image_pick.dart';
+import '../services/image_resize.dart';
 import '../services/continuation_merge.dart';
 import '../services/chat_export.dart';
 import '../services/web_download.dart';
@@ -253,11 +254,11 @@ String buildFillInOpenerPrompt({
     // opener addresses the whole group from the very first message.
     sys.writeln('\n${buildJointPersonaBlock(personaParty).trim()}');
   } else if (persona != null) {
-    sys.writeln('\nUser persona — ${persona.name}: ${persona.description}');
-    if (persona.dialogueExamples.trim().isNotEmpty) {
-      sys.writeln(
-          '\n${persona.name}\'s dialogue examples:\n${persona.dialogueExamples.trim()}');
-    }
+    // Keep opener generation on the same canonical persona projection as
+    // ongoing roleplay. Structured {{user}} profiles therefore never fall
+    // back to stale legacy description text here.
+    sys.writeln('\nUser persona — ${persona.name}:');
+    sys.writeln(buildSinglePersonaBlock(persona));
   }
   // 4. Bound lorebook hits — the same world facts the ongoing chat injects via
   // {{wiBefore}} / the inline "--- Lore ---" block, so the opener can't
@@ -848,7 +849,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           final name = liveStore.activePreset?.name ?? '';
                           Navigator.pop(sheet);
                           messenger.showSnackBar(
-                            SnackBar(content: Text('Switched to $name')),
+                            SnackBar(content: Text('Interruptor a ${name}')),
                           );
                         },
                         child: Column(
@@ -893,7 +894,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   Navigator.pop(sheet);
                                   messenger.showSnackBar(
                                     SnackBar(
-                                        content: Text('Switched to $name')),
+                                        content: Text('Interruptor a ${name}')),
                                   );
                                 },
                               ),
@@ -915,14 +916,14 @@ class _ChatScreenState extends State<ChatScreen> {
                           leading: Icon(Icons.edit_note,
                               color: EmberColors.textMid),
                           title: Text(
-                            'Quick edit system prompt',
+                            'Previsión del sistema de edición rápida',
                             style: TextStyle(
                                 fontSize: 13,
                                 color: EmberColors.textHigh,
                                 fontWeight: FontWeight.w500),
                           ),
                           subtitle: Text(
-                            'Edit "${active.name}" main prompt',
+                            'Editar "${active.name}"',
                             style: TextStyle(
                                 color: EmberColors.textMid, fontSize: 11),
                           ),
@@ -964,7 +965,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   child: ElevatedButton.icon(
                                     icon: const Icon(Icons.save_outlined,
                                         size: 16),
-                                    label: const Text('Save'),
+                                    label: const Text('Guardar'),
                                     onPressed: () {
                                       // Re-resolve the live preset by id in
                                       // case it changed while the field was
@@ -1022,7 +1023,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.tune, size: 16),
-                          label: const Text('Manage presets'),
+                          label: const Text('Gestionar presets'),
                           onPressed: () {
                             Navigator.pop(sheet);
                             navigator.push(MaterialPageRoute(
@@ -1110,7 +1111,7 @@ class _ChatScreenState extends State<ChatScreen> {
               final name = liveStore.chatPrimaryProvider(chat)?.name ?? 'None';
               Navigator.pop(sheet);
               messenger.showSnackBar(
-                SnackBar(content: Text('This chat now uses $name')),
+                SnackBar(content: Text('Esta charla utiliza ${name}')),
               );
             }
 
@@ -1227,7 +1228,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.tune, size: 16),
-                          label: const Text('Manage providers'),
+                          label: const Text('Gestion proveedores'),
                           onPressed: () {
                             Navigator.pop(sheet);
                             navigator.push(MaterialPageRoute(
@@ -1280,13 +1281,26 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _attachChatImages() async {
     if (_generating) return;
-    final picked = await pickImages(multiple: true);
-    if (!mounted || picked.isEmpty) return;
-    setState(() {
-      _pendingChatImages
-        ..clear()
-        ..addAll(picked.take(4));
-    });
+    try {
+      final picked = await pickImages(multiple: true);
+      if (!mounted || _generating || picked.isEmpty) return;
+      final optimized = <PickedImage>[];
+      for (final image in picked.take(4)) {
+        final bytes = await downscaleIfNeeded(image.bytes);
+        optimized.add(PickedImage(name: image.name, bytes: bytes, path: image.path));
+      }
+      if (!mounted || _generating) return;
+      setState(() {
+        _pendingChatImages
+          ..clear()
+          ..addAll(optimized);
+      });
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudieron adjuntar las imágenes.')),
+      );
+    }
   }
 
   void _clearPendingChatImages() {
@@ -1441,7 +1455,7 @@ class _ChatScreenState extends State<ChatScreen> {
           Message(
             id: newId('msg'),
             kind: MessageKind.user,
-            variants: [text],
+            variants: [text.isEmpty ? 'Describe la imagen adjunta.' : text],
             imageDataUrls: pendingImageDataUrls,
           ),
         );
@@ -1465,10 +1479,10 @@ class _ChatScreenState extends State<ChatScreen> {
     final messenger = ScaffoldMessenger.of(context);
     messenger.clearSnackBars();
     messenger.showSnackBar(SnackBar(
-      content: const Text('Connect an AI provider to send this message.'),
+      content: const Text('Conecta un proveedor de IA para enviar este mensaje.'),
       duration: const Duration(seconds: 8),
       action: SnackBarAction(
-        label: 'Set up provider',
+        label: 'Configurar proveedor',
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(
               builder: (_) => const ApiConnectionsScreen()),
@@ -2196,7 +2210,7 @@ class _ChatScreenState extends State<ChatScreen> {
               .replaceFirst(RegExp(r'^generateLiveSheetUpdate failed: '), '');
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-              'Live Sheet update failed — $reason. It will keep retrying as you chat.',
+              'Actualización de la ficha de escena falló — ${reason}. Seguirá reintentando mientras chateas.',
               style: const TextStyle(fontSize: 13),
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
@@ -2337,7 +2351,7 @@ class _ChatScreenState extends State<ChatScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-                'Scene background couldn\'t update — $reason. It will keep trying as you chat.',
+                'El fondo de escena no pudo actualizar — ${reason}. Seguirá intentando mientras chateas.',
                 style: const TextStyle(fontSize: 13),
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
@@ -2538,7 +2552,7 @@ class _ChatScreenState extends State<ChatScreen> {
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 8),
         action: SnackBarAction(
-          label: 'Retry',
+          label: 'Reintentar',
           textColor: EmberColors.primary,
           onPressed: () {
             // Wave CY.18.154: route through _retryGeneration — handles both a
@@ -2935,7 +2949,7 @@ class _ChatScreenState extends State<ChatScreen> {
             if (primary != null)
               ListTile(
                 leading: const Icon(Icons.add_comment_outlined),
-                title: const Text('New chat with this character'),
+                title: const Text('Nueva charla con este personaje'),
                 onTap: () async {
                   Navigator.pop(sheet);
                   await _startNewChatWithCharacter(primary);
@@ -2945,7 +2959,7 @@ class _ChatScreenState extends State<ChatScreen> {
               leading: const Icon(Icons.edit_note),
               title: const Text('Fill-In-Your-Own'),
               subtitle: Text(
-                'Scenario change or your own opening message.',
+                'Cambio de escenario o su propio mensaje de apertura.',
                 style:
                     TextStyle(color: EmberColors.textMid, fontSize: 12),
               ),
@@ -2974,7 +2988,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.account_tree_outlined),
-                    title: const Text('Chat Tree'),
+                    title: const Text('Árbol del chat'),
                     onTap: () {
                       Navigator.pop(sheet);
                       // Shared with the AppBar tree button (Wave CY.18.5
@@ -2984,11 +2998,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.psychology_outlined),
-                    title: const Text('Checkpoints'),
+                    title: const Text('Puntos de control'),
                     subtitle: Builder(builder: (_) {
                       if (!chat.memoryEnabled) {
                         return Text(
-                          'Off — auto-summariser disabled for this chat.',
+                          'Off — auto-summariser deshabilitado para esta charla.',
                           style: TextStyle(
                               color: EmberColors.textMid, fontSize: 12),
                         );
@@ -3013,7 +3027,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.checklist_rtl),
-                    title: const Text('Live Sheet'),
+                    title: const Text('Ficha de escena'),
                     subtitle: Text(
                       chat.liveSheetEnabled
                           ? 'On — tracking entity state.'
@@ -3031,7 +3045,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ListTile(
                     leading: Icon(Icons.map_outlined,
                         color: EmberColors.textMid),
-                    title: const Text('Script'),
+                    title: const Text('Guion'),
                     onTap: () {
                       Navigator.pop(sheet);
                       Navigator.of(context).push(MaterialPageRoute(
@@ -3049,7 +3063,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: ExpansionTile(
                 leading: Icon(Icons.more_horiz,
                     color: EmberColors.textMid),
-                title: const Text('More options'),
+                title: const Text('Más opciones'),
                 iconColor: EmberColors.textHigh,
                 collapsedIconColor: EmberColors.textMid,
                 textColor: EmberColors.textHigh,
@@ -3064,9 +3078,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   // the conversation.
                   ListTile(
                     leading: const Icon(Icons.tune),
-                    title: const Text('Chat background'),
+                    title: const Text('Fondo del chat'),
                     subtitle: Text(
-                      'Background & scene.',
+                      'Fondo y escena.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
@@ -3077,9 +3091,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.groups_outlined),
-                    title: const Text('Group chat & Lorebooks'),
+                    title: const Text('Chat de grupo &quot; libros de mundo &quot;'),
                     subtitle: Text(
-                      'Members + attached lorebooks.',
+                      'Miembros + libros de mundo adjuntos.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
@@ -3128,7 +3142,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     leading: const Icon(Icons.dns_outlined),
                     title: const Text('Provider'),
                     subtitle: Text(
-                      'Provider · ${store.chatPrimaryProvider(chat)?.name ?? "None"}',
+                      'Proveedor · ${store.chatPrimaryProvider(chat)?.name ?? "None"}',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
@@ -3140,7 +3154,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (primary != null)
                     ListTile(
                       leading: const Icon(Icons.info_outline),
-                      title: const Text('Character details'),
+                      title: const Text('Detalles del personaje'),
                       onTap: () {
                         Navigator.pop(sheet);
                         showCharacterDetailsSheet(
@@ -3152,9 +3166,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ListTile(
                     leading: const Icon(Icons.toll),
-                    title: const Text('Token breakdown'),
+                    title: const Text('Desglose de las cifras'),
                     subtitle: Text(
-                      'See where your context budget is going.',
+                      'Vea adónde va su presupuesto de contexto.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
@@ -3167,7 +3181,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     leading: const Icon(Icons.download_outlined),
                     title: const Text('Export chat'),
                     subtitle: Text(
-                      'Save as SillyTavern JSONL or full-fidelity Pyre JSON.',
+                      'Guardar como SillyTavern JSONL o Pyre JSON de plena fidelidad.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 12),
                     ),
@@ -3180,15 +3194,15 @@ class _ChatScreenState extends State<ChatScreen> {
                   ListTile(
                     leading: Icon(Icons.delete_outline,
                         color: EmberColors.danger),
-                    title: Text('Delete chat',
+                    title: Text('Eliminar el chat',
                         style: TextStyle(color: EmberColors.danger)),
                     onTap: () async {
                       Navigator.pop(sheet);
                       final ok = await confirmDelete(
                         context,
-                        title: 'Delete chat?',
+                        title: 'Eliminar el chat?',
                         message:
-                            'This conversation and all its messages will be lost forever.',
+                            'Esta conversación y todos sus mensajes se perderán para siempre.',
                       );
                       if (!ok || !mounted) return;
                       store.removeChat(chat.id);
@@ -3344,7 +3358,7 @@ class _ChatScreenState extends State<ChatScreen> {
       );
     } catch (e) {
       messenger.showSnackBar(
-          SnackBar(content: Text('Export failed: $e')));
+          SnackBar(content: Text('Fallo de exportación: ${e}')));
     }
   }
 
@@ -3381,7 +3395,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ListTile(
                 leading: Icon(Icons.play_arrow_rounded,
                     color: EmberColors.primary),
-                title: const Text('Continue (extend this message)'),
+                title: const Text('Continuar este mensaje'),
                 onTap: () {
                   Navigator.pop(sheet);
                   _continueLast();
@@ -3405,7 +3419,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ListTile(
                 leading: Icon(Icons.auto_fix_high_outlined,
                     color: EmberColors.primary),
-                title: const Text('Regenerate with a guide'),
+                title: const Text('Regenerar con un guía'),
                 onTap: () {
                   Navigator.pop(sheet);
                   _regenerateWithGuide(chat, m);
@@ -3458,7 +3472,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 subtitle: cascade
                     ? Text(
-                        'Chat Settings → Delete behavior is on "This and after".',
+                        'Configuración de chat → Eliminar el comportamiento está en "Esto y después".',
                         style: TextStyle(
                             color: EmberColors.textMid, fontSize: 11),
                       )
@@ -3774,7 +3788,7 @@ class _ChatScreenState extends State<ChatScreen> {
       // here means no provider is configured at all.)
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No provider configured. Open "More → API Connections".'),
+          content: Text('Ningún proveedor configurado. Abrir "Más → Conexiones de API".'),
         ),
       );
       return;
@@ -3896,7 +3910,7 @@ class _ChatScreenState extends State<ChatScreen> {
             messenger.showSnackBar(
               SnackBar(
                   content: Text(
-                      '${isGuided ? "Guide" : "Impersonate"} failed: $e')),
+                      '${isGuided ? "Guide" : "Impersonate"} falló: ${e}')),
             );
           }
         },
@@ -3957,7 +3971,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messenger.showSnackBar(
         SnackBar(
             content:
-                Text('${isGuided ? "Guide" : "Impersonate"} failed: $e')),
+                Text('${isGuided ? "Guide" : "Impersonate"} falló: ${e}')),
       );
     }
   }
@@ -3997,7 +4011,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -4019,7 +4033,7 @@ class _ChatScreenState extends State<ChatScreen> {
   /// dismissible chip above the input bar; consumed (and cleared) by `_send`.
   Future<void> _armGuideForReply() async {
     final guide = await _promptGuideLine(
-      title: 'Guide the reply',
+      title: 'Guía de la respuesta',
       hint: 'How should the next reply go?',
       confirmLabel: 'Arm guide',
     );
@@ -4032,7 +4046,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _regenerateWithGuide(Chat chat, Message m) async {
     if (_generating) return;
     final guide = await _promptGuideLine(
-      title: 'Regenerate with a guide',
+      title: 'Regenerar con un guía',
       hint: 'Steer this re-roll (e.g. "make her more reluctant")',
       confirmLabel: 'Regenerate',
     );
@@ -4071,7 +4085,7 @@ class _ChatScreenState extends State<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Guide my message',
+                  'Guía mi mensaje',
                   style: TextStyle(
                     color: EmberColors.textHigh,
                     fontSize: 16,
@@ -4094,8 +4108,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   maxLines: 6,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: const InputDecoration(
-                    labelText: 'Outline (optional)',
-                    hintText: 'e.g. refuse the offer, but leave the door open',
+                    labelText: 'Esquema (opcional)',
+                    hintText: 'por ejemplo, rechazar la oferta, pero dejar la puerta abierta',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -4109,11 +4123,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 SegmentedButton<GuidePerspective>(
                   segments: const [
                     ButtonSegment(
-                        value: GuidePerspective.first, label: Text('First')),
+                        value: GuidePerspective.first, label: Text('Primera')),
                     ButtonSegment(
                         value: GuidePerspective.second, label: Text('Second')),
                     ButtonSegment(
-                        value: GuidePerspective.third, label: Text('Third')),
+                        value: GuidePerspective.third, label: Text('Tercera')),
                   ],
                   selected: {perspective},
                   showSelectedIcon: false,
@@ -4140,7 +4154,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(sheet),
-                      child: const Text('Cancel'),
+                      child: const Text('Cancelar'),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
@@ -4177,7 +4191,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: Text('Add $title'),
+        title: Text('Añadir ${title}'),
         content: TextField(
           controller: ctl,
           autofocus: true,
@@ -4189,7 +4203,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
+              child: const Text('Cancelar')),
           ElevatedButton(
             onPressed: () {
               final t = ctl.text.trim();
@@ -4202,7 +4216,7 @@ class _ChatScreenState extends State<ChatScreen> {
               );
               Navigator.pop(ctx);
             },
-            child: const Text('Add'),
+            child: const Text('Añadir'),
           ),
         ],
       ),
@@ -4259,8 +4273,8 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 SegmentedButton<int>(
                   segments: const [
-                    ButtonSegment(value: 0, label: Text('Scenario')),
-                    ButtonSegment(value: 1, label: Text('Custom message')),
+                    ButtonSegment(value: 0, label: Text('Escenario')),
+                    ButtonSegment(value: 1, label: Text('Mensaje personalizado')),
                   ],
                   selected: {tab},
                   onSelectionChanged: (s) =>
@@ -4283,7 +4297,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(height: 12),
                 if (tab == 0) ...[
                   Text(
-                    'The model writes a new opening message contextualised to your scenario. It becomes a new variant of the first message — swipe between greetings.',
+                    'El modelo escribe un nuevo mensaje de apertura contextualizado a su escenario. Se convierte en una nueva variante del primer mensaje: girar entre saludos.',
                     style: TextStyle(
                         color: EmberColors.textMid, fontSize: 12),
                   ),
@@ -4295,12 +4309,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     textCapitalization: TextCapitalization.sentences,
                     decoration: const InputDecoration(
                       hintText:
-                          'e.g. "Late evening, the tavern is closing. {{char}} is the last patron…"',
+                          'Por ejemplo: "La tarde tardía, la taberna se está cerrando. Es el último patrón..."',
                     ),
                   ),
                 ] else ...[
                   Text(
-                    'Your text becomes a new first-message variant. Use the arrows on the opening message to switch.',
+                    'Su texto se convierte en una nueva variante de primer mensaje. Utilice las flechas en el mensaje de apertura para cambiar.',
                     style: TextStyle(
                         color: EmberColors.textMid, fontSize: 12),
                   ),
@@ -4312,7 +4326,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     textCapitalization: TextCapitalization.sentences,
                     decoration: const InputDecoration(
                       hintText:
-                          'Type the opening exactly as the character would say it…',
+                          'Escribe la apertura exactamente como el personaje lo diría…',
                     ),
                   ),
                 ],
@@ -4328,7 +4342,7 @@ class _ChatScreenState extends State<ChatScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -4807,7 +4821,7 @@ class _ChatScreenState extends State<ChatScreen> {
         if (beat != null) {
           store.touchChat(chat); // F1: story beat add syncs
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Added to script')),
+            const SnackBar(content: Text('Añadido al guion')),
           );
         }
         return true;
@@ -4840,10 +4854,10 @@ class _ChatScreenState extends State<ChatScreen> {
         () async {
           final ok = await confirmDelete(
             context,
-            title: 'Clear all messages?',
+            title: '¿Borrar todos los mensajes?',
             message:
-                'Every message in this chat will be erased. The chat itself stays.',
-            confirmLabel: 'Clear',
+                'Cada mensaje en este chat será borrado. El chat en sí permanece.',
+            confirmLabel: 'Limpiar',
           );
           if (!ok) return;
           for (final m in [...chat.messages]) {
@@ -4863,7 +4877,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Slash commands'),
+        title: const Text('Comandos Slash'),
         content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -4879,7 +4893,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
+            child: const Text('Cerrar'),
           ),
         ],
       ),
@@ -5020,7 +5034,7 @@ class _ChatScreenState extends State<ChatScreen> {
     if (chat == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const Center(child: Text('Chat not found')),
+        body: const Center(child: Text('Chat no encontrado')),
       );
     }
     final character = _primaryCharacter(store, chat);
@@ -5181,7 +5195,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.more_vert),
-            tooltip: 'Chat actions',
+            tooltip: 'Acciones de chat',
             onPressed: () => _showChatKebab(chat, character),
           ),
         ],
@@ -5250,7 +5264,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: Padding(
                       padding: EdgeInsets.all(32),
                       child: Text(
-                        'Say something to start the conversation.',
+                        'Di algo para empezar la conversación.',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: EmberColors.textMid),
                       ),
@@ -5502,7 +5516,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       size: 14,
                                       color: EmberColors.primary),
                                   const SizedBox(width: 6),
-                                  Text('Jump to bottom',
+                                  Text('Saltar a la parte inferior',
                                       style: TextStyle(
                                           color: EmberColors.primary,
                                           fontSize: 12,
@@ -6203,7 +6217,7 @@ class _MessageBubbleState extends State<_MessageBubble> {
                               alignment: Alignment.centerRight,
                               child: TextButton.icon(
                                 icon: const Icon(Icons.close, size: 14),
-                                label: const Text('Done',
+                                label: const Text('Listo',
                                     style: TextStyle(fontSize: 12)),
                                 style: TextButton.styleFrom(
                                   foregroundColor: EmberColors.primary,
@@ -6870,7 +6884,7 @@ class _InlineMessageEditorState extends State<_InlineMessageEditor> {
                 minimumSize: const Size(0, 28),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
             ),
             const SizedBox(width: 4),
             ElevatedButton(
@@ -6883,7 +6897,7 @@ class _InlineMessageEditorState extends State<_InlineMessageEditor> {
                 minimumSize: const Size(0, 28),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('Save'),
+              child: const Text('Guardar'),
             ),
           ],
         ),
@@ -7325,7 +7339,7 @@ class _InputBar extends StatelessWidget {
                       Icon(Icons.explore_outlined,
                           size: 16, color: EmberColors.textMid),
                       SizedBox(width: 10),
-                      Text('Guide the reply'),
+                      Text('Guía de la respuesta'),
                     ]),
                   ),
                 // "Guide my message" — guided Impersonate (outline +
@@ -7338,7 +7352,7 @@ class _InputBar extends StatelessWidget {
                       Icon(Icons.edit_note_outlined,
                           size: 16, color: EmberColors.textMid),
                       SizedBox(width: 10),
-                      Text('Guide my message'),
+                      Text('Guía mi mensaje'),
                     ]),
                   ),
                 PopupMenuItem<String>(
@@ -7369,7 +7383,7 @@ class _InputBar extends StatelessWidget {
                       Icon(Icons.smart_toy_outlined,
                           size: 16, color: EmberColors.textMid),
                       SizedBox(width: 10),
-                      Text('Add system note'),
+                      Text('Añadir la nota del sistema'),
                     ]),
                   ),
               ],
@@ -7410,7 +7424,7 @@ class _InputBar extends StatelessWidget {
                   // behaviour that users expect everywhere else.
                   textCapitalization: TextCapitalization.sentences,
                   decoration: const InputDecoration(
-                    hintText: 'Enter your message…',
+                    hintText: 'Escriba su mensaje…',
                     isDense: true,
                   ),
                   textInputAction: TextInputAction.newline,
@@ -7534,7 +7548,7 @@ class _ArmedGuideChip extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Guiding next reply: $guide',
+              'Guiándose la siguiente respuesta: ${guide}',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -7597,7 +7611,7 @@ class _CheckpointDivider extends StatelessWidget {
                   size: 14, color: EmberColors.primary),
               const SizedBox(width: 6),
               Text(
-                'Checkpoint',
+                'Punto de control',
                 style: TextStyle(
                   color: EmberColors.primary,
                   fontSize: 11,

@@ -147,12 +147,12 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
   Future<void> _disconnect() async {
     final ok = await confirmDelete(
       context,
-      title: 'Disconnect from PC?',
+      title: '¿Desconectarse de PC?',
       message:
           'You can re-pair anytime by scanning a fresh QR from the PC. '
           'The PC will keep this device in its registry until you revoke '
           'it from the desktop Network screen.',
-      confirmLabel: 'Disconnect',
+      confirmLabel: 'Desconectar',
     );
     if (!ok) return;
     await LanClient.instance.disconnect();
@@ -197,7 +197,7 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
     // store.uiPrefs.syncProviderKeys and rebuilds when it flips.
     final store = context.watch<AppStore>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Connect to LAN')),
+      appBar: AppBar(title: const Text('Conectar a la red local')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
@@ -246,7 +246,7 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
       const Padding(
         padding: EdgeInsets.symmetric(vertical: 12),
         child: Text(
-          'Not connected to a Pyre server.',
+          'No está conectado a un servidor Pyre.',
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),
@@ -256,7 +256,7 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
             leading: const Icon(Icons.qr_code_scanner),
             title: const Text('Scan QR from PC'),
             subtitle: const Text(
-                'Open the desktop\'s Network → Pair new device → point your camera at the QR.'),
+                'Abrir la red de escritorio → Par nuevo dispositivo → apuntar su cámara en el QR.'),
             onTap: _openScanner,
           ),
         ),
@@ -264,9 +264,9 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
       Card(
         child: ListTile(
           leading: const Icon(Icons.keyboard_alt_outlined),
-          title: const Text('Enter manually'),
+          title: const Text('Ingrese manualmente'),
           subtitle: const Text(
-              'Type host / port / token shown below the QR on the PC.'),
+              'Tipo host / puerto / ficha que se muestra debajo del QR en el PC.'),
           onTap: _openManual,
         ),
       ),
@@ -394,7 +394,7 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
               if (c.deviceId != null) ...[
                 const SizedBox(height: 2),
                 Text(
-                  'Device ID: ${c.deviceId}',
+                  'ID del dispositivo: ${c.deviceId}',
                   style: TextStyle(
                     color: EmberColors.textDim,
                     fontSize: 11,
@@ -412,7 +412,7 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
                 children: [
                   TextButton.icon(
                     icon: const Icon(Icons.sync, size: 16),
-                    label: const Text('Force sync now'),
+                    label: const Text('Sincronización de la fuerza ahora'),
                     onPressed: () async {
                       // Wave CY.18.70: trigger SyncEngine immediately
                       // bypassing the 30s timer. Same tick code path.
@@ -439,13 +439,13 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.fact_check_outlined, size: 16),
-                    label: const Text('Check sync'),
+                    label: const Text('Verificación de sincronización'),
                     onPressed: _checking ? null : _checkSync,
                   ),
                   TextButton.icon(
                     icon: const Icon(Icons.link_off,
                         size: 16, color: Colors.redAccent),
-                    label: const Text('Disconnect',
+                    label: const Text('Desconectar',
                         style: TextStyle(color: Colors.redAccent)),
                     onPressed: _disconnect,
                   ),
@@ -501,7 +501,7 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
                           'Sync attempted — make sure the PC has this turned ON too.'),
                 );
               },
-              title: const Text('Sync providers & API keys'),
+              title: const Text('Proveedores de Sync &amp; API'),
               subtitle: Text(
                 'Pull the AI providers + keys from your paired PC. Encrypted '
                 'over the LAN — the PC must have this turned ON too.',
@@ -541,7 +541,7 @@ class _LanConnectScreenState extends State<LanConnectScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Sync conflicts',
+            const Text('Conflictos sincrónicos',
                 style: TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 2),
             Text(
@@ -712,7 +712,7 @@ class _ScannerPageState extends State<_ScannerPage>
                       ElevatedButton.icon(
                         onPressed: () => _start(restart: true),
                         icon: const Icon(Icons.refresh),
-                        label: const Text('Retry'),
+                        label: const Text('Reintentar'),
                       ),
                     ],
                   ),
@@ -748,7 +748,7 @@ class _ScannerPageState extends State<_ScannerPage>
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Text(
-                'Open Pyre on your PC → More → Network → Pair new device.',
+                'Open Pyre en tu PC → Más → Red → Par nuevo dispositivo.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
@@ -809,7 +809,7 @@ class _ManualEntryDialogState extends State<_ManualEntryDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Enter pairing details'),
+      title: const Text('Introduzca detalles de pareado'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -854,7 +854,7 @@ class _ManualEntryDialogState extends State<_ManualEntryDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(null),
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
         ),
         ElevatedButton(
           onPressed: _submit,
@@ -957,7 +957,7 @@ class _SyncCheckDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: const Text('Cerrar'),
         ),
       ],
     );

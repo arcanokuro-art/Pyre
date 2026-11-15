@@ -13,6 +13,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../l10n/app_strings.dart';
 import '../models/models.dart';
+import '../services/female_character_profile.dart';
 import '../services/capped_fetch.dart';
 import '../services/card_import.dart';
 import '../services/focus_bus.dart';
@@ -41,7 +42,7 @@ import 'character_edit_screen.dart';
 import 'chat_picker_screens.dart';
 import 'chat_screen.dart';
 import 'lorebooks_screen.dart' show LorebookList, editLorebook, importLorebookFile;
-import 'persona_editor.dart';
+import 'persona_manual_chooser.dart';
 
 class CharactersScreen extends StatefulWidget {
   const CharactersScreen({super.key});
@@ -307,7 +308,7 @@ Future<void> _showPersonaAddSheet(BuildContext context) async {
         ),
         onTap: () {
           Navigator.pop(sheet);
-          showPersonaEditor(context);
+          showManualPersonaGenderChooser(context);
         },
       ),
       Divider(color: EmberColors.stroke, height: 1),
@@ -486,10 +487,28 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
       // Start fresh); if none, go straight to new editor.
       ListTile(
         leading: Icon(Icons.edit_note, color: EmberColors.primary),
-        title: Text(AppStrings.of(context).es ? 'Crear desde cero' : 'Create from scratch'),
+        title: const Text('Personaje mujer'),
         onTap: () async {
           Navigator.pop(sheet);
           await _createBlankCharacter(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.male, color: EmberColors.textDim),
+        title: const Text('Personaje hombre'),
+        onTap: () async {
+          Navigator.pop(sheet);
+          await _createBlankCharacter(context, male: true);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
+        title: const Text('Crear con asistente de IA'),
+        onTap: () {
+          Navigator.pop(sheet);
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => const CharacterAssistantScreen(),
+          ));
         },
       ),
       Divider(color: EmberColors.stroke, height: 1),
@@ -523,15 +542,16 @@ Future<void> _showImportSourceSheet(BuildContext context) async {
 /// `Start fresh` tile). The user can either pick up where they left
 /// off OR explicitly start a new card. Avoids accidentally orphaning
 /// existing drafts because the user forgot they had one.
-Future<void> _createBlankCharacter(BuildContext context) async {
+Future<void> _createBlankCharacter(BuildContext context, {bool male = false}) async {
   final store = context.read<AppStore>();
   if (store.characterDrafts.isNotEmpty) {
-    await _showResumeOrStartFreshSheet(context);
+    await _showResumeOrStartFreshSheet(context, male: male);
     return;
   }
   final draft = Character(
     id: newId('draft'),
     name: '',
+    extensions: {if (male) maleProfileKey: newMaleProfile() else femaleProfileKey: newFemaleProfile()},
   );
   store.saveDraft(draft);
   if (!context.mounted) return;
@@ -544,7 +564,7 @@ Future<void> _createBlankCharacter(BuildContext context) async {
 /// scratch" and there are existing drafts. Lists each draft with
 /// long-press → delete, and a "Start fresh" tile at the bottom that
 /// spawns a new draft.
-Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
+Future<void> _showResumeOrStartFreshSheet(BuildContext context, {bool male = false}) async {
   final store = context.read<AppStore>();
   await showModalBottomSheet<void>(
     context: context,
@@ -697,6 +717,7 @@ Future<void> _showResumeOrStartFreshSheet(BuildContext context) async {
                 final draft = Character(
                   id: newId('draft'),
                   name: '',
+                  extensions: {if (male) maleProfileKey: newMaleProfile() else femaleProfileKey: newFemaleProfile()},
                 );
                 store.saveDraft(draft);
                 if (!context.mounted) return;

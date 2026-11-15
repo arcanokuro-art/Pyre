@@ -29,7 +29,7 @@ import 'creator_schema.dart';
 // `<<SHEET>>`, blocks, or markers — that machinery is being deleted.
 const String _kQualityRules = '''
 QUALITY RULES (apply to every value you write):
-- English only: every value MUST be written in English, regardless of the language used in the conversation above.
+- Spanish only: every value MUST be written in Spanish, regardless of the language used in the conversation above.
 - Invent confidently: fill anything not explicitly discussed with specific, plausible detail, to a rich depth. Never leave a field thin, vague, or hedged.
 - Anti-seed-collapse: do NOT just echo or lightly expand the user's seed idea. The original seed should be at most ~30% of the result — build a fuller, fleshed-out character around it.
 - Stated traits must manifest: if the character is described as (e.g.) half-Japanese/half-Irish, shy, or a NEET, those facts must concretely show up in the relevant fields — not merely asserted once.
@@ -279,7 +279,7 @@ String _buildBatchRequest(
 
   buf.writeln(
       'Fill EXACTLY the following fields for the character defined above. '
-      'For each field, write a rich, specific English value following the '
+      'For each field, write a rich, specific Spanish value following the '
       'quality rules.');
   buf.writeln();
 
@@ -359,7 +359,7 @@ String _buildBatchRequest(
   buf.writeln();
   buf.write(
       'Respond with ONE JSON object whose keys are EXACTLY: '
-      '${batchKeys.join(', ')}. English values. No markdown fence, no text '
+      '${batchKeys.join(', ')}. Spanish values. No markdown fence, no text '
       'before or after the JSON object.');
   return buf.toString();
 }

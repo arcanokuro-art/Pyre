@@ -257,15 +257,15 @@ void main() {
       // Also touch a narrative field so we can confirm narrative edits still
       // flush to the snapshot exactly as before. Scroll back up to reach it.
       await tester.dragUntilVisible(
-        find.widgetWithText(TextField, 'Description'),
+        find.widgetWithText(TextField, 'Descripción'),
         scrollable,
         const Offset(0, 300),
       );
       await tester.enterText(
-          find.widgetWithText(TextField, 'Description'), 'Updated text.');
+          find.widgetWithText(TextField, 'Descripción'), 'Updated text.');
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('Save'));
+      await tester.tap(find.byTooltip('Guardar'));
       await tester.pumpAndSettle();
 
       // Binding edit landed in the chat's per-chat sets, NOT the snapshot.

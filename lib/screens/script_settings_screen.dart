@@ -48,7 +48,7 @@ class _ScriptSettingsScreenState extends State<ScriptSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Script')),
+      appBar: AppBar(title: const Text('Guion')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
         children: [
@@ -58,8 +58,8 @@ class _ScriptSettingsScreenState extends State<ScriptSettingsScreen> {
           // story_roadmap.dart — beats are injected as SOFT direction with
           // anti-rush framing; "done" beats drop out of injection.
           const HowItWorksCard(
-            title: 'How the Script works',
-            subtitle: 'What it is, how it paces, controls.',
+            title: 'Cómo funciona el guion',
+            subtitle: 'Lo que es, cómo avanza, controla.',
             sections: [
               HowItWorksSection('What it is', [
                 HowItWorksBlock.paragraph(
@@ -123,7 +123,7 @@ class _ScriptSettingsScreenState extends State<ScriptSettingsScreen> {
           ),
           // ── Beats cap ─────────────────────────────────────────────────
           SliderCard(
-            label: 'Inject at most N directions',
+            label: 'Inyecte en la mayoría de direcciones N',
             subtitle: _beatsCap <= 0
                 ? 'All active directions are sent to the model each turn.'
                 : 'Only the first $_beatsCap active direction${_beatsCap == 1 ? "" : "s"} '

@@ -415,7 +415,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Couldn't read the downloaded card."),
+                  content: Text("No podía leer la tarjeta descargada."),
                 ),
               );
               return;
@@ -590,7 +590,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         uris.add(Uri.file(path).toString());
       } catch (e) {
         messenger.showSnackBar(
-          SnackBar(content: Text('Could not export ${c.name}: $e')),
+          SnackBar(content: Text('No podía exportar ${c.name}: ${e}')),
         );
       }
     }
@@ -699,7 +699,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           messenger.showSnackBar(
             SnackBar(
               content: Text(
-                'Skipped ${c.name} — no avatar (a card needs an image).',
+                'Saltar ${c.name} — no avatar (una tarjeta necesita una imagen).',
               ),
             ),
           );
@@ -714,7 +714,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         out.add(PyreUploadFile('$base.card.png', base64Encode(pngBytes)));
       } catch (e) {
         messenger.showSnackBar(
-          SnackBar(content: Text('Could not export ${c.name}: $e')),
+          SnackBar(content: Text('No podía exportar ${c.name}: ${e}')),
         );
       }
     }
@@ -1044,7 +1044,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       );
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Import failed: $e')),
+        SnackBar(content: Text('Fallo de importación: ${e}')),
       );
     } finally {
       if (mounted) {
@@ -1093,7 +1093,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       );
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Import failed: $e')),
+        SnackBar(content: Text('Fallo de importación: ${e}')),
       );
     } finally {
       if (mounted) {
@@ -1114,18 +1114,18 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Already imported?'),
+        title: const Text('¿Ya importado?'),
         content: Text(
-          "You already imported '$existingName' — import again anyway?",
+          "¿Ya importaste '${existingName}' — importar de nuevo de todos modos?",
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Import anyway'),
+            child: const Text('Importación de todos modos'),
           ),
         ],
       ),
@@ -1286,7 +1286,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       );
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Import failed: $e')),
+        SnackBar(content: Text('Fallo de importación: ${e}')),
       );
     } finally {
       if (mounted) {
@@ -1343,12 +1343,12 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         appBar: inWindowsWebview
             ? null
             : AppBar(
-                title: const Text('Discover'),
+                title: const Text('Explorar'),
                 actions: [
                   if (inMobileWebview) ...[
                     IconButton(
                       icon: const Icon(Icons.arrow_back_ios_new),
-                      tooltip: 'Back',
+                      tooltip: 'Volver',
                       onPressed: () async {
                         if (await _controller!.canGoBack()) {
                           await _controller!.goBack();
@@ -1362,7 +1362,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.more_vert),
-                      tooltip: 'More',
+                      tooltip: 'Más',
                       onPressed: _showWebviewMenu,
                     ),
                   ],
@@ -1485,7 +1485,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       );
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Import failed: $e')),
+        SnackBar(content: Text('Fallo de importación: ${e}')),
       );
     } finally {
       // Restore the iframe's pointer events regardless of mounted state — the
@@ -1512,7 +1512,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     final bytes = decodeBbxCardB64(b64);
     if (bytes == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not read the downloaded card.')),
+        const SnackBar(content: Text('No podía leer la tarjeta descargada.')),
       );
       return;
     }
@@ -1533,7 +1533,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       );
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Import failed: $e')),
+        SnackBar(content: Text('Fallo de importación: ${e}')),
       );
     } finally {
       setBotbooruFrameInteractive(true);
@@ -1665,12 +1665,12 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             ),
             const SizedBox(height: 18),
             const Text(
-              'Discover characters',
+              'Descubre personajes',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
             Text(
-              'Browse botbooru.com inside the app. When you find a card you like, tap "Download PNG" — Pyre intercepts it and offers a one-tap import.',
+              'Navega botbooru.com dentro de la aplicación. Cuando encuentres una tarjeta que te guste, pulsa "Descargar PNG" — Pyre lo intercepta y ofrece una importación de una sola entrada.',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 14,
@@ -1711,7 +1711,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             const SizedBox(height: 8),
             Center(
               child: Text(
-                'You can paste a card URL too — More menu inside the webview.',
+                'También puede pegar una URL de la tarjeta — Más menú dentro de la webview.',
                 style: TextStyle(
                     color: EmberColors.textDim, fontSize: 11),
               ),
@@ -1732,7 +1732,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Pyre is not affiliated with botbooru. The webview is locked to a few trusted character-card hosts; off-site links open in your phone\'s browser instead.',
+                      'Pyre no está afiliado con botbooru. La webview está bloqueada a algunos hosts de tarjetas de caracteres confiables; enlaces fuera del sitio abiertos en el navegador de su teléfono en lugar.',
                       style: TextStyle(
                           color: EmberColors.textMid,
                           fontSize: 11,
@@ -1798,7 +1798,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.arrow_back),
-              title: const Text('Back to instructions'),
+              title: const Text('Volver a las instrucciones'),
               onTap: () {
                 Navigator.pop(sheet);
                 _setShowWebview(false);
@@ -1815,7 +1815,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             ListTile(
               leading: Icon(Icons.cookie_outlined,
                   color: EmberColors.danger),
-              title: Text('Sign out / clear cookies',
+              title: Text('Iniciar sesión / cookies claras',
                   style: TextStyle(color: EmberColors.danger)),
               onTap: () async {
                 Navigator.pop(sheet);
@@ -1823,7 +1823,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 _controller?.loadRequest(Uri.parse('https://botbooru.com/'));
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Cookies cleared.')),
+                    const SnackBar(content: Text('Las cookies se despejaron.')),
                   );
                 }
               },
@@ -1916,10 +1916,10 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       );
       if (!ok) {
         messenger.showSnackBar(const SnackBar(
-            content: Text('Browser refused to open the link. Allow popups for this site.')));
+            content: Text('Navegador se negó a abrir el enlace. Permitir popups para este sitio.')));
       }
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Could not open: $e')));
+      messenger.showSnackBar(SnackBar(content: Text('No se puede abrir: ${e}')));
     }
   }
 
@@ -1956,7 +1956,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           actions: [
             TextButton(
               onPressed: busy ? null : () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: busy
@@ -1982,7 +1982,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       width: 16,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Import'),
+                  : const Text('Importar'),
             ),
           ],
         ),
@@ -2084,7 +2084,7 @@ class _CharacterPickerSheetState extends State<_CharacterPickerSheet> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Pick a character to upload',
+                    'Escoge un personaje para subir',
                     style: TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w700),
                   ),
@@ -2110,7 +2110,7 @@ class _CharacterPickerSheetState extends State<_CharacterPickerSheet> {
                     isDense: true,
                     prefixIcon:
                         Icon(Icons.search, size: 18, color: EmberColors.textDim),
-                    hintText: 'Search by name or tagline…',
+                    hintText: 'Buscar por nombre o etiqueta…',
                   ),
                   onChanged: (v) => setState(() => _query = v),
                 ),
@@ -2134,7 +2134,7 @@ class _CharacterPickerSheetState extends State<_CharacterPickerSheet> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 32),
                             child: Text(
-                              'No characters match that search.',
+                              'No hay personajes que coincidan con esa búsqueda.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: EmberColors.textDim, fontSize: 13),
@@ -2201,7 +2201,7 @@ class _CharacterPickerSheetState extends State<_CharacterPickerSheet> {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.upload, size: 16),
-                          label: Text('Use ${_selected.length} selected'),
+                          label: Text('Usar ${_selected.length} seleccionado'),
                           onPressed: () {
                             final picks = widget.characters
                                 .where((c) => _selected.contains(c.id))

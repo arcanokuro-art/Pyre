@@ -135,7 +135,7 @@ void main() {
 
           await tester.tap(find.widgetWithText(ElevatedButton, 'Crear'));
           await tester.pumpAndSettle();
-          await tester.tap(find.widgetWithText(ListTile, 'Crear desde cero'));
+          await tester.tap(find.widgetWithText(ListTile, 'Personaje mujer'));
           await tester.pumpAndSettle();
 
           final startFresh = find.widgetWithText(ListTile, 'Empezar de cero');
@@ -221,8 +221,8 @@ void main() {
           ),
         );
 
-        expect(find.text('Change avatar'), findsOneWidget);
-        expect(find.text('Recrop'), findsOneWidget);
+        expect(find.text('Cambiar avatar'), findsOneWidget);
+        expect(find.text('Recortar'), findsOneWidget);
         expect(tester.takeException(), isNull);
 
         await tester.pump(const Duration(milliseconds: 700));

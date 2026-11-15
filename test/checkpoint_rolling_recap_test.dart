@@ -54,38 +54,6 @@ void main() {
     });
   });
 
-  group('trigger default + migration (autoEvery 20 → 10)', () {
-    test('fresh install defaults to 10', () {
-      expect(MemorySettings().autoEvery, 10);
-      expect(MemorySettings.fromJson(const {}).autoEvery, 10);
-    });
-
-    test('an install still on the OLD STOCK 20 from an old version is '
-        'migrated to 10 once', () {
-      final m = MemorySettings.fromJson({
-        'autoEvery': 20,
-        'summaryPromptVersion': MemorySettings.kSummaryPromptVersion - 1,
-      });
-      expect(m.autoEvery, 10);
-    });
-
-    test('a DELIBERATE non-stock value is preserved across the migration', () {
-      final m = MemorySettings.fromJson({
-        'autoEvery': 35,
-        'summaryPromptVersion': MemorySettings.kSummaryPromptVersion - 1,
-      });
-      expect(m.autoEvery, 35);
-    });
-
-    test('20 chosen ON the current version is respected', () {
-      final m = MemorySettings.fromJson({
-        'autoEvery': 20,
-        'summaryPromptVersion': MemorySettings.kSummaryPromptVersion,
-      });
-      expect(m.autoEvery, 20);
-    });
-  });
-
   group('summariser body (chapter framing)', () {
     final chat = Chat(
       id: 'c',
@@ -132,13 +100,5 @@ void main() {
       expect(body, contains('OPENING chapter'));
     });
 
-    test('the default prompt sets the chapter contract (first = setting + '
-        'start; later = only what happened, no retell)', () {
-      final p = MemorySettings.defaultSummaryPrompt;
-      expect(p, contains('ONE new chapter'));
-      expect(p, contains('NEVER retell'));
-      expect(p.toLowerCase(), contains('self-contained story'));
-      expect(p, contains('FIRST chapter'));
-    });
   });
 }

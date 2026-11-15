@@ -83,10 +83,10 @@ void main() {
 
       // Fill the three labelled fields by their label text.
       await tester.enterText(
-          find.widgetWithText(TextField, 'Name'), 'Strip asterisks');
-      await tester.enterText(find.widgetWithText(TextField, 'Find'), 'fox');
+          find.widgetWithText(TextField, 'Nombre'), 'Strip asterisks');
+      await tester.enterText(find.widgetWithText(TextField, 'Buscar'), 'fox');
       await tester.enterText(
-          find.widgetWithText(TextField, 'Replace'), 'cat');
+          find.widgetWithText(TextField, 'Reemplazar'), 'cat');
       await tester.pumpAndSettle();
 
       // Save (the AppBar action). 2026-07-13: _save now awaits the ReDoS
@@ -94,7 +94,7 @@ void main() {
       // completes under the fake-async test clock — runAsync turns the real
       // event loop so the probe verdict lands before the assertions.
       await tester.runAsync(() async {
-        await tester.tap(find.widgetWithText(TextButton, 'Save'));
+        await tester.tap(find.widgetWithText(TextButton, 'Guardar'));
         await Future<void>.delayed(const Duration(milliseconds: 300));
       });
       await tester.pumpAndSettle();
@@ -120,14 +120,14 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.widgetWithText(TextField, 'Find'), '/dog/gi');
+          find.widgetWithText(TextField, 'Buscar'), '/dog/gi');
       await tester.enterText(
-          find.widgetWithText(TextField, 'Replace'), 'wolf');
+          find.widgetWithText(TextField, 'Reemplazar'), 'wolf');
       await tester.pumpAndSettle();
 
       // 2026-07-13: runAsync for the real-isolate ReDoS probe (see above).
       await tester.runAsync(() async {
-        await tester.tap(find.widgetWithText(TextButton, 'Save'));
+        await tester.tap(find.widgetWithText(TextButton, 'Guardar'));
         await Future<void>.delayed(const Duration(milliseconds: 300));
       });
       await tester.pumpAndSettle();
@@ -151,9 +151,9 @@ void main() {
       // The default sample contains "fox"; a global fox→CAT rule should show
       // CAT in the live preview WITHOUT saving anything.
       await tester.enterText(
-          find.widgetWithText(TextField, 'Find'), '/fox/g');
+          find.widgetWithText(TextField, 'Buscar'), '/fox/g');
       await tester.enterText(
-          find.widgetWithText(TextField, 'Replace'), 'CAT');
+          find.widgetWithText(TextField, 'Reemplazar'), 'CAT');
       await tester.pumpAndSettle();
 
       // The preview targets the AI stream by default and applies regardless of
@@ -201,35 +201,35 @@ void main() {
       await tester.pumpAndSettle();
 
       // Open the "New entry" dialog (the AppBar + action).
-      await tester.tap(find.byTooltip('New entry'));
+      await tester.tap(find.byTooltip('Nueva entrada'));
       await tester.pumpAndSettle();
 
       // Primary + secondary keywords. Typing the secondary reveals the Logic
       // dropdown (it's hidden until secondary keywords exist).
       await tester.enterText(
-          find.widgetWithText(TextField, 'Trigger keywords'), 'castle');
+          find.widgetWithText(TextField, 'Palabras clave de activación'), 'castle');
       await tester.enterText(
-          find.widgetWithText(TextField, 'Secondary keywords (optional)'),
+          find.widgetWithText(TextField, 'Palabras clave secundarias (opcional)'),
           'siege, banner');
       await tester.enterText(
-          find.widgetWithText(TextField, 'Content to inject'),
+          find.widgetWithText(TextField, 'Contenido que se añade al contexto'),
           'The old castle.');
       await tester.pumpAndSettle();
 
       // Pick the "All of these" logic (LoreSelectiveLogic.andAll).
       await tester.tap(find.byType(DropdownButtonFormField<LoreSelectiveLogic>));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('All of these').last);
+      await tester.tap(find.text('Todas las palabras clave').last);
       await tester.pumpAndSettle();
 
       // Enable the trigger-chance switch (reveals the Slider).
-      await tester.tap(find.widgetWithText(SwitchListTile, 'Use trigger chance'));
+      await tester.tap(find.widgetWithText(SwitchListTile, 'Usar probabilidad de activación'));
       await tester.pumpAndSettle();
       expect(find.byType(Slider), findsOneWidget,
           reason: 'enabling "Use trigger chance" must reveal the slider');
 
       // Save ("Add" for a new entry).
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Add'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Añadir'));
       await tester.pumpAndSettle();
 
       // The book now has one entry with the typed/selected options.
@@ -279,14 +279,14 @@ void main() {
       await tester.pumpAndSettle();
 
       // Open the preset's kebab, then Edit.
-      await tester.tap(find.byTooltip('Preset actions'));
+      await tester.tap(find.byTooltip('Acciones del preajuste'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(ListTile, 'Edit'));
+      await tester.tap(find.widgetWithText(ListTile, 'Editar'));
       await tester.pumpAndSettle();
 
       // The modular editor shows the "Prompt blocks" section with both names
       // and a Switch per block (no flat Main prompt field — the blocks are it).
-      expect(find.text('PROMPT BLOCKS'), findsOneWidget);
+      expect(find.text('BLOQUES DE INSTRUCCIONES'), findsOneWidget);
       expect(find.text('README'), findsOneWidget);
       expect(find.text('OMNI PROTOCOL'), findsOneWidget);
       final switches = find.byType(Switch);
@@ -304,7 +304,7 @@ void main() {
 
       // Save commits the draft via store.updatePreset (the same path used for
       // mainPrompt). The dialog passes through "Save".
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Save'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Guardar'));
       await tester.pumpAndSettle();
 
       // The stored preset's first block is now disabled; the second untouched.
@@ -333,16 +333,16 @@ void main() {
       await tester.pumpWidget(_host(store, const PresetsScreen()));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('Preset actions'));
+      await tester.tap(find.byTooltip('Acciones del preajuste'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(ListTile, 'Edit'));
+      await tester.tap(find.widgetWithText(ListTile, 'Editar'));
       await tester.pumpAndSettle();
 
       // Flat editor: the existing Main prompt TextField is present, the block
       // section is NOT (the flat UX is unchanged). The prompt text also shows
       // in the list row's subtitle behind the dialog, so scope the assertion
       // to the editable TextField holding the value.
-      expect(find.text('PROMPT BLOCKS'), findsNothing);
+      expect(find.text('BLOQUES DE INSTRUCCIONES'), findsNothing);
       expect(find.byType(Switch), findsNothing);
       expect(
         find.widgetWithText(TextField, 'You are a helpful assistant.'),

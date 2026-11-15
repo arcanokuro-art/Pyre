@@ -879,7 +879,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
         CreatorMessage(
           role: 'assistant',
           content:
-              '$_embeddedLorebookStartMarker for this $targetLabel. Tell me what world facts, places, factions, rules, or NPC lore should become entries. Type /entry when one is ready; I will add it to the Sheet instead of opening another screen.',
+              '${_embeddedLorebookStartMarker} para este ${targetLabel}. Dime qué hechos del mundo, lugares, facciones, reglas o lore NPC deben convertirse en entradas. Tipo /entrada cuando uno está listo; lo añadiré a la hoja en lugar de abrir otra pantalla.',
         ),
       );
     store.updateCreatorSessionMessages(id, messages);
@@ -1913,7 +1913,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       final messenger = ScaffoldMessenger.of(context);
       if (_structuredBuilding || _generating) {
         messenger.showSnackBar(
-          const SnackBar(content: Text('Already building the sheet…')),
+          const SnackBar(content: Text('Generando la ficha…')),
         );
         return;
       }
@@ -2782,7 +2782,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
               ListTile(
                 leading: Icon(Icons.badge_outlined,
                     color: EmberColors.primary),
-                title: const Text('Character from library'),
+                title: const Text('Personaje de la biblioteca'),
                 onTap: () => Navigator.pop(sheet, 'char'),
               ),
             if (hasPersonas)
@@ -2796,13 +2796,13 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
               ListTile(
                 leading: Icon(Icons.menu_book_outlined,
                     color: EmberColors.primary),
-                title: const Text('Lorebook from library'),
+                title: const Text('libro de mundo de la biblioteca'),
                 onTap: () => Navigator.pop(sheet, 'lorebook'),
               ),
             ListTile(
               leading:
                   Icon(Icons.folder_open_outlined, color: EmberColors.primary),
-              title: const Text('Browse device'),
+              title: const Text('Explorar archivos del dispositivo'),
               onTap: () => Navigator.pop(sheet, 'device'),
             ),
           ],
@@ -2831,7 +2831,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       MaterialPageRoute(
         builder: (_) => const PersonaPickerScreen(
           title: 'Attach a persona',
-          subtitle: 'Pick a persona to hand the Creator as a reference.',
+          subtitle: 'Elija un personaje para entregar al Creador como referencia.',
           showCurrentSelection: false,
         ),
       ),
@@ -2873,7 +2873,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Attach a lorebook',
+                  'Adjuntar un libro de mundo',
                   style: TextStyle(
                     color: EmberColors.textHigh,
                     fontSize: 16,
@@ -2926,8 +2926,8 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
     final pickedId = await navigator.push<String>(
       MaterialPageRoute(
         builder: (_) => const CharacterPickerScreen(
-          title: 'Attach a card',
-          subtitle: 'Pick a character to hand the Creator as a reference.',
+          title: 'Adjuntar una ficha',
+          subtitle: 'Escoja un personaje para entregar al Creador como referencia.',
         ),
       ),
     );
@@ -2963,7 +2963,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       final bytes = f.bytes;
       if (bytes == null) {
         messenger.showSnackBar(
-          const SnackBar(content: Text('Could not read file bytes.')),
+          const SnackBar(content: Text('No podía leer bytes de archivos.')),
         );
         return;
       }
@@ -2982,7 +2982,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       final extracted = buildCardReferenceExtract(f.name, card.raw);
       await _stageCardAttachment(filename: f.name, extracted: extracted);
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Attach failed: $e')));
+      messenger.showSnackBar(SnackBar(content: Text('No se pudo adjuntar: ${e}')));
     }
   }
 
@@ -3001,8 +3001,8 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
             '(~${(extracted.length / 4 / 1000).toStringAsFixed(0)}k tokens). '
             'Some models may reject the request. Pyre never truncates — '
             'the full content will be sent. Continue?',
-        confirmLabel: 'Attach',
-        cancelLabel: 'Cancel',
+        confirmLabel: 'Adjuntar',
+        cancelLabel: 'Cancelar',
       );
       if (!ok) return;
     }
@@ -3034,7 +3034,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       messenger.showSnackBar(
         const SnackBar(
           content: Text(
-            'No provider configured. Open "More → API Connections".',
+            'Ningún proveedor configurado. Abrir "Más → Conexiones de API".',
           ),
         ),
       );
@@ -3074,7 +3074,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       setState(() => _pendingAttachments.add(pending));
       // Wave AY: greeting is now static (see _greeting).
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Attach failed: $e')));
+      messenger.showSnackBar(SnackBar(content: Text('No se pudo adjuntar: ${e}')));
     }
   }
 
@@ -3095,7 +3095,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       final bytes = f.bytes;
       if (bytes == null) {
         messenger.showSnackBar(
-          const SnackBar(content: Text('Could not read file bytes.')),
+          const SnackBar(content: Text('No podía leer bytes de archivos.')),
         );
         return;
       }
@@ -3110,7 +3110,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
             messenger.showSnackBar(
               const SnackBar(
                 content: Text(
-                  'PDF appears to be image-only (scanned). Pyre can\'t OCR it — paste the relevant text as a .txt or .md instead.',
+                  'PDF parece ser sólo imagen (secanned). Pyre no puede OCR it - pegar el texto relevante como un .txt o .md en su lugar.',
                 ),
                 duration: Duration(seconds: 6),
               ),
@@ -3119,7 +3119,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
           }
         } catch (e) {
           messenger.showSnackBar(
-            SnackBar(content: Text('Could not parse the PDF: $e')),
+            SnackBar(content: Text('No podía analizar el PDF: ${e}')),
           );
           return;
         }
@@ -3146,8 +3146,8 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
               '(~${(extracted.length / 4 / 1000).toStringAsFixed(0)}k tokens). '
               'Some models may reject the request. Pyre never truncates — '
               'the full content will be sent. Continue?',
-          confirmLabel: 'Attach',
-          cancelLabel: 'Cancel',
+          confirmLabel: 'Adjuntar',
+          cancelLabel: 'Cancelar',
         );
         if (!ok) return;
       }
@@ -3163,7 +3163,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       });
       // Wave AY: greeting is now static (see _greeting).
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Attach failed: $e')));
+      messenger.showSnackBar(SnackBar(content: Text('No se pudo adjuntar: ${e}')));
     }
   }
 
@@ -3208,7 +3208,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: Text('Edit ${_humanLabel(key)}'),
+        title: Text('Editar ${_humanLabel(key)}'),
         content: SizedBox(
           width: double.maxFinite,
           child: Column(
@@ -3227,7 +3227,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 8),
                   child: Text(
-                    'JSON object. Invalid JSON keeps the previous value.',
+                    'Objeto JSON inválido JSON mantiene el valor anterior.',
                     style: TextStyle(color: EmberColors.textMid, fontSize: 11),
                   ),
                 ),
@@ -3248,11 +3248,11 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, null),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, ctl.text),
-            child: const Text('Save'),
+            child: const Text('Guardar'),
           ),
         ],
       ),
@@ -3326,7 +3326,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
           final maxHeight = MediaQuery.of(ctx).size.height * 0.88;
           return AlertDialog(
             backgroundColor: EmberColors.bgPanel,
-            title: Text('Edit lore entry ${index + 1}'),
+            title: Text('Editar la entrada de lore ${index + 1}'),
             content: SizedBox(
               width: double.maxFinite,
               child: ConstrainedBox(
@@ -3340,7 +3340,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                         minLines: 1,
                         maxLines: 3,
                         decoration: const InputDecoration(
-                          labelText: 'Trigger keywords',
+                          labelText: 'Palabras clave desencadenantes',
                           helperText: 'Comma-separated',
                         ),
                       ),
@@ -3350,8 +3350,8 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                         minLines: 1,
                         maxLines: 3,
                         decoration: const InputDecoration(
-                          labelText: 'Secondary keywords',
-                          helperText: 'Optional comma-separated filters',
+                          labelText: 'Palabras clave secundarias',
+                          helperText: 'Filtros opcionales separados por coma',
                         ),
                         onChanged: (_) => setLocal(() {}),
                       ),
@@ -3363,19 +3363,19 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                           items: const [
                             DropdownMenuItem(
                               value: LoreSelectiveLogic.andAny,
-                              child: Text('Any of these'),
+                              child: Text('Cualquiera de estos'),
                             ),
                             DropdownMenuItem(
                               value: LoreSelectiveLogic.andAll,
-                              child: Text('All of these'),
+                              child: Text('Todo esto'),
                             ),
                             DropdownMenuItem(
                               value: LoreSelectiveLogic.notAny,
-                              child: Text('None of these'),
+                              child: Text('Ninguno de estos'),
                             ),
                             DropdownMenuItem(
                               value: LoreSelectiveLogic.notAll,
-                              child: Text('Not all of these'),
+                              child: Text('No todos estos'),
                             ),
                           ],
                           onChanged: (v) => setLocal(
@@ -3389,14 +3389,14 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                         minLines: 5,
                         maxLines: 12,
                         decoration: const InputDecoration(
-                          labelText: 'Content to inject',
+                          labelText: 'Contenido que se añade al contexto',
                           border: OutlineInputBorder(),
                         ),
                       ),
                       CheckboxListTile(
                         contentPadding: EdgeInsets.zero,
                         value: constant,
-                        title: const Text('Always inject (constant)'),
+                        title: const Text('Inyecte siempre (constante)'),
                         onChanged: (v) => setLocal(() => constant = v ?? false),
                       ),
                       TextField(
@@ -3404,12 +3404,12 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           labelText: 'Order',
-                          helperText: 'Higher priority entries inject later',
+                          helperText: 'Entradas de mayor prioridad inyectadas más adelante',
                         ),
                       ),
                       Row(
                         children: [
-                          const Expanded(child: Text('Case sensitive')),
+                          const Expanded(child: Text('Distinguir mayúsculas y minúsculas')),
                           TextButton(
                             onPressed: () => setLocal(
                               () => caseSensitive = triNext(caseSensitive),
@@ -3420,7 +3420,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                       ),
                       Row(
                         children: [
-                          const Expanded(child: Text('Match whole words')),
+                          const Expanded(child: Text('Coincide palabras enteras')),
                           TextButton(
                             onPressed: () => setLocal(
                               () => matchWholeWords = triNext(matchWholeWords),
@@ -3432,7 +3432,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                       SwitchListTile(
                         contentPadding: EdgeInsets.zero,
                         value: useProbability,
-                        title: const Text('Use trigger chance'),
+                        title: const Text('Usar la oportunidad del gatillo'),
                         onChanged: (v) => setLocal(() => useProbability = v),
                       ),
                       if (useProbability)
@@ -3469,15 +3469,15 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                   delete = true;
                   Navigator.pop(ctx, true);
                 },
-                child: const Text('Delete'),
+                child: const Text('Eliminar'),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel'),
+                child: const Text('Cancelar'),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Save'),
+                child: const Text('Guardar'),
               ),
             ],
           );
@@ -3560,7 +3560,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Alternative Greetings',
+                          'Saludos alternativos',
                           style: TextStyle(
                             color: EmberColors.textHigh,
                             fontSize: 17,
@@ -3626,7 +3626,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                                   size: 18,
                                 ),
                                 color: EmberColors.textMid,
-                                tooltip: 'Remove this greeting',
+                                tooltip: 'Retire este saludo',
                                 onPressed: controllers.length > 1
                                     ? () {
                                         setLocal(() {
@@ -3695,7 +3695,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.add, size: 18),
-                      label: const Text('Add greeting'),
+                      label: const Text('Agregar saludo'),
                       onPressed: () {
                         setLocal(() {
                           controllers.add(TextEditingController());
@@ -3711,12 +3711,12 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                     children: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('Cancel'),
+                        child: const Text('Cancelar'),
                       ),
                       const SizedBox(width: 4),
                       ElevatedButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('Save'),
+                        child: const Text('Guardar'),
                       ),
                     ],
                   ),
@@ -3894,7 +3894,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
             if (canRetry)
               ListTile(
                 leading: Icon(Icons.refresh, color: EmberColors.primary),
-                title: const Text('Retry (regenerate this reply)'),
+                title: const Text('Retry (regenerar esta respuesta)'),
                 onTap: () {
                   Navigator.pop(sheet);
                   _retry();
@@ -3916,7 +3916,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                 leading: const Icon(Icons.edit_outlined),
                 title: const Text('Edit + re-run from here'),
                 subtitle: Text(
-                  'Replaces your message and drops everything that came after — the assistant generates a fresh reply.',
+                  'Reemplaza tu mensaje y deja caer todo lo que viene después — el asistente genera una respuesta fresca.',
                   style: TextStyle(color: EmberColors.textMid, fontSize: 11),
                 ),
                 onTap: () {
@@ -3939,7 +3939,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                   ),
                   subtitle: cascade
                       ? Text(
-                          'Chat Settings → Delete behavior is on "This and after".',
+                          'Configuración de chat → Eliminar el comportamiento está en "Esto y después".',
                           style: TextStyle(
                             color: EmberColors.textMid,
                             fontSize: 11,
@@ -3951,9 +3951,9 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                     if (cascade) {
                       final ok = await confirmDelete(
                         context,
-                        title: 'Delete this and all messages after?',
+                        title: 'Eliminar esto y todos los mensajes después?',
                         message:
-                            'You\'ll lose this message and every reply that came after it.',
+                            'Perderás este mensaje y todas las respuestas que surgieron después de él.',
                       );
                       if (!ok) return;
                     }
@@ -3979,7 +3979,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Edit your message'),
+        title: const Text('Edita tu mensaje'),
         content: TextField(
           controller: ctl,
           autofocus: true,
@@ -3990,7 +3990,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, null),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, ctl.text.trim()),
@@ -4313,7 +4313,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       messenger.showSnackBar(
         const SnackBar(
           content: Text(
-            'Nothing to save yet — build the card first (tell me when you\'re ready, or type /build).',
+            'Nada que guardar todavía —construya la tarjeta primero (dígame cuando esté listo, o escriba /build).',
           ),
         ),
       );
@@ -4441,7 +4441,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
     final messenger = ScaffoldMessenger.of(context);
     if (entries.isEmpty) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Add at least one lore entry first.')),
+        const SnackBar(content: Text('Añade primero una entrada al libro de mundo.')),
       );
       return;
     }
@@ -4460,7 +4460,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       if (!mounted) return;
       messenger.showSnackBar(
         SnackBar(
-          content: Text('Updated ${target.name}.'),
+          content: Text('Actualizado ${target.name}.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -4477,7 +4477,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
     if (!mounted) return;
     messenger.showSnackBar(
       SnackBar(
-        content: Text('Saved ${book.name} to Lorebooks.'),
+        content: Text('Ahorró ${book.name} a libros de mundo.'),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -4538,7 +4538,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Save your edits'),
+        title: const Text('Guarda tus ediciones'),
         content: Text(
           'You\'re editing an existing $noun. Overwrite the original, or '
           'save your changes as a new copy and leave the original $noun '
@@ -4547,11 +4547,11 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, null),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, _SaveMode.overwrite),
-            child: const Text('Overwrite original'),
+            child: const Text('Sobreescribir original'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, _SaveMode.copy),
@@ -4729,7 +4729,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       c = characterFromCharaCard(cc);
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not build card from canvas: $e')),
+        SnackBar(content: Text('No se puede construir tarjeta de tela: ${e}')),
       );
       return;
     }
@@ -4876,7 +4876,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
         if (mounted) Navigator.of(context).pop();
         messenger.showSnackBar(
           SnackBar(
-            content: Text('Saved ${c.name} to your characters.'),
+            content: Text('Guardado ${c.name} a tus personajes.'),
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 3),
           ),
@@ -4891,7 +4891,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
         if (avatarPng == null) {
           messenger.showSnackBar(
             const SnackBar(
-              content: Text('Pick an avatar before exporting as PNG.'),
+              content: Text('Escoge un avatar antes de exportar como PNG.'),
             ),
           );
           return;
@@ -4920,7 +4920,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
             // Web has no filesystem — trigger a real browser download.
             downloadBytesToBrowser(pngBytes, filename, 'image/png');
             messenger.showSnackBar(
-              SnackBar(content: Text('Downloading $filename')),
+              SnackBar(content: Text('Descargar ${filename}')),
             );
           } else {
             final dir = await getApplicationDocumentsDirectory();
@@ -4940,7 +4940,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
               messenger.showSnackBar(
                 SnackBar(
                   content: Text(
-                    'Share failed: $e — file saved to ${file.path}',
+                    'Compartir falló: ${e} — archivo guardado a ${file.path}',
                   ),
                 ),
               );
@@ -5005,24 +5005,24 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Rename session'),
+        title: const Text('Período de sesiones de renombre'),
         content: TextField(
           controller: ctl,
           autofocus: true,
-          decoration: const InputDecoration(hintText: 'Session title'),
+          decoration: const InputDecoration(hintText: 'Título de la sesión'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, null),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, ''),
-            child: const Text('Reset'),
+            child: const Text('Restablecer'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, ctl.text.trim()),
-            child: const Text('Save'),
+            child: const Text('Guardar'),
           ),
         ],
       ),
@@ -5037,10 +5037,10 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
   Future<void> _deleteSessionPrompt(CreatorSession s) async {
     final ok = await confirmDelete(
       context,
-      title: 'Delete session?',
+      title: '¿Suprímase el período de sesiones?',
       message:
-          'This deletes the conversation and the canvas for "${s.derivedTitle()}". Saved characters are NOT removed.',
-      confirmLabel: 'Delete',
+          'Esto elimina la conversación y el lienzo para "${s.derivedTitle()}". Los caracteres guardados NO son eliminados.',
+      confirmLabel: 'Eliminar',
     );
     if (!ok) return;
     if (!mounted) return;
@@ -5085,7 +5085,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
         // and the Sheet/Chat toggle collide into garbled overlapping
         // text on small phones.
         title: const Text(
-          'Character Creator',
+          'Creador de personajes',
           overflow: TextOverflow.ellipsis,
           softWrap: false,
         ),
@@ -5140,7 +5140,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
               ),
             ),
           IconButton(
-            tooltip: 'Creator help',
+            tooltip: 'Ayuda al Creador',
             icon: const Icon(Icons.help_outline, size: 20),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -5327,7 +5327,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                                     ),
                                     icon: const Icon(Icons.refresh, size: 14),
                                     label: const Text(
-                                      'Retry',
+                                      'Reintentar',
                                       style: TextStyle(fontSize: 12),
                                     ),
                                     onPressed: _retry,
@@ -5393,7 +5393,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                             ),
                             SizedBox(width: 6),
                             Text(
-                              'Jump to bottom',
+                              'Saltar a la parte inferior',
                               style: TextStyle(
                                 color: EmberColors.primary,
                                 fontSize: 12,
@@ -5420,7 +5420,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(16, 4, 16, 0),
             child: Text(
-              'Tell me when to build the sheet, or type /build',
+              'Dime cuándo construir la hoja, o escribir /build',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 11, color: EmberColors.textDim),
             ),
@@ -5484,7 +5484,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                   child: Padding(
                     padding: EdgeInsets.all(32),
                     child: Text(
-                      'The sheet stays empty while we talk — I write every field in one go once you\'re ready to build (say the word, or type /build). It\'ll fill in here then, ready to review before you save.',
+                      'La hoja permanece vacía mientras hablamos —escribo todos los campos en una sola vez que estés listo para construir (por ejemplo, la palabra, o escriba /build). Se llenará aquí entonces, listo para revisar antes de ahorrar.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: EmberColors.textMid),
                     ),
@@ -5608,7 +5608,7 @@ class _CharacterAssistantScreenState extends State<CharacterAssistantScreen> {
                     Expanded(
                       child: OutlinedButton.icon(
                         icon: const Icon(Icons.chat_bubble_outline, size: 16),
-                        label: const Text('Keep chatting'),
+                        label: const Text('Sigue chateando'),
                         onPressed: () => setState(() => _showCanvas = false),
                       ),
                     ),
@@ -5698,7 +5698,7 @@ class _SessionsDrawerState extends State<_SessionsDrawer> {
                     child: Row(
                       children: [
                         const Text(
-                          'Sessions',
+                          'Períodos de sesiones',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -5729,7 +5729,7 @@ class _SessionsDrawerState extends State<_SessionsDrawer> {
                   ),
                   TextButton.icon(
                     icon: const Icon(Icons.add, size: 16),
-                    label: const Text('New'),
+                    label: const Text('Nuevo'),
                     onPressed: widget.onNewSession,
                   ),
                 ],
@@ -5742,7 +5742,7 @@ class _SessionsDrawerState extends State<_SessionsDrawer> {
                 onChanged: (v) => setState(() => _query = v.trim()),
                 style: const TextStyle(fontSize: 13),
                 decoration: InputDecoration(
-                  hintText: 'Search sessions…',
+                  hintText: 'Sesiones de búsqueda…',
                   hintStyle: const TextStyle(fontSize: 13),
                   prefixIcon: Icon(
                     Icons.search,
@@ -5822,7 +5822,7 @@ class _SessionsDrawerState extends State<_SessionsDrawer> {
                             ),
                           ),
                           trailing: PopupMenuButton<String>(
-                            tooltip: 'Session',
+                            tooltip: 'Período de sesiones',
                             icon: Icon(
                               Icons.more_vert,
                               size: 18,
@@ -5855,11 +5855,11 @@ class _SessionsDrawerState extends State<_SessionsDrawer> {
                               ),
                               const PopupMenuItem(
                                 value: 'rename',
-                                child: Text('Rename'),
+                                child: Text('Cambiar nombre'),
                               ),
                               const PopupMenuItem(
                                 value: 'delete',
-                                child: Text('Delete'),
+                                child: Text('Eliminar'),
                               ),
                             ],
                           ),
@@ -5939,7 +5939,7 @@ class _CanvasFieldsViewState extends State<_CanvasFieldsView> {
         children: [
           _CanvasField(
             fieldKey: _CharacterAssistantScreenState._canvasLorebookNameKey,
-            label: 'Lorebook name',
+            label: 'Nombre de libro de mundo',
             value: name is String && name.trim().isNotEmpty
                 ? name
                 : 'New lorebook',
@@ -5972,7 +5972,7 @@ class _CanvasFieldsViewState extends State<_CanvasFieldsView> {
                 border: Border.all(color: EmberColors.stroke),
               ),
               child: Text(
-                'No entries yet. Chat about the world, then type /entry when one is ready.',
+                'No hay entradas todavía. Chat sobre el mundo, luego escriba /entrada cuando uno está listo.',
                 style: TextStyle(color: EmberColors.textMid, fontSize: 13),
               ),
             )
@@ -6559,7 +6559,7 @@ class _ModeChoiceRow extends StatelessWidget {
         children: [
           ElevatedButton.icon(
             icon: const Icon(Icons.person_outline, size: 18),
-            label: const Text('Build a character'),
+            label: const Text('Crear un personaje'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
@@ -6694,7 +6694,7 @@ class _InputBar extends StatelessWidget {
                 // Single `+` button — popup with named attach options. Mirrors
                 // the ChatGPT mobile pattern.
                 PopupMenuButton<String>(
-                  tooltip: 'Attach',
+                  tooltip: 'Adjuntar',
                   icon: Icon(
                     Icons.add_circle_outline,
                     color: EmberColors.textMid,
@@ -6721,7 +6721,7 @@ class _InputBar extends StatelessWidget {
                         children: [
                           Icon(Icons.image_outlined, size: 18),
                           SizedBox(width: 10),
-                          Text('Attach image'),
+                          Text('Adjuntar imagen'),
                         ],
                       ),
                     ),
@@ -6731,7 +6731,7 @@ class _InputBar extends StatelessWidget {
                         children: [
                           Icon(Icons.badge_outlined, size: 18),
                           SizedBox(width: 10),
-                          Text('Attach card / persona / lorebook'),
+                          Text('Adjuntar ficha, persona o libro de mundo'),
                         ],
                       ),
                     ),
@@ -6799,7 +6799,7 @@ class _InputBar extends StatelessWidget {
                       backgroundColor: EmberColors.danger,
                     ),
                     icon: const Icon(Icons.stop, color: Colors.white),
-                    tooltip: 'Stop generating',
+                    tooltip: 'Detener generación',
                   )
                 else
                   IconButton.filled(
@@ -7729,7 +7729,7 @@ class _SaveCardSheetState extends State<_SaveCardSheet> {
       setState(() => _avatar = bytes);
     } catch (e) {
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not pick image: $e')),
+        SnackBar(content: Text('No se puede elegir la imagen: ${e}')),
       );
     }
   }
@@ -7973,7 +7973,7 @@ class _SaveCardSheetState extends State<_SaveCardSheet> {
                               Icons.chat_bubble_outline,
                               size: 16,
                             ),
-                            label: const Text('Save & start chat'),
+                            label: const Text('Guardar &quot; iniciar chat &quot;'),
                             onPressed: _saving
                                 ? null
                                 : () => _submit(action: _SaveAction.startChat),

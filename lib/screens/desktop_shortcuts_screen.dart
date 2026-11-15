@@ -44,7 +44,7 @@ class DesktopShortcutsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Desktop Shortcuts'),
+        title: const Text('Atajos de escritorio'),
         actions: [
           // Wave CY.18.90: visible Restore defaults action up in the
           // bar so the user doesn't have to scroll past a long list
@@ -54,7 +54,7 @@ class DesktopShortcutsScreen extends StatelessWidget {
                 ? null
                 : () => _confirmRestore(context, store),
             icon: const Icon(Icons.refresh, size: 18),
-            label: const Text('Restore defaults'),
+            label: const Text('Restaurar predeterminados'),
           ),
           const SizedBox(width: 4),
         ],
@@ -95,7 +95,7 @@ class DesktopShortcutsScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(4, 4, 4, 8),
             child: Text(
-              'Fixed (chat input)',
+              'Arreglado (introducción de la cadena)',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -109,7 +109,7 @@ class DesktopShortcutsScreen extends StatelessWidget {
             child: Column(
               children: [
                 _ReadOnlyShortcutRow(
-                  label: 'Send message',
+                  label: 'Enviar mensaje',
                   binding: 'Enter',
                 ),
                 Divider(
@@ -119,7 +119,7 @@ class DesktopShortcutsScreen extends StatelessWidget {
                   endIndent: 16,
                 ),
                 _ReadOnlyShortcutRow(
-                  label: 'Insert newline in input',
+                  label: 'Insertar la nueva línea en la entrada',
                   binding: 'Shift + Enter',
                 ),
               ],
@@ -135,7 +135,7 @@ class DesktopShortcutsScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: const Text('Restore default shortcuts?'),
+        title: const Text('Restaurar atajos predeterminados?'),
         content: const Text(
           'Every shortcut goes back to the factory binding. Your '
           'wide-layout preference is not affected.',
@@ -143,7 +143,7 @@ class DesktopShortcutsScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -239,7 +239,7 @@ class _ShortcutRow extends StatelessWidget {
         context: context,
         builder: (ctx) => AlertDialog(
           backgroundColor: EmberColors.bgPanel,
-          title: const Text('Shortcut already in use'),
+          title: const Text('Atajo ya en uso'),
           content: Text(
             '${captured.label()} is currently bound to '
             '"${kShortcutActionLabels[conflictId] ?? conflictId}".\n\n'
@@ -249,11 +249,11 @@ class _ShortcutRow extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Use anyway'),
+              child: const Text('Usar de todos modos'),
             ),
           ],
         ),
@@ -406,7 +406,7 @@ class _CaptureDialogState extends State<_CaptureDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Press a key combination, or Esc to cancel.',
+                'Presione una combinación de teclas, o Esc para cancelar.',
                 style: TextStyle(
                     color: EmberColors.textMid, fontSize: 13),
               ),
@@ -444,7 +444,7 @@ class _CaptureDialogState extends State<_CaptureDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
         ),
       ],
     );

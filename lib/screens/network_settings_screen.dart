@@ -140,7 +140,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
         if (mounted) {
           store.setLanServerEnabled(false);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Server failed to start: $e')),
+            SnackBar(content: Text('El servidor no comenzó: ${e}')),
           );
         }
       }
@@ -176,7 +176,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
         store.setLanServerEnabled(false);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Restart failed: $e — server off')),
+            SnackBar(content: Text('Restart falló: ${e} — servidor apagado')),
           );
         }
       }
@@ -201,7 +201,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
         store.setLanServerEnabled(false);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Restart failed: $e — server off')),
+            SnackBar(content: Text('Restart falló: ${e} — servidor apagado')),
           );
         }
       }
@@ -212,7 +212,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
   void _openPairModal(AppStore store) {
     if (!PyreServer.instance.running) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Turn the server on first')),
+        const SnackBar(content: Text('Enciende el servidor primero')),
       );
       return;
     }
@@ -233,10 +233,10 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
   Future<void> _revoke(PairedDevice d) async {
     final ok = await confirmDelete(
       context,
-      title: 'Revoke ${d.name}?',
+      title: '¿Revocar ${d.name}?',
       message:
-          'This device will be disconnected on its next sync. It can re-pair by scanning a new QR.',
-      confirmLabel: 'Revoke',
+          'Este dispositivo se desconectará en su siguiente sincronización. Puede volver a pagar escaneando un nuevo QR.',
+      confirmLabel: 'Revocación',
     );
     if (!ok) return;
     // Wave CY.18.255 (audit FIX 2): revoke by the bearer HASH — the raw
@@ -253,7 +253,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
     final devices = DeviceRegistry.instance.paired;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Network (LAN sync)')),
+      appBar: AppBar(title: const Text('Network (Sincronización de LAN)')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
         children: [
@@ -334,10 +334,10 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
                   ),
                   TextButton(
                     onPressed: () => _applyPortChange(store),
-                    child: const Text('Apply port'),
+                    child: const Text('Aplicar puerto'),
                   ),
                   Divider(color: EmberColors.stroke, height: 24),
-                  const Text('Bind address',
+                  const Text('Dirección de escucha',
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   // ignore: deprecated_member_use
                   RadioListTile<String>(
@@ -346,7 +346,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
                     groupValue: store.uiPrefs.lanBindMode,
                     title: const Text('Entire LAN (0.0.0.0)'),
                     subtitle: const Text(
-                      'Phones on the same Wi-Fi can connect.',
+                      'Los teléfonos en el mismo Wi-Fi pueden conectarse.',
                       style: TextStyle(fontSize: 12),
                     ),
                     // ignore: deprecated_member_use
@@ -361,9 +361,9 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
                     value: 'localhost',
                     // ignore: deprecated_member_use
                     groupValue: store.uiPrefs.lanBindMode,
-                    title: const Text('Localhost only'),
+                    title: const Text('Localhost sólo'),
                     subtitle: const Text(
-                      'Only this machine. Useful for local web testing.',
+                      'Sólo esta máquina. Útil para las pruebas web locales.',
                       style: TextStyle(fontSize: 12),
                     ),
                     // ignore: deprecated_member_use
@@ -425,7 +425,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
                       setState(() {});
                     },
                     title: const Text(
-                        'Sync providers & API keys to paired devices'),
+                        'Proveedores de sincronización &amp; claves de API para dispositivos emparejados'),
                     subtitle: Text(
                       'Encrypted. Only your paired phones/PCs — never the '
                       'web view. Keys never leave in plaintext.',
@@ -465,12 +465,12 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      const Text('Paired devices',
+                      const Text('Dispositivos pares',
                           style: TextStyle(fontWeight: FontWeight.w600)),
                       const Spacer(),
                       ElevatedButton.icon(
                         icon: const Icon(Icons.qr_code_2, size: 16),
-                        label: const Text('Pair new'),
+                        label: const Text('Nuevo par'),
                         onPressed: running
                             ? () => _openPairModal(store)
                             : null,
@@ -482,7 +482,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text(
-                        'No paired devices. Tap "Pair new" to add your phone.',
+                        'No hay dispositivos emparejados. Pulsa "Pair nuevo" para agregar tu teléfono.',
                         style: TextStyle(
                           color: EmberColors.textMid,
                           fontSize: 13,
@@ -517,7 +517,7 @@ class _NetworkSettingsScreenState extends State<NetworkSettingsScreen> {
                             ),
                             TextButton(
                               onPressed: () => _revoke(d),
-                              child: const Text('Revoke',
+                              child: const Text('Revocación',
                                   style:
                                       TextStyle(color: Colors.redAccent)),
                             ),
@@ -641,21 +641,21 @@ class _PairModalState extends State<_PairModal> {
                 children: [
                   const Icon(Icons.qr_code_2, size: 22),
                   const SizedBox(width: 8),
-                  const Text('Pair new device',
+                  const Text('Nuevo dispositivo',
                       style: TextStyle(
                           fontSize: 17, fontWeight: FontWeight.w600)),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close, size: 20),
                     onPressed: () => Navigator.of(context).pop(),
-                    tooltip: 'Close',
+                    tooltip: 'Cerrar',
                   ),
                 ],
               ),
               const SizedBox(height: 8),
               if (expired)
                 const Text(
-                  'This token has expired. Close and tap "Pair new" again.',
+                  'Esta ficha ha expirado. Cerrar y pulsar "Pair nuevo" de nuevo.',
                   style: TextStyle(color: Colors.orangeAccent),
                 )
               else ...[

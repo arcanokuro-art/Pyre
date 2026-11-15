@@ -1,0 +1,55 @@
+name: Publish female creator preview
+on:
+  push:
+    branches: ['codex/female-character-creator']
+    paths: ['.github/workflows/publish-female-preview.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: publish-female-preview
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download verified APK and publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: arcanokuro-art/Pyre
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=c625a5a7e642d5e5c357fcc7477f00e1a2243f3d
+          actual="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36831378697 --jq '.head_sha')"
+          conclusion="$(gh api repos/arcanokuro-art/Pyre/actions/runs/36831378697 --jq '.conclusion')"
+          test "$actual" = "$expected"
+          test "$conclusion" = success
+          gh api "repos/arcanokuro-art/Pyre/compare/$expected...$GITHUB_SHA" --jq '.files[].filename' > changed-files.txt
+          if rg -v '^\\.github/workflows/' changed-files.txt; then
+            echo "Refusing to tag code different from the verified APK" >&2
+            exit 1
+          fi
+          gh run download 36831378697 -n Pyre-female-creator-preview-apk -D apk
+          mv apk/app-debug.apk apk/Pyre-Creadores-Femenino-Masculino.apk
+          sha256sum apk/Pyre-Creadores-Femenino-Masculino.apk > apk/SHA256SUMS.txt
+          cat > notes.md <<'NOTES'
+          Creador masculino basado en el prototipo aportado, con 89 campos, género Hombre y orientación Heterosexual fijos. La opción Masculino abre el formulario; permite borradores, relaciones, mensajes y recursos visuales.
+          
+          Avatar y Lorebooks conservan sus componentes y lugares, igual que en el femenino. Se conserva el creador femenino y la corrección de los cuadros rojos.
+          
+          APK de prueba con identidad y datos separados de Pyre habitual. No incluye bloques internos de dinámica sexual explícita. Falta probar esta versión en un teléfono físico.
+          
+          Análisis sin incidencias y 37 pruebas aprobadas del formulario masculino/femenino, exportación y adjuntos: https://github.com/arcanokuro-art/Pyre/actions/runs/36831378697.
+          
+          Código del APK: https://github.com/arcanokuro-art/Pyre/commit/c625a5a7e642d5e5c357fcc7477f00e1a2243f3d. La etiqueta añade únicamente el flujo de publicación; el código de la app coincide con el validado.
+          NOTES
+          tag=pyre-character-creators-preview
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --title "Pyre · Creadores femenino y masculino" --notes-file notes.md --prerelease --latest=false
+          else
+            gh release create "$tag" --target "$GITHUB_SHA" --title "Pyre · Creadores femenino y masculino" --notes-file notes.md --prerelease --latest=false
+          fi
+          gh release upload "$tag" apk/Pyre-Creadores-Femenino-Masculino.apk apk/SHA256SUMS.txt --clobber
+

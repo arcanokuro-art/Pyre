@@ -197,7 +197,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                           size: 18, color: EmberColors.primary),
                       SizedBox(width: 8),
                       Text(
-                        'Edit checkpoint',
+                        'Editar el puesto de control',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600),
                       ),
@@ -234,7 +234,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                       const Spacer(),
                       TextButton(
                         onPressed: () => Navigator.pop(d),
-                        child: const Text('Cancel'),
+                        child: const Text('Cancelar'),
                       ),
                       const SizedBox(width: 8),
                       ElevatedButton(
@@ -243,7 +243,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                           backgroundColor: EmberColors.primary,
                           foregroundColor: Colors.white,
                         ),
-                        child: const Text('Save'),
+                        child: const Text('Guardar'),
                       ),
                     ],
                   ),
@@ -331,7 +331,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                               size: 20, color: EmberColors.primary),
                           const SizedBox(width: 8),
                           const Text(
-                            'Write a checkpoint',
+                            'Escribe un punto de control',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w600),
                           ),
@@ -359,7 +359,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             hintText:
-                                'What has happened so far, in your words…',
+                                'Lo que ha pasado hasta ahora, en tus palabras…',
                             alignLabelWithHint: true,
                           ),
                         ),
@@ -397,7 +397,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                           const Spacer(),
                           TextButton(
                             onPressed: () => Navigator.pop(d),
-                            child: const Text('Cancel'),
+                            child: const Text('Cancelar'),
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
@@ -406,7 +406,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                               backgroundColor: EmberColors.primary,
                               foregroundColor: Colors.white,
                             ),
-                            child: const Text('Save'),
+                            child: const Text('Guardar'),
                           ),
                         ],
                       ),
@@ -462,7 +462,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
           context: context,
           builder: (d) => AlertDialog(
             backgroundColor: EmberColors.bgPanel,
-            title: const Text('Delete checkpoint?'),
+            title: const Text('¿Supir el puesto de control?'),
             content: Text(
               'This summary will be removed from the chain. The next '
               'auto-summarisation will re-summarise the same range from '
@@ -472,13 +472,13 @@ class _MemoryScreenState extends State<MemoryScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(d, false),
-                child: const Text('Cancel'),
+                child: const Text('Cancelar'),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(d, true),
                 style:
                     TextButton.styleFrom(foregroundColor: EmberColors.danger),
-                child: const Text('Delete'),
+                child: const Text('Eliminar'),
               ),
             ],
           ),
@@ -507,7 +507,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
           context: context,
           builder: (d) => AlertDialog(
             backgroundColor: EmberColors.bgPanel,
-            title: const Text('Wipe all checkpoints?'),
+            title: const Text('¿Limpiar todos los puntos de control?'),
             content: Text(
               'Every checkpoint on every branch of this chat will be '
               'erased. The model will lose its recap until you '
@@ -517,7 +517,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(d, false),
-                child: const Text('Cancel'),
+                child: const Text('Cancelar'),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(d, true),
@@ -557,7 +557,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
     final chat = _liveChat(store);
     if (chat == null) {
       return const Scaffold(
-        body: Center(child: Text('Chat not found.')),
+        body: Center(child: Text('Chat no encontrado.')),
       );
     }
     final valid = ltm.findValidCheckpoints(chat);
@@ -565,7 +565,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Checkpoints'),
+        title: const Text('Puntos de control'),
         actions: [
           if (chat.memoryCheckpoints.isNotEmpty)
             IconButton(
@@ -755,7 +755,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                     icon: Icon(Icons.edit_note,
                         size: 18, color: EmberColors.textMid),
                     label: Text(
-                      'Write one yourself',
+                      'Escríbete.',
                       style: TextStyle(
                           color: EmberColors.textMid, fontSize: 13),
                     ),
@@ -818,7 +818,7 @@ class _CheckpointCard extends StatelessWidget {
                       size: 16, color: EmberColors.primary),
                   const SizedBox(width: 6),
                   Text(
-                    'Checkpoint $index of $total',
+                    'Punto de control ${index} de ${total}',
                     style: const TextStyle(
                         fontSize: 13, fontWeight: FontWeight.w600),
                   ),
@@ -920,13 +920,13 @@ class _CheckpointDetailScreenState extends State<_CheckpointDetailScreen> {
     final ckpt = _resolve(store);
     if (ckpt == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Checkpoint')),
-        body: const Center(child: Text('Checkpoint no longer exists.')),
+        appBar: AppBar(title: const Text('Punto de control')),
+        body: const Center(child: Text('El punto de control ya no existe.')),
       );
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Checkpoint ${widget.index} of ${widget.total}'),
+        title: Text('Punto de control ${widget.index} de ${widget.total}'),
       ),
       body: Column(
         children: [
@@ -995,7 +995,7 @@ class _CheckpointDetailScreenState extends State<_CheckpointDetailScreen> {
                     child: OutlinedButton.icon(
                       onPressed: () => widget.onEdit(ckpt),
                       icon: const Icon(Icons.edit_outlined, size: 16),
-                      label: const Text('Edit'),
+                      label: const Text('Editar'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: EmberColors.primary,
                       ),
@@ -1012,7 +1012,7 @@ class _CheckpointDetailScreenState extends State<_CheckpointDetailScreen> {
                           Navigator.of(btnCtx).pop();
                         },
                         icon: const Icon(Icons.delete_outline, size: 16),
-                        label: const Text('Delete'),
+                        label: const Text('Eliminar'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: EmberColors.danger,
                         ),

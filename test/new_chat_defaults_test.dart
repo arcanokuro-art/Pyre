@@ -21,13 +21,6 @@ class _NoopBackend implements StoreBackend {
 
 void main() {
   group('new-chat default settings round-trip', () {
-    test('MemorySettings.newChatsEnabled defaults true + round-trips', () {
-      expect(MemorySettings().newChatsEnabled, isTrue);
-      expect(MemorySettings.fromJson(const {}).newChatsEnabled, isTrue);
-      final off = MemorySettings(newChatsEnabled: false);
-      expect(MemorySettings.fromJson(off.toJson()).newChatsEnabled, isFalse);
-    });
-
     test('LiveSheetSettings.newChatsEnabled defaults true + round-trips', () {
       expect(LiveSheetSettings().newChatsEnabled, isTrue);
       expect(LiveSheetSettings.fromJson(const {}).newChatsEnabled, isTrue);
@@ -45,12 +38,11 @@ void main() {
       expect(chat.liveSheetEnabled, isTrue);
     });
 
-    test('defaults OFF → new chat starts with both features OFF', () {
+    test('Live Sheet disabled → managed memory still starts enabled', () {
       final store = AppStore(storage: _NoopBackend());
-      store.memorySettings.newChatsEnabled = false;
       store.liveSheetSettings.newChatsEnabled = false;
       final chat = store.startChatWith(Character(id: 'c1', name: 'A'));
-      expect(chat.memoryEnabled, isFalse);
+      expect(chat.memoryEnabled, isTrue);
       expect(chat.liveSheetEnabled, isFalse);
     });
   });

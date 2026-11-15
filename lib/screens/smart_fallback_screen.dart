@@ -25,14 +25,14 @@ class SmartFallbackScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Smart provider fallback')),
+      appBar: AppBar(title: const Text('Retroceso del proveedor inteligente')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
         children: [
           // ── How it works ──────────────────────────────────────────────
           const HowItWorksCard(
-            title: 'How smart provider fallback works',
-            subtitle: 'What it does, and how to opt out.',
+            title: 'Cómo funciona el rendimiento del proveedor inteligente',
+            subtitle: 'Lo que hace, y cómo optar por salir.',
             sections: [
               HowItWorksSection('What it is', [
                 HowItWorksBlock.paragraph(
@@ -71,7 +71,7 @@ class SmartFallbackScreen extends StatelessWidget {
             child: SwitchListTile(
               value: store.uiPrefs.askToSwitchOnFailure,
               onChanged: store.setAskToSwitchOnFailure,
-              title: const Text('Ask to switch providers when one fails',
+              title: const Text('Preguntar si quieres cambiar de proveedor cuando falle',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               subtitle: Text(
                 'When a provider errors or refuses, Pyre offers to retry '

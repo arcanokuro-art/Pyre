@@ -37,7 +37,7 @@ class ChatSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat Settings')),
+      appBar: AppBar(title: const Text('Ajustes del chat')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
         children: [
@@ -49,14 +49,14 @@ class ChatSettingsScreen extends StatelessWidget {
           _HubCard(rows: [
             _HubRow(
               icon: Icons.palette_outlined,
-              title: 'Customize Chat',
-              subtitle: 'Bubbles, background, and reasoning display.',
+              title: 'Personalizar Chat',
+              subtitle: 'Burbujas, fondo y visualización del razonamiento.',
               builder: (_) => const ChatAppearanceScreen(),
             ),
             _HubRow(
               icon: Icons.tune,
-              title: 'Behaviors',
-              subtitle: 'Delete, new-chat persona, and streaming.',
+              title: 'Comportamiento',
+              subtitle: 'Suprímase, nuevo personaje, y streaming.',
               builder: (_) => const ChatBehaviorsScreen(),
             ),
           ]),
@@ -66,13 +66,13 @@ class ChatSettingsScreen extends StatelessWidget {
             _HubRow(
               icon: Icons.settings_suggest_outlined,
               title: 'Presets',
-              subtitle: 'Sampling defaults and prompt presets.',
+              subtitle: 'Marcar defectos y presets rápidos.',
               builder: (_) => const PresetsScreen(),
             ),
             _HubRow(
               icon: Icons.find_replace,
-              title: 'Regex (find/replace)',
-              subtitle: 'Rewrite chat text on the fly (non-destructive).',
+              title: 'Regex (finamiento/sustitución)',
+              subtitle: 'Reescribir texto de chat sobre la mosca (no destructivo).',
               builder: (_) => const RegexRulesScreen(),
             ),
           ]),
@@ -81,20 +81,20 @@ class ChatSettingsScreen extends StatelessWidget {
           _HubCard(rows: [
             _HubRow(
               icon: Icons.psychology,
-              title: 'Checkpoints',
-              subtitle: 'Auto-summarise older messages into a recap.',
+              title: 'Puntos de control',
+              subtitle: 'Resumir automáticamente los mensajes anteriores.',
               builder: (_) => const LongTermMemoryScreen(),
             ),
             _HubRow(
               icon: Icons.checklist_rtl,
-              title: 'Live Sheet',
-              subtitle: 'Track each character\'s current state.',
+              title: 'Ficha de escena',
+              subtitle: 'Rastrea el estado actual de cada personaje.',
               builder: (_) => const LiveSheetSettingsScreen(),
             ),
             _HubRow(
               icon: Icons.map_outlined,
-              title: 'Script',
-              subtitle: 'Plant plot beats the story builds toward.',
+              title: 'Guion',
+              subtitle: 'La trama de plantas supera la historia.',
               builder: (_) => const ScriptSettingsScreen(),
             ),
           ]),
@@ -105,14 +105,14 @@ class ChatSettingsScreen extends StatelessWidget {
               icon: Icons.explore_outlined,
               title: 'Guide',
               subtitle:
-                  'Steer the next reply, or draft your own message from an outline.',
+                  'Firme la siguiente respuesta, o redacte su propio mensaje de un esquema.',
               builder: (_) => const GuideSettingsScreen(),
             ),
             _HubRow(
               icon: Icons.smart_toy_outlined,
               title: 'System note',
               subtitle:
-                  'Show the one-off /sys system-note action in the chat menu (off by default).',
+                  'Mostrar la acción de un solo lado /sys en el menú de chat (de forma predeterminada).',
               builder: (_) => const SystemNoteSettingsScreen(),
             ),
           ]),

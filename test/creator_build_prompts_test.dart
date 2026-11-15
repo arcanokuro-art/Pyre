@@ -30,9 +30,9 @@ void main() {
                 reason: 'key "$key" missing for $mode batch $i');
           }
 
-          // Output contract: JSON object + English.
+          // Output contract: JSON object + Spanish.
           expect(all, contains('JSON object'));
-          expect(all, contains('English'));
+          expect(all, contains('Spanish'));
 
           // Quality rules carried forward from the architect.
           expect(all.toLowerCase(), contains('meta'),

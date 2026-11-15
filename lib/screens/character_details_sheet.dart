@@ -12,7 +12,7 @@ import '../widgets/menu_sheet.dart';
 import 'character_assistant_screen.dart';
 import 'character_edit_screen.dart';
 import 'chat_picker_screens.dart';
-import 'persona_editor.dart';
+import 'persona_manual_chooser.dart';
 
 String _tr(BuildContext context, String es, String en) =>
     AppStrings.of(context).es ? es : en;
@@ -281,7 +281,7 @@ class PersonaDetailsSheet extends StatelessWidget {
           leading: const Icon(Icons.edit_outlined),
           title: Text(_tr(context, 'Editar manualmente', 'Edit manually')),
           subtitle: Text(_tr(context, 'Abre el formulario clásico para modificar los campos directamente.', 'Open the classic form to tweak fields directly.'), style: TextStyle(color: EmberColors.textMid, fontSize: 12)),
-          onTap: () { Navigator.pop(sheet); Navigator.of(context).pop(); showPersonaEditor(context, existing: p); },
+          onTap: () { Navigator.pop(sheet); Navigator.of(context).pop(); showManualPersonaEditor(context, existing: p); },
         ),
         const SizedBox(height: 8),
       ],

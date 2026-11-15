@@ -35,8 +35,7 @@ List<String> _stringList(dynamic v) {
   return const [];
 }
 
-String _str(dynamic v, [String fallback = '']) =>
-    v is String ? v : fallback;
+String _str(dynamic v, [String fallback = '']) => v is String ? v : fallback;
 
 Character characterFromCharaCard(CharaCard card, {String? overrideAvatar}) {
   // Wave CY.18.54: clear the per-import error log at entry. Pre-Wave,
@@ -70,14 +69,21 @@ Character characterFromCharaCard(CharaCard card, {String? overrideAvatar}) {
   final pyreExt = c['extensions'] is Map
       ? (c['extensions'] as Map)['pyre']
       : null;
-  final pyreTagline =
-      pyreExt is Map ? _str(pyreExt['tagline']) : '';
+  final explicitType = pyreExt is Map ? pyreExt['charType'] : null;
+  final charType = switch (explicitType) {
+    'female' || 'male' => explicitType as String,
+    _ when extRaw is Map && extRaw['pyre_male_profile'] is Map => 'male',
+    _ when extRaw is Map && extRaw['pyre_female_profile'] is Map => 'female',
+    _ => null,
+  };
+  final pyreTagline = pyreExt is Map ? _str(pyreExt['tagline']) : '';
   final taglineRaw = _str(c['tagline']).isNotEmpty
       ? _str(c['tagline'])
       : pyreTagline;
   return Character(
     id: newId('char'),
     name: _str(c['name'], 'Unnamed'),
+    charType: charType,
     tagline: taglineRaw.isNotEmpty ? taglineRaw : null,
     description: _str(c['description']),
     personality: _str(c['personality']),
@@ -98,9 +104,7 @@ Character characterFromCharaCard(CharaCard card, {String? overrideAvatar}) {
         ? _str(depthRaw['prompt'])
         : (depthRaw is String ? depthRaw : ''),
     depthPromptDepth: depthRaw is Map
-        ? (depthRaw['depth'] is num
-            ? (depthRaw['depth'] as num).toInt()
-            : 4)
+        ? (depthRaw['depth'] is num ? (depthRaw['depth'] as num).toInt() : 4)
         : 4,
     extensions: c['extensions'] is Map
         ? (c['extensions'] as Map).cast<String, dynamic>()
@@ -128,6 +132,11 @@ Character restoreCanvasDroppedExtras(
   Character original, {
   required bool keepFavorite,
 }) {
+  rebuilt.charType ??= original.charType;
+  for (final key in ['pyre_female_profile', 'pyre_male_profile']) {
+    final profile = original.extensions[key];
+    if (profile != null) rebuilt.extensions.putIfAbsent(key, () => profile);
+  }
   rebuilt.gallery = List<String>.from(original.gallery);
   rebuilt.talkativeness = original.talkativeness;
   if (keepFavorite) rebuilt.favorite = original.favorite;

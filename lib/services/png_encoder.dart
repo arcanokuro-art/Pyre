@@ -37,12 +37,14 @@ Map<String, dynamic> buildCharaCardV2Json(Character c, {Lorebook? lorebook}) {
   // namespace inside `extensions` so it round-trips (Pyre reads it
   // back on import; other tools ignore the unknown namespace).
   final tagline = c.tagline?.trim() ?? '';
-  if (tagline.isNotEmpty) {
+  final charType = c.charType;
+  if (tagline.isNotEmpty || charType != null) {
     final existing = extensions['pyre'];
     final pyre = existing is Map
         ? Map<String, dynamic>.from(existing)
         : <String, dynamic>{};
-    pyre['tagline'] = tagline;
+    if (tagline.isNotEmpty) pyre['tagline'] = tagline;
+    if (charType != null) pyre['charType'] = charType;
     extensions['pyre'] = pyre;
   }
   final data = <String, dynamic>{
@@ -110,7 +112,8 @@ Map<String, dynamic> _charaCardBookEntry(LoreEntry e, int index) {
     // `selective` (chara_card_v2): the entry fires only on a key match —
     // true for keyed entries, false for an always-on (constant) overview.
     // Wave 1.1 (F3): secondary keys imply a selective entry too.
-    'selective': !e.constant && (e.keys.isNotEmpty || e.secondaryKeys.isNotEmpty),
+    'selective':
+        !e.constant && (e.keys.isNotEmpty || e.secondaryKeys.isNotEmpty),
     // Wave 1.1 (F3): SillyTavern "selective" keyword options. Emitted with
     // the ST field names so a round-trip (export → re-import) preserves them.
     'selectiveLogic': loreSelectiveLogicToSt(e.selectiveLogic),
@@ -130,8 +133,11 @@ Map<String, dynamic> _charaCardBookEntry(LoreEntry e, int index) {
 /// [avatarPngBytes] must be a valid PNG (the Character's avatar, typically
 /// already a 256x256 cropped square). Throws [FormatException] if the
 /// input isn't a PNG.
-Uint8List encodeCharaCardPng(Character c, Uint8List avatarPngBytes,
-    {Lorebook? lorebook}) {
+Uint8List encodeCharaCardPng(
+  Character c,
+  Uint8List avatarPngBytes, {
+  Lorebook? lorebook,
+}) {
   final cardJson = jsonEncode(buildCharaCardV2Json(c, lorebook: lorebook));
   final cardB64 = base64Encode(utf8.encode(cardJson));
 

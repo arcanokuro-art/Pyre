@@ -30,8 +30,8 @@ class SystemNoteSettingsScreen extends StatelessWidget {
         children: [
           // ── How it works ──────────────────────────────────────────────
           const HowItWorksCard(
-            title: 'How the system note works',
-            subtitle: 'A one-off instruction to the model, mid-chat.',
+            title: 'Cómo funciona la nota del sistema',
+            subtitle: 'Una instrucción puntual para el modelo durante el chat.',
             sections: [
               HowItWorksSection('What it is', [
                 HowItWorksBlock.paragraph(
@@ -60,7 +60,7 @@ class SystemNoteSettingsScreen extends StatelessWidget {
           Card(
             margin: const EdgeInsets.symmetric(vertical: 6),
             child: SwitchListTile(
-              title: const Text('Show "Add system note"',
+              title: const Text('Mostrar "Agregar la nota del sistema"',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               subtitle: Text(
                 'Adds a "system note" action to the chat input\'s ⋮ menu, next '

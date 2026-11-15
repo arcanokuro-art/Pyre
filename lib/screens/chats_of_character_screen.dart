@@ -32,7 +32,7 @@ class ChatsOfCharacterScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'New chat',
+            tooltip: 'Nuevo chat',
             onPressed: character == null
                 ? null
                 : () => startNewChatWithPersonaPrompt(
@@ -46,7 +46,7 @@ class ChatsOfCharacterScreen extends StatelessWidget {
       body: chats.isEmpty
           ? const EmptyState(
               icon: Icons.chat_bubble_outline,
-              title: 'No chats with this character',
+              title: 'Sin charlas con este personaje',
               subtitle: 'Tap + to start one.',
             )
           : Column(
@@ -56,7 +56,7 @@ class ChatsOfCharacterScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        'Chats with ${character?.name ?? "this character"}',
+                        'Chats con ${character?.name ?? "this character"}',
                         style: TextStyle(
                           color: EmberColors.textMid,
                           fontSize: 12,
@@ -227,7 +227,7 @@ class _ChatRow extends StatelessWidget {
             ),
             IconButton(
               icon: Icon(Icons.more_vert, color: EmberColors.textDim),
-              tooltip: 'Chat actions',
+              tooltip: 'Acciones de chat',
               onPressed: () => _showRowKebab(context, store, chat),
             ),
           ],
@@ -302,15 +302,15 @@ void _showRowKebab(BuildContext context, AppStore store, Chat chat) {
           ListTile(
             leading: Icon(Icons.delete_outline,
                 color: EmberColors.danger),
-            title: Text('Delete chat',
+            title: Text('Eliminar el chat',
                 style: TextStyle(color: EmberColors.danger)),
             onTap: () async {
               Navigator.pop(sheet);
               final ok = await confirmDelete(
                 context,
-                title: 'Delete chat?',
+                title: 'Eliminar el chat?',
                 message:
-                    'This conversation and all its messages will be lost forever.',
+                    'Esta conversación y todos sus mensajes se perderán para siempre.',
               );
               if (!ok) return;
               store.removeChat(chat.id);
@@ -337,20 +337,20 @@ Future<void> renameChatPrompt(
       content: TextField(
         controller: ctl,
         autofocus: true,
-        decoration: const InputDecoration(hintText: 'Chat title'),
+        decoration: const InputDecoration(hintText: 'Título de Chat'),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, null),
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
         ),
         TextButton(
           onPressed: () => Navigator.pop(ctx, ''),
-          child: const Text('Reset'),
+          child: const Text('Restablecer'),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(ctx, ctl.text.trim()),
-          child: const Text('Save'),
+          child: const Text('Guardar'),
         ),
       ],
     ),

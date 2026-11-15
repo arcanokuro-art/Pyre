@@ -16,7 +16,8 @@ import 'avatar_crop_screen.dart';
 
 class PersonaEditorSheet extends StatefulWidget {
   final Persona? existing;
-  const PersonaEditorSheet({super.key, this.existing});
+  final String? profileGender;
+  const PersonaEditorSheet({super.key, this.existing, this.profileGender});
 
   @override
   State<PersonaEditorSheet> createState() => _PersonaEditorSheetState();
@@ -208,7 +209,7 @@ class _PersonaEditorSheetState extends State<PersonaEditorSheet> {
                 const SizedBox(width: 8),
                 TextButton(
                   onPressed: hasAvatar ? _recrop : null,
-                  child: const Text('Recrop'),
+                  child: const Text('Recortar'),
                 ),
               ],
             ),
@@ -216,7 +217,7 @@ class _PersonaEditorSheetState extends State<PersonaEditorSheet> {
             TextField(
               controller: _name,
               decoration: InputDecoration(
-                labelText: 'Name',
+                labelText: 'Nombre',
                 errorText: _nameError,
               ),
               onChanged: (_) => setState(() {
@@ -230,8 +231,8 @@ class _PersonaEditorSheetState extends State<PersonaEditorSheet> {
             TextField(
               controller: _tagline,
               decoration: const InputDecoration(
-                labelText: 'Tagline',
-                hintText: 'A short tagline shown in lists (one line)',
+                labelText: 'Frase breve',
+                hintText: 'Frase breve que se muestra en las listas.',
               ),
             ),
             const SizedBox(height: 12),
@@ -240,9 +241,9 @@ class _PersonaEditorSheetState extends State<PersonaEditorSheet> {
               maxLines: 10,
               minLines: 4,
               decoration: const InputDecoration(
-                labelText: 'Description',
+                labelText: 'Descripción',
                 hintText:
-                    'How the user appears in chats. Personality, looks, anything the model should know.',
+                    'Cómo aparece el usuario en chats. Personalidad, apariencia, cualquier cosa que el modelo debe saber.',
               ),
             ),
             const SizedBox(height: 12),
@@ -257,7 +258,7 @@ class _PersonaEditorSheetState extends State<PersonaEditorSheet> {
               decoration: const InputDecoration(
                 labelText: 'Dialogue examples',
                 hintText:
-                    'Optional. First-person dialogue / action samples in the user\'s voice. `<START>` separator between exchanges, same shape as a chara_card_v2 mes_example.',
+                    'Opcional. Muestras de diálogo/acción de primera persona en la voz del usuario. Separador &quot; garantizado &quot; entre intercambios, la misma forma que un chara_card_v2 mes_example.',
               ),
             ),
             const SizedBox(height: 16),
@@ -304,12 +305,12 @@ class _PersonaEditorSheetState extends State<PersonaEditorSheet> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
+                  child: const Text('Cancelar'),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: _save,
-                  child: const Text('Save'),
+                  child: const Text('Guardar'),
                 ),
               ],
             ),
@@ -320,7 +321,8 @@ class _PersonaEditorSheetState extends State<PersonaEditorSheet> {
   }
 }
 
-Future<void> showPersonaEditor(BuildContext context, {Persona? existing}) {
+Future<void> showPersonaEditor(BuildContext context,
+    {Persona? existing, String? profileGender}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -328,6 +330,6 @@ Future<void> showPersonaEditor(BuildContext context, {Persona? existing}) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    builder: (_) => PersonaEditorSheet(existing: existing),
+    builder: (_) => PersonaEditorSheet(existing: existing, profileGender: profileGender),
   );
 }

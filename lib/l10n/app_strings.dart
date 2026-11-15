@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart';
 
 /// Pyre localization foundation.
-/// Spanish is the default language and English is the secondary language.
+/// Cadenas de la interfaz de Pyre.
 class AppStrings {
   final Locale locale;
   const AppStrings(this.locale);
 
   static const defaultLocale = Locale('es');
-  static const supportedLocales = <Locale>[Locale('es'), Locale('en')];
+  static const supportedLocales = <Locale>[defaultLocale];
 
   static AppStrings of(BuildContext context) =>
       Localizations.of<AppStrings>(context, AppStrings) ??

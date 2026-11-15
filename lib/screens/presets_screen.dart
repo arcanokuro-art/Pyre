@@ -34,12 +34,12 @@ class PresetsScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.file_upload_outlined),
-            tooltip: 'Import SillyTavern preset',
+            tooltip: 'Importar preajuste de SillyTavern',
             onPressed: () => _importSillyTavern(context),
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'New preset',
+            tooltip: 'Nuevo preajuste',
             onPressed: () => _editPreset(context, null),
           ),
         ],
@@ -67,8 +67,8 @@ class PresetsScreen extends StatelessWidget {
       // Shared explainer card (collapsed by default), matching the
       // Long-term Memory / Live Sheet / Script screens.
       const HowItWorksCard(
-        title: 'How presets work',
-        subtitle: 'What a preset is, and how to switch.',
+        title: 'Cómo funcionan los presets',
+        subtitle: 'Lo que es un preset, y cómo cambiar.',
         sections: [
           HowItWorksSection('What it is', [
             HowItWorksBlock.paragraph(
@@ -190,7 +190,7 @@ class _PresetCard extends StatelessWidget {
         ),
         trailing: IconButton(
           icon: Icon(Icons.more_vert, color: EmberColors.textMid),
-          tooltip: 'Preset actions',
+          tooltip: 'Acciones del preajuste',
           onPressed: () => _openPresetKebab(context, p),
         ),
         onTap: () => store.setActivePreset(p.id),
@@ -300,7 +300,7 @@ class _DefaultGenerationCardState extends State<_DefaultGenerationCard> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Preset "${preset.name}" overrides some of these values when active. Overridden sliders show the preset value as the effective one.',
+                      'Preset "${preset.name}" supera algunos de estos valores cuando está activo. Los deslizadores overridden muestran el valor preestablecido como el efectivo.',
                       style: TextStyle(
                         color: EmberColors.textMid,
                         fontSize: 12,
@@ -314,7 +314,7 @@ class _DefaultGenerationCardState extends State<_DefaultGenerationCard> {
         SliderCard(
           label: 'Max Response Tokens',
           subtitle:
-              'Maximum tokens in a response; too small may cause truncation.',
+              'Tokens máximos en una respuesta; demasiado pequeño puede causar truncación.',
           value: dispMaxTokens,
           min: 64,
           max: 4096,
@@ -336,7 +336,7 @@ class _DefaultGenerationCardState extends State<_DefaultGenerationCard> {
         ),
         SliderCard(
           label: 'Temperature',
-          subtitle: 'Script-adherent  ~  Wildly imaginative',
+          subtitle: 'guion-adherente ~ Wildly imaginative',
           value: dispTemp,
           min: 0,
           max: 2,
@@ -356,7 +356,7 @@ class _DefaultGenerationCardState extends State<_DefaultGenerationCard> {
         ),
         SliderCard(
           label: 'Top-P',
-          subtitle: 'Personality Single-faceted  ~  Multi-faceted',
+          subtitle: 'Personalidad Una cara única ~ Multi-faceted',
           value: dispTopP,
           min: 0,
           max: 1,
@@ -376,7 +376,7 @@ class _DefaultGenerationCardState extends State<_DefaultGenerationCard> {
         ),
         SliderCard(
           label: 'Top-K',
-          subtitle: 'Dialogue Style Fixed  ~  Variable  (0 = disabled)',
+          subtitle: 'Estilo de diálogo fijo ~ Variable (0 = discapacitados)',
           value: dispTopK,
           min: 0,
           max: 100,
@@ -467,12 +467,12 @@ Future<void> _openPresetKebab(BuildContext context, Preset p) async {
           ListTile(
             leading: Icon(Icons.check_circle_outline,
                 color: EmberColors.primary),
-            title: const Text('Select (activate now)'),
+            title: const Text('Seleccione (activar ahora)'),
             onTap: () {
               Navigator.pop(sheet);
               store.setActivePreset(p.id);
               messenger.showSnackBar(
-                SnackBar(content: Text('"${p.name}" is now active.')),
+                SnackBar(content: Text('"${p.name}" está ahora activo.')),
               );
             },
           ),
@@ -497,7 +497,7 @@ Future<void> _openPresetKebab(BuildContext context, Preset p) async {
           // so the original default stays intact as a reference point.
           ListTile(
             leading: const Icon(Icons.visibility_outlined),
-            title: const Text('View details'),
+            title: const Text('Ver detalles'),
             onTap: () {
               Navigator.pop(sheet);
               _showPresetDetails(context, p);
@@ -547,7 +547,7 @@ Future<void> _openPresetKebab(BuildContext context, Preset p) async {
               );
               store.addPreset(clone);
               messenger.showSnackBar(
-                const SnackBar(content: Text('Copied as editable preset.')),
+                const SnackBar(content: Text('Copia editable guardada.')),
               );
             },
           ),
@@ -557,7 +557,7 @@ Future<void> _openPresetKebab(BuildContext context, Preset p) async {
           if (!p.locked)
             ListTile(
               leading: const Icon(Icons.edit_outlined),
-              title: const Text('Edit'),
+              title: const Text('Editar'),
               onTap: () {
                 Navigator.pop(sheet);
                 _editPreset(context, p);
@@ -566,7 +566,7 @@ Future<void> _openPresetKebab(BuildContext context, Preset p) async {
           _menuSectionLabel('Export'),
           ListTile(
             leading: const Icon(Icons.file_download_outlined),
-            title: const Text('Export JSON'),
+            title: const Text('Exportar JSON'),
             onTap: () async {
               Navigator.pop(sheet);
               final json = const JsonEncoder.withIndent('  ')
@@ -582,7 +582,7 @@ Future<void> _openPresetKebab(BuildContext context, Preset p) async {
             ListTile(
               leading: Icon(Icons.delete_outline,
                   color: EmberColors.danger),
-              title: Text('Delete',
+              title: Text('Eliminar',
                   style: TextStyle(color: EmberColors.danger)),
               onTap: () async {
                 Navigator.pop(sheet);
@@ -590,7 +590,7 @@ Future<void> _openPresetKebab(BuildContext context, Preset p) async {
                   context,
                   title: 'Delete "${p.name}"?',
                   message:
-                      'The preset will be removed. Chats using it will fall back to the default preset.',
+                      'Se eliminará el preset. Los chats que lo utilicen se volverán al preset predeterminado.',
                 );
                 if (!ok) return;
                 store.removePreset(p.id);
@@ -701,7 +701,7 @@ class _PresetDetailsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'PROMPT BLOCKS',
+            'BLOQUES DE INSTRUCCIONES',
             style: TextStyle(
               color: EmberColors.primary,
               fontWeight: FontWeight.w700,
@@ -775,7 +775,7 @@ class _PresetDetailsScreen extends StatelessWidget {
     final live = _live(store);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Preset details'),
+        title: const Text('Detalles de Preset'),
         actions: [
           if (live.locked)
             Padding(
@@ -879,7 +879,7 @@ Future<void> _importSillyTavern(BuildContext context) async {
     final bytes = result.files.single.bytes;
     if (bytes == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not read file bytes.')),
+        const SnackBar(content: Text('No podía leer bytes de archivos.')),
       );
       return;
     }
@@ -903,18 +903,18 @@ Future<void> _importSillyTavern(BuildContext context) async {
     messenger.showSnackBar(SnackBar(
       duration: const Duration(seconds: 6),
       content: Text(
-        'Imported "${imported.preset.name}" — ${parts.join(" · ")}',
+        'Importado "${imported.preset.name}" — ${parts.join(" · ")}',
       ),
     ));
   } catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text('Import failed: $e')));
+    messenger.showSnackBar(SnackBar(content: Text('Fallo de importación: ${e}')));
   }
 }
 
 Future<void> _editPreset(BuildContext context, Preset? existing) async {
   final store = context.read<AppStore>();
   // Identity + prompts
-  final nameCtl = TextEditingController(text: existing?.name ?? 'New preset');
+  final nameCtl = TextEditingController(text: existing?.name ?? 'Nuevo preajuste');
   final mainCtl = TextEditingController(text: existing?.mainPrompt ?? '');
   final postCtl =
       TextEditingController(text: existing?.postHistoryInstructions ?? '');
@@ -1012,7 +1012,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: EmberColors.bgPanel,
-      title: Text(existing == null ? 'New preset' : 'Edit preset'),
+      title: Text(existing == null ? 'Nuevo preajuste' : 'Editar preajuste'),
       content: SizedBox(
         width: 460,
         child: SingleChildScrollView(
@@ -1029,7 +1029,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
               sectionHeader('Identity'),
               TextField(
                 controller: nameCtl,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Nombre'),
               ),
               // MODULAR preset → show the toggleable "Prompt blocks" list in
               // place of the flat Main/Post text fields. FLAT preset → keep the
@@ -1045,7 +1045,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
                   minLines: 4,
                   decoration: const InputDecoration(
                     hintText:
-                        'Supports {{char}}, {{user}}, {{description}}, {{personality}}, {{scenario}}, {{persona}}, {{mesExample}}, {{wiBefore}}.',
+                        'Apoya {} {}} {} {}} {} {} {} {} {} {}} {} {} {}} {}} {}} {}} {mesExample}}}}} {} {}}}} {}}}} {} {}}}} {} {} {}}} {}}}} {}} {}}}}} {}}}}}}} {}}}}}}} {}}}}}} {}}}}}} {}}}}}} {}}}} {}}}}}}} {}}}}} {}}}}}}}}}} {}}}}}}}}}} {}}}}}}}}} {}}}} {}}}}}} {}}}}} {}}}}}} {}}}}}}}} {}}}}}}}} {}}}}}}}}}}}}}}}} {}}}}}}}}}}}}}}}}',
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -1056,7 +1056,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
                   maxLines: 5,
                   minLines: 2,
                   decoration: const InputDecoration(
-                    hintText: 'Optional. Same template tokens as Main.',
+                    hintText: 'Opcional. Las mismas fichas de plantilla como Main.',
                   ),
                 ),
               ],
@@ -1069,7 +1069,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
                 minLines: 2,
                 decoration: const InputDecoration(
                   hintText:
-                      'Optional. Supports {{user}}, {{char}}. Default: write next message as the persona.',
+                      'Opcional. Admite {{user}}, {char}. Default: escriba el siguiente mensaje como el personaje.',
                 ),
               ),
               const SizedBox(height: 12),
@@ -1081,7 +1081,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
                 minLines: 2,
                 decoration: const InputDecoration(
                   hintText:
-                      'Optional. Supports {{char}}, {{lastChatMessage}}.',
+                      'Opcional. Apoya {char}}, {lastChatMessage}}.',
                 ),
               ),
               const SizedBox(height: 12),
@@ -1124,11 +1124,11 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
               Row(children: [
                 Expanded(
                     child: numField(freqCtl,
-                        label: 'Frequency penalty', hint: '−2.0 – 2.0')),
+                        label: 'Pena de frecuencia', hint: '−2.0 – 2.0')),
                 const SizedBox(width: 12),
                 Expanded(
                     child: numField(presCtl,
-                        label: 'Presence penalty', hint: '−2.0 – 2.0')),
+                        label: 'Presencia penal', hint: '−2.0 – 2.0')),
               ]),
               const SizedBox(height: 12),
               Row(children: [
@@ -1142,7 +1142,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
               ]),
               const SizedBox(height: 12),
               numField(repCtl,
-                  label: 'Repetition penalty', hint: '1.0 – 1.5 typical'),
+                  label: 'Pena de repetición', hint: '1.0 – 1.5 typical'),
               sectionHeader('Anti-repetition (DRY) & banned words'),
               hint(
                   'For local/self-hosted backends (llama.cpp, KoboldCpp, '
@@ -1161,7 +1161,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
               ]),
               const SizedBox(height: 12),
               numField(dryLenCtl,
-                  label: 'DRY allowed length', hint: 'int, 2 typical'),
+                  label: 'DRY longitud permitida', hint: 'int, 2 typical'),
               const SizedBox(height: 12),
               hint(
                   'Banned words — the model is blocked from producing these '
@@ -1172,7 +1172,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
                 minLines: 1,
                 decoration: const InputDecoration(
                   hintText:
-                      'Comma-separated, e.g. ministrations, shivers down her spine',
+                      'Separados por comas, por ejemplo, ministraciones, se deslizan por su columna vertebral',
                 ),
               ),
             ],
@@ -1183,7 +1183,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
         ),
         ElevatedButton(
           onPressed: () {
@@ -1268,7 +1268,7 @@ Future<void> _editPreset(BuildContext context, Preset? existing) async {
             }
             Navigator.pop(ctx);
           },
-          child: Text(existing == null ? 'Create' : 'Save'),
+          child: Text(existing == null ? 'Crear' : 'Guardar'),
         ),
       ],
     ),
@@ -1308,7 +1308,7 @@ class _PromptBlocksSection extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: 18, bottom: 6),
           child: Text(
-            'PROMPT BLOCKS',
+            'BLOQUES DE INSTRUCCIONES',
             style: TextStyle(
               color: EmberColors.primary,
               fontWeight: FontWeight.w700,
@@ -1329,7 +1329,7 @@ class _PromptBlocksSection extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Text(
-              'No blocks yet. Add one below.',
+              'Aún no hay bloques.',
               style: TextStyle(color: EmberColors.textDim, fontSize: 12),
             ),
           )
@@ -1380,7 +1380,7 @@ class _PromptBlocksSection extends StatelessWidget {
               ));
             }),
             icon: const Icon(Icons.add, size: 18),
-            label: const Text('Add block'),
+            label: const Text('Agregar bloque'),
           ),
         ),
       ],
@@ -1456,14 +1456,14 @@ class _BlockRow extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit_outlined, size: 18),
             color: EmberColors.textMid,
-            tooltip: 'Edit block',
+            tooltip: 'Editar bloque',
             visualDensity: VisualDensity.compact,
             onPressed: onEdit,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline, size: 18),
             color: EmberColors.danger,
-            tooltip: 'Delete block',
+            tooltip: 'Borrar bloque',
             visualDensity: VisualDensity.compact,
             onPressed: onDelete,
           ),
@@ -1548,7 +1548,7 @@ Future<void> _showBlockEditor(
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: EmberColors.bgPanel,
-      title: const Text('Edit block'),
+      title: const Text('Editar bloque'),
       content: SizedBox(
         width: 460,
         child: SingleChildScrollView(
@@ -1587,8 +1587,8 @@ Future<void> _showBlockEditor(
                 const SizedBox(height: 8),
                 SegmentedButton<String>(
                   segments: const [
-                    ButtonSegment(value: 'system', label: Text('System')),
-                    ButtonSegment(value: 'user', label: Text('User')),
+                    ButtonSegment(value: 'system', label: Text('Sistema')),
+                    ButtonSegment(value: 'user', label: Text('Usuario')),
                     ButtonSegment(value: 'assistant', label: Text('Assistant')),
                   ],
                   selected: {role},
@@ -1617,9 +1617,9 @@ Future<void> _showBlockEditor(
                 SegmentedButton<String>(
                   segments: const [
                     ButtonSegment(
-                        value: 'before', label: Text('Before history')),
-                    ButtonSegment(value: 'after', label: Text('After history')),
-                    ButtonSegment(value: 'depth', label: Text('At depth')),
+                        value: 'before', label: Text('Ante la historia')),
+                    ButtonSegment(value: 'after', label: Text('Después de la historia')),
+                    ButtonSegment(value: 'depth', label: Text('A profundidad')),
                   ],
                   selected: {placement},
                   onSelectionChanged: (s) =>
@@ -1630,7 +1630,7 @@ Future<void> _showBlockEditor(
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      Text('Depth from end:',
+                      Text('Profundidad desde el final:',
                           style: TextStyle(
                               color: EmberColors.textMid, fontSize: 12)),
                       const SizedBox(width: 10),
@@ -1664,7 +1664,7 @@ Future<void> _showBlockEditor(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
         ),
         ElevatedButton(
           onPressed: () {
@@ -1687,7 +1687,7 @@ Future<void> _showBlockEditor(
             });
             Navigator.pop(ctx);
           },
-          child: const Text('Save'),
+          child: const Text('Guardar'),
         ),
       ],
     ),

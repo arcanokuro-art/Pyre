@@ -64,14 +64,14 @@ class GroupAndLorebooksSheet extends StatelessWidget {
                 ),
               ),
               const Text(
-                'Group chat & Lorebooks',
+                'Chat de grupo &quot; libros de mundo &quot;',
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 16),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  'Members',
+                  'Miembros',
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: EmberColors.textMid,
@@ -83,7 +83,7 @@ class GroupAndLorebooksSheet extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.person_add_outlined, size: 16),
-                  label: const Text('Add character to chat'),
+                  label: const Text('Añadir personaje al chat'),
                   onPressed: () => _showAddMember(context, chatId),
                 ),
               ),
@@ -97,7 +97,7 @@ class GroupAndLorebooksSheet extends StatelessWidget {
                   activeThumbColor: EmberColors.primary,
                   title: const Text('Party mode'),
                   subtitle: const Text(
-                    'Everyone responds together in one scene.',
+                    'Todos responden juntos en una escena.',
                     style: TextStyle(fontSize: 12),
                   ),
                   value: c.partyMode,
@@ -107,7 +107,7 @@ class GroupAndLorebooksSheet extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  'Lorebooks',
+                  'Libros de mundo',
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: EmberColors.textMid,
@@ -253,7 +253,7 @@ List<Widget> _buildLorebookSections(
       widgets.add(Padding(
         padding: EdgeInsets.only(top: 4, bottom: 4),
         child: Text(
-          'No per-chat lorebooks attached yet.',
+          'Aún no hay libros de libros por cadena.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 12),
         ),
       ));
@@ -272,7 +272,7 @@ List<Widget> _buildLorebookSections(
           trailing: IconButton(
             icon: Icon(Icons.close,
                 size: 16, color: EmberColors.textMid),
-            tooltip: 'Detach from this chat',
+            tooltip: 'Apártese de este chat',
             onPressed: () {
               // Mega-audit 2026-06-05 (F5): detaching a per-chat lorebook
               // edits chat sub-state that rides a chat sync, but a bare
@@ -293,7 +293,7 @@ List<Widget> _buildLorebookSections(
       padding: const EdgeInsets.only(top: 4),
       child: OutlinedButton.icon(
         icon: const Icon(Icons.add, size: 16),
-        label: const Text('Manage per-chat lorebooks'),
+        label: const Text('Gestionar los libros de texto por cadena'),
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -371,7 +371,7 @@ List<Widget> _buildMembers(BuildContext context, AppStore store, Chat chat) {
       Padding(
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Text(
-          'No members yet.',
+          'Todavía no hay miembros.',
           style: TextStyle(color: EmberColors.textMid, fontSize: 13),
         ),
       ),
@@ -397,7 +397,7 @@ List<Widget> _buildMembers(BuildContext context, AppStore store, Chat chat) {
           ? IconButton(
               icon: Icon(Icons.remove_circle_outline,
                   color: EmberColors.danger),
-              tooltip: 'Remove from chat',
+              tooltip: 'Eliminar del chat',
               onPressed: () => store.removeCharacterFromChat(chat.id, id),
             )
           : null,
@@ -413,8 +413,8 @@ Future<void> _showAddMember(BuildContext context, String chatId) async {
   final picked = await Navigator.of(context).push<String>(
     MaterialPageRoute(
       builder: (_) => CharacterPickerScreen(
-        title: 'Add character to chat',
-        subtitle: 'Pick a character to add as a member of this group chat.',
+        title: 'Añadir personaje al chat',
+        subtitle: 'Elija un personaje para agregar como miembro de este chat de grupo.',
         excludeIds: chat.characterIds.toSet(),
       ),
     ),
@@ -433,7 +433,7 @@ Future<void> _showAddMember(BuildContext context, String chatId) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text(
-            'Group formed! Party mode makes everyone reply in one scene.'),
+            'Grupo formado! Modo de partido hace que todo el mundo responda en una escena.'),
         duration: const Duration(seconds: 6),
         // 2026-07-05 (Gui): see the twin snackbar in chat_picker_screens —
         // an action-carrying snackbar can persist forever under accessible

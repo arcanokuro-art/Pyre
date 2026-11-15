@@ -47,7 +47,7 @@ Future<void> runStBulkImport(BuildContext context, AppStore store) async {
       withData: true,
     );
   } catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text('Could not open picker: $e')));
+    messenger.showSnackBar(SnackBar(content: Text('No se puede abrir picker: ${e}')));
     return;
   }
   if (result == null || result.files.isEmpty) return;
@@ -121,7 +121,7 @@ Future<void> _runBackupImport(
   final bytes = file.bytes;
   if (bytes == null) {
     messenger.showSnackBar(
-      const SnackBar(content: Text('Could not read the backup file.')),
+      const SnackBar(content: Text('No podía leer el archivo de respaldo.')),
     );
     return;
   }
@@ -133,7 +133,7 @@ Future<void> _runBackupImport(
   } catch (e) {
     if (!context.mounted) return;
     messenger.showSnackBar(
-      SnackBar(content: Text('Could not read the backup: $e')),
+      SnackBar(content: Text('No podía leer la copia de seguridad: ${e}')),
     );
     return;
   }
@@ -419,7 +419,7 @@ Future<void> _showBackupSummary(
       actions: [
         FilledButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Done'),
+          child: const Text('Listo'),
         ),
       ],
     ),
@@ -594,7 +594,7 @@ Future<void> _showSummary(
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () => Navigator.pop(sheet),
-                      child: const Text('Done'),
+                      child: const Text('Listo'),
                     ),
                   ),
                 ),

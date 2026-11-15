@@ -122,7 +122,7 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
               child: Row(
                 children: [
-                  const Text('Browse models',
+                  const Text('Explorar modelos',
                       style: TextStyle(
                           fontSize: 17, fontWeight: FontWeight.w600)),
                   const Spacer(),

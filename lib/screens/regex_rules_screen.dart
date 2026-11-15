@@ -32,7 +32,7 @@ class RegexRulesScreen extends StatelessWidget {
         store.regexRules.where((r) => !r.deleted).toList(growable: false));
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Regex (find/replace)'),
+        title: const Text('Regex (finamiento/sustitución)'),
         actions: [
           IconButton(
             icon: const Icon(Icons.file_upload_outlined),
@@ -41,7 +41,7 @@ class RegexRulesScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'New rule',
+            tooltip: 'Nueva regla',
             onPressed: () => _openEditor(context, null),
           ),
         ],
@@ -54,8 +54,8 @@ class RegexRulesScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         children: [
           const HowItWorksCard(
-            title: 'How regex rules work',
-            subtitle: 'On-the-fly find/replace, non-destructive.',
+            title: 'Cómo funcionan las reglas del regex',
+            subtitle: 'En el vuelo encontrar/reemplazar, no destructivo.',
             sections: [
               HowItWorksSection('What it is', [
                 HowItWorksBlock.paragraph(
@@ -95,7 +95,7 @@ class RegexRulesScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4, vertical: 16),
               child: Text(
-                'No regex rules yet. Tap + to create one.',
+                'Aún no hay reglas de regex. Pulsa + para crear una.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: EmberColors.textDim, fontSize: 13),
               ),
@@ -163,7 +163,7 @@ class RegexRulesScreen extends StatelessWidget {
                               } else if (choice == 'delete') {
                                 final ok = await confirmDelete(
                                   context,
-                                  title: 'Delete rule?',
+                                  title: '¿Supir la regla?',
                                   message:
                                       'Remove "${r.name}"? This only deletes '
                                       'the rule — your messages are '
@@ -178,9 +178,9 @@ class RegexRulesScreen extends StatelessWidget {
                             },
                             itemBuilder: (_) => const [
                               PopupMenuItem(
-                                  value: 'edit', child: Text('Edit')),
+                                  value: 'edit', child: Text('Editar')),
                               PopupMenuItem(
-                                  value: 'delete', child: Text('Delete')),
+                                  value: 'delete', child: Text('Eliminar')),
                             ],
                           ),
                         ],
@@ -226,7 +226,7 @@ class RegexRulesScreen extends StatelessWidget {
       final bytes = result.files.first.bytes;
       if (bytes == null) {
         messenger.showSnackBar(
-          const SnackBar(content: Text('Could not read the file.')),
+          const SnackBar(content: Text('No podía leer el archivo.')),
         );
         return;
       }
@@ -276,7 +276,7 @@ class RegexRulesScreen extends StatelessWidget {
       ];
       messenger.showSnackBar(SnackBar(content: Text('${parts.join(' · ')}.')));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Import failed: $e')));
+      messenger.showSnackBar(SnackBar(content: Text('Fallo de importación: ${e}')));
     }
   }
 }
@@ -399,7 +399,7 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
     if (lit.pattern.isEmpty) {
       messenger.showSnackBar(const SnackBar(
           content:
-              Text('Add a Find pattern first — an empty rule never fires.')));
+              Text('Añade primero un patrón de búsqueda.')));
       return;
     }
     if (!regexPatternIsValid(lit.pattern, lit.flags)) {
@@ -482,7 +482,7 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
         actions: [
           TextButton(
             onPressed: _save,
-            child: const Text('Save'),
+            child: const Text('Guardar'),
           ),
         ],
       ),
@@ -492,18 +492,17 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
           TextField(
             controller: _name,
             decoration: const InputDecoration(
-              labelText: 'Name',
-              hintText: 'e.g. Strip stage directions',
+              labelText: 'Nombre',
+              hintText: 'por ejemplo, las direcciones de la etapa de la tira',
             ),
           ),
           const SizedBox(height: 14),
           TextField(
             controller: _find,
             decoration: InputDecoration(
-              labelText: 'Find',
-              helperText: 'A regex. Accepts /pattern/flags or a raw pattern. '
-                  'Flags: i (ignore case), g (replace all), m (multiline), '
-                  's (dot matches newline).',
+              labelText: 'Buscar',
+              helperText: 'Introduce un patrón o /patrón/opciones. Opciones: i (ignorar mayúsculas), '
+                  'g (todas las coincidencias), m (varias líneas), s (el punto incluye saltos de línea).',
               helperMaxLines: 3,
               errorText: _findErrorText(),
             ),
@@ -514,7 +513,7 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
           TextField(
             controller: _replace,
             decoration: const InputDecoration(
-              labelText: 'Replace',
+              labelText: 'Reemplazar',
               helperText: 'Use \$1..\$9 for capture groups and {{match}} for '
                   'the whole match.',
               helperMaxLines: 2,
@@ -526,15 +525,14 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
           TextField(
             controller: _trim,
             decoration: const InputDecoration(
-              labelText: 'Trim strings (optional)',
-              helperText: 'One per line. These substrings are stripped from the '
-                  'matched text wherever {{match}} is used.',
+              labelText: 'Texto que se recorta (opcional)',
+              helperText: 'Escribe un fragmento por línea. Se eliminan de cada coincidencia al usar {{match}}.',
               helperMaxLines: 2,
             ),
             maxLines: null,
           ),
           const SizedBox(height: 18),
-          Text('Applies to',
+          Text('Se aplica a',
               style: TextStyle(
                   fontWeight: FontWeight.w600, color: EmberColors.textHigh)),
           CheckboxListTile(
@@ -543,7 +541,7 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
             controlAffinity: ListTileControlAffinity.leading,
             value: _userInput,
             onChanged: (v) => setState(() => _userInput = v ?? false),
-            title: const Text('User input (your / persona turns)'),
+            title: const Text('Mensajes del usuario'),
           ),
           CheckboxListTile(
             contentPadding: EdgeInsets.zero,
@@ -551,7 +549,7 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
             controlAffinity: ListTileControlAffinity.leading,
             value: _aiOutput,
             onChanged: (v) => setState(() => _aiOutput = v ?? false),
-            title: const Text('AI output (character turns)'),
+            title: const Text('Respuestas de la IA (turnos del personaje)'),
           ),
           const SizedBox(height: 8),
           SwitchListTile(
@@ -559,17 +557,17 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
             dense: true,
             value: _affectsDisplay,
             onChanged: (v) => setState(() => _affectsDisplay = v),
-            title: const Text('Apply to displayed text'),
-            subtitle: const Text('Transforms the chat bubble (storage untouched).'),
+            title: const Text('Aplicar al texto mostrado'),
+            subtitle: const Text('Transforma la burbuja de chat (storage intouched).'),
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             dense: true,
             value: _affectsPrompt,
             onChanged: (v) => setState(() => _affectsPrompt = v),
-            title: const Text('Apply to prompt sent to model'),
+            title: const Text('Aplicar a las instrucciones que recibe el modelo'),
             subtitle:
-                const Text('Transforms history in-flight (storage untouched).'),
+                const Text('Transforma la historia en vuelo (storage intouched).'),
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -590,7 +588,7 @@ class _RegexRuleEditorScreenState extends State<RegexRuleEditorScreen> {
               SegmentedButton<RegexStream>(
                 segments: const [
                   ButtonSegment(
-                      value: RegexStream.userInput, label: Text('User')),
+                      value: RegexStream.userInput, label: Text('Usuario')),
                   ButtonSegment(
                       value: RegexStream.aiOutput, label: Text('AI')),
                 ],

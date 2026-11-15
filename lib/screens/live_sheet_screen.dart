@@ -157,7 +157,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
     if (provider == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Set up a provider first.')),
+        const SnackBar(content: Text('Establezca un proveedor primero.')),
       );
       return;
     }
@@ -172,7 +172,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text(
-                'A Live Sheet update is already in progress — try again in a moment.')),
+                'Ya hay una actualización de la ficha de escena en curso. Intenta de nuevo en un momento.')),
       );
       return;
     }
@@ -225,7 +225,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content:
-                Text('Already up to date — no new messages since the last refresh.')),
+                Text('Ya está al día. No hay mensajes nuevos.')),
       );
       return;
     }
@@ -233,7 +233,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
       // Edge guard: enabling always creates a snapshot, so this is unreachable
       // in practice. Fall back to the "no changes" toast rather than crash.
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No significant changes detected.')),
+        const SnackBar(content: Text('No se detectan cambios significativos.')),
       );
       return;
     }
@@ -252,7 +252,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
       store.touchChat(chat); // F1: re-anchor + seeded facts sync
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Filled the sheet from the conversation.')),
+        const SnackBar(content: Text('Llenó la hoja de la conversación.')),
       );
     } finally {
       if (mounted) setState(() => _updating = false);
@@ -280,7 +280,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
     if (provider == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Set up a provider first.')),
+        const SnackBar(content: Text('Establezca un proveedor primero.')),
       );
       return;
     }
@@ -365,11 +365,11 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, ctl.text.trim()),
-            child: const Text('Add'),
+            child: const Text('Añadir'),
           ),
         ],
       ),
@@ -392,7 +392,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgElevated,
-        title: Text('Generate "$name" from chat?'),
+        title: Text('Generar "${name}" de chat?'),
         content: Text(
           'Ask the AI to fill in this NPC\'s current state '
           'based on the conversation so far?',
@@ -425,7 +425,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: EmberColors.bgElevated,
-        title: Text('Remove "${entity.name}"?'),
+        title: Text('¿Retirar "${entity.name}"?'),
         content: Text(
           'This entity and all its tracked facts will be removed '
           'from the Live Sheet.',
@@ -434,12 +434,12 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: EmberColors.danger),
-            child: const Text('Remove'),
+            child: const Text('Quitar'),
           ),
         ],
       ),
@@ -459,8 +459,8 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
 
     if (chat == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Live Sheet')),
-        body: const Center(child: Text('Chat not found.')),
+        appBar: AppBar(title: const Text('Ficha de escena')),
+        body: const Center(child: Text('Chat no encontrado.')),
       );
     }
 
@@ -481,11 +481,11 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Live Sheet'),
+        title: const Text('Ficha de escena'),
         actions: [
           IconButton(
             icon: const Icon(Icons.tune),
-            tooltip: 'Options',
+            tooltip: 'Opciones',
             onPressed: _showOptions,
           ),
         ],
@@ -504,9 +504,9 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
                 if (v) _ensureSnapshot(store, chat);
                 store.touchChat(chat); // F1: liveSheetEnabled toggle syncs
               },
-              title: const Text('Live Sheet'),
+              title: const Text('Ficha de escena'),
               subtitle: Text(
-                'Track each character\'s current state as the story unfolds.',
+                'Seguimiento del estado actual de cada personaje mientras se desarrolla la historia.',
                 style: TextStyle(color: EmberColors.textMid, fontSize: 12),
               ),
               activeThumbColor: EmberColors.primary,
@@ -552,9 +552,9 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
               child: ListTile(
                 leading: Icon(Icons.info_outline,
                     color: EmberColors.textMid),
-                title: const Text('No active snapshot'),
+                title: const Text('No hay instantánea activa'),
                 subtitle: Text(
-                  'Toggle the Live Sheet off and on again to create one.',
+                  'Toggle the ficha de escena off and on again to create one.',
                   style: TextStyle(color: EmberColors.textMid, fontSize: 12),
                 ),
               ),
@@ -597,7 +597,7 @@ class _LiveSheetScreenState extends State<LiveSheetScreen> {
                         ),
                       )
                     : const Icon(Icons.sync),
-                label: const Text('Update state now'),
+                label: const Text('Estado de actualización ahora'),
                 onPressed: _updating ? null : () => _runUpdate(store, chat),
               ),
             ),
@@ -677,7 +677,7 @@ class _EntityCard extends StatelessWidget {
                   )
                 else
                   IconButton(
-                    tooltip: 'Generate from chat',
+                    tooltip: 'Generado en chat',
                     icon: const Icon(Icons.auto_fix_high_outlined, size: 18),
                     onPressed: onSeedFromChat,
                     visualDensity: VisualDensity.compact,

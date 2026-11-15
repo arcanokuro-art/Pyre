@@ -162,8 +162,8 @@ class _ScriptScreenState extends State<ScriptScreen> {
 
     if (chat == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Script')),
-        body: const Center(child: Text('Chat not found.')),
+        appBar: AppBar(title: const Text('Guion')),
+        body: const Center(child: Text('Chat no encontrado.')),
       );
     }
 
@@ -173,11 +173,11 @@ class _ScriptScreenState extends State<ScriptScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Script'),
+        title: const Text('Guion'),
         actions: [
           IconButton(
             icon: const Icon(Icons.tune),
-            tooltip: 'Options',
+            tooltip: 'Opciones',
             onPressed: _showOptions,
           ),
         ],
@@ -220,7 +220,7 @@ class _ScriptScreenState extends State<ScriptScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
                 child: Text(
-                  'No directions yet — write one below.',
+                  'Todavía no hay direcciones — escríbase uno a continuación.',
                   style: TextStyle(
                     color: EmberColors.textDim,
                     fontSize: 13,
@@ -270,7 +270,7 @@ class _ScriptScreenState extends State<ScriptScreen> {
                     maxLines: 8,
                     style: const TextStyle(fontSize: 13),
                     decoration: InputDecoration(
-                      hintText: 'One direction per line…',
+                      hintText: 'Una dirección por línea…',
                       hintStyle: TextStyle(color: EmberColors.textDim),
                       border: OutlineInputBorder(),
                       isDense: true,
@@ -283,7 +283,7 @@ class _ScriptScreenState extends State<ScriptScreen> {
                     alignment: Alignment.centerRight,
                     child: FilledButton.icon(
                       icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Add'),
+                      label: const Text('Añadir'),
                       onPressed: () => _addBeats(store, chat),
                     ),
                   ),
@@ -379,7 +379,7 @@ class _ActiveBeatRow extends StatelessWidget {
           ),
           // Delete
           IconButton(
-            tooltip: 'Remove beat',
+            tooltip: 'Retirar el ritmo',
             icon: Icon(Icons.close,
                 size: 18, color: EmberColors.textMid),
             onPressed: onDelete,
@@ -427,7 +427,7 @@ class _DoneBeatRow extends StatelessWidget {
           ),
           // Reactivate
           IconButton(
-            tooltip: 'Reactivate beat',
+            tooltip: 'Reactivar latido',
             icon: Icon(Icons.undo,
                 size: 18, color: EmberColors.textMid),
             onPressed: onReactivate,
@@ -435,7 +435,7 @@ class _DoneBeatRow extends StatelessWidget {
           ),
           // Delete
           IconButton(
-            tooltip: 'Remove beat',
+            tooltip: 'Retirar el ritmo',
             icon: Icon(Icons.close,
                 size: 18, color: EmberColors.textMid),
             onPressed: onDelete,

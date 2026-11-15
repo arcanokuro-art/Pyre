@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
+import '../services/female_character_profile.dart';
+import '../widgets/female_character_form.dart';
 import '../services/attachment_store.dart';
 import '../services/chat_only_lorebook_binding.dart';
 import '../services/image_pick.dart';
@@ -69,6 +71,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
   // from the Advanced section. Existing values on imported cards are
   // preserved through Save because `Character.fromJson(_source().toJson())`
   // copies them automatically; we just never overwrite from form state.
+  Map<String, dynamic>? _femaleProfile;
   String? _avatar;
   /// Non-destructive Recrop: the UNCROPPED original avatar ref (or null when
   /// the avatar was never cropped — then `_avatar` IS the full image). Seeded
@@ -108,6 +111,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
     super.initState();
     final store = context.read<AppStore>();
     final c = _source();
+    _femaleProfile = readFemaleProfile(c);
     name = TextEditingController(text: c.name);
     tagline = TextEditingController(text: c.tagline ?? '');
     description = TextEditingController(text: c.description);
@@ -280,6 +284,13 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
     if (widget.overrideChatId == null) {
       composed.lorebookIds = List<String>.from(_lorebookIds);
     }
+    if (_femaleProfile != null) {
+      final store = context.read<AppStore>();
+      applyFemaleProfile(composed, _femaleProfile!, names: {
+        for (final c in store.characters) c.id: c.name,
+        for (final p in store.personas) p.id: p.name,
+      });
+    }
     return composed;
   }
 
@@ -364,6 +375,13 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
   }
 
   void _save() {
+    if (_femaleProfile != null &&
+        ((_femaleProfile!['fields'] as Map)['identity.nombre']
+                ?.toString().trim() ?? '').isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Escribe el nombre del personaje.')));
+      return;
+    }
     final store = context.read<AppStore>();
     // Wave BG: draft mode → cancel any pending debounce, promote to
     // a real character via `promoteDraftToCharacter`. The draft's
@@ -431,11 +449,15 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
     final store = context.read<AppStore>();
     _draftDebounce?.cancel();
     final composed = _composeFromForm();
-    if (store.isDraftMeaningful(composed)) {
+    final meaningful = _femaleProfile == null
+        ? store.isDraftMeaningful(composed)
+        : _femaleProfile!['edited'] == true || _avatar != null ||
+            _gallery.isNotEmpty || _lorebookIds.isNotEmpty;
+    if (meaningful) {
       store.saveDraft(composed);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
-            'Draft saved. Resume from Create → Resume draft.'),
+            'Borrador salvado. Resumir de Crear → Resumir borrador.'),
         duration: Duration(seconds: 2),
       ));
     } else {
@@ -463,10 +485,10 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
       appBar: AppBar(
         title: Text(
           isOverride
-              ? 'Edit (this chat only)'
+              ? 'Editar solo en este chat'
               : isDraft
-                  ? 'New character'
-                  : 'Edit character',
+                  ? 'Nuevo personaje'
+                  : 'Editar personaje',
         ),
         actions: [
           // Wave BG: Drafts shortcut so the user can jump between
@@ -480,12 +502,12 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                 isLabelVisible: draftCount > 1,
                 child: const Icon(Icons.drafts_outlined),
               ),
-              tooltip: 'Drafts',
+              tooltip: 'Borradores',
               onPressed: _showDraftsSheet,
             ),
           IconButton(
             icon: const Icon(Icons.save),
-            tooltip: 'Save',
+            tooltip: 'Guardar',
             onPressed: _save,
           ),
         ],
@@ -519,7 +541,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                   children: [
                     ElevatedButton.icon(
                       icon: const Icon(Icons.image_outlined, size: 14),
-                      label: const Text('Change avatar'),
+                      label: const Text('Cambiar avatar'),
                       onPressed: _pickAndCropAvatar,
                     ),
                     TextButton(
@@ -529,7 +551,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                       onPressed: _avatar != null && _avatar!.isNotEmpty
                           ? _recropAvatar
                           : null,
-                      child: const Text('Recrop'),
+                      child: const Text('Recortar'),
                     ),
                   ],
                 ),
@@ -538,7 +560,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                 // this character's chat-bubble tint — group chats tell
                 // speakers apart at a glance. Default = the global AI bubble
                 // color from Customize Chat. Same palette/row as there.
-                Text('Chat bubble color',
+                Text('Color de burbuja del chat',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 13)),
                 const SizedBox(height: 6),
@@ -557,7 +579,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                   return Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      'Card weight: $label',
+                      'Peso de la ficha: ${label}',
                       style: TextStyle(
                         color: EmberColors.textDim,
                         fontSize: 11,
@@ -578,14 +600,17 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
           // and finally the Advanced collapsible. This way a user who
           // builds with the AI and then opens the manual editor sees
           // the same field flow they just lived through.
+          if (_femaleProfile != null)
+            _femaleForm()
+          else ...[
           _sectionHeader('Identity'),
-          _LabeledField(label: 'Name', controller: name),
+          _LabeledField(label: 'Nombre', controller: name),
 
           // ---- Description & World ----
           _sectionHeader('Description & World'),
           _LabeledField(
-              label: 'Description', controller: description, maxLines: 6),
-          _LabeledField(label: 'Scenario', controller: scenario, maxLines: 4),
+              label: 'Descripción', controller: description, maxLines: 6),
+          _LabeledField(label: 'Escenario', controller: scenario, maxLines: 4),
 
           // ---- Greeting ----
           // Wave BI: alternate greetings MOVED to Advanced to match
@@ -593,24 +618,26 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
           // and the field clutters the main flow.
           _sectionHeader('Greeting'),
           _LabeledField(
-            label: 'First message',
+            label: 'Primer mensaje',
             controller: firstMes,
             maxLines: 6,
           ),
           _LabeledField(
-              label: 'Example dialogue', controller: mesExample, maxLines: 6),
+              label: 'Ejemplos de diálogo', controller: mesExample, maxLines: 6),
 
           // ---- Card metadata ----
           // Wave BI: tags, tagline, creator_notes grouped together.
           // These three are what surface in card lists / discovery,
           // not in-character content. Order matches Creator Sheet.
           _sectionHeader('Card metadata'),
-          _LabeledField(label: 'Tags (comma-separated)', controller: tagsCsv),
-          _LabeledField(label: 'Tagline', controller: tagline),
+          _LabeledField(label: 'Etiquetas (separadas por comas)', controller: tagsCsv),
+          _LabeledField(label: 'Frase breve', controller: tagline),
           _LabeledField(
-              label: 'Creator notes',
+              label: 'Notas del creador',
               controller: creatorNotes,
               maxLines: 4),
+
+          ],
 
           // Wave CC: bind one or more lorebooks to this character so
           // they auto-activate in every chat she appears in (in
@@ -623,19 +650,15 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
             selectedIds: _lorebookIds,
             onChanged: (next) => setState(() => _lorebookIds = next),
             sublabel: isOverride
-                ? 'Adding a book here attaches it to THIS chat only. '
-                    'Removing one only turns it off for this chat — the '
-                    'character\'s own bindings (and other chats) are '
-                    'unaffected.'
-                : 'These books inject in every chat with this character — '
-                    'on top of any books attached per-chat. Use this for '
-                    'world / setting context that travels with the character.',
+                ? 'Vincula los libros solo a este chat.'
+                : 'Estos libros se activan en todos los chats de este personaje.',
           ),
           const SizedBox(height: 4),
 
           // Wave CY.18.128: native gallery — extra images beyond the avatar,
           // added via file picker → AttachmentStore (pyre:// refs, never
           // base64). "Use as avatar" repoints _avatar to the picked ref.
+          if (_femaleProfile != null) _femaleForm(resourcesOnly: true),
           GalleryEditorSection(
             gallery: _gallery,
             onChanged: (next) => setState(() => _gallery = next),
@@ -653,13 +676,13 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
 
           // ---- Advanced (collapsed by default) ----
           const SizedBox(height: 12),
-          Theme(
+          if (_femaleProfile == null) Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
               tilePadding: EdgeInsets.zero,
               childrenPadding: EdgeInsets.zero,
               title: Text(
-                'ADVANCED',
+                'AVANZADO',
                 style: TextStyle(
                   color: EmberColors.primary,
                   fontWeight: FontWeight.w700,
@@ -668,9 +691,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                 ),
               ),
               subtitle: Text(
-                'Personality (kept empty by spec), system prompts, '
-                'alternate greetings, talkativeness, depth prompt, '
-                'raw extensions.',
+                'Personalidad, instrucciones del sistema y saludos alternativos.',
                 style: TextStyle(
                     color: EmberColors.textMid, fontSize: 11, height: 1.4),
               ),
@@ -682,15 +703,15 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                 // who import an existing card may have legacy content
                 // here — preserve it but don't surface in the main flow.
                 _LabeledField(
-                    label: 'Personality (legacy field — usually empty)',
+                    label: 'Personalidad',
                     controller: personality,
                     maxLines: 4),
                 _LabeledField(
-                    label: 'System prompt override',
+                    label: 'Instrucciones del sistema',
                     controller: systemPrompt,
                     maxLines: 4),
                 _LabeledField(
-                    label: 'Post-history instructions',
+                    label: 'Instrucciones posteriores al historial',
                     controller: postHistory,
                     maxLines: 4),
                 // Wave BI: alternate greetings moved here from main
@@ -700,9 +721,9 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                   controllers: _greetingCtls,
                   onChanged: () => setState(() {}),
                 ),
-                _LabeledField(label: 'Creator', controller: creator),
+                _LabeledField(label: 'Creador', controller: creator),
                 _LabeledField(
-                    label: 'Character version', controller: characterVersion),
+                    label: 'Versión del personaje', controller: characterVersion),
                 // Wave BJ: Talkativeness slider, Depth prompt fields,
                 // and Extensions raw-JSON were removed. Niche fields
                 // that almost nobody used and that added a wall of
@@ -717,7 +738,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                'Edits here only affect this chat. They do not touch the global character.',
+                'Las ediciones aquí sólo afectan este chat. Ellos no tocan el carácter global.',
                 style:
                     TextStyle(color: EmberColors.textMid, fontSize: 12),
               ),
@@ -751,7 +772,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Drafts',
+                    'Borradores',
                     style: TextStyle(
                       color: EmberColors.textHigh,
                       fontSize: 17,
@@ -814,7 +835,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                           : null,
                       trailing: isCurrent
                           ? Text(
-                              'editing',
+                              'edición',
                               style: TextStyle(
                                 color: EmberColors.primary,
                                 fontSize: 11,
@@ -844,14 +865,14 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             backgroundColor: EmberColors.bgPanel,
-                            title: const Text('Delete draft?'),
+                            title: const Text('¿Supir el borrador?'),
                             content: Text(
                                 'Permanently discard "$title"? '
                                 'This cannot be undone.'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx),
-                                child: const Text('Cancel'),
+                                child: const Text('Cancelar'),
                               ),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -867,7 +888,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                                     Navigator.of(context).pop();
                                   }
                                 },
-                                child: const Text('Delete'),
+                                child: const Text('Eliminar'),
                               ),
                             ],
                           ),
@@ -881,7 +902,7 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
                 Padding(
                   padding: EdgeInsets.all(20),
                   child: Text(
-                    'No drafts yet.',
+                    'Todavía no hay borradores.',
                     style: TextStyle(
                         color: EmberColors.textDim, fontSize: 13),
                   ),
@@ -891,6 +912,21 @@ class _CharacterEditScreenState extends State<CharacterEditScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _femaleForm({bool resourcesOnly = false}) {
+    final store = context.watch<AppStore>();
+    return FemaleCharacterForm(
+      key: ValueKey('${widget.draftId ?? widget.characterId}:$resourcesOnly'),
+      profile: _femaleProfile!,
+      characters: {
+        for (final c in store.characters)
+          if (c.id != widget.characterId) c.id: c.name,
+      },
+      personas: {for (final p in store.personas) p.id: p.name},
+      resourcesOnly: resourcesOnly,
+      onChanged: () { _scheduleDraftSave(); setState(() {}); },
     );
   }
 
@@ -963,7 +999,7 @@ class _GreetingsEditor extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(bottom: 6, left: 4),
             child: Text(
-              'Alternate greetings',
+              'Saludos alternativos',
               style: TextStyle(
                 color: EmberColors.textMid,
                 fontSize: 12,
@@ -1000,7 +1036,7 @@ class _GreetingsEditor extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.delete_outline, size: 18),
                           color: EmberColors.textMid,
-                          tooltip: 'Remove this greeting',
+                          tooltip: 'Retire este saludo',
                           onPressed: controllers.length > 1
                               ? () {
                                   // H-2: drop any autosave listener before
@@ -1036,7 +1072,7 @@ class _GreetingsEditor extends StatelessWidget {
             width: double.infinity,
             child: OutlinedButton.icon(
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add greeting'),
+              label: const Text('Agregar saludo'),
               onPressed: () {
                 controllers.add(TextEditingController());
                 onChanged();

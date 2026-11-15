@@ -983,7 +983,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Proxies are URLs shared in Discord servers or forums that relay requests to a model the host pays for. Paste the URL + the password they gave you.',
+                            'Los ejes son URL compartidas en servidores de discordia o foros que transmiten solicitudes a un modelo que el host paga. Pruebe la URL + la contraseña que le dieron.',
                             style: TextStyle(
                                 color: EmberColors.textMid,
                                 fontSize: 11,
@@ -997,7 +997,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                 const SizedBox(height: 12),
                 TextField(
                   controller: nameCtl,
-                  decoration: const InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Nombre'),
                 ),
                 const SizedBox(height: 12),
                 // Base URL with a dropdown of community-known providers.
@@ -1015,7 +1015,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                         ? Builder(
                             builder: (btnCtx) => IconButton(
                               icon: const Icon(Icons.arrow_drop_down),
-                              tooltip: 'Pick from common providers',
+                              tooltip: 'Elija de los proveedores comunes',
                               onPressed: () async {
                                 final box = btnCtx.findRenderObject()
                                     as RenderBox?;
@@ -1089,7 +1089,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                     child: TextField(
                       controller: modelCtl,
                       decoration: const InputDecoration(
-                        labelText: 'Model',
+                        labelText: 'Modelo',
                         hintText: 'gpt-4o-mini',
                       ),
                     ),
@@ -1117,7 +1117,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                         ScaffoldMessenger.of(ctx).showSnackBar(
                           const SnackBar(
                               content:
-                                  Text('Fill in the base URL first.')),
+                                  Text('Llene primero la URL base.')),
                         );
                         return;
                       }
@@ -1162,7 +1162,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                 shape: const Border(),
                 collapsedShape: const Border(),
                 title: Text(
-                  'Advanced',
+                  'Avanzado',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -1203,8 +1203,8 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                     controller: ctxCtl,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: 'Context window (tokens) — optional',
-                      hintText: 'auto-detected; e.g. 128000',
+                      labelText: 'Ventana de contexto (tokens) - opcional',
+                      hintText: 'autodetectado; por ejemplo, 128000',
                     ),
                   ),
                   Padding(
@@ -1278,7 +1278,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                     body: '{"reasoning_effort": "low"}',
                   ),
                   const _ParamHint(
-                    label: 'DeepSeek R1 (some gateways)',
+                    label: 'DeepSeek R1 (algunos portales)',
                     body: '{"include_reasoning": false}',
                   ),
                   const _ParamHint(
@@ -1305,7 +1305,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 6),
                       child: Text(
-                        'Prompt post-processing',
+                        'Pront post-processing',
                         style: TextStyle(
                           fontSize: 12,
                           color: EmberColors.textMid,
@@ -1341,7 +1341,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
                       ),
                       DropdownMenuItem(
                         value: PromptPostProcessing.singleUser,
-                        child: Text('Single user message'),
+                        child: Text('Mensaje de usuario único'),
                       ),
                     ],
                     onChanged: (v) {
@@ -1380,7 +1380,7 @@ Future<void> _editProvider(BuildContext context, ApiProvider? existing) async {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1561,7 +1561,7 @@ class _ParamHint extends StatelessWidget {
             iconSize: 16,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-            tooltip: 'Copy',
+            tooltip: 'Copiar',
             icon: Icon(Icons.copy, color: EmberColors.textMid),
             onPressed: () async {
               try {
@@ -1576,7 +1576,7 @@ class _ParamHint extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text(
-                            'Copy unavailable here — select the text and copy manually.')),
+                            'Copiar no disponible aquí — seleccione el texto y copiar manualmente.')),
                   );
                 }
               }
@@ -1606,7 +1606,7 @@ class _PostProcessingHelp extends StatelessWidget {
           children: [
             Icon(Icons.help_outline, size: 15, color: EmberColors.primary),
             SizedBox(width: 6),
-            Text('What do these modes do?',
+            Text('¿Qué hacen estos modos?',
                 style: TextStyle(fontSize: 12, color: EmberColors.textMid)),
           ],
         ),

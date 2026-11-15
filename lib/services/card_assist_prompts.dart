@@ -290,7 +290,7 @@ this whole conversation and generates the complete card automatically
 over a few passes (a couple of minutes, depending on their provider).
 It fills every field — appearance, personality, background,
 relationships, scenario, first message, dialogue examples, tags — to a
-rich depth, in English, from what the two of you developed here. Your
+rich depth, in Spanish, from what the two of you developed here. Your
 job ends at the conversation; the marker hands off to the build.
 
 ## READ THE VIBE BEFORE YOU GET FANCY
@@ -646,7 +646,7 @@ this whole conversation and generates the complete scenario card
 automatically over a few passes (a couple of minutes, depending on
 their provider) — the narrator framing and world/NPC sections, the
 scenario hook, the opening scene, sample exchanges, the anti-drift
-reminders, and tags — all in English, from what the two of you
+reminders, and tags — all in Spanish, from what the two of you
 developed here. Drop a one-time heads-up that the build takes a minute
 or two; don't repeat it.
 
@@ -840,7 +840,7 @@ the chara_card_v2 fields:
   `[character("Name") + Persona("Trait1" + "Trait2") +
   Mind("…") + Body("…")]` — bracket-heavy structured text.
 - **Plain prose** (most chub.ai personality-driven cards): a
-  paragraph or two of free-form English with no labels at all.
+  paragraph or two of free-form Spanish with no labels at all.
 - **XML-tagged sections** (Pyre's scenario style, also seen in
   narrator cards from elsewhere): `<Narrator>…</Narrator>`,
   `<Scene Setup>…</Scene Setup>`, `<Tone>…</Tone>`, etc.
@@ -1536,11 +1536,7 @@ generic.
 
 ## SHEET LANGUAGE
 
-The built persona is written in ENGLISH, even if you chat with the user
-in another language — UNLESS the persona themselves speaks another
-language / uses non-English phrases, or the user explicitly asks for the
-persona to be written in another language. (Mirror the chat in whatever
-language the user writes; the sheet itself defaults to English.) You
+Write the persona sheet in Spanish. You
 don't need to do anything for this — just flag it in chat if the user
 seems to expect the sheet in their own language so they can confirm.
 

@@ -73,7 +73,7 @@ class LorebookList extends StatelessWidget {
     if (allVisible.isEmpty) {
       return EmptyState(
         icon: Icons.menu_book_outlined,
-        title: 'No lorebooks yet',
+        title: 'Aún no hay libros de libros.',
         subtitle: hiddenCount > 0
             ? 'You have $hiddenCount embedded lorebook${hiddenCount == 1 ? "" : "s"} '
                 'bound to characters (kept out of this list to reduce '
@@ -153,7 +153,7 @@ class LorebookList extends StatelessWidget {
               ? const EmptyState(
                   icon: Icons.search_off,
                   title: 'No matches',
-                  subtitle: 'Nothing matches your search.',
+                  subtitle: 'Nada coincide con tu búsqueda.',
                 )
               : ListView.builder(
                   padding:
@@ -219,7 +219,7 @@ class LorebookList extends StatelessWidget {
         trailing: IconButton(
           icon: Icon(Icons.more_vert,
               color: EmberColors.textMid),
-          tooltip: 'Lorebook actions',
+          tooltip: 'Acciones de libro de mundo',
           onPressed: () => _openLorebookKebab(context, l),
         ),
         onTap: () => Navigator.of(context).push(
@@ -271,7 +271,7 @@ Future<void> _openLorebookKebab(BuildContext context, Lorebook l) async {
           _menuSectionLabel('Edit'),
           ListTile(
             leading: const Icon(Icons.edit_outlined),
-            title: const Text('Edit entries'),
+            title: const Text('Editar entradas'),
             onTap: () {
               Navigator.pop(sheet);
               Navigator.of(context).push(MaterialPageRoute(
@@ -283,7 +283,7 @@ Future<void> _openLorebookKebab(BuildContext context, Lorebook l) async {
           // Creator — entries pre-loaded, Save updates it in place.
           ListTile(
             leading: Icon(Icons.auto_awesome, color: EmberColors.primary),
-            title: const Text('Edit with AI'),
+            title: const Text('Editar con AI'),
             onTap: () {
               Navigator.pop(sheet);
               Navigator.of(context).push(MaterialPageRoute(
@@ -302,7 +302,7 @@ Future<void> _openLorebookKebab(BuildContext context, Lorebook l) async {
           ),
           ListTile(
             leading: const Icon(Icons.copy),
-            title: const Text('Copy as new'),
+            title: const Text('Guardar una copia'),
             onTap: () {
               Navigator.pop(sheet);
               final clone = Lorebook(
@@ -390,7 +390,7 @@ Future<void> _openLorebookKebab(BuildContext context, Lorebook l) async {
           ListTile(
             leading: Icon(Icons.delete_outline,
                 color: EmberColors.danger),
-            title: Text('Delete',
+            title: Text('Eliminar',
                 style: TextStyle(color: EmberColors.danger)),
             onTap: () async {
               Navigator.pop(sheet);
@@ -398,7 +398,7 @@ Future<void> _openLorebookKebab(BuildContext context, Lorebook l) async {
                 context,
                 title: 'Delete "${l.name}"?',
                 message:
-                    'The lorebook will be removed and detached from every chat using it.',
+                    'El libro de lores será eliminado y separado de cada chat que lo use.',
               );
               if (!ok) return;
               store.removeLorebook(l.id);
@@ -421,7 +421,7 @@ Future<void> _embedIntoCard(
   final characters = store.characters.where((c) => !c.deleted).toList();
   if (characters.isEmpty) {
     messenger.showSnackBar(
-      const SnackBar(content: Text('No characters found. Create one first.')),
+      const SnackBar(content: Text('No hay personajes encontrados, crea uno primero.')),
     );
     return;
   }
@@ -447,7 +447,7 @@ Future<void> _embedIntoCard(
                   Icon(Icons.person, color: EmberColors.primary),
                   const SizedBox(width: 10),
                   const Text(
-                    'Embed into which card?',
+                    '¿Entrada en qué tarjeta?',
                     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                   ),
                   const Spacer(),
@@ -568,7 +568,7 @@ Future<void> importLorebookFile(BuildContext context) async {
     final bytes = f.bytes;
     if (bytes == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not read the file.')),
+        const SnackBar(content: Text('No podía leer el archivo.')),
       );
       return;
     }
@@ -588,7 +588,7 @@ Future<void> importLorebookFile(BuildContext context) async {
       messenger.showSnackBar(
         const SnackBar(
             content: Text(
-                'Not a recognised lorebook format — expected chara_card_v2 character_book, SillyTavern world-info, or Pyre lorebook JSON.')),
+                'No es un formato reconocido de libro de mundo — esperado chara_card_v2 character_book, SillyTavern world-info, o Pyre libro de mundo JSON.')),
       );
       return;
     }
@@ -596,12 +596,12 @@ Future<void> importLorebookFile(BuildContext context) async {
     messenger.showSnackBar(
       SnackBar(
         content: Text(
-            'Imported "${book.name}" — ${book.entries.length} entries.'),
+            'Importado "${book.name}" — Entradas ${book.entries.length}.'),
       ),
     );
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Import failed: $e')),
+      SnackBar(content: Text('Fallo de importación: ${e}')),
     );
   }
 }
@@ -627,7 +627,7 @@ Future<void> editLorebook(BuildContext context, Lorebook? existing) async {
             TextField(
               controller: nameCtl,
               decoration: InputDecoration(
-                labelText: 'Name',
+                labelText: 'Nombre',
                 errorText: nameError,
               ),
               onChanged: (_) {
@@ -640,14 +640,14 @@ Future<void> editLorebook(BuildContext context, Lorebook? existing) async {
             TextField(
               controller: descCtl,
               maxLines: 2,
-              decoration: const InputDecoration(labelText: 'Description'),
+              decoration: const InputDecoration(labelText: 'Descripción'),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -692,7 +692,7 @@ class LorebookEditScreen extends StatelessWidget {
     if (lore == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const Center(child: Text('Lorebook not found')),
+        body: const Center(child: Text('libro de mundo no se encontró')),
       );
     }
     return Scaffold(
@@ -701,7 +701,7 @@ class LorebookEditScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'New entry',
+            tooltip: 'Nueva entrada',
             onPressed: () => _addEntry(context, lore),
           ),
         ],
@@ -726,9 +726,9 @@ class LorebookEditScreen extends StatelessWidget {
             child: lore.entries.isEmpty
           ? const EmptyState(
               icon: Icons.format_list_bulleted,
-              title: 'No entries',
+              title: 'No hay entradas',
               subtitle:
-                  'Add an entry with one or more trigger keywords and the text to inject.',
+                  'Agregue una entrada con una o más palabras clave de disparador y el texto para inyectar.',
             )
           : ListView.separated(
               padding: const EdgeInsets.all(16),
@@ -765,7 +765,7 @@ class LorebookEditScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CheckboxListTile(
-                              title: const Text('Always inject (constant)'),
+                              title: const Text('Activar siempre (constante)'),
                               value: entry.constant,
                               activeColor: EmberColors.primary,
                               contentPadding: EdgeInsets.zero,
@@ -783,22 +783,22 @@ class LorebookEditScreen extends StatelessWidget {
                                     onPressed: () =>
                                         _editEntry(context, lore, entry),
                                     icon: const Icon(Icons.edit, size: 16),
-                                    label: const Text('Edit'),
+                                    label: const Text('Editar'),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 IconButton(
                                   icon: Icon(Icons.delete_outline,
                                       color: EmberColors.danger),
-                                  tooltip: 'Delete entry',
+                                  tooltip: 'Suprimir la entrada',
                                   // Completeness-gaps: confirm like every other
                                   // delete in the app (was an immediate remove).
                                   onPressed: () async {
                                     final ok = await confirmDelete(
                                       context,
-                                      title: 'Delete entry?',
+                                      title: 'Eliminar la entrada?',
                                       message:
-                                          'This lorebook entry will be removed.',
+                                          'Esta entrada de libro de mundo será eliminada.',
                                     );
                                     if (!ok) return;
                                     lore.entries.removeWhere(
@@ -867,7 +867,7 @@ Future<void> _editEntry(
         final dialogMaxHeight = screenSize.height * 0.88;
         return AlertDialog(
         backgroundColor: EmberColors.bgPanel,
-        title: Text(isNew ? 'New entry' : 'Edit entry'),
+        title: Text(isNew ? 'Nueva entrada' : 'Editar entrada'),
         content: SizedBox(
           width: dialogWidth,
           child: ConstrainedBox(
@@ -882,9 +882,9 @@ Future<void> _editEntry(
                   minLines: 2,
                   maxLines: 4,
                   decoration: const InputDecoration(
-                    labelText: 'Trigger keywords',
+                    labelText: 'Palabras clave de activación',
                     helperText:
-                        'Comma-separated. Ignored if "constant" is on.',
+                        'Separa las palabras con comas. Se omiten si activas la opción Constante.',
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -893,9 +893,9 @@ Future<void> _editEntry(
                   minLines: 2,
                   maxLines: 4,
                   decoration: const InputDecoration(
-                    labelText: 'Secondary keywords (optional)',
+                    labelText: 'Palabras clave secundarias (opcional)',
                     helperText:
-                        'Comma-separated. Combined with the logic below.',
+                        'Separa las palabras con comas. Se combinan con las condiciones de abajo.',
                   ),
                   onChanged: (_) => setState(() {}),
                 ),
@@ -905,23 +905,23 @@ Future<void> _editEntry(
                   const SizedBox(height: 12),
                   DropdownButtonFormField<LoreSelectiveLogic>(
                     initialValue: logic,
-                    decoration: const InputDecoration(labelText: 'Logic'),
+                    decoration: const InputDecoration(labelText: 'Condición'),
                     items: const [
                       DropdownMenuItem(
                         value: LoreSelectiveLogic.andAny,
-                        child: Text('Any of these'),
+                        child: Text('Cualquiera de estos'),
                       ),
                       DropdownMenuItem(
                         value: LoreSelectiveLogic.andAll,
-                        child: Text('All of these'),
+                        child: Text('Todas las palabras clave'),
                       ),
                       DropdownMenuItem(
                         value: LoreSelectiveLogic.notAny,
-                        child: Text('None of these'),
+                        child: Text('Ninguno de estos'),
                       ),
                       DropdownMenuItem(
                         value: LoreSelectiveLogic.notAll,
-                        child: Text('Not all of these'),
+                        child: Text('No todos estos'),
                       ),
                     ],
                     onChanged: (v) => setState(
@@ -931,7 +931,7 @@ Future<void> _editEntry(
                   Padding(
                     padding: EdgeInsets.only(top: 6),
                     child: Text(
-                      'Add secondary keywords to enable AND/NOT logic.',
+                      'Añade palabras clave secundarias para activar las condiciones Y/NO.',
                       style: TextStyle(
                           color: EmberColors.textDim, fontSize: 11),
                     ),
@@ -942,12 +942,12 @@ Future<void> _editEntry(
                   minLines: 6,
                   maxLines: 14,
                   decoration: const InputDecoration(
-                    labelText: 'Content to inject',
+                    labelText: 'Contenido que se añade al contexto',
                   ),
                 ),
                 const SizedBox(height: 8),
                 CheckboxListTile(
-                  title: const Text('Always inject (constant)'),
+                  title: const Text('Activar siempre (constante)'),
                   value: constant,
                   activeColor: EmberColors.primary,
                   contentPadding: EdgeInsets.zero,
@@ -958,7 +958,7 @@ Future<void> _editEntry(
                 // behaviour (case-insensitive whole-word).
                 Row(
                   children: [
-                    const Expanded(child: Text('Case sensitive')),
+                    const Expanded(child: Text('Distinguir mayúsculas y minúsculas')),
                     TextButton(
                       onPressed: () => setState(
                           () => caseSensitive = triNext(caseSensitive)),
@@ -968,7 +968,7 @@ Future<void> _editEntry(
                 ),
                 Row(
                   children: [
-                    const Expanded(child: Text('Match whole words')),
+                    const Expanded(child: Text('Coincide palabras enteras')),
                     TextButton(
                       onPressed: () => setState(
                           () => matchWholeWords = triNext(matchWholeWords)),
@@ -978,7 +978,7 @@ Future<void> _editEntry(
                 ),
                 const SizedBox(height: 4),
                 SwitchListTile(
-                  title: const Text('Use trigger chance'),
+                  title: const Text('Usar probabilidad de activación'),
                   value: useProbability,
                   activeThumbColor: EmberColors.primary,
                   contentPadding: EdgeInsets.zero,
@@ -1020,15 +1020,15 @@ Future<void> _editEntry(
                   minLines: 1,
                   maxLines: 2,
                   decoration: const InputDecoration(
-                    labelText: 'Only for characters (optional)',
+                    labelText: 'Solo para estos personajes (opcional)',
                     helperText:
-                        'Comma-separated names. Empty = every character.',
+                        'Separa los nombres con comas. Si está vacío, se aplica a todos los personajes.',
                   ),
                   onChanged: (_) => setState(() {}),
                 ),
                 if (charFilterCtl.text.trim().isNotEmpty)
                   SwitchListTile(
-                    title: const Text('Exclude these instead'),
+                    title: const Text('Excluir estos en su lugar'),
                     value: characterFilterExclude,
                     activeThumbColor: EmberColors.primary,
                     contentPadding: EdgeInsets.zero,
@@ -1044,7 +1044,7 @@ Future<void> _editEntry(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1083,7 +1083,7 @@ Future<void> _editEntry(
               store.updateLorebook(lore);
               Navigator.pop(ctx);
             },
-            child: Text(isNew ? 'Add' : 'Save'),
+            child: Text(isNew ? 'Añadir' : 'Guardar'),
           ),
         ],
       );

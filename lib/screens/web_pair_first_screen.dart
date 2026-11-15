@@ -211,7 +211,7 @@ class _WebPairFirstScreenState extends State<_WebPairFirstScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Connect this browser to your PC',
+                  'Conecta este navegador a tu PC',
                   style: TextStyle(
                     color: EmberColors.textMid,
                     fontSize: 14,
@@ -251,7 +251,7 @@ class _WebPairFirstScreenState extends State<_WebPairFirstScreen> {
                   ElevatedButton.icon(
                     onPressed: _busy ? null : _requestConfirm,
                     icon: const Icon(Icons.computer),
-                    label: const Text('Pair with this PC'),
+                    label: const Text('Pareja con este PC'),
                   ),
                 const SizedBox(height: 6),
                 Text(
@@ -310,7 +310,7 @@ class _WebPairFirstScreenState extends State<_WebPairFirstScreen> {
                 Padding(
                   padding: const EdgeInsets.only(left: 2, bottom: 6),
                   child: Text(
-                    'Connecting to: $_host:$_port',
+                    'Conexión a: ${_host}:${_port}',
                     style: TextStyle(
                       color: EmberColors.textDim,
                       fontSize: 11,
@@ -357,7 +357,7 @@ class _WebPairFirstScreenState extends State<_WebPairFirstScreen> {
                           width: 18,
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Text('Connect'),
+                      : const Text('Conectar'),
                 ),
                 const SizedBox(height: 20),
                 Text(

@@ -53,7 +53,7 @@ class _LiveSheetSettingsScreenState extends State<LiveSheetSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Live Sheet')),
+      appBar: AppBar(title: const Text('Ficha de escena')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
         children: [
@@ -64,8 +64,8 @@ class _LiveSheetSettingsScreenState extends State<LiveSheetSettingsScreen> {
           // clothing, conditions, possessions, facts; locked facts; per-
           // entity seed; authoritative re-injection every turn).
           const HowItWorksCard(
-            title: 'How the Live Sheet works',
-            subtitle: 'What it is, how it tracks, controls.',
+            title: 'Cómo funciona la hoja de vida',
+            subtitle: 'Lo que es, cómo rastrea, controla.',
             sections: [
               HowItWorksSection('What it is', [
                 HowItWorksBlock.paragraph(
@@ -144,7 +144,7 @@ class _LiveSheetSettingsScreenState extends State<LiveSheetSettingsScreen> {
                 setState(() => _newChatsEnabled = v);
                 _commit();
               },
-              title: const Text('New chats start with the Live Sheet on'),
+              title: const Text('Los nuevos chats comienzan con la ficha de escena en'),
               subtitle: const Text(
                   'When off, a brand-new chat begins with state-tracking '
                   'disabled. Existing chats and the per-chat toggle are '
@@ -153,7 +153,7 @@ class _LiveSheetSettingsScreenState extends State<LiveSheetSettingsScreen> {
           ),
           // ── Auto-update cadence ───────────────────────────────────────
           SliderCard(
-            label: 'Auto-update every',
+            label: 'Actualizar automáticamente cada',
             subtitle: _autoEvery <= 0
                 ? 'Auto-update disabled — use "Update state now" manually.'
                 : 'Pyre updates the sheet every $_autoEvery character turns. '

@@ -64,7 +64,7 @@ class CustomizeChatSheet extends StatelessWidget {
               ),
             ),
             const Text(
-              'Chat background',
+              'Fondo del chat',
               style: TextStyle(
                   fontSize: 17, fontWeight: FontWeight.w600),
             ),
@@ -199,7 +199,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
     if (recentText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content:
-            Text('Nothing to read yet — send a message or two first.'),
+            Text('Nada que leer todavía — enviar un mensaje o dos primero.'),
       ));
       return;
     }
@@ -225,7 +225,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
     final provider = store.chatPrimaryProvider(chat);
     if (provider == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('No active provider — set one in API Connections first.'),
+        content: Text('Ningún proveedor activo — establecer uno en las conexiones API primero.'),
       ));
       return;
     }
@@ -415,7 +415,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 8),
           child: Text(
-            'Background',
+            'Fondo',
             style: TextStyle(
                 fontWeight: FontWeight.w600,
                 color: EmberColors.textMid,
@@ -488,7 +488,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
                 TextButton.icon(
                   icon: Icon(Icons.delete_outline,
                       size: 16, color: EmberColors.danger),
-                  label: Text('Clear',
+                  label: Text('Limpiar',
                       style: TextStyle(color: EmberColors.danger)),
                   onPressed: () {
                     chat.customBackgroundDataUrl = null;
@@ -503,7 +503,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
         if (effectiveSource == ChatBackgroundSource.dynamic) ...[
           const SizedBox(height: 8),
           const Text(
-            'Current location',
+            'Ubicación actual',
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 6),
@@ -516,7 +516,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
             onSubmitted: (_) => _commitLocation(),
             decoration: InputDecoration(
               isDense: true,
-              hintText: 'e.g. the Serpent’s Fang guild hall',
+              hintText: 'por ejemplo, el vestíbulo de la Serpiente Fang',
               helperMaxLines: 3,
               helperText:
                   'Pyre keeps this updated as the scene moves. Type a place '
@@ -582,7 +582,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
                     chat.backgroundOpacity = null;
                     store.touchChat(chat); // F1: opacity reset syncs
                   },
-                  child: const Text('Reset'),
+                  child: const Text('Restablecer'),
                 ),
             ],
           ),
@@ -611,7 +611,7 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
           Row(
             children: [
               const Expanded(
-                child: Text('Background fit', style: TextStyle(fontSize: 13)),
+                child: Text('Ajuste del fondo', style: TextStyle(fontSize: 13)),
               ),
               if (chat.backgroundFit != null)
                 TextButton(
@@ -619,12 +619,12 @@ class _ChatBackgroundSectionState extends State<_ChatBackgroundSection> {
                     chat.backgroundFit = null;
                     store.touchChat(chat); // F1: fit reset syncs
                   },
-                  child: const Text('Reset'),
+                  child: const Text('Restablecer'),
                 ),
             ],
           ),
           Text(
-            'Contain shows the whole image — most useful on wide windows. "App default" follows Chat Settings.',
+            'Contain muestra toda la imagen —la más útil en las ventanas anchas. "Aplicar por defecto" sigue Ajustes del chat.',
             style: TextStyle(color: EmberColors.textMid, fontSize: 11),
           ),
           const SizedBox(height: 8),

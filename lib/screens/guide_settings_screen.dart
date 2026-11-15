@@ -51,8 +51,8 @@ class _GuideSettingsScreenState extends State<GuideSettingsScreen> {
         children: [
           // ── How it works ──────────────────────────────────────────────
           const HowItWorksCard(
-            title: 'How Guide works',
-            subtitle: 'Steer one reply, or draft your own message.',
+            title: 'Cómo funciona Guía',
+            subtitle: 'Firme una respuesta, o redactar su propio mensaje.',
             sections: [
               HowItWorksSection('What it is', [
                 HowItWorksBlock.paragraph(
@@ -145,11 +145,11 @@ class _GuideSettingsScreenState extends State<GuideSettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Where the guide goes',
+                  const Text('Donde va el guía',
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 2),
                   Text(
-                    'Where the one-shot guidance note is placed in the prompt.',
+                    'Donde se coloca la nota de orientación instantánea en el aviso.',
                     style:
                         TextStyle(color: EmberColors.textMid, fontSize: 12),
                   ),
@@ -162,7 +162,7 @@ class _GuideSettingsScreenState extends State<GuideSettingsScreen> {
                       ),
                       ButtonSegment(
                         value: GuideInjectionPosition.beforeLastUserTurn,
-                        label: Text('Before my last message'),
+                        label: Text('Antes de mi último mensaje'),
                       ),
                     ],
                     selected: {_draft.injectionPosition},
@@ -199,7 +199,7 @@ class _GuideSettingsScreenState extends State<GuideSettingsScreen> {
                     segments: const [
                       ButtonSegment(
                         value: GuidePerspective.first,
-                        label: Text('First'),
+                        label: Text('Primera'),
                       ),
                       ButtonSegment(
                         value: GuidePerspective.second,
@@ -207,7 +207,7 @@ class _GuideSettingsScreenState extends State<GuideSettingsScreen> {
                       ),
                       ButtonSegment(
                         value: GuidePerspective.third,
-                        label: Text('Third'),
+                        label: Text('Tercera'),
                       ),
                     ],
                     selected: {_draft.defaultPerspective},
