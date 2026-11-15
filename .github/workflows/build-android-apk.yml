@@ -123,24 +123,6 @@ jobs:
             --title "${{ github.ref_name == 'pyre-chat-multimedia' && 'Pyre Android - Chat Multimedia' || 'Pyre Android - Managed Memory 1M 2M 10M' }}" \
             --notes "${{ github.ref_name == 'pyre-chat-multimedia' && 'APK de Pyre con multimedia de chat: adjuntar imágenes, visión y generación de escenas. Incluye la memoria administrada 1M / 2M / 10M. Para teléfonos Android ARM64 modernos, descarga Pyre-Android-arm64-v8a.apk.' || 'APK de Pyre con la configuración general de memoria 1M / 2M / 10M. 2M es el valor estándar. Para teléfonos Android ARM64 modernos, descarga Pyre-Android-arm64-v8a.apk.' }}"
 
-      - name: Publicar APK integrado en español
-        if: github.ref == 'refs/heads/codex/pyre-completo-es'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="pyre-es-${GITHUB_SHA:0:12}"
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" Pyre-Android-*.apk --clobber
-          else
-            if [ "$PYRE_SIGNING_MODE" = release ]; then
-              NOTES="APK con firma de publicación del repositorio."
-            else
-              NOTES="Compilación Pyre Dev para instalación paralela a Pyre."
-            fi
-            gh release create "$TAG" --target "$GITHUB_SHA" --prerelease \
-              --title "Pyre en español · Android" --notes "$NOTES" Pyre-Android-*.apk
-          fi
-
       - name: Comprobar instalación y arranque en Android
         if: github.ref == 'refs/heads/codex/pyre-completo-es'
         timeout-minutes: 12
