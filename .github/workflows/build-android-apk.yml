@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: write
 
 jobs:
@@ -19,6 +20,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Recuperar el APK para cambios exclusivos del comprobador
+        id: prior_apk
+        if: github.event_name == 'push' && github.ref == 'refs/heads/codex/pyre-completo-es'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIOUS_SHA: ${{ github.event.before }}
+        run: |
+          if ! git fetch --quiet --no-tags --depth=1 origin "$PREVIOUS_SHA"; then exit 0; fi
+          if ! git diff --quiet "$PREVIOUS_SHA" HEAD -- . ':(exclude).github/workflows/build-android-apk.yml'; then exit 0; fi
+          run_id="$(gh run list --workflow build-android-apk.yml --commit "$PREVIOUS_SHA" \
+            --status completed --limit 1 --json databaseId --jq '.[0].databaseId' || true)"
+          if [ -z "$run_id" ]; then exit 0; fi
+          if gh run download "$run_id" --name Pyre-Android-x86_64 && [ -s Pyre-Android-x86_64.apk ]; then
+            echo "reused=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -26,6 +43,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Flutter
+        if: steps.prior_apk.outputs.reused != 'true'
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.47.4'
@@ -33,6 +51,7 @@ jobs:
           cache: true
 
       - name: Install dependencies
+        if: steps.prior_apk.outputs.reused != 'true'
         run: flutter pub get
 
       - name: Verify final managed memory integration
@@ -47,6 +66,7 @@ jobs:
           ! grep -q "Summary Prompt" lib/screens/long_term_memory_screen.dart
 
       - name: Configure CI release signing
+        if: steps.prior_apk.outputs.reused != 'true'
         env:
           PYRE_CI_KEYSTORE_B64: ${{ secrets.PYRE_ANDROID_KEYSTORE_B64 }}
           PYRE_CI_STORE_PASSWORD: ${{ secrets.PYRE_ANDROID_STORE_PASSWORD }}
@@ -68,6 +88,7 @@ jobs:
           fi
 
       - name: Build release APKs per ABI
+        if: steps.prior_apk.outputs.reused != 'true'
         run: |
           if [ "$GITHUB_REF_NAME" = "codex/pyre-completo-es" ] && [ "$PYRE_SIGNING_MODE" != release ]; then
             PYRE_DEV=true flutter build apk --release --split-per-abi --dart-define=PYRE_DEV=true
@@ -76,6 +97,7 @@ jobs:
           fi
 
       - name: Verify APK signing mode
+        if: steps.prior_apk.outputs.reused != 'true'
         run: |
           echo "Signing mode: $PYRE_SIGNING_MODE"
           if [ "$PYRE_SIGNING_MODE" != "release" ]; then
@@ -83,12 +105,14 @@ jobs:
           fi
 
       - name: Prepare downloadable APK names
+        if: steps.prior_apk.outputs.reused != 'true'
         run: |
           cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk Pyre-Android-arm64-v8a.apk
           cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk Pyre-Android-armeabi-v7a.apk
           cp build/app/outputs/flutter-apk/app-x86_64-release.apk Pyre-Android-x86_64.apk
 
       - name: Upload ARM64 APK artifact
+        if: steps.prior_apk.outputs.reused != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: Pyre-Android-arm64-v8a
@@ -96,6 +120,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload ARMv7 APK artifact
+        if: steps.prior_apk.outputs.reused != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: Pyre-Android-armeabi-v7a
@@ -103,6 +128,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload x86_64 APK artifact
+        if: steps.prior_apk.outputs.reused != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: Pyre-Android-x86_64
@@ -128,9 +154,22 @@ jobs:
         timeout-minutes: 12
         run: |
           sudo chmod a+rw /dev/kvm
-          sdkmanager 'emulator' 'system-images;android-34;google_apis;x86_64'
-          printf 'no\n' | avdmanager create avd --name pyre-ci \
+          sdk="${ANDROID_HOME:-${ANDROID_SDK_ROOT:?}}"
+          sdk_manager="$(find -L "$sdk/cmdline-tools" -path '*/bin/sdkmanager' -print -quit 2>/dev/null || true)"
+          if [ -z "$sdk_manager" ]; then
+            tools_archive="$RUNNER_TEMP/android-tools.zip"
+            tools_dir="$RUNNER_TEMP/pyre-sdk-tools"
+            curl --fail --silent --show-error --retry 2 \
+              https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip \
+              --output "$tools_archive"
+            unzip -q "$tools_archive" -d "$tools_dir"
+            sdk_manager="$tools_dir/cmdline-tools/bin/sdkmanager"
+          fi
+          "$sdk_manager" --sdk_root="$sdk" 'emulator' 'system-images;android-34;google_apis;x86_64'
+          export ANDROID_HOME="$sdk"
+          printf 'no\n' | "$(dirname "$sdk_manager")/avdmanager" create avd --name pyre-ci \
             --package 'system-images;android-34;google_apis;x86_64' --force
+          export PATH="$sdk/platform-tools:$PATH"
           adb start-server
           "$ANDROID_HOME/emulator/emulator" -avd pyre-ci -no-window -no-audio \
             -no-snapshot -no-boot-anim -gpu swiftshader_indirect > emulator.log 2>&1 &
@@ -143,9 +182,11 @@ jobs:
           done
           test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1
           adb shell input keyevent 82
-          package=app.pyre.client
-          if [ "$PYRE_SIGNING_MODE" != release ]; then package=app.pyre.client.dev; fi
           adb install Pyre-Android-x86_64.apk
+          package=app.pyre.client
+          if adb shell pm path app.pyre.client.dev | grep -q '^package:'; then
+            package=app.pyre.client.dev
+          fi
           adb logcat -c
           adb shell am start -W -n "$package/com.example.emberchat.MainActivity" | tee startup.log
           grep -q 'Status: ok' startup.log
