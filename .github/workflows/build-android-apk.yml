@@ -140,3 +140,35 @@ jobs:
             gh release create "$TAG" --target "$GITHUB_SHA" --prerelease \
               --title "Pyre en español · Android" --notes "$NOTES" Pyre-Android-*.apk
           fi
+
+      - name: Comprobar instalación y arranque en Android
+        if: github.ref == 'refs/heads/codex/pyre-completo-es'
+        timeout-minutes: 12
+        run: |
+          sudo chmod a+rw /dev/kvm
+          sdkmanager 'emulator' 'system-images;android-34;google_apis;x86_64'
+          printf 'no\n' | avdmanager create avd --name pyre-ci \
+            --package 'system-images;android-34;google_apis;x86_64' --force
+          adb start-server
+          "$ANDROID_HOME/emulator/emulator" -avd pyre-ci -no-window -no-audio \
+            -no-snapshot -no-boot-anim -gpu swiftshader_indirect > emulator.log 2>&1 &
+          emulator_pid=$!
+          trap 'kill "$emulator_pid" 2>/dev/null || true' EXIT
+          timeout 240 adb wait-for-device
+          for attempt in {1..60}; do
+            if [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1 ]; then break; fi
+            sleep 3
+          done
+          test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = 1
+          adb shell input keyevent 82
+          package=app.pyre.client
+          if [ "$PYRE_SIGNING_MODE" != release ]; then package=app.pyre.client.dev; fi
+          adb install Pyre-Android-x86_64.apk
+          adb logcat -c
+          adb shell am start -W -n "$package/com.example.emberchat.MainActivity" | tee startup.log
+          grep -q 'Status: ok' startup.log
+          sleep 5
+          adb shell pidof "$package"
+          adb shell dumpsys activity activities | grep -m1 "topResumedActivity.*$package"
+          adb logcat -d -s AndroidRuntime:E > crashes.log
+          if grep -q 'FATAL EXCEPTION' crashes.log; then cat crashes.log; exit 1; fi

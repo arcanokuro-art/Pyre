@@ -111,7 +111,7 @@ void main() {
 
     // (3) Actionable recovery: a "Set up provider" action (deep-link), not a
     // navigation instruction the user has to follow by hand.
-    expect(find.text('Set up provider'), findsOneWidget,
+    expect(find.text('Configurar proveedor'), findsOneWidget,
         reason: 'the block must offer a one-tap route to API Connections');
 
     // Let the snackbar's auto-dismiss timer fire so no timer dangles into

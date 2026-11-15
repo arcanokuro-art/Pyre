@@ -50,7 +50,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(
-      find.text(locale.languageCode == 'es' ? 'Añadir lorebook' : 'Add lorebook'),
+      find.text('Añadir lorebook'),
     );
     await tester.pumpAndSettle();
   }
@@ -65,14 +65,14 @@ void main() {
     expect(find.text('Pick a lorebook'), findsNothing);
   });
 
-  testWidgets('lorebook picker pluralizes entry counts in English',
+  testWidgets('lorebook picker falls back to Spanish on English devices',
       (tester) async {
     await pumpPicker(tester, const Locale('en'));
 
-    expect(find.text('Pick a lorebook'), findsOneWidget);
-    expect(find.text('1 entry'), findsOneWidget);
-    expect(find.text('2 entries'), findsOneWidget);
-    expect(find.text('Elige un lorebook'), findsNothing);
+    expect(find.text('Elige un lorebook'), findsOneWidget);
+    expect(find.text('1 entrada'), findsOneWidget);
+    expect(find.text('2 entradas'), findsOneWidget);
+    expect(find.text('Pick a lorebook'), findsNothing);
   });
 }
 
